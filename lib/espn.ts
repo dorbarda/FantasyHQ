@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type {
   StandingEntry, MatchupsData, Player,
-  HistoryEntry, RulesData, SeasonStats,
+  RulesData, SeasonStats,
   CategoryStanding, LuckTableEntry, StatsData,
 } from './types';
 
@@ -352,10 +352,6 @@ export async function getStatsData(): Promise<StatsData> {
 
 // ─── STATIC DATA ─────────────────────────────────────────────────────────────
 
-export async function getHistory(): Promise<HistoryEntry[]> {
-  const { default: data } = await import('@/data/history.json');
-  return data as HistoryEntry[];
-}
 
 export async function getRules(): Promise<RulesData> {
   const { default: data } = await import('@/data/rules.json');

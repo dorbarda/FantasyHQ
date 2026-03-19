@@ -84,7 +84,7 @@ export interface CategoryStanding {
   ast: CategoryStat;
   stl: CategoryStat;
   blk: CategoryStat;
-  to: CategoryStat;  // lower is better — rank 1 = fewest TOs
+  to: CategoryStat;
   pts: CategoryStat;
 }
 
@@ -107,30 +107,31 @@ export interface StatsData {
   luckTable: LuckTableEntry[];
 }
 
-export interface Prize {
-  place: string;
-  ownerName: string;
-  prize: string;
-}
+// ─── History ──────────────────────────────────────────────────────────────────
 
-export interface SeasonChampion {
+export interface HistoricalTeam {
+  rank: number;
   teamName: string;
   ownerName: string;
-  record: string;
-  finalScore: number;
+  wins: number;
+  losses: number;
+  pf: number;
+  pa: number;
 }
 
-export interface SeasonRunnerUp {
-  teamName: string;
-  ownerName: string;
-  record: string;
+export interface HistoricalSeason {
+  year: number;
+  seasonLabel: string; // e.g. "2024-25"
+  champion: HistoricalTeam | null;
+  runnerUp: HistoricalTeam | null;
+  lastPlace: HistoricalTeam | null;
+  finalStandings: HistoricalTeam[];
+  mvpPlayer: string;
+  notes: string;
 }
 
-export interface HistoryEntry {
-  season: string;
-  champion: SeasonChampion;
-  runnerUp: SeasonRunnerUp;
-  prizes: Prize[];
+export interface SeasonOverride {
+  year: number;
   mvpPlayer: string;
   notes: string;
 }

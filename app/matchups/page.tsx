@@ -1,30 +1,45 @@
-import matchupsData from '@/data/matchups.json';
+import { hasEspnCredentials, getMatchups } from '@/lib/espn';
+import matchupsJson from '@/data/matchups.json';
 import { MatchupsData } from '@/lib/types';
 import MatchupCard from '@/components/MatchupCard';
 
-export default function MatchupsPage() {
-  const data = matchupsData as MatchupsData;
+export const revalidate = 1800;
+
+export default async function MatchupsPage() {
+  let data: MatchupsData;
+
+  if (hasEspnCredentials()) {
+    try {
+      data = await getMatchups();
+    } catch (err) {
+      console.error('ESPN fetch failed, using static data:', err);
+      data = matchupsJson as MatchupsData;
+    }
+  } else {
+    data = matchupsJson as MatchupsData;
+  }
+
   const liveMatchups = data.matchups.filter((m) => m.isLive);
   const upcomingMatchups = data.matchups.filter((m) => !m.isLive);
 
   return (
     <div className="py-5">
-      {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div>
           <h1 className="text-[28px] font-bold tracking-tight text-[#0f1419]">Matchups</h1>
           <p className="text-[15px] text-[#536471] font-medium">Week {data.week} · Head-to-Head</p>
         </div>
-        <div className="flex items-center gap-1.5">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00ba7c] opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00ba7c]"></span>
-          </span>
-          <span className="text-[12px] font-bold text-[#00ba7c]">Live</span>
-        </div>
+        {liveMatchups.length > 0 && (
+          <div className="flex items-center gap-1.5">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00ba7c] opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00ba7c]"></span>
+            </span>
+            <span className="text-[12px] font-bold text-[#00ba7c]">Live</span>
+          </div>
+        )}
       </div>
 
-      {/* Live matchups */}
       {liveMatchups.length > 0 && (
         <section className="mb-5">
           <p className="text-[11px] font-bold uppercase tracking-widest text-[#536471] mb-3">
@@ -42,7 +57,6 @@ export default function MatchupsPage() {
         <div className="border-b border-[#eff3f4] mb-5" />
       )}
 
-      {/* Not started matchups */}
       {upcomingMatchups.length > 0 && (
         <section>
           <p className="text-[11px] font-bold uppercase tracking-widest text-[#536471] mb-3">

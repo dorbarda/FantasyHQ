@@ -1,13 +1,26 @@
-import playersData from '@/data/players.json';
+import { hasEspnCredentials, getPlayers } from '@/lib/espn';
+import playersJson from '@/data/players.json';
 import { Player } from '@/lib/types';
 import PlayerTable from '@/components/PlayerTable';
 
-export default function PlayersPage() {
-  const players = playersData as Player[];
+export const revalidate = 1800;
+
+export default async function PlayersPage() {
+  let players: Player[];
+
+  if (hasEspnCredentials()) {
+    try {
+      players = await getPlayers();
+    } catch (err) {
+      console.error('ESPN fetch failed, using static data:', err);
+      players = playersJson as Player[];
+    }
+  } else {
+    players = playersJson as Player[];
+  }
 
   return (
     <div className="py-5">
-      {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div>
           <h1 className="text-[28px] font-bold tracking-tight text-[#0f1419]">Players</h1>
@@ -18,11 +31,10 @@ export default function PlayersPage() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00ba7c] opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00ba7c]"></span>
           </span>
-          <span className="text-[12px] font-bold text-[#00ba7c]">Live · Week 18</span>
+          <span className="text-[12px] font-bold text-[#00ba7c]">Live</span>
         </div>
       </div>
 
-      {/* Key */}
       <div className="flex items-center gap-3 mb-3">
         <div className="flex items-center gap-1">
           <span className="inline-flex items-center justify-center text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#1d9bf0] text-white">G</span>

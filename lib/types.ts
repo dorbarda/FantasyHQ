@@ -107,7 +107,59 @@ export interface StatsData {
   luckTable: LuckTableEntry[];
 }
 
-// ─── History ──────────────────────────────────────────────────────────────────
+// ─── Playoff Bracket ─────────────────────────────────────────────────────────
+
+export interface BracketTeam {
+  teamId: string;
+  teamName: string;
+  ownerName: string;
+  score: number;
+  seed: number;
+  isYou: boolean;
+}
+
+export interface BracketMatchup {
+  id: string;
+  round: number;              // 1 = first playoff round
+  bracketType: 'winners' | 'consolation';
+  matchupPeriodId: number;
+  home: BracketTeam;
+  away: BracketTeam | null;
+  winner: 'home' | 'away' | null;
+  isCurrentRound: boolean;
+}
+
+export interface PlayoffBracketData {
+  isPlayoffs: boolean;
+  currentMatchupPeriod: number;
+  totalRounds: number;
+  winners: BracketMatchup[];
+  consolation: BracketMatchup[];
+  champion: BracketTeam | null;
+}
+
+// ─── NBA Scoreboard ───────────────────────────────────────────────────────────
+
+export interface NBATeam {
+  tricode: string;
+  city: string;
+  name: string;
+  score: number;
+  wins: number;
+  losses: number;
+}
+
+export interface NBAGame {
+  gameId: string;
+  status: 'pre' | 'live' | 'final';
+  statusText: string;
+  period: number;
+  gameTimeUTC: string;
+  homeTeam: NBATeam;
+  awayTeam: NBATeam;
+}
+
+// ─── History ─────────────────────────────────────────────────────────────────
 
 export interface HistoricalTeam {
   rank: number;

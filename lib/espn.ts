@@ -3,6 +3,7 @@ import type {
   StandingEntry, MatchupsData, Player,
   RulesData, SeasonStats,
   CategoryStanding, LuckTableEntry, StatsData,
+  BracketMatchup, BracketTeam, PlayoffBracketData,
 } from './types';
 
 const ESPN_S2 = process.env.ESPN_S2;
@@ -348,6 +349,105 @@ export async function getStatsData(): Promise<StatsData> {
   }).sort((a, b) => b.pf - a.pf);
 
   return { matchesPlayed, seasonStats, categoryStandings, luckTable };
+}
+
+// ─── PLAYOFF BRACKET ──────────────────────────────────────────────────────────
+
+export async function getPlayoffBracket(): Promise<PlayoffBracketData> {
+  const data = await espnFetch(
+    '?view=mTeam&view=mMatchup&view=mMatchupScore&view=mStandings'
+  );
+
+  const currentMatchupPeriod: number = data.status?.currentMatchupPeriod || 1;
+  const teams: any[] = data.teams || [];
+  const members: any[] = data.members || [];
+  const memberMap = buildMemberMap(members);
+  const myTeamId = findMyTeamId(members, teams);
+
+  // Build team info (seed comes from playoffSeed or rank)
+  const teamMap: Record<number, { name: string; owner: string; seed: number; isYou: boolean }> = {};
+  for (const t of teams) {
+    const owner = (t.owners || []).map((id: string) => memberMap[id] || 'Unknown').join(' & ');
+    teamMap[t.id] = {
+      name: t.name || `Team ${t.id}`,
+      owner,
+      seed: t.playoffSeed || t.rankCalculatedFinal || 0,
+      isYou: t.id === myTeamId,
+    };
+  }
+
+  // Filter to playoff matchups only
+  const allMatchups: any[] = data.schedule || [];
+  const playoffMatchups = allMatchups.filter(
+    (m: any) => m.playoffTierType && m.playoffTierType !== 'NONE'
+  );
+
+  const isPlayoffs = playoffMatchups.some(
+    (m: any) => m.matchupPeriodId === currentMatchupPeriod
+  );
+
+  // Determine round numbers: sort unique playoff periods, assign round 1, 2, ...
+  const playoffPeriods = Array.from(
+    new Set(playoffMatchups.map((m: any) => m.matchupPeriodId as number))
+  ).sort((a, b) => a - b);
+
+  function makeTeam(side: any, id: number): BracketTeam {
+    const info = teamMap[id] || { name: '?', owner: '?', seed: 0, isYou: false };
+    return {
+      teamId: `team${id}`,
+      teamName: info.name,
+      ownerName: info.owner,
+      score: Math.round((side?.totalPoints || 0) * 10) / 10,
+      seed: info.seed,
+      isYou: info.isYou,
+    };
+  }
+
+  const brackets: BracketMatchup[] = playoffMatchups.map((m: any, idx: number) => {
+    const round = playoffPeriods.indexOf(m.matchupPeriodId) + 1;
+    const home = makeTeam(m.home, m.home?.teamId);
+    const away = m.away?.teamId != null ? makeTeam(m.away, m.away.teamId) : null;
+
+    let winner: 'home' | 'away' | null = null;
+    if (m.winner === 'HOME') winner = 'home';
+    else if (m.winner === 'AWAY') winner = 'away';
+
+    const isWinners = m.playoffTierType === 'WINNERS_BRACKET';
+
+    return {
+      id: `bracket-${idx}`,
+      round,
+      bracketType: isWinners ? 'winners' : 'consolation',
+      matchupPeriodId: m.matchupPeriodId,
+      home,
+      away,
+      winner,
+      isCurrentRound: m.matchupPeriodId === currentMatchupPeriod,
+    };
+  });
+
+  const winners = brackets
+    .filter(m => m.bracketType === 'winners')
+    .sort((a, b) => a.round - b.round || a.home.seed - b.home.seed);
+
+  const consolation = brackets
+    .filter(m => m.bracketType === 'consolation')
+    .sort((a, b) => a.round - b.round);
+
+  // Champion = winner of the highest-round winners matchup
+  const finalMatchup = winners.filter(m => m.round === playoffPeriods.length)[0] ?? null;
+  let champion: BracketTeam | null = null;
+  if (finalMatchup?.winner === 'home') champion = finalMatchup.home;
+  else if (finalMatchup?.winner === 'away') champion = finalMatchup.away;
+
+  return {
+    isPlayoffs,
+    currentMatchupPeriod,
+    totalRounds: playoffPeriods.length,
+    winners,
+    consolation,
+    champion,
+  };
 }
 
 // ─── STATIC DATA ─────────────────────────────────────────────────────────────

@@ -3,6 +3,7 @@ import statsJson from '@/data/stats.json';
 import { StatsData } from '@/lib/types';
 import CategoryTable from '@/components/CategoryTable';
 import SeasonStatsTable from '@/components/SeasonStatsTable';
+import LuckTable from '@/components/LuckTable';
 
 export const revalidate = 1800;
 
@@ -52,11 +53,18 @@ export default async function StatsPage() {
       <div className="border-b border-[#eff3f4] mb-5" />
 
       {/* Season stats */}
-      <section>
+      <section className="mb-5">
         <p className="text-[11px] font-bold uppercase tracking-widest text-[#536471] mb-3">
           Season Totals
         </p>
         <SeasonStatsTable stats={data.seasonStats} />
+      </section>
+
+      <div className="border-b border-[#eff3f4] mb-5" />
+
+      {/* Luck table */}
+      <section>
+        <LuckTable entries={data.luckTable} />
       </section>
     </div>
   );

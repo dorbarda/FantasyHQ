@@ -5,6 +5,7 @@ export interface Streak {
 
 export interface StandingEntry {
   rank: number;
+  powerRank: number;
   teamId: string;
   teamName: string;
   ownerName: string;
@@ -13,6 +14,7 @@ export interface StandingEntry {
   points: number;
   streak: Streak;
   isYou: boolean;
+  moves: number;
 }
 
 export interface MatchupTeam {
@@ -46,6 +48,63 @@ export interface Player {
   ast: number;
   tpm: number;
   fp: number;
+}
+
+export interface SeasonStats {
+  teamId: string;
+  teamName: string;
+  ownerName: string;
+  fgm: number;
+  fga: number;
+  ftm: number;
+  fta: number;
+  tpm: number;
+  reb: number;
+  ast: number;
+  stl: number;
+  blk: number;
+  to: number;
+  td: number;
+  pts: number;
+}
+
+export interface CategoryStat {
+  value: number;
+  rank: number;
+}
+
+export interface CategoryStanding {
+  teamId: string;
+  teamName: string;
+  ownerName: string;
+  fgPct: CategoryStat;
+  ftPct: CategoryStat;
+  tpm: CategoryStat;
+  reb: CategoryStat;
+  ast: CategoryStat;
+  stl: CategoryStat;
+  blk: CategoryStat;
+  to: CategoryStat;  // lower is better — rank 1 = fewest TOs
+  pts: CategoryStat;
+}
+
+export interface LuckTableEntry {
+  teamId: string;
+  teamName: string;
+  ownerName: string;
+  pf: number;
+  pa: number;
+  diff: number;
+  pfPerMatch: number;
+  paPerMatch: number;
+  movesPerMatch: number;
+}
+
+export interface StatsData {
+  matchesPlayed: number;
+  seasonStats: SeasonStats[];
+  categoryStandings: CategoryStanding[];
+  luckTable: LuckTableEntry[];
 }
 
 export interface Prize {

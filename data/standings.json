@@ -1,112 +1,132 @@
 [
   {
     "rank": 1,
+    "powerRank": 1,
     "teamId": "team1",
-    "teamName": "Tel Aviv Thunder",
-    "ownerName": "Yossi Mizrahi",
+    "teamName": "Inglourious Basterds",
+    "ownerName": "Omer Rosenberg",
     "wins": 14,
     "losses": 3,
     "points": 1842.5,
-    "streak": { "type": "W", "count": 5 },
-    "isYou": false
+    "streak": { "type": "W", "count": 3 },
+    "isYou": false,
+    "moves": 68
   },
   {
     "rank": 2,
+    "powerRank": 3,
     "teamId": "team2",
-    "teamName": "Haifa Hawks",
-    "ownerName": "Avi Cohen",
+    "teamName": "Team Miller",
+    "ownerName": "Barak Miller",
     "wins": 12,
     "losses": 5,
     "points": 1798.0,
     "streak": { "type": "W", "count": 2 },
-    "isYou": true
+    "isYou": false,
+    "moves": 58
   },
   {
     "rank": 3,
+    "powerRank": 2,
     "teamId": "team3",
-    "teamName": "Jerusalem Ballers",
-    "ownerName": "Noam Peretz",
+    "teamName": "Slotzki",
+    "ownerName": "Nir Zele",
     "wins": 11,
     "losses": 6,
     "points": 1763.5,
-    "streak": { "type": "L", "count": 1 },
-    "isYou": false
+    "streak": { "type": "W", "count": 1 },
+    "isYou": false,
+    "moves": 65
   },
   {
     "rank": 4,
+    "powerRank": 4,
     "teamId": "team4",
-    "teamName": "Beer Sheva Kings",
-    "ownerName": "Tal Shapiro",
+    "teamName": "Team Mamba Forever",
+    "ownerName": "Yoav Coracos",
     "wins": 10,
     "losses": 7,
     "points": 1741.0,
-    "streak": { "type": "W", "count": 3 },
-    "isYou": false
+    "streak": { "type": "L", "count": 1 },
+    "isYou": false,
+    "moves": 91
   },
   {
     "rank": 5,
+    "powerRank": 6,
     "teamId": "team5",
-    "teamName": "Netanya Nets",
-    "ownerName": "Itai Levi",
+    "teamName": "Nordau Peaky Blinder",
+    "ownerName": "Dor Barda",
     "wins": 9,
     "losses": 8,
     "points": 1712.5,
-    "streak": { "type": "L", "count": 2 },
-    "isYou": false
+    "streak": { "type": "L", "count": 1 },
+    "isYou": true,
+    "moves": 108
   },
   {
     "rank": 6,
+    "powerRank": 5,
     "teamId": "team6",
-    "teamName": "Rishon Rockets",
-    "ownerName": "Gal Katz",
+    "teamName": "King Ozniyon",
+    "ownerName": "Ilay Mendel",
     "wins": 8,
     "losses": 9,
     "points": 1689.0,
     "streak": { "type": "W", "count": 1 },
-    "isYou": false
+    "isYou": false,
+    "moves": 92
   },
   {
     "rank": 7,
+    "powerRank": 8,
     "teamId": "team7",
-    "teamName": "Ramat Gan Rangers",
-    "ownerName": "Eran Ben-David",
+    "teamName": "League's American Problem",
+    "ownerName": "Yuval Halevy",
     "wins": 7,
     "losses": 10,
     "points": 1651.5,
     "streak": { "type": "L", "count": 3 },
-    "isYou": false
+    "isYou": false,
+    "moves": 98
   },
   {
     "rank": 8,
+    "powerRank": 7,
     "teamId": "team8",
-    "teamName": "Eilat Eagles",
-    "ownerName": "Dor Friedman",
+    "teamName": "Libi's Legacy",
+    "ownerName": "Amir Ben Izhak",
     "wins": 6,
     "losses": 11,
     "points": 1624.0,
-    "streak": { "type": "L", "count": 4 },
-    "isYou": false
+    "streak": { "type": "L", "count": 1 },
+    "isYou": false,
+    "moves": 107
   },
   {
     "rank": 9,
+    "powerRank": 10,
     "teamId": "team9",
-    "teamName": "Ashdod Aces",
-    "ownerName": "Ron Avraham",
+    "teamName": "PlottKe",
+    "ownerName": "Yotam Goldin",
     "wins": 4,
     "losses": 13,
     "points": 1587.5,
-    "streak": { "type": "L", "count": 2 },
-    "isYou": false
+    "streak": { "type": "W", "count": 1 },
+    "isYou": false,
+    "moves": 105
   },
   {
     "rank": 10,
+    "powerRank": 9,
     "teamId": "team10",
-    "teamName": "Herzliya Heat",
-    "ownerName": "Matan Goldberg",
+    "teamName": "Flint Tropics 70's Show",
+    "ownerName": "Dor Gelless",
     "wins": 3,
     "losses": 14,
     "points": 1543.0,
-    "streak": { "type": "L", "count": 6 },
-    "isYou": false
+    "streak": { "type": "L", "count": 2 },
+    "isYou": false,
+    "moves": 99
   }
 ]

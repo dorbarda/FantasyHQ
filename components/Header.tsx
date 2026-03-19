@@ -7,6 +7,7 @@ const navItems = [
   { label: 'Standings', href: '/' },
   { label: 'Matchups', href: '/matchups' },
   { label: 'Players', href: '/players' },
+  { label: 'Stats', href: '/stats' },
   { label: 'History', href: '/history' },
   { label: 'Rules', href: '/rules' },
 ];

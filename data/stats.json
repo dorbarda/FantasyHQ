@@ -1,0 +1,219 @@
+{
+  "matchesPlayed": 17,
+  "seasonStats": [
+    {
+      "teamId": "team1",
+      "teamName": "Inglourious Basterds",
+      "ownerName": "Omer Rosenberg",
+      "fgm": 4689, "fga": 9748, "ftm": 2315, "fta": 2790,
+      "tpm": 1254, "reb": 3952, "ast": 2983, "stl": 793,
+      "blk": 542, "to": 1597, "td": 2, "pts": 12947
+    },
+    {
+      "teamId": "team2",
+      "teamName": "Team Miller",
+      "ownerName": "Barak Miller",
+      "fgm": 4719, "fga": 9732, "ftm": 2242, "fta": 2863,
+      "tpm": 1276, "reb": 4128, "ast": 2688, "stl": 743,
+      "blk": 547, "to": 1450, "td": 2, "pts": 12956
+    },
+    {
+      "teamId": "team3",
+      "teamName": "Slotzki",
+      "ownerName": "Nir Zele",
+      "fgm": 4668, "fga": 9618, "ftm": 2429, "fta": 2998,
+      "tpm": 1234, "reb": 4232, "ast": 2595, "stl": 812,
+      "blk": 429, "to": 1430, "td": 2, "pts": 12999
+    },
+    {
+      "teamId": "team4",
+      "teamName": "Team Mamba Forever",
+      "ownerName": "Yoav Coracos",
+      "fgm": 4616, "fga": 9839, "ftm": 2350, "fta": 2992,
+      "tpm": 1465, "reb": 4028, "ast": 2609, "stl": 760,
+      "blk": 435, "to": 1482, "td": 5, "pts": 13056
+    },
+    {
+      "teamId": "team5",
+      "teamName": "Nordau Peaky Blinder",
+      "ownerName": "Dor Barda",
+      "fgm": 4430, "fga": 9449, "ftm": 2128, "fta": 2712,
+      "tpm": 1239, "reb": 3963, "ast": 3120, "stl": 704,
+      "blk": 462, "to": 1606, "td": 3, "pts": 12227
+    },
+    {
+      "teamId": "team6",
+      "teamName": "King Ozniyon",
+      "ownerName": "Ilay Mendel",
+      "fgm": 4219, "fga": 9034, "ftm": 2223, "fta": 2781,
+      "tpm": 1371, "reb": 4769, "ast": 3068, "stl": 686,
+      "blk": 399, "to": 1584, "td": 2, "pts": 12032
+    },
+    {
+      "teamId": "team7",
+      "teamName": "League's American Problem",
+      "ownerName": "Yuval Halevy",
+      "fgm": 4127, "fga": 8302, "ftm": 1929, "fta": 2499,
+      "tpm": 1104, "reb": 4164, "ast": 2841, "stl": 783,
+      "blk": 337, "to": 1431, "td": 3, "pts": 11287
+    },
+    {
+      "teamId": "team8",
+      "teamName": "Libi's Legacy",
+      "ownerName": "Amir Ben Izhak",
+      "fgm": 4328, "fga": 9114, "ftm": 1978, "fta": 2464,
+      "tpm": 1090, "reb": 4322, "ast": 3032, "stl": 747,
+      "blk": 496, "to": 1384, "td": 2, "pts": 11724
+    },
+    {
+      "teamId": "team9",
+      "teamName": "PlottKe",
+      "ownerName": "Yotam Goldin",
+      "fgm": 3738, "fga": 7792, "ftm": 1972, "fta": 2400,
+      "tpm": 1027, "reb": 3284, "ast": 2401, "stl": 692,
+      "blk": 376, "to": 1093, "td": 1, "pts": 10475
+    },
+    {
+      "teamId": "team10",
+      "teamName": "Flint Tropics 70's Show",
+      "ownerName": "Dor Gelless",
+      "fgm": 4131, "fga": 8590, "ftm": 1884, "fta": 2326,
+      "tpm": 1249, "reb": 3875, "ast": 2475, "stl": 680,
+      "blk": 421, "to": 1224, "td": 2, "pts": 11395
+    }
+  ],
+  "categoryStandings": [
+    {
+      "teamId": "team1", "teamName": "Inglourious Basterds", "ownerName": "Omer Rosenberg",
+      "fgPct": { "value": 0.48102, "rank": 3 },
+      "ftPct": { "value": 0.82975, "rank": 1 },
+      "tpm":   { "value": 1254, "rank": 6 },
+      "reb":   { "value": 3952, "rank": 9 },
+      "ast":   { "value": 2983, "rank": 3 },
+      "stl":   { "value": 793,  "rank": 2 },
+      "blk":   { "value": 542,  "rank": 2 },
+      "to":    { "value": 1597, "rank": 8 },
+      "pts":   { "value": 12947, "rank": 3 }
+    },
+    {
+      "teamId": "team2", "teamName": "Team Miller", "ownerName": "Barak Miller",
+      "fgPct": { "value": 0.48490, "rank": 2 },
+      "ftPct": { "value": 0.78310, "rank": 6 },
+      "tpm":   { "value": 1276, "rank": 4 },
+      "reb":   { "value": 4128, "rank": 5 },
+      "ast":   { "value": 2688, "rank": 7 },
+      "stl":   { "value": 743,  "rank": 5 },
+      "blk":   { "value": 547,  "rank": 1 },
+      "to":    { "value": 1450, "rank": 4 },
+      "pts":   { "value": 12956, "rank": 2 }
+    },
+    {
+      "teamId": "team3", "teamName": "Slotzki", "ownerName": "Nir Zele",
+      "fgPct": { "value": 0.48530, "rank": 1 },
+      "ftPct": { "value": 0.81020, "rank": 2 },
+      "tpm":   { "value": 1234, "rank": 7 },
+      "reb":   { "value": 4232, "rank": 3 },
+      "ast":   { "value": 2595, "rank": 9 },
+      "stl":   { "value": 812,  "rank": 1 },
+      "blk":   { "value": 429,  "rank": 8 },
+      "to":    { "value": 1430, "rank": 3 },
+      "pts":   { "value": 12999, "rank": 1 }
+    },
+    {
+      "teamId": "team4", "teamName": "Team Mamba Forever", "ownerName": "Yoav Coracos",
+      "fgPct": { "value": 0.46915, "rank": 8 },
+      "ftPct": { "value": 0.78840, "rank": 5 },
+      "tpm":   { "value": 1465, "rank": 1 },
+      "reb":   { "value": 4028, "rank": 7 },
+      "ast":   { "value": 2609, "rank": 8 },
+      "stl":   { "value": 760,  "rank": 4 },
+      "blk":   { "value": 435,  "rank": 7 },
+      "to":    { "value": 1482, "rank": 5 },
+      "pts":   { "value": 13056, "rank": 4 }
+    },
+    {
+      "teamId": "team5", "teamName": "Nordau Peaky Blinder", "ownerName": "Dor Barda",
+      "fgPct": { "value": 0.46880, "rank": 9 },
+      "ftPct": { "value": 0.78470, "rank": 7 },
+      "tpm":   { "value": 1239, "rank": 5 },
+      "reb":   { "value": 3963, "rank": 8 },
+      "ast":   { "value": 3120, "rank": 1 },
+      "stl":   { "value": 704,  "rank": 7 },
+      "blk":   { "value": 462,  "rank": 5 },
+      "to":    { "value": 1606, "rank": 9 },
+      "pts":   { "value": 12227, "rank": 6 }
+    },
+    {
+      "teamId": "team6", "teamName": "King Ozniyon", "ownerName": "Ilay Mendel",
+      "fgPct": { "value": 0.46700, "rank": 10 },
+      "ftPct": { "value": 0.79940, "rank": 3 },
+      "tpm":   { "value": 1371, "rank": 2 },
+      "reb":   { "value": 4769, "rank": 1 },
+      "ast":   { "value": 3068, "rank": 2 },
+      "stl":   { "value": 686,  "rank": 8 },
+      "blk":   { "value": 399,  "rank": 9 },
+      "to":    { "value": 1584, "rank": 7 },
+      "pts":   { "value": 12032, "rank": 7 }
+    },
+    {
+      "teamId": "team7", "teamName": "League's American Problem", "ownerName": "Yuval Halevy",
+      "fgPct": { "value": 0.49710, "rank": 4 },
+      "ftPct": { "value": 0.77190, "rank": 8 },
+      "tpm":   { "value": 1104, "rank": 9 },
+      "reb":   { "value": 4164, "rank": 4 },
+      "ast":   { "value": 2841, "rank": 5 },
+      "stl":   { "value": 783,  "rank": 3 },
+      "blk":   { "value": 337,  "rank": 10 },
+      "to":    { "value": 1431, "rank": 2 },
+      "pts":   { "value": 11287, "rank": 9 }
+    },
+    {
+      "teamId": "team8", "teamName": "Libi's Legacy", "ownerName": "Amir Ben Izhak",
+      "fgPct": { "value": 0.47490, "rank": 7 },
+      "ftPct": { "value": 0.80280, "rank": 5 },
+      "tpm":   { "value": 1090, "rank": 10 },
+      "reb":   { "value": 4322, "rank": 2 },
+      "ast":   { "value": 3032, "rank": 4 },
+      "stl":   { "value": 747,  "rank": 4 },
+      "blk":   { "value": 496,  "rank": 3 },
+      "to":    { "value": 1384, "rank": 1 },
+      "pts":   { "value": 11724, "rank": 8 }
+    },
+    {
+      "teamId": "team9", "teamName": "PlottKe", "ownerName": "Yotam Goldin",
+      "fgPct": { "value": 0.47970, "rank": 5 },
+      "ftPct": { "value": 0.82170, "rank": 4 },
+      "tpm":   { "value": 1027, "rank": 8 },
+      "reb":   { "value": 3284, "rank": 10 },
+      "ast":   { "value": 2401, "rank": 10 },
+      "stl":   { "value": 692,  "rank": 9 },
+      "blk":   { "value": 376,  "rank": 10 },
+      "to":    { "value": 1093, "rank": 6 },
+      "pts":   { "value": 10475, "rank": 10 }
+    },
+    {
+      "teamId": "team10", "teamName": "Flint Tropics 70's Show", "ownerName": "Dor Gelless",
+      "fgPct": { "value": 0.48090, "rank": 6 },
+      "ftPct": { "value": 0.81000, "rank": 3 },
+      "tpm":   { "value": 1249, "rank": 3 },
+      "reb":   { "value": 3875, "rank": 6 },
+      "ast":   { "value": 2475, "rank": 6 },
+      "stl":   { "value": 680,  "rank": 10 },
+      "blk":   { "value": 421,  "rank": 6 },
+      "to":    { "value": 1224, "rank": 7 },
+      "pts":   { "value": 11395, "rank": 5 }
+    }
+  ],
+  "luckTable": [
+    { "teamId": "team1",  "teamName": "Inglourious Basterds",     "ownerName": "Omer Rosenberg", "pf": 25476, "pa": 22975, "diff": 2501,  "pfPerMatch": 1499, "paPerMatch": 1351, "movesPerMatch": 4.00 },
+    { "teamId": "team2",  "teamName": "Team Miller",              "ownerName": "Barak Miller",   "pf": 25032, "pa": 23002, "diff": 2030,  "pfPerMatch": 1472, "paPerMatch": 1353, "movesPerMatch": 3.41 },
+    { "teamId": "team3",  "teamName": "Slotzki",                  "ownerName": "Nir Zele",       "pf": 24841, "pa": 22980, "diff": 1861,  "pfPerMatch": 1461, "paPerMatch": 1352, "movesPerMatch": 3.82 },
+    { "teamId": "team4",  "teamName": "Team Mamba Forever",       "ownerName": "Yoav Coracos",   "pf": 24254, "pa": 23253, "diff": 1001,  "pfPerMatch": 1427, "paPerMatch": 1368, "movesPerMatch": 5.35 },
+    { "teamId": "team5",  "teamName": "Nordau Peaky Blinder",     "ownerName": "Dor Barda",      "pf": 23901, "pa": 24405, "diff": -504,  "pfPerMatch": 1406, "paPerMatch": 1436, "movesPerMatch": 6.35 },
+    { "teamId": "team6",  "teamName": "King Ozniyon",             "ownerName": "Ilay Mendel",    "pf": 24367, "pa": 24405, "diff": -38,   "pfPerMatch": 1433, "paPerMatch": 1436, "movesPerMatch": 5.41 },
+    { "teamId": "team7",  "teamName": "League's American Problem","ownerName": "Yuval Halevy",   "pf": 23013, "pa": 24738, "diff": -1725, "pfPerMatch": 1354, "paPerMatch": 1455, "movesPerMatch": 5.76 },
+    { "teamId": "team8",  "teamName": "Libi's Legacy",            "ownerName": "Amir Ben Izhak", "pf": 24428, "pa": 25104, "diff": -676,  "pfPerMatch": 1437, "paPerMatch": 1477, "movesPerMatch": 6.29 },
+    { "teamId": "team9",  "teamName": "PlottKe",                  "ownerName": "Yotam Goldin",   "pf": 21063, "pa": 23765, "diff": -2702, "pfPerMatch": 1239, "paPerMatch": 1398, "movesPerMatch": 6.18 },
+    { "teamId": "team10", "teamName": "Flint Tropics 70's Show",  "ownerName": "Dor Gelless",    "pf": 22617, "pa": 24365, "diff": -1748, "pfPerMatch": 1330, "paPerMatch": 1433, "movesPerMatch": 5.82 }
+  ]
+}

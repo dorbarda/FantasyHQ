@@ -460,6 +460,13 @@ export async function getMatchupDepth(): Promise<MatchupDepthData> {
   ]);
 
   const currentMatchupPeriod: number = scheduleData.status?.currentMatchupPeriod || 1;
+  // Daily scoring period ID — in daily-scoring leagues this is >> currentMatchupPeriod
+  // (e.g. 148 days into the season vs week 18). In weekly-scoring leagues it equals it.
+  const currentScoringPeriod: number =
+    scheduleData.scoringPeriodId ||
+    scheduleData.status?.latestScoringPeriod ||
+    currentMatchupPeriod;
+
   const teams: any[] = scheduleData.teams || [];
   const members: any[] = scheduleData.members || [];
   const memberMap = buildMemberMap(members);
@@ -471,14 +478,25 @@ export async function getMatchupDepth(): Promise<MatchupDepthData> {
     teamMeta[t.id] = { name: t.name || `Team ${t.id}`, owner, isYou: t.id === myTeamId };
   }
 
-  const matchupPeriodMap: Record<string, number[]> =
-    settingsData.settings?.scheduleSettings?.matchupPeriods || {};
+  // ESPN's matchupPeriods setting maps each matchup week to a single scoring period
+  // (same number) — not to individual daily scoring period IDs. We ignore it and
+  // instead estimate per-day ranges from the season's total scoring periods.
+  const isDailyLeague = currentScoringPeriod > currentMatchupPeriod * 2;
 
   function getScoringPeriods(matchupPeriodId: number): number[] {
-    const fromSettings = matchupPeriodMap[String(matchupPeriodId)];
-    if (fromSettings && fromSettings.length > 0) return fromSettings;
-    const start = (matchupPeriodId - 1) * 7 + 1;
-    return Array.from({ length: 7 }, (_, i) => start + i);
+    if (!isDailyLeague) {
+      // Weekly scoring league: one period per matchup, no per-day breakdown available
+      return [matchupPeriodId];
+    }
+    // Daily scoring league: pro-rate scoring periods across matchup weeks.
+    // e.g. 148 daily SPs / 18 weeks ≈ 8.2 → week 1 = [1..8], week 2 = [9..17], etc.
+    const spPerWeek = currentScoringPeriod / currentMatchupPeriod;
+    const start = Math.round((matchupPeriodId - 1) * spPerWeek) + 1;
+    const end = matchupPeriodId < currentMatchupPeriod
+      ? Math.round(matchupPeriodId * spPerWeek)
+      : currentScoringPeriod;
+    const days = Math.min(Math.max(1, end - start + 1), 9); // guard: max 9 days/week
+    return Array.from({ length: days }, (_, i) => start + i);
   }
 
   const schedule: any[] = scheduleData.schedule || [];
@@ -502,8 +520,9 @@ export async function getMatchupDepth(): Promise<MatchupDepthData> {
     const results = await Promise.allSettled(
       batch.map(period => {
         const sps = getScoringPeriods(period);
-        const lastSP = sps[sps.length - 1];
-        return espnFetch(`?view=mRoster&view=mTeam&scoringPeriodId=${lastSP}`);
+        // Use mid-week scoring period so ESPN returns stats for all days of that week
+        const midSP = sps[Math.floor(sps.length / 2)];
+        return espnFetch(`?view=mRoster&view=mTeam&scoringPeriodId=${midSP}`);
       })
     );
     batch.forEach((period, j) => {
@@ -515,6 +534,8 @@ export async function getMatchupDepth(): Promise<MatchupDepthData> {
       }
     });
   }
+
+  const MAX_PLAYERS_PER_DAY = 10; // a fantasy team can only start 10 players/day
 
   function countPlayersOnDay(entries: any[], scoringPeriodId: number): number {
     let count = 0;
@@ -529,7 +550,7 @@ export async function getMatchupDepth(): Promise<MatchupDepthData> {
         count++;
       }
     }
-    return count;
+    return Math.min(count, MAX_PLAYERS_PER_DAY);
   }
 
   const rows: MatchupDepthRow[] = [];
@@ -581,8 +602,9 @@ export async function getMatchupDepth(): Promise<MatchupDepthData> {
 
   rows.sort((a, b) => a.matchupPeriod - b.matchupPeriod || a.teamName.localeCompare(b.teamName));
 
+  // Use the max day count across all completed weeks so every week's columns align
   const daysPerMatchup = completedPeriods.length > 0
-    ? getScoringPeriods(completedPeriods[0]).length
+    ? Math.max(...completedPeriods.map(p => getScoringPeriods(p).length))
     : 7;
 
   return { rows, daysPerMatchup, currentMatchupPeriod, completedPeriods };

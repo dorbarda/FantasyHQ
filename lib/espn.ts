@@ -19,12 +19,13 @@ export function hasEspnCredentials() {
 
 const BASE = `https://lm-api-reads.fantasy.espn.com/apis/v3/games/fba/seasons/${SEASON}/segments/0/leagues/${LEAGUE_ID}`;
 
-async function espnFetch(params: string): Promise<any> {
+async function espnFetch(params: string, extraHeaders?: Record<string, string>): Promise<any> {
   const url = `${BASE}${params}`;
   const res = await fetch(url, {
     headers: {
       Cookie: `espn_s2=${ESPN_S2}; SWID=${SWID}`,
       Accept: 'application/json',
+      ...extraHeaders,
     },
     next: { revalidate: 1800 },
   });
@@ -611,9 +612,16 @@ export async function getMatchupDepth(): Promise<MatchupDepthData> {
 // ─── TRANSACTIONS ─────────────────────────────────────────────────────────────
 
 export async function getTransactions(): Promise<TransactionsData> {
-  // Fetch all executed transactions + current roster (for player name lookup)
+  // The /transactions/ sub-endpoint with x-fantasy-filter returns the full
+  // season history (not just the current period like ?view=mTransactions2).
+  // We ask for up to 2000 WAIVER + FREEAGENT adds in one shot.
+  const txFilter = JSON.stringify({
+    filterType: { value: ['WAIVER', 'FREEAGENT'] },
+    limit: 2000,
+    offset: 0,
+  });
   const [txData, rosterData] = await Promise.all([
-    espnFetch('?view=mTransactions2'),
+    espnFetch('/transactions/', { 'x-fantasy-filter': txFilter }),
     espnFetch('?view=mRoster&view=mTeam'),
   ]);
 

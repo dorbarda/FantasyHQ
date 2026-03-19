@@ -103,9 +103,9 @@ function RoundLabel({ label }: { label: string }) {
 }
 
 function roundName(round: number, totalRounds: number) {
-  if (round === totalRounds) return 'Finals';
-  if (round === totalRounds - 1 && totalRounds >= 3) return 'Semi-Finals';
-  if (totalRounds === 2 && round === 1) return 'Semi-Finals';
+  if (round === totalRounds)     return 'Finals';
+  if (round === totalRounds - 1) return 'Semi-Finals';
+  if (round === totalRounds - 2) return 'Quarter-Finals';
   return `Round ${round}`;
 }
 

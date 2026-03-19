@@ -455,10 +455,7 @@ export async function getPlayoffBracket(): Promise<PlayoffBracketData> {
 // ─── MATCHUP DEPTH ────────────────────────────────────────────────────────────
 
 export async function getMatchupDepth(): Promise<MatchupDepthData> {
-  const [scheduleData, settingsData] = await Promise.all([
-    espnFetch('?view=mMatchup&view=mMatchupScore&view=mTeam'),
-    espnFetch('?view=mSettings'),
-  ]);
+  const scheduleData = await espnFetch('?view=mMatchup&view=mMatchupScore&view=mTeam');
 
   const currentMatchupPeriod: number = scheduleData.status?.currentMatchupPeriod || 1;
   // Daily scoring period ID — in daily-scoring leagues this is >> currentMatchupPeriod

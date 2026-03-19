@@ -1,0 +1,94 @@
+{
+  "lastUpdated": "October 2024",
+  "sections": [
+    {
+      "title": "League Format",
+      "rules": [
+        "10-team private league on ESPN Fantasy Basketball.",
+        "Head-to-head (H2H) Each Category scoring format — 9 categories per week.",
+        "Regular season runs from Week 1 through Week 21.",
+        "Top 6 teams qualify for playoffs (Weeks 22–24).",
+        "Each week matchup runs Monday through Sunday."
+      ]
+    },
+    {
+      "title": "Scoring Categories",
+      "rules": [
+        "Points (PTS)",
+        "Rebounds (REB)",
+        "Assists (AST)",
+        "Steals (STL)",
+        "Blocks (BLK)",
+        "3-Pointers Made (3PM)",
+        "Field Goal % (FG%) — minimum 15 attempts",
+        "Free Throw % (FT%) — minimum 10 attempts",
+        "Turnovers (TO) — lower is better"
+      ]
+    },
+    {
+      "title": "Roster",
+      "rules": [
+        "13 active roster spots per team.",
+        "Positions: PG, SG, SF, PF, C, G, F, UTIL, UTIL, BN, BN, BN, BN.",
+        "2 Injured Reserve (IR) spots available.",
+        "A player placed on IR must have official IR/IL status.",
+        "Daily lineup changes allowed — lock at game start time."
+      ]
+    },
+    {
+      "title": "Draft",
+      "rules": [
+        "Live snake draft before the season starts.",
+        "Draft order determined by reverse standings from previous season.",
+        "New managers (first season) pick randomly within the bottom half.",
+        "15 rounds, 10 picks per round = 150 total picks.",
+        "Each pick has a 90-second clock during live draft."
+      ]
+    },
+    {
+      "title": "Transactions & Waivers",
+      "rules": [
+        "Waiver claims process every Wednesday morning at 5:00 AM.",
+        "Waiver priority resets using Continual Rolling List (CRL) order.",
+        "Free agents (post-waiver) can be picked up at any time.",
+        "Maximum 100 transactions per season per team.",
+        "Trades must be accepted within 48 hours or they expire.",
+        "2-day trade review period — league can veto by majority vote."
+      ]
+    },
+    {
+      "title": "Playoffs",
+      "rules": [
+        "Top 6 teams enter playoffs after Week 21.",
+        "Seeds 1 and 2 receive a first-round bye.",
+        "Bracket: (3v6) and (4v5) in Week 22, winners face 1 and 2 in Week 23.",
+        "Championship in Week 24.",
+        "Playoff seeding determined by regular season record, then total points.",
+        "No trades allowed after Week 19 (trade deadline)."
+      ]
+    },
+    {
+      "title": "Prizes",
+      "rules": [
+        "Entry fee: ₪120 per team.",
+        "Total pot: ₪1,200.",
+        "1st place: ₪800.",
+        "2nd place: ₪400.",
+        "3rd place (consolation bracket winner): ₪200 from side contributions.",
+        "Last place (regular season): Must buy the group dinner — date TBD.",
+        "Weekly high score bonus: ₪20 per week (optional, must be agreed pre-season)."
+      ]
+    },
+    {
+      "title": "Code of Conduct",
+      "rules": [
+        "Collusion of any kind results in immediate disqualification.",
+        "Tanking (intentionally losing) is prohibited — must start a legal lineup each week.",
+        "A legal lineup means all active roster spots filled (no empty slots).",
+        "Trash talk in the group chat is encouraged — be cool about it.",
+        "Any disputes go to a majority vote among all league members.",
+        "Commissioner's ruling is final in edge cases."
+      ]
+    }
+  ]
+}

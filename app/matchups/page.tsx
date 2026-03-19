@@ -1,0 +1,60 @@
+import matchupsData from '@/data/matchups.json';
+import { MatchupsData } from '@/lib/types';
+import MatchupCard from '@/components/MatchupCard';
+
+export default function MatchupsPage() {
+  const data = matchupsData as MatchupsData;
+  const liveMatchups = data.matchups.filter((m) => m.isLive);
+  const upcomingMatchups = data.matchups.filter((m) => !m.isLive);
+
+  return (
+    <div className="py-5">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-5">
+        <div>
+          <h1 className="text-[28px] font-bold tracking-tight text-[#0f1419]">Matchups</h1>
+          <p className="text-[15px] text-[#536471] font-medium">Week {data.week} · Head-to-Head</p>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00ba7c] opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00ba7c]"></span>
+          </span>
+          <span className="text-[12px] font-bold text-[#00ba7c]">Live</span>
+        </div>
+      </div>
+
+      {/* Live matchups */}
+      {liveMatchups.length > 0 && (
+        <section className="mb-5">
+          <p className="text-[11px] font-bold uppercase tracking-widest text-[#536471] mb-3">
+            In Progress
+          </p>
+          <div className="flex flex-col gap-3">
+            {liveMatchups.map((matchup) => (
+              <MatchupCard key={matchup.id} matchup={matchup} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {liveMatchups.length > 0 && upcomingMatchups.length > 0 && (
+        <div className="border-b border-[#eff3f4] mb-5" />
+      )}
+
+      {/* Not started matchups */}
+      {upcomingMatchups.length > 0 && (
+        <section>
+          <p className="text-[11px] font-bold uppercase tracking-widest text-[#536471] mb-3">
+            Projected
+          </p>
+          <div className="flex flex-col gap-3">
+            {upcomingMatchups.map((matchup) => (
+              <MatchupCard key={matchup.id} matchup={matchup} />
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+  );
+}

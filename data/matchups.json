@@ -1,0 +1,105 @@
+{
+  "week": 18,
+  "matchups": [
+    {
+      "id": "m1",
+      "home": {
+        "teamId": "team2",
+        "teamName": "Haifa Hawks",
+        "ownerName": "Avi Cohen",
+        "projectedScore": 118.4,
+        "actualScore": 124.2,
+        "isYou": true
+      },
+      "away": {
+        "teamId": "team5",
+        "teamName": "Netanya Nets",
+        "ownerName": "Itai Levi",
+        "projectedScore": 112.1,
+        "actualScore": 108.7,
+        "isYou": false
+      },
+      "isLive": true
+    },
+    {
+      "id": "m2",
+      "home": {
+        "teamId": "team1",
+        "teamName": "Tel Aviv Thunder",
+        "ownerName": "Yossi Mizrahi",
+        "projectedScore": 121.8,
+        "actualScore": 119.5,
+        "isYou": false
+      },
+      "away": {
+        "teamId": "team8",
+        "teamName": "Eilat Eagles",
+        "ownerName": "Dor Friedman",
+        "projectedScore": 98.3,
+        "actualScore": 95.1,
+        "isYou": false
+      },
+      "isLive": true
+    },
+    {
+      "id": "m3",
+      "home": {
+        "teamId": "team4",
+        "teamName": "Beer Sheva Kings",
+        "ownerName": "Tal Shapiro",
+        "projectedScore": 115.6,
+        "actualScore": 110.3,
+        "isYou": false
+      },
+      "away": {
+        "teamId": "team7",
+        "teamName": "Ramat Gan Rangers",
+        "ownerName": "Eran Ben-David",
+        "projectedScore": 104.2,
+        "actualScore": 112.8,
+        "isYou": false
+      },
+      "isLive": true
+    },
+    {
+      "id": "m4",
+      "home": {
+        "teamId": "team3",
+        "teamName": "Jerusalem Ballers",
+        "ownerName": "Noam Peretz",
+        "projectedScore": 116.9,
+        "actualScore": 116.9,
+        "isYou": false
+      },
+      "away": {
+        "teamId": "team6",
+        "teamName": "Rishon Rockets",
+        "ownerName": "Gal Katz",
+        "projectedScore": 109.4,
+        "actualScore": 109.4,
+        "isYou": false
+      },
+      "isLive": false
+    },
+    {
+      "id": "m5",
+      "home": {
+        "teamId": "team9",
+        "teamName": "Ashdod Aces",
+        "ownerName": "Ron Avraham",
+        "projectedScore": 101.2,
+        "actualScore": 101.2,
+        "isYou": false
+      },
+      "away": {
+        "teamId": "team10",
+        "teamName": "Herzliya Heat",
+        "ownerName": "Matan Goldberg",
+        "projectedScore": 95.7,
+        "actualScore": 95.7,
+        "isYou": false
+      },
+      "isLive": false
+    }
+  ]
+}

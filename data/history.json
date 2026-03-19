@@ -1,0 +1,68 @@
+[
+  {
+    "season": "2023-24",
+    "champion": {
+      "teamName": "Tel Aviv Thunder",
+      "ownerName": "Yossi Mizrahi",
+      "record": "15-6",
+      "finalScore": 1921.5
+    },
+    "runnerUp": {
+      "teamName": "Haifa Hawks",
+      "ownerName": "Avi Cohen",
+      "record": "13-8"
+    },
+    "prizes": [
+      { "place": "1st", "ownerName": "Yossi Mizrahi", "prize": "₪800" },
+      { "place": "2nd", "ownerName": "Avi Cohen", "prize": "₪400" },
+      { "place": "3rd", "ownerName": "Noam Peretz", "prize": "₪200" },
+      { "place": "Last", "ownerName": "Matan Goldberg", "prize": "Buys everyone dinner 😬" }
+    ],
+    "mvpPlayer": "Nikola Jokić",
+    "notes": "Yossi dominated the second half of the season with a 9-game win streak."
+  },
+  {
+    "season": "2022-23",
+    "champion": {
+      "teamName": "Jerusalem Ballers",
+      "ownerName": "Noam Peretz",
+      "record": "14-7",
+      "finalScore": 1887.0
+    },
+    "runnerUp": {
+      "teamName": "Beer Sheva Kings",
+      "ownerName": "Tal Shapiro",
+      "record": "13-8"
+    },
+    "prizes": [
+      { "place": "1st", "ownerName": "Noam Peretz", "prize": "₪800" },
+      { "place": "2nd", "ownerName": "Tal Shapiro", "prize": "₪400" },
+      { "place": "3rd", "ownerName": "Gal Katz", "prize": "₪200" },
+      { "place": "Last", "ownerName": "Ron Avraham", "prize": "Buys everyone dinner 😬" }
+    ],
+    "mvpPlayer": "Luka Dončić",
+    "notes": "Closest final in league history — decided in the final week by 2.5 points."
+  },
+  {
+    "season": "2021-22",
+    "champion": {
+      "teamName": "Haifa Hawks",
+      "ownerName": "Avi Cohen",
+      "record": "16-5",
+      "finalScore": 1956.0
+    },
+    "runnerUp": {
+      "teamName": "Netanya Nets",
+      "ownerName": "Itai Levi",
+      "record": "14-7"
+    },
+    "prizes": [
+      { "place": "1st", "ownerName": "Avi Cohen", "prize": "₪800" },
+      { "place": "2nd", "ownerName": "Itai Levi", "prize": "₪400" },
+      { "place": "3rd", "ownerName": "Yossi Mizrahi", "prize": "₪200" },
+      { "place": "Last", "ownerName": "Eran Ben-David", "prize": "Buys everyone dinner 😬" }
+    ],
+    "mvpPlayer": "Giannis Antetokounmpo",
+    "notes": "Avi's team went on a historic 11-game win streak to close out the regular season."
+  }
+]

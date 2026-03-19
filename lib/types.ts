@@ -136,6 +136,40 @@ export interface SeasonOverride {
   notes: string;
 }
 
+// ─── Records ──────────────────────────────────────────────────────────────────
+
+export interface Superlative {
+  emoji: string;
+  label: string;
+  value: string;
+  teamName: string;
+  ownerName: string;
+  context: string; // e.g. "Week 14 · 2024-25"
+}
+
+export interface H2HRecord {
+  wins: number;
+  losses: number;
+}
+
+export interface OwnerCareer {
+  ownerName: string;
+  championships: number;
+  totalWins: number;
+  totalLosses: number;
+  winPct: number;
+  avgWeeklyScore: number;
+  seasonsPlayed: number;
+  bestSeasonRecord: string; // e.g. "14-7"
+}
+
+export interface RecordsData {
+  superlatives: Superlative[];
+  h2hMap: Record<string, Record<string, H2HRecord>>;
+  ownerNames: string[]; // stable sorted list for matrix axes
+  hallOfFame: OwnerCareer[];
+}
+
 export interface RulesSection {
   title: string;
   rules: string[];

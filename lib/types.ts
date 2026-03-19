@@ -286,6 +286,36 @@ export interface DraftBoardData {
   hasStats: boolean;      // false if player stats fetch failed
 }
 
+// ─── Transactions ─────────────────────────────────────────────────────────────
+
+export interface TransactionPlayer {
+  playerId: number;
+  playerName: string;
+  proTeam: string;
+  position: string;
+  addCount: number;
+}
+
+export interface FantasyTeamActivity {
+  teamId: string;
+  teamName: string;
+  ownerName: string;
+  isYou: boolean;
+  topPlayer: string;
+  topPlayerProTeam: string;
+  topPlayerCount: number;
+  totalAdds: number;
+}
+
+export interface TransactionsData {
+  topAddedPlayers: TransactionPlayer[];
+  addsByNbaTeam: { team: string; count: number }[];
+  byFantasyTeam: FantasyTeamActivity[];
+  totalAdds: number;
+}
+
+// ─── Rules ────────────────────────────────────────────────────────────────────
+
 export interface RulesSection {
   title: string;
   rules: string[];

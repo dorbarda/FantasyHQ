@@ -5,6 +5,7 @@ import type {
   CategoryStanding, LuckTableEntry, StatsData,
   BracketMatchup, BracketTeam, PlayoffBracketData,
   MatchupDepthRow, MatchupDepthData,
+  TransactionPlayer, FantasyTeamActivity, TransactionsData,
 } from './types';
 
 const ESPN_S2 = process.env.ESPN_S2;
@@ -608,6 +609,137 @@ export async function getMatchupDepth(): Promise<MatchupDepthData> {
     : 7;
 
   return { rows, daysPerMatchup, currentMatchupPeriod, completedPeriods };
+}
+
+// ─── TRANSACTIONS ─────────────────────────────────────────────────────────────
+
+export async function getTransactions(): Promise<TransactionsData> {
+  // Fetch all executed transactions + current roster (for player name lookup)
+  const [txData, rosterData] = await Promise.all([
+    espnFetch('?view=mTransactions2'),
+    espnFetch('?view=mRoster&view=mTeam'),
+  ]);
+
+  const teams: any[] = rosterData.teams || [];
+  const members: any[] = rosterData.members || [];
+  const memberMap = buildMemberMap(members);
+  const myTeamId = findMyTeamId(members, teams);
+
+  const teamMeta: Record<number, { name: string; owner: string; isYou: boolean }> = {};
+  for (const t of teams) {
+    const owner = (t.owners || []).map((id: string) => memberMap[id] || 'Unknown').join(' & ');
+    teamMeta[t.id] = { name: t.name || `Team ${t.id}`, owner, isYou: t.id === myTeamId };
+  }
+
+  // Build player info from current rosters first
+  const playerInfo: Record<number, { name: string; proTeam: string; position: string }> = {};
+  for (const team of teams) {
+    for (const entry of (team.roster?.entries || []) as any[]) {
+      const p = entry.playerPoolEntry?.player;
+      if (!p) continue;
+      playerInfo[p.id] = {
+        name: p.fullName || `Player ${p.id}`,
+        proTeam: PRO_TEAMS[p.proTeamId] || 'FA',
+        position: ['PG', 'SG', 'SF', 'PF', 'C', 'G', 'F', 'F'][p.defaultPositionId - 1] || 'F',
+      };
+    }
+  }
+
+  // Walk all transactions, tally ADD actions only (executed, non-pending)
+  const transactions: any[] = txData.transactions || [];
+  const playerAddCount: Record<number, number> = {};
+  // fantasyTeamPlayerAdds[teamId][playerId] = add count
+  const fantasyTeamPlayerAdds: Record<number, Record<number, number>> = {};
+  const unknownIds = new Set<number>();
+
+  for (const tx of transactions) {
+    if (tx.status !== 'EXECUTED' && tx.status !== 'EXECUTED_PROPOSED') continue;
+    for (const item of (tx.items || []) as any[]) {
+      if (item.type !== 'ADD') continue;
+      const playerId: number = item.playerId;
+      const toTeamId: number = item.toTeamId;
+      if (!playerId || toTeamId < 0) continue;
+
+      playerAddCount[playerId] = (playerAddCount[playerId] || 0) + 1;
+      if (!fantasyTeamPlayerAdds[toTeamId]) fantasyTeamPlayerAdds[toTeamId] = {};
+      fantasyTeamPlayerAdds[toTeamId][playerId] = (fantasyTeamPlayerAdds[toTeamId][playerId] || 0) + 1;
+
+      if (!playerInfo[playerId]) unknownIds.add(playerId);
+    }
+  }
+
+  // Fetch names for players not on any current roster (dropped/waived)
+  if (unknownIds.size > 0) {
+    const idList = Array.from(unknownIds);
+    const CHUNK = 50;
+    for (let i = 0; i < idList.length; i += CHUNK) {
+      const chunk = idList.slice(i, i + CHUNK);
+      try {
+        const filter = encodeURIComponent(JSON.stringify({ filterIds: { value: chunk } }));
+        const data = await espnFetch(
+          `?view=kona_player_info&scoringPeriodId=0&x-fantasy-filter=${filter}`
+        );
+        for (const entry of (data.players || []) as any[]) {
+          const p = entry.playerPoolEntry?.player;
+          if (!p) continue;
+          playerInfo[p.id] = {
+            name: p.fullName || `Player ${p.id}`,
+            proTeam: PRO_TEAMS[p.proTeamId] || 'FA',
+            position: ['PG', 'SG', 'SF', 'PF', 'C', 'G', 'F', 'F'][p.defaultPositionId - 1] || 'F',
+          };
+        }
+      } catch { /* ignore chunk failures — names fall back to "Player {id}" */ }
+    }
+  }
+
+  // Top 10 most-added players
+  const topAddedPlayers: TransactionPlayer[] = Object.entries(playerAddCount)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 10)
+    .map(([idStr, count]) => {
+      const id = Number(idStr);
+      const info = playerInfo[id] || { name: `Player ${id}`, proTeam: 'FA', position: 'F' };
+      return { playerId: id, playerName: info.name, proTeam: info.proTeam, position: info.position, addCount: count };
+    });
+
+  // Adds grouped by NBA team
+  const nbaTeamCount: Record<string, number> = {};
+  for (const [idStr, count] of Object.entries(playerAddCount)) {
+    const proTeam = playerInfo[Number(idStr)]?.proTeam || 'FA';
+    if (proTeam === 'FA') continue;
+    nbaTeamCount[proTeam] = (nbaTeamCount[proTeam] || 0) + count;
+  }
+  const addsByNbaTeam = Object.entries(nbaTeamCount)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 15)
+    .map(([team, count]) => ({ team, count }));
+
+  // Per fantasy team: top targeted player + total adds
+  const byFantasyTeam: FantasyTeamActivity[] = Object.entries(fantasyTeamPlayerAdds)
+    .map(([teamIdStr, playerCounts]) => {
+      const teamId = Number(teamIdStr);
+      const meta = teamMeta[teamId] || { name: `Team ${teamId}`, owner: 'Unknown', isYou: false };
+      const totalAdds = Object.values(playerCounts).reduce((s, n) => s + n, 0);
+      const [topIdStr, topCount] = Object.entries(playerCounts)
+        .sort(([, a], [, b]) => b - a)[0] ?? ['0', 0];
+      const topId = Number(topIdStr);
+      const topInfo = playerInfo[topId] || { name: `Player ${topId}`, proTeam: 'FA', position: 'F' };
+      return {
+        teamId: `team${teamId}`,
+        teamName: meta.name,
+        ownerName: meta.owner,
+        isYou: meta.isYou,
+        topPlayer: topInfo.name,
+        topPlayerProTeam: topInfo.proTeam,
+        topPlayerCount: Number(topCount),
+        totalAdds,
+      };
+    })
+    .sort((a, b) => b.totalAdds - a.totalAdds);
+
+  const totalAdds = Object.values(playerAddCount).reduce((s, n) => s + n, 0);
+
+  return { topAddedPlayers, addsByNbaTeam, byFantasyTeam, totalAdds };
 }
 
 // ─── STATIC DATA ─────────────────────────────────────────────────────────────

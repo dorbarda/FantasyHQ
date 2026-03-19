@@ -170,6 +170,45 @@ export interface RecordsData {
   hallOfFame: OwnerCareer[];
 }
 
+// ─── Draft Board ──────────────────────────────────────────────────────────────
+
+export type DraftGrade = 'A+' | 'A' | 'B' | 'C' | 'D' | 'F' | 'INJ' | '?';
+
+export interface DraftPick {
+  overallPick: number;   // 1-based
+  round: number;
+  roundPick: number;     // pick position within the round
+  draftSlot: number;     // column index (team's original draft slot)
+  teamId: number;
+  ownerName: string;
+  playerId: number;
+  playerName: string;
+  position: string;      // G / F / C
+  proTeam: string;
+  fp: number;            // season fantasy points (pts + reb*1.2 + ast*1.5 + tpm*3)
+  pts: number;
+  gp: number;            // games played (minutes / 30 proxy)
+  seasonRank: number;    // rank among all drafted players by fp
+  delta: number;         // overallPick - seasonRank (positive = outperformed)
+  grade: DraftGrade;
+}
+
+export interface DraftTeamSlot {
+  teamId: number;
+  ownerName: string;
+  teamName: string;
+  draftSlot: number;     // 1 = first overall pick
+}
+
+export interface DraftBoardData {
+  year: number;
+  seasonLabel: string;
+  teams: DraftTeamSlot[]; // sorted by draftSlot asc
+  picks: DraftPick[];
+  rounds: number;
+  hasStats: boolean;      // false if player stats fetch failed
+}
+
 export interface RulesSection {
   title: string;
   rules: string[];

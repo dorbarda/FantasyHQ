@@ -8,6 +8,7 @@ const navItems = [
   { label: 'Matchups', href: '/matchups' },
   { label: 'Players', href: '/players' },
   { label: 'Stats', href: '/stats' },
+  { label: 'Depth', href: '/matchup-depth' },
   { label: 'Draft', href: '/draft' },
   { label: 'Records', href: '/records' },
   { label: 'History', href: '/history' },

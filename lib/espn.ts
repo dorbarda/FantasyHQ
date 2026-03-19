@@ -4,6 +4,7 @@ import type {
   RulesData, SeasonStats,
   CategoryStanding, LuckTableEntry, StatsData,
   BracketMatchup, BracketTeam, PlayoffBracketData,
+  MatchupDepthRow, MatchupDepthData,
 } from './types';
 
 const ESPN_S2 = process.env.ESPN_S2;
@@ -448,6 +449,133 @@ export async function getPlayoffBracket(): Promise<PlayoffBracketData> {
     consolation,
     champion,
   };
+}
+
+// ─── MATCHUP DEPTH ────────────────────────────────────────────────────────────
+
+export async function getMatchupDepth(): Promise<MatchupDepthData> {
+  // Single call: schedule with scores + roster per matchup period + settings
+  const [scheduleData, settingsData] = await Promise.all([
+    espnFetch('?view=mMatchup&view=mMatchupScore&view=mRoster&view=mTeam'),
+    espnFetch('?view=mSettings'),
+  ]);
+
+  const currentMatchupPeriod: number = scheduleData.status?.currentMatchupPeriod || 1;
+  const teams: any[] = scheduleData.teams || [];
+  const members: any[] = scheduleData.members || [];
+  const memberMap = buildMemberMap(members);
+  const myTeamId = findMyTeamId(members, teams);
+
+  // Team metadata
+  const teamMeta: Record<number, { name: string; owner: string; isYou: boolean }> = {};
+  for (const t of teams) {
+    const owner = (t.owners || []).map((id: string) => memberMap[id] || 'Unknown').join(' & ');
+    teamMeta[t.id] = { name: t.name || `Team ${t.id}`, owner, isYou: t.id === myTeamId };
+  }
+
+  // Matchup period → scoring periods mapping from settings
+  // Falls back to assuming 7 contiguous scoring periods per matchup
+  const matchupPeriodMap: Record<string, number[]> =
+    settingsData.settings?.scheduleSettings?.matchupPeriods || {};
+
+  function getScoringPeriods(matchupPeriodId: number): number[] {
+    const fromSettings = matchupPeriodMap[String(matchupPeriodId)];
+    if (fromSettings && fromSettings.length > 0) return fromSettings;
+    // Fallback: 7-day weeks
+    const start = (matchupPeriodId - 1) * 7 + 1;
+    return Array.from({ length: 7 }, (_, i) => start + i);
+  }
+
+  // Count players who played (non-zero stats) on a given scoring period
+  // from a roster entries array
+  function countPlayersOnDay(entries: any[], scoringPeriodId: number): number {
+    let count = 0;
+    for (const entry of entries) {
+      const p = entry.playerPoolEntry?.player;
+      if (!p) continue;
+      const stats: any[] = p.stats || [];
+      // Check if this player has actual stats for this specific scoring period
+      const dayStat = stats.find(
+        (s: any) => s.statSourceId === 0 && s.scoringPeriodId === scoringPeriodId
+      );
+      // "Played" = has stats entry for this day with non-zero points or minutes
+      if (dayStat && (dayStat.appliedTotal > 0 || (dayStat.stats?.['0'] || 0) > 0 || (dayStat.stats?.['40'] || 0) > 0)) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  const schedule: any[] = scheduleData.schedule || [];
+  // Only process regular-season, completed matchups
+  const completed = schedule.filter(
+    (m: any) => m.playoffTierType === 'NONE' && m.matchupPeriodId < currentMatchupPeriod
+  );
+
+  const completedPeriods = Array.from(
+    new Set(completed.map((m: any) => m.matchupPeriodId as number))
+  ).sort((a, b) => a - b);
+
+  const rows: MatchupDepthRow[] = [];
+
+  for (const m of completed) {
+    const scoringPeriods = getScoringPeriods(m.matchupPeriodId);
+    const daysCount = scoringPeriods.length;
+
+    for (const side of ['home', 'away'] as const) {
+      const mySide = m[side];
+      const oppSide = m[side === 'home' ? 'away' : 'home'];
+      if (!mySide?.teamId) continue;
+
+      const meta = teamMeta[mySide.teamId] || { name: '?', owner: '?', isYou: false };
+      const oppMeta = teamMeta[oppSide?.teamId] || { name: '?', owner: '?', isYou: false };
+
+      // Roster entries — try rosterForMatchupPeriod first, then rosterForCurrentScoringPeriod
+      const entries: any[] =
+        mySide.rosterForMatchupPeriod?.entries ||
+        mySide.rosterForCurrentScoringPeriod?.entries ||
+        [];
+
+      // Daily player counts
+      const dailyPlayers = scoringPeriods.map(sp => countPlayersOnDay(entries, sp));
+      const totalPlayers = dailyPlayers.reduce((s, n) => s + n, 0);
+
+      const teamScore = Math.round((mySide.totalPoints || 0) * 10) / 10;
+      const oppScore  = Math.round((oppSide?.totalPoints || 0) * 10) / 10;
+
+      const scorePP   = totalPlayers > 0 ? Math.round((teamScore / totalPlayers) * 10) / 10 : 0;
+      const efficiency = totalPlayers > 0 ? Math.round((scorePP / totalPlayers) * 1000) / 1000 : 0;
+
+      let won: boolean | null = null;
+      if (m.winner === 'HOME') won = side === 'home';
+      else if (m.winner === 'AWAY') won = side === 'away';
+
+      rows.push({
+        matchupPeriod: m.matchupPeriodId,
+        teamId: `team${mySide.teamId}`,
+        teamName: meta.name,
+        ownerName: meta.owner,
+        isYou: meta.isYou,
+        dailyPlayers: dailyPlayers.slice(0, daysCount),
+        totalPlayers,
+        teamScore,
+        opponentName: oppMeta.owner,
+        opponentScore: oppScore,
+        won,
+        scorePP,
+        efficiency,
+      });
+    }
+  }
+
+  // Sort: matchup period asc, then by team name
+  rows.sort((a, b) => a.matchupPeriod - b.matchupPeriod || a.teamName.localeCompare(b.teamName));
+
+  const daysPerMatchup = completedPeriods.length > 0
+    ? getScoringPeriods(completedPeriods[0]).length
+    : 7;
+
+  return { rows, daysPerMatchup, currentMatchupPeriod, completedPeriods };
 }
 
 // ─── STATIC DATA ─────────────────────────────────────────────────────────────

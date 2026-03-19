@@ -107,6 +107,31 @@ export interface StatsData {
   luckTable: LuckTableEntry[];
 }
 
+// ─── Matchup Depth ────────────────────────────────────────────────────────────
+
+export interface MatchupDepthRow {
+  matchupPeriod: number;
+  teamId: string;
+  teamName: string;
+  ownerName: string;
+  isYou: boolean;
+  dailyPlayers: number[];     // players who played each day of the matchup (length = days in week)
+  totalPlayers: number;       // sum of dailyPlayers
+  teamScore: number;
+  opponentName: string;
+  opponentScore: number;
+  won: boolean | null;        // null = in progress
+  scorePP: number;            // teamScore / totalPlayers
+  efficiency: number;         // scorePP / totalPlayers  (= teamScore / totalPlayers²)
+}
+
+export interface MatchupDepthData {
+  rows: MatchupDepthRow[];
+  daysPerMatchup: number;     // usually 7
+  currentMatchupPeriod: number;
+  completedPeriods: number[];
+}
+
 // ─── Playoff Bracket ─────────────────────────────────────────────────────────
 
 export interface BracketTeam {

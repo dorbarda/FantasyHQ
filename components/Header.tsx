@@ -19,7 +19,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-[#eff3f4]">
-      <div className="max-w-[600px] mx-auto h-[53px] flex items-center justify-between px-4">
+      <div className="max-w-[1100px] mx-auto h-[53px] flex items-center justify-between px-4 xl:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-1.5 shrink-0">
           <span className="text-[20px]">🏀</span>

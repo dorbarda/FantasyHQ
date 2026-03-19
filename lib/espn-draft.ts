@@ -43,48 +43,74 @@ async function espnGet(year: number, params: string, extraHeaders?: Record<strin
   return res.json();
 }
 
-// ─── Player stats via kona endpoint ──────────────────────────────────────────
+// ─── Player data via kona endpoint ───────────────────────────────────────────
 
-async function fetchPlayerStats(year: number, playerIds: number[]): Promise<Map<number, { fp: number; pts: number; gp: number }>> {
+interface KonaPlayerData {
+  name: string;
+  position: string;
+  proTeam: string;
+  fp: number;
+  pts: number;
+  gp: number;
+}
+
+async function fetchPlayerData(year: number, playerIds: number[]): Promise<Map<number, KonaPlayerData>> {
+  // "00{year}" = full-season stat bucket for that year in ESPN's API
   const filter = JSON.stringify({
     players: {
       filterIds: { value: playerIds },
       limit: playerIds.length + 10,
+      filterStatsForTopScoringPeriodIds: {
+        value: 17,
+        additionalValue: [`00${year}`, `10${year}`, `20${year}`],
+      },
     },
   });
 
   let data: any;
   try {
     data = await espnGet(year, '?view=kona_player_info', { 'x-fantasy-filter': filter });
-  } catch {
+  } catch (e) {
+    console.error('kona fetch failed:', e);
     return new Map();
   }
 
-  const statsMap = new Map<number, { fp: number; pts: number; gp: number }>();
+  const map = new Map<number, KonaPlayerData>();
 
-  for (const p of (data.players || []) as any[]) {
-    const player = p.playerPoolEntry?.player;
+  for (const entry of (data.players || []) as any[]) {
+    const player = entry.playerPoolEntry?.player;
     if (!player) continue;
 
     const stats: any[] = player.stats || [];
-    // Full-season actual stats: statSplitTypeId=0, statSourceId=0
-    const seasonStat = stats.find(
-      (s: any) => s.statSourceId === 0 && s.statSplitTypeId === 0
-    );
+
+    // Find full-season actual stats — try several filter combinations ESPN uses
+    const seasonStat =
+      stats.find((s: any) => s.statSourceId === 0 && s.statSplitTypeId === 0) ||
+      stats.find((s: any) => s.statSourceId === 0 && s.scoringPeriodId === 0) ||
+      // Fallback: among actual stats, pick the one with the highest points (= season total)
+      stats
+        .filter((s: any) => s.statSourceId === 0)
+        .sort((a: any, b: any) => (b.stats?.['0'] || 0) - (a.stats?.['0'] || 0))[0];
+
     const s = seasonStat?.stats || {};
 
     const pts = Math.round((s['0']  || 0) * 10) / 10;
     const reb = Math.round((s['6']  || 0) * 10) / 10;
     const ast = Math.round((s['3']  || 0) * 10) / 10;
     const tpm = Math.round((s['17'] || 0) * 10) / 10;
-    const min = Math.round(s['40'] || 0);           // total minutes
-    const gp  = Math.round(min / 30);               // rough games played proxy
+    const min = Math.round(s['40'] || 0);
+    const gp  = Math.round(min / 30);
     const fp  = Math.round((pts + reb * 1.2 + ast * 1.5 + tpm * 3) * 10) / 10;
 
-    statsMap.set(player.id as number, { fp, pts, gp });
+    map.set(player.id as number, {
+      name:     player.fullName || `Player ${player.id}`,
+      position: POS_MAP[player.defaultPositionId || 5] || '—',
+      proTeam:  PRO_TEAMS[player.proTeamId] || '—',
+      fp, pts, gp,
+    });
   }
 
-  return statsMap;
+  return map;
 }
 
 // ─── Grade ────────────────────────────────────────────────────────────────────
@@ -135,25 +161,26 @@ export async function getDraftBoard(year: number): Promise<DraftBoardData> {
     }
   }
 
-  // 3. Fetch player stats
-  const playerIds = rawPicks.map((p: any) => p.playerId as number);
-  const statsMap = await fetchPlayerStats(year, playerIds);
-  const hasStats = statsMap.size > 0;
+  // 3. Fetch player names + season stats from kona endpoint
+  const playerIds = Array.from(new Set(rawPicks.map((p: any) => p.playerId as number)));
+  const playerData = await fetchPlayerData(year, playerIds);
+  const hasStats = playerData.size > 0 &&
+    Array.from(playerData.values()).some(p => p.fp > 0);
 
-  // 4. Assign season rank (among drafted players, by fp)
-  //    Players with no stats get fp=0, ranked last
-  const fpList = playerIds.map(id => statsMap.get(id)?.fp ?? 0);
+  // 4. Rank drafted players by fp
+  const fpList = playerIds.map(id => playerData.get(id)?.fp ?? 0);
   const sorted = [...fpList].sort((a, b) => b - a);
+  // Handle ties: use findIndex to give the best rank in a tie
   const rankOf = (fp: number) => sorted.findIndex(v => v === fp) + 1;
 
   // 5. Build picks
   const picks: DraftPick[] = rawPicks.map((p: any) => {
-    const stats = statsMap.get(p.playerId) ?? { fp: 0, pts: 0, gp: 0 };
-    const overallPick: number = p.overallPickNumber || p.roundPickNumber + (p.roundId - 1) * 10;
-    const seasonRank = hasStats ? rankOf(stats.fp) : 0;
+    const pd = playerData.get(p.playerId);
+    const overallPick: number = p.overallPickNumber || (p.roundId - 1) * Object.keys(draftSlotMap).length + p.roundPickNumber;
+    const seasonRank = hasStats ? rankOf(pd?.fp ?? 0) : 0;
     const delta = overallPick - seasonRank;
     const grade: DraftGrade = hasStats
-      ? computeGrade(stats.fp, stats.pts, delta)
+      ? computeGrade(pd?.fp ?? 0, pd?.pts ?? 0, delta)
       : '?';
 
     return {
@@ -164,12 +191,12 @@ export async function getDraftBoard(year: number): Promise<DraftBoardData> {
       teamId: p.teamId,
       ownerName: teamInfo[p.teamId]?.ownerName ?? 'Unknown',
       playerId: p.playerId,
-      playerName: p.playerName || `Player ${p.playerId}`,
-      position: POS_MAP[p.defaultPositionId] || '—',
-      proTeam: PRO_TEAMS[p.proTeamId] || '—',
-      fp: stats.fp,
-      pts: stats.pts,
-      gp: stats.gp,
+      playerName: pd?.name ?? `Player ${p.playerId}`,
+      position:   pd?.position ?? '—',
+      proTeam:    pd?.proTeam ?? '—',
+      fp:  pd?.fp  ?? 0,
+      pts: pd?.pts ?? 0,
+      gp:  pd?.gp  ?? 0,
       seasonRank,
       delta,
       grade,

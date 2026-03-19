@@ -612,18 +612,30 @@ export async function getMatchupDepth(): Promise<MatchupDepthData> {
 // ─── TRANSACTIONS ─────────────────────────────────────────────────────────────
 
 export async function getTransactions(): Promise<TransactionsData> {
-  // The /transactions/ sub-endpoint with x-fantasy-filter returns the full
-  // season history (not just the current period like ?view=mTransactions2).
-  // We ask for up to 2000 WAIVER + FREEAGENT adds in one shot.
-  const txFilter = JSON.stringify({
-    filterType: { value: ['WAIVER', 'FREEAGENT'] },
-    limit: 2000,
-    offset: 0,
-  });
-  const [txData, rosterData] = await Promise.all([
-    espnFetch('/transactions/', { 'x-fantasy-filter': txFilter }),
-    espnFetch('?view=mRoster&view=mTeam'),
-  ]);
+  // ?view=mTransactions2 only returns the current scoring period by default.
+  // We call it once per completed matchup week (scoringPeriodId=1..N) to get
+  // the full season history. Batched in groups of 5 to avoid rate limits.
+  const statusData = await espnFetch('?view=mTeam');
+  const currentMatchupPeriod: number = statusData.status?.currentMatchupPeriod || 1;
+
+  const allTransactions: any[] = [];
+  const BATCH = 5;
+  for (let i = 1; i <= currentMatchupPeriod; i += BATCH) {
+    const periods = Array.from(
+      { length: Math.min(BATCH, currentMatchupPeriod - i + 1) },
+      (_, j) => i + j
+    );
+    const results = await Promise.allSettled(
+      periods.map(p => espnFetch(`?view=mTransactions2&scoringPeriodId=${p}`))
+    );
+    for (const r of results) {
+      if (r.status === 'fulfilled') {
+        allTransactions.push(...(r.value.transactions || []));
+      }
+    }
+  }
+
+  const rosterData = await espnFetch('?view=mRoster&view=mTeam');
 
   const teams: any[] = rosterData.teams || [];
   const members: any[] = rosterData.members || [];
@@ -651,7 +663,13 @@ export async function getTransactions(): Promise<TransactionsData> {
   }
 
   // Walk all transactions, tally ADD actions only (executed, non-pending)
-  const transactions: any[] = txData.transactions || [];
+  // Deduplicate by transaction id in case periods overlap
+  const seenTxIds = new Set<string>();
+  const transactions: any[] = allTransactions.filter(tx => {
+    if (seenTxIds.has(tx.id)) return false;
+    seenTxIds.add(tx.id);
+    return true;
+  });
   const playerAddCount: Record<number, number> = {};
   // fantasyTeamPlayerAdds[teamId][playerId] = add count
   const fantasyTeamPlayerAdds: Record<number, Record<number, number>> = {};

@@ -43,9 +43,9 @@ async function espnGet(year: number, params: string, extraHeaders?: Record<strin
   return res.json();
 }
 
-// ─── Player data via kona endpoint ───────────────────────────────────────────
+// ─── Player data ──────────────────────────────────────────────────────────────
 
-interface KonaPlayerData {
+interface PlayerData {
   name: string;
   position: string;
   proTeam: string;
@@ -54,60 +54,74 @@ interface KonaPlayerData {
   gp: number;
 }
 
-async function fetchPlayerData(year: number, playerIds: number[]): Promise<Map<number, KonaPlayerData>> {
-  // "00{year}" = full-season stat bucket for that year in ESPN's API
-  const filter = JSON.stringify({
-    players: {
-      filterIds: { value: playerIds },
-      limit: playerIds.length + 10,
-      filterStatsForTopScoringPeriodIds: {
-        value: 17,
-        additionalValue: [`00${year}`, `10${year}`, `20${year}`],
-      },
-    },
-  });
+function extractStats(player: any): { fp: number; pts: number; gp: number } {
+  const stats: any[] = player.stats || [];
+  // Full-season actual: statSplitTypeId=0 + statSourceId=0
+  const seasonStat =
+    stats.find((s: any) => s.statSourceId === 0 && s.statSplitTypeId === 0) ||
+    stats.find((s: any) => s.statSourceId === 0 && s.scoringPeriodId === 0)  ||
+    // Fallback: highest-pts actual stat row = season cumulative
+    stats
+      .filter((s: any) => s.statSourceId === 0)
+      .sort((a: any, b: any) => (b.stats?.['0'] || 0) - (a.stats?.['0'] || 0))[0];
 
-  let data: any;
+  const s = seasonStat?.stats || {};
+  const pts = Math.round((s['0']  || 0) * 10) / 10;
+  const reb = Math.round((s['6']  || 0) * 10) / 10;
+  const ast = Math.round((s['3']  || 0) * 10) / 10;
+  const tpm = Math.round((s['17'] || 0) * 10) / 10;
+  const fp  = Math.round((pts + reb * 1.2 + ast * 1.5 + tpm * 3) * 10) / 10;
+  const gp  = Math.round((s['40'] || 0) / 30);
+  return { fp, pts, gp };
+}
+
+function playerMeta(p: any): PlayerData {
+  return {
+    name:     p.fullName || `Player ${p.id}`,
+    position: POS_MAP[p.defaultPositionId || 5] || '—',
+    proTeam:  PRO_TEAMS[p.proTeamId] || '—',
+    ...extractStats(p),
+  };
+}
+
+async function fetchPlayerData(year: number, draftedIds: number[]): Promise<Map<number, PlayerData>> {
+  const map = new Map<number, PlayerData>();
+
+  // ── Strategy 1: mRoster — proven endpoint, same one used by getPlayers/getStatsData ──
   try {
-    data = await espnGet(year, '?view=kona_player_info', { 'x-fantasy-filter': filter });
+    const data = await espnGet(year, '?view=mRoster&view=mTeam');
+    for (const team of (data.teams || []) as any[]) {
+      for (const entry of (team.roster?.entries || []) as any[]) {
+        const p = entry.playerPoolEntry?.player;
+        if (!p) continue;
+        map.set(p.id as number, playerMeta(p));
+      }
+    }
   } catch (e) {
-    console.error('kona fetch failed:', e);
-    return new Map();
+    console.error(`[draft] mRoster failed year=${year}:`, e);
   }
 
-  const map = new Map<number, KonaPlayerData>();
-
-  for (const entry of (data.players || []) as any[]) {
-    const player = entry.playerPoolEntry?.player;
-    if (!player) continue;
-
-    const stats: any[] = player.stats || [];
-
-    // Find full-season actual stats — try several filter combinations ESPN uses
-    const seasonStat =
-      stats.find((s: any) => s.statSourceId === 0 && s.statSplitTypeId === 0) ||
-      stats.find((s: any) => s.statSourceId === 0 && s.scoringPeriodId === 0) ||
-      // Fallback: among actual stats, pick the one with the highest points (= season total)
-      stats
-        .filter((s: any) => s.statSourceId === 0)
-        .sort((a: any, b: any) => (b.stats?.['0'] || 0) - (a.stats?.['0'] || 0))[0];
-
-    const s = seasonStat?.stats || {};
-
-    const pts = Math.round((s['0']  || 0) * 10) / 10;
-    const reb = Math.round((s['6']  || 0) * 10) / 10;
-    const ast = Math.round((s['3']  || 0) * 10) / 10;
-    const tpm = Math.round((s['17'] || 0) * 10) / 10;
-    const min = Math.round(s['40'] || 0);
-    const gp  = Math.round(min / 30);
-    const fp  = Math.round((pts + reb * 1.2 + ast * 1.5 + tpm * 3) * 10) / 10;
-
-    map.set(player.id as number, {
-      name:     player.fullName || `Player ${player.id}`,
-      position: POS_MAP[player.defaultPositionId || 5] || '—',
-      proTeam:  PRO_TEAMS[player.proTeamId] || '—',
-      fp, pts, gp,
-    });
+  // ── Strategy 2: broad kona fetch — top 300 by season stats, covers dropped players ──
+  const missingIds = draftedIds.filter(id => !map.has(id));
+  if (missingIds.length > 0) {
+    try {
+      const filter = JSON.stringify({
+        players: {
+          limit: 300,
+          sortAppliedStatTotal: { sortAsc: false, sortPriority: 1, value: `00${year}` },
+          filterStatsForTopScoringPeriodIds: { value: 17, additionalValue: [`00${year}`] },
+        },
+      });
+      const data = await espnGet(year, '?view=kona_player_info', { 'x-fantasy-filter': filter });
+      const missing = new Set(missingIds);
+      for (const entry of (data.players || []) as any[]) {
+        const player = entry.playerPoolEntry?.player;
+        if (!player || !missing.has(player.id as number)) continue;
+        map.set(player.id as number, playerMeta(player));
+      }
+    } catch (e) {
+      console.error(`[draft] kona fallback failed year=${year}:`, e);
+    }
   }
 
   return map;
@@ -161,23 +175,25 @@ export async function getDraftBoard(year: number): Promise<DraftBoardData> {
     }
   }
 
-  // 3. Fetch player names + season stats from kona endpoint
+  // 3. Fetch player names + season stats
   const playerIds = Array.from(new Set(rawPicks.map((p: any) => p.playerId as number)));
   const playerData = await fetchPlayerData(year, playerIds);
   const hasStats = playerData.size > 0 &&
-    Array.from(playerData.values()).some(p => p.fp > 0);
+    Array.from(playerData.values()).some(pd => pd.fp > 0);
 
-  // 4. Rank drafted players by fp
-  const fpList = playerIds.map(id => playerData.get(id)?.fp ?? 0);
-  const sorted = [...fpList].sort((a, b) => b - a);
-  // Handle ties: use findIndex to give the best rank in a tie
-  const rankOf = (fp: number) => sorted.findIndex(v => v === fp) + 1;
+  // 4. Rank drafted players by fp (stable: players with same fp get same rank)
+  const fpByPlayer: [number, number][] = playerIds.map(id => [id, playerData.get(id)?.fp ?? 0]);
+  fpByPlayer.sort((a, b) => b[1] - a[1]);
+  const rankMap = new Map<number, number>();
+  fpByPlayer.forEach(([id], i) => rankMap.set(id, i + 1));
+
+  const numTeams = Object.keys(draftSlotMap).length;
 
   // 5. Build picks
   const picks: DraftPick[] = rawPicks.map((p: any) => {
     const pd = playerData.get(p.playerId);
-    const overallPick: number = p.overallPickNumber || (p.roundId - 1) * Object.keys(draftSlotMap).length + p.roundPickNumber;
-    const seasonRank = hasStats ? rankOf(pd?.fp ?? 0) : 0;
+    const overallPick: number = p.overallPickNumber || (p.roundId - 1) * numTeams + p.roundPickNumber;
+    const seasonRank = hasStats ? (rankMap.get(p.playerId) ?? playerIds.length) : 0;
     const delta = overallPick - seasonRank;
     const grade: DraftGrade = hasStats
       ? computeGrade(pd?.fp ?? 0, pd?.pts ?? 0, delta)

@@ -612,17 +612,27 @@ export async function getMatchupDepth(): Promise<MatchupDepthData> {
 // ─── TRANSACTIONS ─────────────────────────────────────────────────────────────
 
 export async function getTransactions(): Promise<TransactionsData> {
-  // ?view=mTransactions2 only returns the current scoring period by default.
-  // We call it once per completed matchup week (scoringPeriodId=1..N) to get
-  // the full season history. Batched in groups of 5 to avoid rate limits.
-  const statusData = await espnFetch('?view=mTeam');
+  // ?view=mTransactions2 returns only the given scoring period's transactions.
+  // In daily-scoring leagues scoringPeriodId is a DAY number (can reach ~150+),
+  // not the matchup-week number — so we must iterate up to the actual daily
+  // scoring period, not just currentMatchupPeriod. Batch 20 at a time.
+  const [statusData, rosterData] = await Promise.all([
+    espnFetch('?view=mTeam'),
+    espnFetch('?view=mRoster&view=mTeam'),
+  ]);
+
   const currentMatchupPeriod: number = statusData.status?.currentMatchupPeriod || 1;
+  // In daily leagues this is ~148; in weekly leagues it equals currentMatchupPeriod
+  const currentScoringPeriod: number =
+    statusData.scoringPeriodId ||
+    statusData.status?.latestScoringPeriod ||
+    currentMatchupPeriod;
 
   const allTransactions: any[] = [];
-  const BATCH = 5;
-  for (let i = 1; i <= currentMatchupPeriod; i += BATCH) {
+  const BATCH = 20;
+  for (let i = 1; i <= currentScoringPeriod; i += BATCH) {
     const periods = Array.from(
-      { length: Math.min(BATCH, currentMatchupPeriod - i + 1) },
+      { length: Math.min(BATCH, currentScoringPeriod - i + 1) },
       (_, j) => i + j
     );
     const results = await Promise.allSettled(
@@ -634,8 +644,6 @@ export async function getTransactions(): Promise<TransactionsData> {
       }
     }
   }
-
-  const rosterData = await espnFetch('?view=mRoster&view=mTeam');
 
   const teams: any[] = rosterData.teams || [];
   const members: any[] = rosterData.members || [];
@@ -676,7 +684,8 @@ export async function getTransactions(): Promise<TransactionsData> {
   const unknownIds = new Set<number>();
 
   for (const tx of transactions) {
-    if (tx.status !== 'EXECUTED' && tx.status !== 'EXECUTED_PROPOSED') continue;
+    // Skip truly pending/failed transactions; accept any "executed" variant
+    if (tx.status === 'PENDING' || tx.status === 'FAILED' || tx.status === 'DRAFT') continue;
     for (const item of (tx.items || []) as any[]) {
       if (item.type !== 'ADD') continue;
       const playerId: number = item.playerId;

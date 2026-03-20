@@ -74,10 +74,8 @@ function computeAnalytics(rows: MatchupDepthRow[]): {
     // Depth advantage: weeks where you started more total players than opponent
     let depthAdvWins = 0, depthAdvTotal = 0, depthDisadvWins = 0, depthDisadvTotal = 0;
     for (const r of tRows) {
-      const hadAdvantage = r.totalPlayers > 0 && r.opponentScore !== undefined;
-      // Find the opponent row to compare totalPlayers
       const oppRow = completedRows.find(
-        or => or.matchupPeriod === r.matchupPeriod && or.ownerName === r.opponentName
+        (or: MatchupDepthRow) => or.matchupPeriod === r.matchupPeriod && or.ownerName === r.opponentName
       );
       if (!oppRow) continue;
       if (r.totalPlayers > oppRow.totalPlayers) {

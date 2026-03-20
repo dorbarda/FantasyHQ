@@ -106,7 +106,6 @@ export default function AnalysisTable({ teams }: { teams: TeamAnalytics[] }) {
         </thead>
         <tbody>
           {sorted.map((t, i) => {
-            const depthAdvWinPct = t.depthAdvTotal > 0 ? t.depthAdvWins / t.depthAdvTotal : null;
             return (
               <tr
                 key={t.teamId}

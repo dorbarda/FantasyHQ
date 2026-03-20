@@ -629,7 +629,17 @@ export async function getTransactions(): Promise<TransactionsData> {
     statusData.status?.latestScoringPeriod ||
     currentMatchupPeriod;
 
+  console.log(`[ESPN] scoringPeriodId=${currentScoringPeriod} matchupPeriod=${currentMatchupPeriod}`);
+
   const allTransactions: any[] = [];
+
+  // Also fetch without a scoringPeriodId — ESPN sometimes returns trades here
+  // (especially when they're associated with period 0 or no period)
+  try {
+    const baseTx = await espnFetch('?view=mTransactions2');
+    allTransactions.push(...(baseTx.transactions || []));
+  } catch { /* ignore */ }
+
   const BATCH = 20;
   for (let i = 1; i <= currentScoringPeriod; i += BATCH) {
     const periods = Array.from(
@@ -789,12 +799,20 @@ export async function getTransactions(): Promise<TransactionsData> {
   // Build trade history (two-team trades only; sort newest first)
   const trades: TradeEvent[] = [];
   for (const tx of rawTrades) {
+    const seenMovements = new Set<string>();
     const movements: { playerId: number; fromTeamId: number; toTeamId: number }[] = [];
+
     for (const item of (tx.items || []) as any[]) {
-      // TRADED_AWAY: player moves away from fromTeamId to toTeamId
-      // Some ESPN responses use TRADED_FOR on the receiving side — skip dupes
-      if (item.type !== 'TRADED_AWAY') continue;
       if (!item.playerId || item.fromTeamId == null || item.toTeamId == null) continue;
+      const itype = (item.type as string || '').toUpperCase();
+      // Accept TRADED_AWAY directly. For TRADED_FOR, ESPN sets fromTeamId=sender,
+      // toTeamId=receiver (same direction as TRADED_AWAY), so treat it the same way
+      // but deduplicate by player+from+to in case both item types appear.
+      if (!itype.includes('TRAD')) continue;
+      // Skip TRADED_FOR if we already have the same movement from TRADED_AWAY
+      const key = `${item.playerId}-${item.fromTeamId}-${item.toTeamId}`;
+      if (seenMovements.has(key)) continue;
+      seenMovements.add(key);
       movements.push({ playerId: item.playerId, fromTeamId: item.fromTeamId, toTeamId: item.toTeamId });
     }
     if (movements.length === 0) continue;

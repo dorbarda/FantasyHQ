@@ -72,42 +72,62 @@ export async function getNBAConferenceStandings(): Promise<{
   west: NBAConferenceStanding[];
 }> {
   try {
+    // ESPN public standings API — reliable server-side, no auth required
     const res = await fetchWithTimeout(
-      'https://stats.nba.com/stats/leaguestandingsv3?LeagueID=00&Season=2025-26&SeasonType=Regular+Season',
-      { headers: NBA_STATS_HEADERS, next: { revalidate: 3600 } }
+      'https://site.api.espn.com/apis/v2/sports/basketball/nba/standings?season=2026',
+      { headers: NBA_HEADERS, next: { revalidate: 3600 } }
     );
     if (!res.ok) return { east: [], west: [] };
     const data = await res.json();
-    const resultSet = data.resultSets?.[0];
-    if (!resultSet) return { east: [], west: [] };
-
-    const headers: string[] = resultSet.headers;
-    const rows: any[][] = resultSet.rowSet;
-
-    const idx = (name: string) => headers.indexOf(name);
 
     const east: NBAConferenceStanding[] = [];
     const west: NBAConferenceStanding[] = [];
 
-    for (const row of rows) {
-      const conf: string = row[idx('Conference')] ?? '';
-      const entry: NBAConferenceStanding = {
-        rank: row[idx('PlayoffRank')] ?? 0,
-        teamTricode: row[idx('TeamSlug')]?.toUpperCase().slice(0, 3) ?? '',
-        teamCity: row[idx('TeamCity')] ?? '',
-        teamName: row[idx('TeamName')] ?? '',
-        wins: row[idx('WINS')] ?? 0,
-        losses: row[idx('LOSSES')] ?? 0,
-        pct: row[idx('WinPCT')] ?? 0,
-        gb: String(row[idx('ConferenceGamesBack')] ?? '-'),
-        homeRecord: row[idx('Home')] ?? '',
-        awayRecord: row[idx('Road')] ?? '',
-        l10: row[idx('L10')] ?? '',
-        streak: String(row[idx('strCurrentStreak')] ?? ''),
-        clinched: row[idx('ClinchIndicator')] ?? '',
-      };
-      if (conf === 'East') east.push(entry);
-      else if (conf === 'West') west.push(entry);
+    for (const conf of data.children ?? []) {
+      const isEast =
+        (conf.abbreviation as string)?.toLowerCase() === 'east' ||
+        (conf.name as string)?.toLowerCase().includes('eastern');
+      const arr = isEast ? east : west;
+
+      for (const entry of conf.standings?.entries ?? []) {
+        const team = entry.team ?? {};
+        const statsMap: Record<string, any> = {};
+        for (const s of entry.stats ?? []) {
+          statsMap[s.name] = s;
+        }
+
+        const wins: number = statsMap['wins']?.value ?? 0;
+        const losses: number = statsMap['losses']?.value ?? 0;
+        const rank: number = statsMap['playoffSeed']?.value ?? arr.length + 1;
+        const gbRaw = statsMap['gamesBehind']?.displayValue ?? '-';
+        const l10 =
+          statsMap['Last Ten Games']?.displayValue ??
+          statsMap['last10']?.displayValue ??
+          '';
+        const streak = statsMap['streak']?.displayValue ?? '';
+
+        arr.push({
+          rank,
+          teamTricode: (team.abbreviation as string) ?? '',
+          teamCity: (team.location as string) ?? '',
+          teamName: (team.name as string) ?? '',
+          wins,
+          losses,
+          pct: wins + losses > 0 ? wins / (wins + losses) : 0,
+          gb: gbRaw === '0' || gbRaw === '0.0' ? '-' : gbRaw,
+          homeRecord:
+            statsMap['Home']?.displayValue ??
+            statsMap['homeRecord']?.displayValue ??
+            '',
+          awayRecord:
+            statsMap['Away']?.displayValue ??
+            statsMap['awayRecord']?.displayValue ??
+            '',
+          l10,
+          streak,
+          clinched: '',
+        });
+      }
     }
 
     east.sort((a, b) => a.rank - b.rank);

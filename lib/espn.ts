@@ -620,29 +620,33 @@ export async function getMatchupDepth(): Promise<MatchupDepthData> {
     new Set(completed.map((m: any) => m.matchupPeriodId as number))
   ).sort((a, b) => a - b);
 
-  // For each completed matchup period, fetch the roster using that week's last
-  // scoring period ID. ESPN returns per-day stats for all players on each team's
-  // roster for that scoring period, giving us D1–D7 player counts.
-  const BATCH = 5;
-  // periodRosterMap[matchupPeriod][teamId] = entries[]
-  const periodRosterMap: Record<number, Record<number, any[]>> = {};
+  // Fetch roster for EACH scoring period (day) individually so ESPN returns
+  // accurate stats for that specific day. Fetching with a single mid-week period
+  // only returns stats for ~2 adjacent days, leaving the rest as zero.
+  // periodDayMap[matchupPeriod][scoringPeriodId][teamId] = entries[]
+  const periodDayMap: Record<number, Record<number, Record<number, any[]>>> = {};
 
-  for (let i = 0; i < completedPeriods.length; i += BATCH) {
-    const batch = completedPeriods.slice(i, i + BATCH);
+  // Build the full list of (period, sp) tasks across all completed weeks
+  const tasks: Array<{ period: number; sp: number }> = [];
+  for (const period of completedPeriods) {
+    for (const sp of getScoringPeriods(period)) {
+      tasks.push({ period, sp });
+    }
+  }
+
+  const BATCH = 10;
+  for (let i = 0; i < tasks.length; i += BATCH) {
+    const batch = tasks.slice(i, i + BATCH);
     const results = await Promise.allSettled(
-      batch.map(period => {
-        const sps = getScoringPeriods(period);
-        // Use mid-week scoring period so ESPN returns stats for all days of that week
-        const midSP = sps[Math.floor(sps.length / 2)];
-        return espnFetch(`?view=mRoster&view=mTeam&scoringPeriodId=${midSP}`);
-      })
+      batch.map(({ sp }) => espnFetch(`?view=mRoster&view=mTeam&scoringPeriodId=${sp}`))
     );
-    batch.forEach((period, j) => {
-      periodRosterMap[period] = {};
+    batch.forEach(({ period, sp }, j) => {
+      if (!periodDayMap[period]) periodDayMap[period] = {};
+      periodDayMap[period][sp] = {};
       const r = results[j];
       if (r.status !== 'fulfilled') return;
       for (const team of (r.value.teams || []) as any[]) {
-        periodRosterMap[period][team.id] = team.roster?.entries || [];
+        periodDayMap[period][sp][team.id] = team.roster?.entries || [];
       }
     });
   }
@@ -678,10 +682,11 @@ export async function getMatchupDepth(): Promise<MatchupDepthData> {
       const meta = teamMeta[mySide.teamId] || { name: '?', owner: '?', isYou: false };
       const oppMeta = teamMeta[oppSide?.teamId] || { name: '?', owner: '?', isYou: false };
 
-      // Roster entries from per-period fetch
-      const entries = periodRosterMap[m.matchupPeriodId]?.[mySide.teamId] || [];
-
-      const dailyPlayers = scoringPeriods.map(sp => countPlayersOnDay(entries, sp));
+      // Count players for each day using that day's own roster fetch
+      const dailyPlayers = scoringPeriods.map(sp => {
+        const entries = periodDayMap[m.matchupPeriodId]?.[sp]?.[mySide.teamId] || [];
+        return countPlayersOnDay(entries, sp);
+      });
       const totalPlayers = dailyPlayers.reduce((s, n) => s + n, 0);
 
       const teamScore = Math.round((mySide.totalPoints || 0) * 10) / 10;

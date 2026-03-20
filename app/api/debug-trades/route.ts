@@ -74,6 +74,6 @@ export async function GET() {
       })),
     })),
     // Also show all unique tx types seen
-    txTypes: [...new Set(unique.map((tx: any) => tx.type))],
+    txTypes: Array.from(new Set(unique.map((tx: any) => tx.type as string))),
   });
 }

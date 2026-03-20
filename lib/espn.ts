@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type {
-  StandingEntry, MatchupsData, Player,
+  StandingEntry, MatchupsData, Matchup, Player,
   RulesData, SeasonStats,
   CategoryStanding, LuckTableEntry, StatsData,
   BracketMatchup, BracketTeam, PlayoffBracketData,
@@ -8,6 +8,7 @@ import type {
   TransactionPlayer, FantasyTeamActivity, TransactionsData,
   TradeEvent, TradedPlayer,
 } from './types';
+import { getNBAScoreboard } from './nba';
 
 const ESPN_S2 = process.env.ESPN_S2;
 const SWID = process.env.SWID;
@@ -126,51 +127,162 @@ export async function getStandings(): Promise<StandingEntry[]> {
 
 // ─── MATCHUPS ─────────────────────────────────────────────────────────────────
 
-export async function getMatchups(): Promise<MatchupsData> {
-  const data = await espnFetch(
-    '?view=mTeam&view=mMatchup&view=mMatchupScore&view=mScoreboard'
-  );
+export async function getMatchups(targetWeek?: number): Promise<MatchupsData> {
+  const [espnResult, nbaResult] = await Promise.allSettled([
+    espnFetch('?view=mTeam&view=mMatchup&view=mMatchupScore&view=mScoreboard&view=mRoster'),
+    getNBAScoreboard(),
+  ]);
+  if (espnResult.status === 'rejected') throw espnResult.reason;
+  const data = espnResult.value;
+
   const currentMatchupPeriod: number = data.status?.currentMatchupPeriod || 1;
-  const teams: any[] = data.teams;
+  const currentScoringPeriod: number =
+    data.scoringPeriodId || data.status?.latestScoringPeriod || currentMatchupPeriod;
+
+  const week = Math.min(Math.max(1, targetWeek ?? currentMatchupPeriod), currentMatchupPeriod);
+
+  const teams: any[] = data.teams || [];
   const members: any[] = data.members || [];
   const memberMap = buildMemberMap(members);
   const myTeamId = findMyTeamId(members, teams);
 
+  // NBA teams with games still to play today (pre or live)
+  const todayRemainingTeams = new Set<string>();
+  if (nbaResult.status === 'fulfilled') {
+    for (const game of nbaResult.value) {
+      if (game.status !== 'final') {
+        todayRemainingTeams.add(game.homeTeam.tricode);
+        todayRemainingTeams.add(game.awayTeam.tricode);
+      }
+    }
+  }
+
+  // Build team map (W-L record, roster)
   const teamMap: Record<number, any> = {};
+  const rosterMap: Record<number, any[]> = {};
   for (const t of teams) {
     const ownerName = (t.owners || [])
       .map((id: string) => memberMap[id] || 'Unknown')
       .join(' & ');
+    const record = t.record?.overall || {};
     teamMap[t.id] = {
       teamId: `team${t.id}`,
       teamName: t.name || `Team ${t.id}`,
       ownerName,
       isYou: t.id === myTeamId,
+      wins: record.wins || 0,
+      losses: record.losses || 0,
     };
+    rosterMap[t.id] = t.roster?.entries || [];
   }
 
-  const weekMatchups = ((data.schedule || []) as any[]).filter(
-    (m: any) => m.matchupPeriodId === currentMatchupPeriod
+  // Count active-slot players who have a game today but haven't scored yet
+  function countPlayersRemaining(teamId: number): number {
+    let count = 0;
+    for (const entry of rosterMap[teamId] || []) {
+      if ((entry.lineupSlotId ?? 9) >= 9) continue; // bench / IR
+      const p = entry.playerPoolEntry?.player;
+      if (!p?.proTeamId) continue;
+      const proTeam = PRO_TEAMS[p.proTeamId];
+      if (!proTeam || !todayRemainingTeams.has(proTeam)) continue;
+      // Already played today?
+      const todayStat = (p.stats || []).find(
+        (s: any) => s.statSourceId === 0 && s.scoringPeriodId === currentScoringPeriod
+      );
+      if (todayStat && todayStat.appliedTotal > 0) continue;
+      count++;
+    }
+    return count;
+  }
+
+  // H2H records from all completed regular-season matchups
+  const h2hWins: Record<number, Record<number, number>> = {};
+  const allSchedule: any[] = data.schedule || [];
+  for (const m of allSchedule) {
+    if (m.playoffTierType && m.playoffTierType !== 'NONE') continue;
+    if (m.winner !== 'HOME' && m.winner !== 'AWAY') continue;
+    const hId: number = m.home?.teamId;
+    const aId: number = m.away?.teamId;
+    if (!hId || !aId) continue;
+    if (!h2hWins[hId]) h2hWins[hId] = {};
+    if (!h2hWins[aId]) h2hWins[aId] = {};
+    if (m.winner === 'HOME') h2hWins[hId][aId] = (h2hWins[hId][aId] || 0) + 1;
+    else h2hWins[aId][hId] = (h2hWins[aId][hId] || 0) + 1;
+  }
+
+  // Total regular-season weeks
+  const regularSchedule = allSchedule.filter(
+    (m: any) => !m.playoffTierType || m.playoffTierType === 'NONE'
+  );
+  const totalWeeks = regularSchedule.length > 0
+    ? Math.max(...regularSchedule.map((m: any) => m.matchupPeriodId as number))
+    : currentMatchupPeriod;
+
+  const isCurrentWeek = week === currentMatchupPeriod;
+  const weekMatchups = allSchedule.filter(
+    (m: any) =>
+      m.matchupPeriodId === week &&
+      (!m.playoffTierType || m.playoffTierType === 'NONE')
   );
 
-  const matchups = weekMatchups.map((m: any, idx: number) => {
+  const blankTeam = { teamId: 'unknown', teamName: 'TBD', ownerName: 'TBD', isYou: false, wins: 0, losses: 0 };
+
+  const matchups: Matchup[] = weekMatchups.map((m: any, idx: number) => {
     const home = m.home || {};
     const away = m.away || {};
-    const homeInfo = teamMap[home.teamId] || { teamId: 'unknown', teamName: 'TBD', ownerName: 'TBD', isYou: false };
-    const awayInfo = teamMap[away.teamId] || { teamId: 'unknown', teamName: 'TBD', ownerName: 'TBD', isYou: false };
-    const homeActual = Math.round((home.totalPoints || 0) * 10) / 10;
-    const awayActual = Math.round((away.totalPoints || 0) * 10) / 10;
-    const homeProjected = Math.round((home.totalProjectedPointsLive || home.totalPoints || 0) * 10) / 10;
-    const awayProjected = Math.round((away.totalProjectedPointsLive || away.totalPoints || 0) * 10) / 10;
+    const homeInfo = teamMap[home.teamId] || blankTeam;
+    const awayInfo = teamMap[away.teamId] || blankTeam;
+
+    const homeActual   = Math.round((home.totalPoints || 0) * 10) / 10;
+    const awayActual   = Math.round((away.totalPoints || 0) * 10) / 10;
+    const homeProjected = Math.round(
+      (home.totalProjectedPointsLive || home.totalPoints || 0) * 10
+    ) / 10;
+    const awayProjected = Math.round(
+      (away.totalProjectedPointsLive || away.totalPoints || 0) * 10
+    ) / 10;
+
+    const isFinal = m.winner === 'HOME' || m.winner === 'AWAY';
+    const isLive  = isCurrentWeek && !isFinal && (homeActual > 0 || awayActual > 0);
+
     return {
       id: `m${idx + 1}`,
-      home: { ...homeInfo, projectedScore: homeProjected, actualScore: homeActual },
-      away: { ...awayInfo, projectedScore: awayProjected, actualScore: awayActual },
-      isLive: homeActual > 0 || awayActual > 0,
+      home: {
+        ...homeInfo,
+        projectedScore: homeProjected,
+        actualScore: homeActual,
+        playersRemainingToday: isCurrentWeek && !isFinal ? countPlayersRemaining(home.teamId) : 0,
+      },
+      away: {
+        ...awayInfo,
+        projectedScore: awayProjected,
+        actualScore: awayActual,
+        playersRemainingToday: isCurrentWeek && !isFinal ? countPlayersRemaining(away.teamId) : 0,
+      },
+      isLive,
+      isFinal,
+      isBattleOfWeek: false, // set below
+      h2h: {
+        homeWins: h2hWins[home.teamId]?.[away.teamId] || 0,
+        awayWins: h2hWins[away.teamId]?.[home.teamId] || 0,
+      },
     };
   });
 
-  return { week: currentMatchupPeriod, matchups };
+  // Battle of the week: closest matchup by projected score (or actual if final)
+  if (matchups.length > 0) {
+    let minDiff = Infinity;
+    let battleIdx = 0;
+    matchups.forEach((m, i) => {
+      const a = m.isFinal ? m.home.actualScore : m.home.projectedScore;
+      const b = m.isFinal ? m.away.actualScore : m.away.projectedScore;
+      const diff = Math.abs(a - b);
+      if (diff < minDiff) { minDiff = diff; battleIdx = i; }
+    });
+    matchups[battleIdx].isBattleOfWeek = true;
+  }
+
+  return { week, currentWeek: currentMatchupPeriod, totalWeeks, matchups };
 }
 
 // ─── PLAYERS ──────────────────────────────────────────────────────────────────

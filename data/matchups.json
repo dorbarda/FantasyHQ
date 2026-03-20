@@ -1,5 +1,7 @@
 {
   "week": 18,
+  "currentWeek": 18,
+  "totalWeeks": 21,
   "matchups": [
     {
       "id": "m1",
@@ -9,7 +11,10 @@
         "ownerName": "Avi Cohen",
         "projectedScore": 118.4,
         "actualScore": 124.2,
-        "isYou": true
+        "isYou": true,
+        "wins": 12,
+        "losses": 5,
+        "playersRemainingToday": 3
       },
       "away": {
         "teamId": "team5",
@@ -17,9 +22,15 @@
         "ownerName": "Itai Levi",
         "projectedScore": 112.1,
         "actualScore": 108.7,
-        "isYou": false
+        "isYou": false,
+        "wins": 9,
+        "losses": 8,
+        "playersRemainingToday": 2
       },
-      "isLive": true
+      "isLive": true,
+      "isFinal": false,
+      "isBattleOfWeek": false,
+      "h2h": { "homeWins": 2, "awayWins": 1 }
     },
     {
       "id": "m2",
@@ -29,7 +40,10 @@
         "ownerName": "Yossi Mizrahi",
         "projectedScore": 121.8,
         "actualScore": 119.5,
-        "isYou": false
+        "isYou": false,
+        "wins": 11,
+        "losses": 6,
+        "playersRemainingToday": 4
       },
       "away": {
         "teamId": "team8",
@@ -37,9 +51,15 @@
         "ownerName": "Dor Friedman",
         "projectedScore": 98.3,
         "actualScore": 95.1,
-        "isYou": false
+        "isYou": false,
+        "wins": 7,
+        "losses": 10,
+        "playersRemainingToday": 1
       },
-      "isLive": true
+      "isLive": true,
+      "isFinal": false,
+      "isBattleOfWeek": false,
+      "h2h": { "homeWins": 3, "awayWins": 0 }
     },
     {
       "id": "m3",
@@ -49,7 +69,10 @@
         "ownerName": "Tal Shapiro",
         "projectedScore": 115.6,
         "actualScore": 110.3,
-        "isYou": false
+        "isYou": false,
+        "wins": 8,
+        "losses": 9,
+        "playersRemainingToday": 2
       },
       "away": {
         "teamId": "team7",
@@ -57,9 +80,15 @@
         "ownerName": "Eran Ben-David",
         "projectedScore": 104.2,
         "actualScore": 112.8,
-        "isYou": false
+        "isYou": false,
+        "wins": 8,
+        "losses": 9,
+        "playersRemainingToday": 3
       },
-      "isLive": true
+      "isLive": true,
+      "isFinal": false,
+      "isBattleOfWeek": false,
+      "h2h": { "homeWins": 1, "awayWins": 2 }
     },
     {
       "id": "m4",
@@ -69,7 +98,10 @@
         "ownerName": "Noam Peretz",
         "projectedScore": 116.9,
         "actualScore": 116.9,
-        "isYou": false
+        "isYou": false,
+        "wins": 10,
+        "losses": 7,
+        "playersRemainingToday": 0
       },
       "away": {
         "teamId": "team6",
@@ -77,9 +109,15 @@
         "ownerName": "Gal Katz",
         "projectedScore": 109.4,
         "actualScore": 109.4,
-        "isYou": false
+        "isYou": false,
+        "wins": 9,
+        "losses": 8,
+        "playersRemainingToday": 0
       },
-      "isLive": false
+      "isLive": false,
+      "isFinal": false,
+      "isBattleOfWeek": true,
+      "h2h": { "homeWins": 2, "awayWins": 1 }
     },
     {
       "id": "m5",
@@ -89,7 +127,10 @@
         "ownerName": "Ron Avraham",
         "projectedScore": 101.2,
         "actualScore": 101.2,
-        "isYou": false
+        "isYou": false,
+        "wins": 6,
+        "losses": 11,
+        "playersRemainingToday": 0
       },
       "away": {
         "teamId": "team10",
@@ -97,9 +138,15 @@
         "ownerName": "Matan Goldberg",
         "projectedScore": 95.7,
         "actualScore": 95.7,
-        "isYou": false
+        "isYou": false,
+        "wins": 5,
+        "losses": 12,
+        "playersRemainingToday": 0
       },
-      "isLive": false
+      "isLive": false,
+      "isFinal": false,
+      "isBattleOfWeek": false,
+      "h2h": { "homeWins": 1, "awayWins": 2 }
     }
   ]
 }

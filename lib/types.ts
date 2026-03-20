@@ -24,6 +24,9 @@ export interface MatchupTeam {
   projectedScore: number;
   actualScore: number;
   isYou: boolean;
+  wins: number;
+  losses: number;
+  playersRemainingToday: number;
 }
 
 export interface Matchup {
@@ -31,10 +34,15 @@ export interface Matchup {
   home: MatchupTeam;
   away: MatchupTeam;
   isLive: boolean;
+  isFinal: boolean;
+  isBattleOfWeek: boolean;
+  h2h: { homeWins: number; awayWins: number };
 }
 
 export interface MatchupsData {
   week: number;
+  currentWeek: number;
+  totalWeeks: number;
   matchups: Matchup[];
 }
 

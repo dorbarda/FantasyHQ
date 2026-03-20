@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
@@ -179,30 +180,15 @@ export default function HomePage() {
     <div className="page-home min-h-screen -mx-4 xl:-mx-8 px-4 xl:px-8 pt-10 pb-10 flex flex-col">
 
       {/* Logo */}
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-3 mb-2">
-          {/* Basketball mascot silhouette */}
-          <svg viewBox="0 0 56 56" fill="none" className="w-14 h-14">
-            <circle cx="28" cy="28" r="26" fill="#C8956C" opacity="0.15" stroke="#C8956C" strokeWidth="1.5"/>
-            {/* simplified face/mascot */}
-            <circle cx="28" cy="22" r="9" fill="#C8956C" opacity="0.8"/>
-            <path d="M19 31c2.5 5 5 7 9 7s6.5-2 9-7" stroke="#C8956C" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.8"/>
-            <circle cx="24.5" cy="20.5" r="1.5" fill="#0B1628"/>
-            <circle cx="31.5" cy="20.5" r="1.5" fill="#0B1628"/>
-            <path d="M25 24.5c.8.8 1.8 1 3 0" stroke="#0B1628" strokeWidth="1" strokeLinecap="round"/>
-            {/* basketball lines */}
-            <circle cx="28" cy="22" r="9" stroke="#0B1628" strokeWidth="0.8" opacity="0.4" fill="none"/>
-            <path d="M19 22h18M28 13v18" stroke="#0B1628" strokeWidth="0.6" opacity="0.3"/>
-          </svg>
-          <div className="text-left">
-            <h1 className="text-[36px] font-black text-white tracking-tight leading-none">
-              Shaqtin
-            </h1>
-            <p className="text-[13px] font-bold text-[#C8956C] tracking-[0.25em] uppercase leading-tight">
-              Fantasy HQ
-            </p>
-          </div>
-        </div>
+      <div className="flex justify-center mb-8">
+        <Image
+          src="/logo.png"
+          alt="Shaqtin Fantasy HQ"
+          width={320}
+          height={120}
+          className="object-contain drop-shadow-2xl"
+          priority
+        />
       </div>
 
       {/* Two-column nav */}

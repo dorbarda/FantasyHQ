@@ -836,45 +836,32 @@ export async function getTransactions(): Promise<TransactionsData> {
   }
 
   // Fetch names for players not on any current roster (dropped/waived).
-  // Uses kona_player_info with filterIds. Each chunk gets a unique URL suffix
-  // so Next.js caches them independently (same URL = same cache key).
+  // Uses ESPN's public sports API — no league context or auth cookies needed,
+  // reliable for any NBA player ID, and Next.js caches each lookup for 24 h.
   if (unknownIds.size > 0) {
     const idList = Array.from(unknownIds);
-    const CHUNK = 50;
-    for (let i = 0; i < idList.length; i += CHUNK) {
-      const chunk = idList.slice(i, i + CHUNK);
-      try {
-        const filter = JSON.stringify({
-          players: {
-            filterIds: { value: chunk },
-            limit: chunk.length,
-          },
-        });
-        // Include scoring period > 0 (ESPN returns nothing for period 0 in some leagues).
-        // Append chunk index so each URL is distinct → separate Next.js cache entries.
-        const resp = await espnFetch(
-          `?view=kona_player_info&scoringPeriodId=${currentScoringPeriod}&_chunk=${Math.floor(i / CHUNK)}`,
-          { 'x-fantasy-filter': filter }
-        );
-        // ESPN can return the list under several shapes; handle all of them.
-        const entries: any[] =
-          resp.players ??
-          resp.playerPoolEntries ??
-          (Array.isArray(resp) ? resp : []);
-        for (const entry of entries) {
-          const p = entry.playerPoolEntry?.player ?? entry.player ?? entry;
-          if (!p?.id) continue;
-          playerInfo[p.id] = {
-            name: p.fullName || `Player ${p.id}`,
-            proTeam: PRO_TEAMS[p.proTeamId] || 'FA',
-            position: ['PG', 'SG', 'SF', 'PF', 'C', 'G', 'F', 'F'][p.defaultPositionId - 1] || 'F',
-          };
-        }
-        const resolved = chunk.filter(id => playerInfo[id]?.name && !playerInfo[id].name.startsWith('Player '));
-        console.log(`[ESPN] kona_player_info chunk ${Math.floor(i / CHUNK)}: ${resolved.length}/${chunk.length} resolved`);
-      } catch (e) {
-        console.error('[ESPN] kona_player_info chunk failed:', e);
-      }
+    const CONCURRENCY = 10;
+    for (let i = 0; i < idList.length; i += CONCURRENCY) {
+      const batch = idList.slice(i, i + CONCURRENCY);
+      await Promise.allSettled(
+        batch.map(async (playerId) => {
+          try {
+            const res = await fetch(
+              `https://site.api.espn.com/apis/common/v3/sports/basketball/nba/athletes/${playerId}`,
+              { next: { revalidate: 86400 } }
+            );
+            if (!res.ok) return;
+            const d = await res.json();
+            const a = d.athlete;
+            if (!a) return;
+            playerInfo[playerId] = {
+              name: a.displayName || a.fullName || `Player ${playerId}`,
+              proTeam: a.team?.abbreviation || 'FA',
+              position: a.position?.abbreviation || 'F',
+            };
+          } catch { /* silently skip unresolvable IDs */ }
+        })
+      );
     }
   }
 

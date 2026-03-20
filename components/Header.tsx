@@ -8,7 +8,6 @@ const navItems = [
   { label: 'League', href: '/league' },
   { label: 'NBA Live', href: '/nba' },
   { label: 'Matchups', href: '/matchups' },
-  { label: 'Players', href: '/players' },
   { label: 'Stats', href: '/stats' },
   { label: 'Depth', href: '/matchup-depth' },
   { label: 'Moves', href: '/transactions' },

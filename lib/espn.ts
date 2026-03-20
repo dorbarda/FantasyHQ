@@ -592,33 +592,39 @@ export async function getMatchupDepth(): Promise<MatchupDepthData> {
 
   const isDailyLeague = currentScoringPeriod > currentMatchupPeriod * 2;
 
-  // ESPN's settings.scheduleSettings.matchupPeriods maps each matchup week ID to its
-  // exact array of daily scoring period IDs, e.g. { "1": [1,2,3,4,5,6], "2": [7,...], ... }
-  // This is the authoritative source — no estimation needed.
-  const espnMatchupPeriods: Record<string, number[]> =
-    scheduleData.settings?.scheduleSettings?.matchupPeriods || {};
+  // Build an exact map of matchupPeriodId → sorted scoring period IDs using the
+  // pointsByScoringPeriod field that mMatchupScore already returns for each matchup.
+  // This tells us exactly which daily SPs belong to each matchup week with no estimation.
+  const schedule: any[] = scheduleData.schedule || [];
+  const matchupScoringPeriods: Record<number, number[]> = {};
+  for (const m of schedule) {
+    const mpId: number = m.matchupPeriodId;
+    if (!mpId || matchupScoringPeriods[mpId]) continue;
+    const pbsp: Record<string, number> =
+      m.home?.pointsByScoringPeriod || m.away?.pointsByScoringPeriod || {};
+    const sps = Object.keys(pbsp).map(Number).filter(n => !isNaN(n)).sort((a, b) => a - b);
+    if (sps.length > 0) matchupScoringPeriods[mpId] = sps;
+  }
 
   function getScoringPeriods(matchupPeriodId: number): number[] {
-    // Use exact ESPN mapping when available (daily leagues with per-day SPs)
-    const exact = espnMatchupPeriods[String(matchupPeriodId)];
-    if (exact && exact.length > 1) return exact;
+    // Use exact SPs derived from score data when available
+    const exact = matchupScoringPeriods[matchupPeriodId];
+    if (exact && exact.length > 0) return exact;
 
     if (!isDailyLeague) {
       // Weekly scoring league: one period per matchup, no per-day breakdown available
       return [matchupPeriodId];
     }
     // Fallback: pro-rate scoring periods across matchup weeks
-    // e.g. 148 daily SPs / 18 weeks ≈ 8.2 → week 1 = [1..8], week 2 = [9..17], etc.
     const spPerWeek = currentScoringPeriod / currentMatchupPeriod;
     const start = Math.round((matchupPeriodId - 1) * spPerWeek) + 1;
     const end = matchupPeriodId < currentMatchupPeriod
       ? Math.round(matchupPeriodId * spPerWeek)
       : currentScoringPeriod;
-    const days = Math.min(Math.max(1, end - start + 1), 9); // guard: max 9 days/week
+    const days = Math.min(Math.max(1, end - start + 1), 9);
     return Array.from({ length: days }, (_, i) => start + i);
   }
 
-  const schedule: any[] = scheduleData.schedule || [];
   const completed = schedule.filter(
     (m: any) => m.playoffTierType === 'NONE' && m.matchupPeriodId < currentMatchupPeriod
   );

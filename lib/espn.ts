@@ -707,9 +707,10 @@ export async function getTransactions(): Promise<TransactionsData> {
     for (let i = 0; i < idList.length; i += CHUNK) {
       const chunk = idList.slice(i, i + CHUNK);
       try {
-        const filter = encodeURIComponent(JSON.stringify({ filterIds: { value: chunk } }));
+        const filter = JSON.stringify({ filterIds: { value: chunk } });
         const data = await espnFetch(
-          `?view=kona_player_info&scoringPeriodId=0&x-fantasy-filter=${filter}`
+          `?view=kona_player_info&scoringPeriodId=0`,
+          { 'x-fantasy-filter': filter }
         );
         for (const entry of (data.players || []) as any[]) {
           const p = entry.playerPoolEntry?.player;

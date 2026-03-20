@@ -3,67 +3,32 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'League', href: '/league' },
-  { label: 'NBA Live', href: '/nba' },
-  { label: 'Matchups', href: '/matchups' },
-  { label: 'Stats', href: '/stats' },
-  { label: 'Depth', href: '/matchup-depth' },
-  { label: 'Moves', href: '/transactions' },
-  { label: 'Draft', href: '/draft' },
-  { label: 'Records', href: '/records' },
-  { label: 'History', href: '/history' },
-  { label: 'Rules', href: '/rules' },
-];
-
 export default function Header() {
   const pathname = usePathname();
-  const isHome = pathname === '/';
+
+  if (pathname === '/') return null;
 
   return (
-    <header className="sticky top-0 z-50 bg-[#0F172A] border-b border-white/5">
-      <div className="max-w-[1100px] mx-auto h-[52px] flex items-center justify-between px-4 xl:px-8">
-        {/* Logo / back arrow */}
-        <Link href="/" className="flex items-center gap-2 shrink-0">
-          {!isHome && (
-            <span className="text-[#94A3B8] text-[16px]">←</span>
-          )}
-          <span className="font-bold text-[16px] text-white tracking-tight">Fantasy HQ</span>
+    <header className="sticky top-0 z-50 bg-white border-b border-[#E4E7ED]">
+      <div className="max-w-[1100px] mx-auto h-[44px] flex items-center px-4 xl:px-8">
+        <Link
+          href="/"
+          className="flex items-center gap-1.5 text-[#6B7280] hover:text-[#111827] transition-colors"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
         </Link>
-
-        {/* Nav tabs */}
-        <nav className="flex items-center h-[52px] overflow-x-auto no-scrollbar">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`
-                  flex items-center h-[52px] px-3 text-[13px] font-medium whitespace-nowrap
-                  transition-colors relative
-                  ${isActive
-                    ? 'text-white'
-                    : 'text-[#94A3B8] hover:text-[#CBD5E1]'
-                  }
-                `}
-              >
-                {item.label}
-                {isActive && (
-                  <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#60A5FA] rounded-t" />
-                )}
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Week badge */}
-        <div className="shrink-0 ml-2">
-          <span className="border border-white/10 text-[#94A3B8] text-[12px] font-medium rounded px-2.5 py-1 whitespace-nowrap">
-            Week 18
-          </span>
-        </div>
       </div>
     </header>
   );

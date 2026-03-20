@@ -698,7 +698,8 @@ export async function getTransactions(): Promise<TransactionsData> {
 
   for (const tx of transactions) {
     // Skip truly pending/failed transactions; accept any "executed" variant
-    if (tx.status === 'PENDING' || tx.status === 'FAILED' || tx.status === 'DRAFT') continue;
+    const txStatus = (tx.status as string || '').toUpperCase();
+    if (txStatus === 'PENDING' || txStatus === 'FAILED' || txStatus === 'DRAFT' || txStatus === 'PROPOSED') continue;
     const isTrade = (tx.type as string || '').toUpperCase().includes('TRADE');
     if (isTrade) {
       rawTrades.push(tx);
@@ -830,7 +831,7 @@ export async function getTransactions(): Promise<TransactionsData> {
 
     trades.push({
       tradeId: tx.id,
-      date: tx.processDate ?? tx.executionDate ?? 0,
+      date: tx.processDate || tx.executionDate || 0,
       teamA: { teamId: teamAId, teamName: metaA.name, ownerName: metaA.owner },
       teamB: { teamId: teamBId, teamName: metaB.name, ownerName: metaB.owner },
       teamAReceived: movements.filter(m => m.toTeamId === teamAId).map(m => makePlayer(m.playerId)),

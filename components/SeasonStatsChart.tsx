@@ -94,7 +94,7 @@ export default function SeasonStatsChart({ stats }: Props) {
             position: 'right',
             fill: '#64748B',
             fontSize: 10,
-            formatter: (v: number) => v.toLocaleString(),
+            formatter: (v: unknown) => v != null ? Number(v).toLocaleString() : '',
           }}>
             {data.map((_, i) => (
               <Cell

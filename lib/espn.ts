@@ -569,7 +569,7 @@ export async function getPlayoffBracket(): Promise<PlayoffBracketData> {
 // ─── MATCHUP DEPTH ────────────────────────────────────────────────────────────
 
 export async function getMatchupDepth(): Promise<MatchupDepthData> {
-  const scheduleData = await espnFetch('?view=mMatchup&view=mMatchupScore&view=mTeam');
+  const scheduleData = await espnFetch('?view=mMatchup&view=mMatchupScore&view=mTeam&view=mSettings');
 
   const currentMatchupPeriod: number = scheduleData.status?.currentMatchupPeriod || 1;
   // Daily scoring period ID — in daily-scoring leagues this is >> currentMatchupPeriod
@@ -590,17 +590,24 @@ export async function getMatchupDepth(): Promise<MatchupDepthData> {
     teamMeta[t.id] = { name: t.name || `Team ${t.id}`, owner, isYou: t.id === myTeamId };
   }
 
-  // ESPN's matchupPeriods setting maps each matchup week to a single scoring period
-  // (same number) — not to individual daily scoring period IDs. We ignore it and
-  // instead estimate per-day ranges from the season's total scoring periods.
   const isDailyLeague = currentScoringPeriod > currentMatchupPeriod * 2;
 
+  // ESPN's settings.scheduleSettings.matchupPeriods maps each matchup week ID to its
+  // exact array of daily scoring period IDs, e.g. { "1": [1,2,3,4,5,6], "2": [7,...], ... }
+  // This is the authoritative source — no estimation needed.
+  const espnMatchupPeriods: Record<string, number[]> =
+    scheduleData.settings?.scheduleSettings?.matchupPeriods || {};
+
   function getScoringPeriods(matchupPeriodId: number): number[] {
+    // Use exact ESPN mapping when available (daily leagues with per-day SPs)
+    const exact = espnMatchupPeriods[String(matchupPeriodId)];
+    if (exact && exact.length > 1) return exact;
+
     if (!isDailyLeague) {
       // Weekly scoring league: one period per matchup, no per-day breakdown available
       return [matchupPeriodId];
     }
-    // Daily scoring league: pro-rate scoring periods across matchup weeks.
+    // Fallback: pro-rate scoring periods across matchup weeks
     // e.g. 148 daily SPs / 18 weeks ≈ 8.2 → week 1 = [1..8], week 2 = [9..17], etc.
     const spPerWeek = currentScoringPeriod / currentMatchupPeriod;
     const start = Math.round((matchupPeriodId - 1) * spPerWeek) + 1;

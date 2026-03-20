@@ -9,7 +9,6 @@ import {
   Tooltip,
   ResponsiveContainer,
   ReferenceLine,
-  LabelList,
 } from 'recharts';
 import { LuckTableEntry } from '@/lib/types';
 
@@ -99,8 +98,9 @@ export default function PfPaScatterChart({ entries }: Props) {
           <Scatter
             data={data}
             isAnimationActive={false}
-            shape={(props: any) => {
-              const { cx, cy, payload } = props;
+            shape={(props: { cx?: number; cy?: number; payload?: { name: string; diff: number } }) => {
+              const { cx = 0, cy = 0, payload } = props;
+              if (!payload) return <g />;
               const color = payload.diff >= 0 ? '#34D399' : '#F87171';
               return (
                 <g>

@@ -16,6 +16,16 @@ const NBA_STATS_HEADERS = {
   'x-nba-stats-token': 'true',
 };
 
+async function fetchWithTimeout(url: string, options: RequestInit, ms = 5000): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export async function getNBAScoreboard(): Promise<NBAGame[]> {
   try {
     const res = await fetch(
@@ -62,12 +72,9 @@ export async function getNBAConferenceStandings(): Promise<{
   west: NBAConferenceStanding[];
 }> {
   try {
-    const res = await fetch(
+    const res = await fetchWithTimeout(
       'https://stats.nba.com/stats/leaguestandingsv3?LeagueID=00&Season=2024-25&SeasonType=Regular+Season',
-      {
-        headers: NBA_STATS_HEADERS,
-        next: { revalidate: 3600 },
-      }
+      { headers: NBA_STATS_HEADERS, next: { revalidate: 3600 } }
     );
     if (!res.ok) return { east: [], west: [] };
     const data = await res.json();
@@ -117,7 +124,7 @@ async function fetchStatLeaders(statCategory: string, top: number = 3): Promise<
     const url =
       `https://stats.nba.com/stats/leagueleaders?LeagueID=00&PerMode=PerGame` +
       `&Scope=S&Season=2024-25&SeasonType=Regular+Season&StatCategory=${statCategory}`;
-    const res = await fetch(url, {
+    const res = await fetchWithTimeout(url, {
       headers: NBA_STATS_HEADERS,
       next: { revalidate: 3600 },
     });

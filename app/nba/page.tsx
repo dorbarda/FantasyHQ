@@ -4,7 +4,7 @@ import NBAScoreboard from '@/components/NBAScoreboard';
 import NBAConferenceStandings from '@/components/NBAConferenceStandings';
 import NBAStatLeaders from '@/components/NBAStatLeaders';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export default async function NBALivePage() {
   let games: NBAGame[] = [];

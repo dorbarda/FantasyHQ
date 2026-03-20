@@ -124,6 +124,35 @@ async function fetchPlayerData(year: number, draftedIds: number[]): Promise<Map<
     }
   }
 
+  // ── Strategy 3: ESPN public athlete API — no auth needed, resolves retired/cut players ──
+  const stillMissing = draftedIds.filter(id => !map.has(id));
+  if (stillMissing.length > 0) {
+    const CONCURRENCY = 10;
+    for (let i = 0; i < stillMissing.length; i += CONCURRENCY) {
+      const batch = stillMissing.slice(i, i + CONCURRENCY);
+      await Promise.allSettled(
+        batch.map(async (playerId) => {
+          try {
+            const res = await fetch(
+              `https://site.api.espn.com/apis/common/v3/sports/basketball/nba/athletes/${playerId}`,
+              { next: { revalidate: 86400 } }
+            );
+            if (!res.ok) return;
+            const d = await res.json();
+            const a = d.athlete;
+            if (!a) return;
+            map.set(playerId, {
+              name:     a.displayName || a.fullName || `Player ${playerId}`,
+              position: a.position?.abbreviation || '—',
+              proTeam:  a.team?.abbreviation || '—',
+              fp: 0, pts: 0, gp: 0,
+            });
+          } catch { /* silently skip unresolvable IDs */ }
+        })
+      );
+    }
+  }
+
   return map;
 }
 

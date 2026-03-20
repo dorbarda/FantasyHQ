@@ -1,9 +1,9 @@
 import { hasEspnCredentials, getStatsData } from '@/lib/espn';
 import statsJson from '@/data/stats.json';
 import { StatsData } from '@/lib/types';
-import CategoryTable from '@/components/CategoryTable';
-import SeasonStatsTable from '@/components/SeasonStatsTable';
-import LuckTable from '@/components/LuckTable';
+import CategoryRadarChart from '@/components/CategoryRadarChart';
+import SeasonStatsChart from '@/components/SeasonStatsChart';
+import PfPaScatterChart from '@/components/PfPaScatterChart';
 
 export const revalidate = 1800;
 
@@ -42,29 +42,32 @@ export default async function StatsPage() {
         </div>
       </div>
 
-      {/* Category standings */}
+      {/* Category Radar */}
       <section className="mb-5">
         <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
           Category Standings
         </p>
-        <CategoryTable standings={data.categoryStandings} teamCount={teamCount} />
+        <CategoryRadarChart standings={data.categoryStandings} teamCount={teamCount} />
       </section>
 
       <div className="border-b border-[#1E3050] mb-5" />
 
-      {/* Season stats */}
+      {/* Season Totals Bar Chart */}
       <section className="mb-5">
         <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
           Season Totals
         </p>
-        <SeasonStatsTable stats={data.seasonStats} />
+        <SeasonStatsChart stats={data.seasonStats} />
       </section>
 
       <div className="border-b border-[#1E3050] mb-5" />
 
-      {/* Luck table */}
+      {/* Points For / Against Scatter */}
       <section>
-        <LuckTable entries={data.luckTable} />
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
+          Points For / Against
+        </p>
+        <PfPaScatterChart entries={data.luckTable} />
       </section>
     </div>
   );

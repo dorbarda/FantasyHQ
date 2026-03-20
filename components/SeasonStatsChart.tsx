@@ -88,7 +88,7 @@ export default function SeasonStatsChart({ stats }: Props) {
               fontSize: 12,
             }}
             itemStyle={{ color: option.color }}
-            formatter={(val: number) => [val.toLocaleString(), option.label]}
+            formatter={(val) => [val != null ? Number(val).toLocaleString() : '', option.label]}
           />
           <Bar dataKey="value" radius={[0, 4, 4, 0]} isAnimationActive={false} label={{
             position: 'right',

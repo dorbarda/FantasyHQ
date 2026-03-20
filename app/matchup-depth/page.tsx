@@ -8,8 +8,8 @@ export default async function MatchupDepthPage() {
   if (!hasEspnCredentials()) {
     return (
       <div className="py-5">
-        <h1 className="text-[28px] font-bold tracking-tight text-[#0f1419] mb-2">Matchup Depth</h1>
-        <p className="text-[15px] text-[#536471]">ESPN credentials required.</p>
+        <h1 className="text-[28px] font-bold tracking-tight text-[#111827] mb-2">Matchup Depth</h1>
+        <p className="text-[15px] text-[#6B7280]">ESPN credentials required.</p>
       </div>
     );
   }
@@ -30,21 +30,21 @@ export default async function MatchupDepthPage() {
     <div className="py-5">
       {/* Header */}
       <div className="mb-5">
-        <h1 className="text-[28px] font-bold tracking-tight text-[#0f1419]">Matchup Depth</h1>
-        <p className="text-[15px] text-[#536471] font-medium">
+        <h1 className="text-[28px] font-bold tracking-tight text-[#111827]">Matchup Depth</h1>
+        <p className="text-[15px] text-[#6B7280] font-medium">
           Players played per day · Score per player · Efficiency
         </p>
       </div>
 
       {/* Summary line */}
       {data && weeksShown > 0 && (
-        <p className="text-[13px] text-[#536471] mb-4">
+        <p className="text-[13px] text-[#6B7280] mb-4">
           {weeksShown} week{weeksShown !== 1 ? 's' : ''} · {data.rows.length / (data.completedPeriods.length || 1)} teams per week
         </p>
       )}
 
       {error && (
-        <p className="text-[15px] text-[#536471]">Could not load data — try again later.</p>
+        <p className="text-[15px] text-[#6B7280]">Could not load data — try again later.</p>
       )}
 
       {data && <MatchupDepthTable data={data} />}

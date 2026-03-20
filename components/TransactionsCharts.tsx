@@ -5,7 +5,7 @@ import type { TransactionsData } from '@/lib/types';
 function Bar({ value, max, color }: { value: number; max: number; color: string }) {
   const pct = max > 0 ? (value / max) * 100 : 0;
   return (
-    <div className="flex-1 bg-[#f7f9f9] rounded-full h-2 overflow-hidden">
+    <div className="flex-1 bg-[#F3F4F6] rounded-full h-1.5 overflow-hidden">
       <div
         className={`h-full rounded-full transition-all ${color}`}
         style={{ width: `${pct}%` }}
@@ -16,7 +16,7 @@ function Bar({ value, max, color }: { value: number; max: number; color: string 
 
 function TeamBadge({ team }: { team: string }) {
   return (
-    <span className="inline-flex items-center justify-center text-[9px] font-black rounded px-1.5 py-0.5 bg-[#0f1419] text-white tracking-wide min-w-[30px]">
+    <span className="inline-flex items-center justify-center text-[9px] font-bold rounded px-1.5 py-0.5 bg-[#111827] text-white tracking-wide min-w-[30px]">
       {team}
     </span>
   );
@@ -30,12 +30,12 @@ function Section({ title, subtitle, children }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className="border border-[#eff3f4] rounded-2xl overflow-hidden">
-      <div className="px-5 pt-5 pb-3">
-        <h2 className="text-[17px] font-bold text-[#0f1419]">{title}</h2>
-        {subtitle && <p className="text-[13px] text-[#536471] mt-0.5">{subtitle}</p>}
+    <div className="border border-[#E4E7ED] rounded-lg overflow-hidden bg-white">
+      <div className="px-5 pt-5 pb-3 border-b border-[#E4E7ED]">
+        <h2 className="text-[15px] font-semibold text-[#111827]">{title}</h2>
+        {subtitle && <p className="text-[13px] text-[#6B7280] mt-0.5">{subtitle}</p>}
       </div>
-      <div className="px-5 pb-5">{children}</div>
+      <div className="px-5 py-5">{children}</div>
     </div>
   );
 }
@@ -48,27 +48,23 @@ function TopPlayersChart({ players }: { players: TransactionsData['topAddedPlaye
     <div className="space-y-3">
       {players.map((p, i) => (
         <div key={p.playerId} className="flex items-center gap-3">
-          {/* Rank */}
-          <span className="text-[12px] font-black text-[#536471] w-4 text-right shrink-0">
+          <span className="text-[12px] font-semibold text-[#9CA3AF] w-4 text-right shrink-0">
             {i + 1}
           </span>
 
-          {/* Player info */}
           <div className="w-[170px] shrink-0">
-            <p className="text-[13px] font-bold text-[#0f1419] leading-tight truncate">
+            <p className="text-[13px] font-semibold text-[#111827] leading-tight truncate">
               {p.playerName}
             </p>
             <div className="flex items-center gap-1 mt-0.5">
               <TeamBadge team={p.proTeam} />
-              <span className="text-[10px] text-[#536471]">{p.position}</span>
+              <span className="text-[10px] text-[#6B7280]">{p.position}</span>
             </div>
           </div>
 
-          {/* Bar */}
-          <Bar value={p.addCount} max={max} color={i === 0 ? 'bg-[#1d9bf0]' : 'bg-[#1d9bf0]/60'} />
+          <Bar value={p.addCount} max={max} color={i === 0 ? 'bg-[#2563EB]' : 'bg-[#2563EB]/50'} />
 
-          {/* Count */}
-          <span className="text-[13px] font-black tabular-nums text-[#0f1419] w-8 text-right shrink-0">
+          <span className="text-[13px] font-bold tabular-nums text-[#111827] w-8 text-right shrink-0">
             {p.addCount}
           </span>
         </div>
@@ -85,12 +81,12 @@ function NbaTeamChart({ teams }: { teams: TransactionsData['addsByNbaTeam'] }) {
     <div className="space-y-2.5">
       {teams.map((t, i) => (
         <div key={t.team} className="flex items-center gap-3">
-          <span className="text-[12px] font-black text-[#536471] w-4 text-right shrink-0">
+          <span className="text-[12px] font-semibold text-[#9CA3AF] w-4 text-right shrink-0">
             {i + 1}
           </span>
           <TeamBadge team={t.team} />
-          <Bar value={t.count} max={max} color={i < 3 ? 'bg-[#00ba7c]' : 'bg-[#00ba7c]/60'} />
-          <span className="text-[13px] font-black tabular-nums text-[#0f1419] w-8 text-right shrink-0">
+          <Bar value={t.count} max={max} color={i < 3 ? 'bg-[#059669]' : 'bg-[#059669]/50'} />
+          <span className="text-[13px] font-bold tabular-nums text-[#111827] w-8 text-right shrink-0">
             {t.count}
           </span>
         </div>
@@ -108,30 +104,30 @@ function FantasyTeamGrid({ teams }: { teams: TransactionsData['byFantasyTeam'] }
       {teams.map((team, rank) => (
         <div
           key={team.teamId}
-          className={`rounded-xl border p-4 ${team.isYou ? 'border-[#1d9bf0]/40 bg-[#1d9bf0]/5' : 'border-[#eff3f4] bg-white'}`}
+          className="rounded-lg border border-[#E4E7ED] bg-white p-4"
         >
           {/* Header row */}
           <div className="flex items-start justify-between gap-2 mb-3">
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
-                <span className="text-[10px] font-black text-[#536471]">#{rank + 1}</span>
-                <p className={`text-[14px] font-bold truncate ${team.isYou ? 'text-[#1d9bf0]' : 'text-[#0f1419]'}`}>
+                <span className="text-[10px] font-semibold text-[#9CA3AF]">#{rank + 1}</span>
+                <p className="text-[14px] font-semibold text-[#111827] truncate">
                   {team.ownerName.split(' ')[0]}
                 </p>
               </div>
-              <p className="text-[11px] text-[#536471] truncate">{team.teamName}</p>
+              <p className="text-[11px] text-[#6B7280] truncate">{team.teamName}</p>
             </div>
             <div className="text-right shrink-0">
-              <p className="text-[22px] font-black text-[#0f1419] leading-none">{team.totalAdds}</p>
-              <p className="text-[10px] text-[#536471] uppercase tracking-wide">total adds</p>
+              <p className="text-[22px] font-bold text-[#111827] leading-none tabular-nums">{team.totalAdds}</p>
+              <p className="text-[10px] text-[#9CA3AF] uppercase tracking-wide">total adds</p>
             </div>
           </div>
 
           {/* Activity bar */}
           <div className="mb-3">
-            <div className="bg-[#f7f9f9] rounded-full h-1.5 overflow-hidden">
+            <div className="bg-[#F3F4F6] rounded-full h-1 overflow-hidden">
               <div
-                className={`h-full rounded-full ${team.isYou ? 'bg-[#1d9bf0]' : 'bg-[#536471]/40'}`}
+                className="h-full rounded-full bg-[#2563EB]/60"
                 style={{ width: `${(team.totalAdds / maxAdds) * 100}%` }}
               />
             </div>
@@ -139,13 +135,13 @@ function FantasyTeamGrid({ teams }: { teams: TransactionsData['byFantasyTeam'] }
 
           {/* Most targeted player */}
           <div className="flex items-center gap-2">
-            <span className="text-[10px] text-[#536471] shrink-0">Top target</span>
+            <span className="text-[10px] text-[#9CA3AF] shrink-0">Top target</span>
             <div className="flex items-center gap-1.5 min-w-0">
               <TeamBadge team={team.topPlayerProTeam} />
-              <span className="text-[12px] font-bold text-[#0f1419] truncate">{team.topPlayer}</span>
+              <span className="text-[12px] font-semibold text-[#111827] truncate">{team.topPlayer}</span>
             </div>
-            <span className="text-[11px] font-black text-[#536471] shrink-0 ml-auto">
-              ×{team.topPlayerCount}
+            <span className="text-[11px] font-semibold text-[#9CA3AF] shrink-0 ml-auto">
+              x{team.topPlayerCount}
             </span>
           </div>
         </div>
@@ -161,17 +157,17 @@ export default function TransactionsCharts({ data }: { data: TransactionsData })
     <div className="space-y-6">
       {/* Stats strip */}
       <div className="flex gap-4 flex-wrap">
-        <div className="border border-[#eff3f4] rounded-xl px-5 py-3">
-          <p className="text-[24px] font-black text-[#0f1419] leading-none">{data.totalAdds}</p>
-          <p className="text-[11px] text-[#536471] uppercase tracking-wide mt-0.5">Total adds this season</p>
+        <div className="border border-[#E4E7ED] rounded-lg px-5 py-3 bg-white">
+          <p className="text-[24px] font-bold text-[#111827] leading-none tabular-nums">{data.totalAdds}</p>
+          <p className="text-[11px] text-[#6B7280] uppercase tracking-wide mt-0.5">Total adds this season</p>
         </div>
-        <div className="border border-[#eff3f4] rounded-xl px-5 py-3">
-          <p className="text-[24px] font-black text-[#0f1419] leading-none">{data.topAddedPlayers[0]?.playerName?.split(' ').pop() ?? '—'}</p>
-          <p className="text-[11px] text-[#536471] uppercase tracking-wide mt-0.5">Most added player</p>
+        <div className="border border-[#E4E7ED] rounded-lg px-5 py-3 bg-white">
+          <p className="text-[24px] font-bold text-[#111827] leading-none">{data.topAddedPlayers[0]?.playerName?.split(' ').pop() ?? '—'}</p>
+          <p className="text-[11px] text-[#6B7280] uppercase tracking-wide mt-0.5">Most added player</p>
         </div>
-        <div className="border border-[#eff3f4] rounded-xl px-5 py-3">
-          <p className="text-[24px] font-black text-[#0f1419] leading-none">{data.addsByNbaTeam[0]?.team ?? '—'}</p>
-          <p className="text-[11px] text-[#536471] uppercase tracking-wide mt-0.5">Hottest NBA team</p>
+        <div className="border border-[#E4E7ED] rounded-lg px-5 py-3 bg-white">
+          <p className="text-[24px] font-bold text-[#111827] leading-none">{data.addsByNbaTeam[0]?.team ?? '—'}</p>
+          <p className="text-[11px] text-[#6B7280] uppercase tracking-wide mt-0.5">Hottest NBA team</p>
         </div>
       </div>
 
@@ -183,7 +179,7 @@ export default function TransactionsCharts({ data }: { data: TransactionsData })
         >
           {data.topAddedPlayers.length > 0
             ? <TopPlayersChart players={data.topAddedPlayers} />
-            : <p className="text-[13px] text-[#536471]">No data yet.</p>
+            : <p className="text-[13px] text-[#6B7280]">No data yet.</p>
           }
         </Section>
 
@@ -193,7 +189,7 @@ export default function TransactionsCharts({ data }: { data: TransactionsData })
         >
           {data.addsByNbaTeam.length > 0
             ? <NbaTeamChart teams={data.addsByNbaTeam} />
-            : <p className="text-[13px] text-[#536471]">No data yet.</p>
+            : <p className="text-[13px] text-[#6B7280]">No data yet.</p>
           }
         </Section>
       </div>
@@ -205,7 +201,7 @@ export default function TransactionsCharts({ data }: { data: TransactionsData })
       >
         {data.byFantasyTeam.length > 0
           ? <FantasyTeamGrid teams={data.byFantasyTeam} />
-          : <p className="text-[13px] text-[#536471]">No data yet.</p>
+          : <p className="text-[13px] text-[#6B7280]">No data yet.</p>
         }
       </Section>
     </div>

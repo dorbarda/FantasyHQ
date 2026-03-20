@@ -10,32 +10,24 @@ function TeamSide({ team, isWinning, isLive }: {
   isLive: boolean;
 }) {
   return (
-    <div className={`flex-1 flex flex-col items-center gap-1 py-3 px-2 ${team.isYou ? 'bg-[#1d9bf0]/[0.03]' : ''}`}>
-      <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-[#f7f9f9] border ${team.isYou ? 'border-[#1d9bf0]' : 'border-[#eff3f4]'}`}>
-        <span className="text-[18px]">🏀</span>
-      </div>
+    <div className="flex-1 flex flex-col items-center gap-1 py-4 px-3">
       <div className="text-center">
-        <p className={`text-[13px] font-bold tracking-tight truncate max-w-[110px] ${team.isYou ? 'text-[#1d9bf0]' : 'text-[#0f1419]'}`}>
+        <p className="text-[13px] font-semibold tracking-tight truncate max-w-[120px] text-[#111827]">
           {team.teamName}
         </p>
-        <div className="flex items-center justify-center gap-1">
-          <p className="text-[11px] text-[#536471] font-medium">{team.ownerName}</p>
-          {team.isYou && (
-            <span className="text-[10px] font-bold text-[#1d9bf0] bg-[#1d9bf0]/10 rounded px-1 shrink-0">You</span>
-          )}
-        </div>
+        <p className="text-[11px] text-[#9CA3AF]">{team.ownerName}</p>
       </div>
-      <div className="text-center">
-        <p className={`text-[24px] font-bold tracking-tight ${isWinning && isLive ? 'text-[#0f1419]' : 'text-[#536471]'}`}>
+      <div className="text-center mt-1">
+        <p className={`text-[26px] font-bold tracking-tight tabular-nums ${isWinning && isLive ? 'text-[#111827]' : 'text-[#6B7280]'}`}>
           {isLive ? team.actualScore.toFixed(1) : team.projectedScore.toFixed(1)}
         </p>
         {isLive && (
-          <p className="text-[11px] text-[#536471]">
+          <p className="text-[11px] text-[#9CA3AF]">
             proj. {team.projectedScore.toFixed(1)}
           </p>
         )}
         {!isLive && (
-          <p className="text-[11px] text-[#536471]">projected</p>
+          <p className="text-[11px] text-[#9CA3AF]">projected</p>
         )}
       </div>
     </div>
@@ -47,15 +39,15 @@ export default function MatchupCard({ matchup }: MatchupCardProps) {
   const awayWinning = matchup.away.actualScore > matchup.home.actualScore;
 
   return (
-    <div className="border border-[#eff3f4] rounded-2xl overflow-hidden">
+    <div className="border border-[#E4E7ED] rounded-lg overflow-hidden bg-white">
       {/* Live indicator row */}
       {matchup.isLive && (
-        <div className="px-4 py-2 border-b border-[#eff3f4] flex items-center justify-center gap-1.5">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00ba7c] opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00ba7c]"></span>
+        <div className="px-4 py-1.5 border-b border-[#E4E7ED] flex items-center justify-center gap-1.5">
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#059669] opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#059669]"></span>
           </span>
-          <span className="text-[12px] font-bold text-[#00ba7c]">Live</span>
+          <span className="text-[11px] font-semibold text-[#059669]">Live</span>
         </div>
       )}
 
@@ -64,8 +56,8 @@ export default function MatchupCard({ matchup }: MatchupCardProps) {
         <TeamSide team={matchup.home} isWinning={homeWinning} isLive={matchup.isLive} />
 
         {/* VS divider */}
-        <div className="flex items-center justify-center px-2 border-x border-[#eff3f4]">
-          <span className="text-[11px] font-bold uppercase tracking-widest text-[#536471]">vs</span>
+        <div className="flex items-center justify-center px-3 border-x border-[#E4E7ED]">
+          <span className="text-[11px] font-semibold uppercase tracking-widest text-[#9CA3AF]">vs</span>
         </div>
 
         <TeamSide team={matchup.away} isWinning={awayWinning} isLive={matchup.isLive} />

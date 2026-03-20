@@ -3,9 +3,9 @@ interface PositionBadgeProps {
 }
 
 const positionStyles: Record<string, string> = {
-  G: 'bg-[#1d9bf0] text-white',
-  F: 'bg-[#00ba7c] text-white',
-  C: 'bg-[#ff7a00] text-white',
+  G: 'bg-[#2563EB] text-white',
+  F: 'bg-[#059669] text-white',
+  C: 'bg-[#D97706] text-white',
 };
 
 export default function PositionBadge({ position }: PositionBadgeProps) {
@@ -13,7 +13,7 @@ export default function PositionBadge({ position }: PositionBadgeProps) {
     <span
       className={`
         inline-flex items-center justify-center
-        text-[10px] font-bold px-1.5 py-0.5 rounded
+        text-[10px] font-semibold px-1.5 py-0.5 rounded
         ${positionStyles[position]}
       `}
     >

@@ -1,5 +1,6 @@
 @import '@fontsource/inter/400.css';
 @import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
 @import '@fontsource/inter/700.css';
 
 @tailwind base;
@@ -7,14 +8,25 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #0f1419;
+  --background: #F8F9FB;
+  --surface: #FFFFFF;
+  --border: #E4E7ED;
+  --nav-bg: #0F172A;
+  --foreground: #111827;
+  --foreground-secondary: #6B7280;
+  --foreground-muted: #9CA3AF;
+  --accent: #2563EB;
+  --accent-light: #EFF6FF;
+  --green: #059669;
+  --red: #DC2626;
+  --orange: #D97706;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 @layer utilities {

@@ -9,10 +9,10 @@ export default function StreakBadge({ streak }: StreakBadgeProps) {
   return (
     <span
       className={`
-        inline-flex items-center rounded-full px-2.5 py-0.5 text-[12px] font-bold
+        inline-flex items-center rounded px-2 py-0.5 text-[12px] font-semibold
         ${isWin
-          ? 'bg-[#00ba7c]/10 text-[#00ba7c]'
-          : 'bg-[#f4212e]/10 text-[#f4212e]'
+          ? 'bg-[#059669]/10 text-[#059669]'
+          : 'bg-[#DC2626]/10 text-[#DC2626]'
         }
       `}
     >

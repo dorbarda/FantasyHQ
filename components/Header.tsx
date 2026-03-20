@@ -20,16 +20,15 @@ export default function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-[#eff3f4]">
-      <div className="max-w-[1100px] mx-auto h-[53px] flex items-center justify-between px-4 xl:px-8">
+    <header className="sticky top-0 z-50 bg-[#0F172A] border-b border-white/5">
+      <div className="max-w-[1100px] mx-auto h-[52px] flex items-center justify-between px-4 xl:px-8">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-1.5 shrink-0">
-          <span className="text-[20px]">🏀</span>
-          <span className="font-bold text-[17px] text-[#0f1419] tracking-tight">Fantasy HQ</span>
+        <Link href="/" className="flex items-center shrink-0">
+          <span className="font-bold text-[16px] text-white tracking-tight">Fantasy HQ</span>
         </Link>
 
         {/* Nav tabs */}
-        <nav className="flex items-center h-[53px] overflow-x-auto no-scrollbar">
+        <nav className="flex items-center h-[52px] overflow-x-auto no-scrollbar">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -37,14 +36,18 @@ export default function Header() {
                 key={item.href}
                 href={item.href}
                 className={`
-                  flex items-center h-[53px] px-3 text-[15px] whitespace-nowrap transition-colors
+                  flex items-center h-[52px] px-3.5 text-[13px] font-medium whitespace-nowrap
+                  transition-colors relative
                   ${isActive
-                    ? 'font-bold text-[#0f1419] border-b-2 border-[#1d9bf0]'
-                    : 'font-medium text-[#536471] hover:bg-[#f7f9f9]'
+                    ? 'text-white'
+                    : 'text-[#94A3B8] hover:text-[#CBD5E1]'
                   }
                 `}
               >
                 {item.label}
+                {isActive && (
+                  <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#60A5FA] rounded-t" />
+                )}
               </Link>
             );
           })}
@@ -52,7 +55,7 @@ export default function Header() {
 
         {/* Week badge */}
         <div className="shrink-0 ml-2">
-          <span className="border border-[#eff3f4] text-[#536471] text-[13px] font-medium rounded-full px-3 py-1 whitespace-nowrap">
+          <span className="border border-white/10 text-[#94A3B8] text-[12px] font-medium rounded px-2.5 py-1 whitespace-nowrap">
             Week 18
           </span>
         </div>

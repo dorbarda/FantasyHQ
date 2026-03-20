@@ -28,39 +28,39 @@ export default async function StatsPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h1 className="text-[28px] font-bold tracking-tight text-[#0f1419]">Stats</h1>
-          <p className="text-[15px] text-[#536471] font-medium">
+          <h1 className="text-[28px] font-bold tracking-tight text-[#111827]">Stats</h1>
+          <p className="text-[15px] text-[#6B7280] font-medium">
             Season totals · {data.matchesPlayed} matchups played
           </p>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00ba7c] opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00ba7c]"></span>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#059669] opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#059669]"></span>
           </span>
-          <span className="text-[12px] font-bold text-[#00ba7c]">Live</span>
+          <span className="text-[12px] font-bold text-[#059669]">Live</span>
         </div>
       </div>
 
       {/* Category standings */}
       <section className="mb-5">
-        <p className="text-[11px] font-bold uppercase tracking-widest text-[#536471] mb-3">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#6B7280] mb-3">
           Category Standings
         </p>
         <CategoryTable standings={data.categoryStandings} teamCount={teamCount} />
       </section>
 
-      <div className="border-b border-[#eff3f4] mb-5" />
+      <div className="border-b border-[#E4E7ED] mb-5" />
 
       {/* Season stats */}
       <section className="mb-5">
-        <p className="text-[11px] font-bold uppercase tracking-widest text-[#536471] mb-3">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#6B7280] mb-3">
           Season Totals
         </p>
         <SeasonStatsTable stats={data.seasonStats} />
       </section>
 
-      <div className="border-b border-[#eff3f4] mb-5" />
+      <div className="border-b border-[#E4E7ED] mb-5" />
 
       {/* Luck table */}
       <section>

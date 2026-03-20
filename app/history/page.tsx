@@ -49,8 +49,8 @@ export default async function HistoryPage() {
   return (
     <div className="py-5">
       <div className="mb-5">
-        <h1 className="text-[28px] font-bold tracking-tight text-[#0f1419]">History</h1>
-        <p className="text-[15px] text-[#536471] font-medium">
+        <h1 className="text-[28px] font-bold tracking-tight text-[#111827]">History</h1>
+        <p className="text-[15px] text-[#6B7280] font-medium">
           {merged.length} seasons · Champions &amp; final standings
         </p>
       </div>

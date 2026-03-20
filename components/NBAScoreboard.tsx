@@ -1,13 +1,11 @@
 import type { NBAGame } from '@/lib/types';
 
 function statusStyle(status: NBAGame['status']) {
-  if (status === 'live') return 'text-[#00ba7c] font-bold';
-  if (status === 'final') return 'text-[#536471]';
-  return 'text-[#536471]';
+  if (status === 'live') return 'text-[#059669] font-semibold';
+  return 'text-[#9CA3AF]';
 }
 
 function cleanStatusText(text: string): string {
-  // "Q3 05:23" → "Q3 5:23" | "Final" | "7:30 pm ET"
   return text.replace(/\b0(\d:)/, '$1').trim();
 }
 
@@ -19,14 +17,14 @@ function GameCard({ game }: { game: NBAGame }) {
   const awayLeads = away.score > home.score;
 
   return (
-    <div className={`px-3 py-2.5 rounded-xl border ${isLive ? 'border-[#00ba7c]/30 bg-[#00ba7c]/5' : 'border-[#eff3f4]'}`}>
+    <div className={`px-3 py-2.5 rounded border ${isLive ? 'border-[#059669]/30 bg-[#059669]/5' : 'border-[#E4E7ED]'}`}>
       {/* Status */}
       <p className={`text-[10px] mb-1.5 ${statusStyle(status)}`}>
         {isLive && (
           <span className="inline-flex items-center gap-1">
             <span className="relative flex h-1.5 w-1.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00ba7c] opacity-75" />
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#00ba7c]" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#059669] opacity-75" />
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#059669]" />
             </span>
             {cleanStatusText(statusText)}
           </span>
@@ -36,12 +34,12 @@ function GameCard({ game }: { game: NBAGame }) {
 
       {/* Away team */}
       <div className="flex items-center justify-between">
-        <span className={`text-[13px] font-bold ${awayLeads && isFinal ? 'text-[#0f1419]' : isLive && awayLeads ? 'text-[#0f1419]' : 'text-[#536471]'}`}>
+        <span className={`text-[13px] font-semibold ${awayLeads && isFinal ? 'text-[#111827]' : isLive && awayLeads ? 'text-[#111827]' : 'text-[#6B7280]'}`}>
           {away.tricode}
-          <span className="text-[10px] font-normal text-[#536471] ml-1">{away.wins}-{away.losses}</span>
+          <span className="text-[10px] font-normal text-[#9CA3AF] ml-1">{away.wins}-{away.losses}</span>
         </span>
         {(isLive || isFinal) && (
-          <span className={`text-[14px] font-black tabular-nums ${awayLeads ? 'text-[#0f1419]' : 'text-[#536471]'}`}>
+          <span className={`text-[14px] font-bold tabular-nums ${awayLeads ? 'text-[#111827]' : 'text-[#6B7280]'}`}>
             {away.score}
           </span>
         )}
@@ -49,12 +47,12 @@ function GameCard({ game }: { game: NBAGame }) {
 
       {/* Home team */}
       <div className="flex items-center justify-between mt-0.5">
-        <span className={`text-[13px] font-bold ${homeLeads && isFinal ? 'text-[#0f1419]' : isLive && homeLeads ? 'text-[#0f1419]' : 'text-[#536471]'}`}>
+        <span className={`text-[13px] font-semibold ${homeLeads && isFinal ? 'text-[#111827]' : isLive && homeLeads ? 'text-[#111827]' : 'text-[#6B7280]'}`}>
           {home.tricode}
-          <span className="text-[10px] font-normal text-[#536471] ml-1">{home.wins}-{home.losses}</span>
+          <span className="text-[10px] font-normal text-[#9CA3AF] ml-1">{home.wins}-{home.losses}</span>
         </span>
         {(isLive || isFinal) && (
-          <span className={`text-[14px] font-black tabular-nums ${homeLeads ? 'text-[#0f1419]' : 'text-[#536471]'}`}>
+          <span className={`text-[14px] font-bold tabular-nums ${homeLeads ? 'text-[#111827]' : 'text-[#6B7280]'}`}>
             {home.score}
           </span>
         )}
@@ -70,9 +68,9 @@ export default function NBAScoreboard({ games }: { games: NBAGame[] }) {
 
   if (games.length === 0) {
     return (
-      <div className="rounded-2xl border border-[#eff3f4] px-4 py-5">
-        <p className="text-[11px] font-bold uppercase tracking-widest text-[#536471] mb-1">NBA Today</p>
-        <p className="text-[13px] text-[#536471]">No games scheduled.</p>
+      <div className="rounded-lg border border-[#E4E7ED] bg-white px-4 py-5">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#6B7280] mb-1">NBA Today</p>
+        <p className="text-[13px] text-[#6B7280]">No games scheduled.</p>
       </div>
     );
   }
@@ -80,26 +78,24 @@ export default function NBAScoreboard({ games }: { games: NBAGame[] }) {
   const live = games.filter(g => g.status === 'live');
   const upcoming = games.filter(g => g.status === 'pre');
   const final = games.filter(g => g.status === 'final');
-
-  // Sort: live first, then upcoming, then final
   const sorted = [...live, ...upcoming, ...final];
 
   return (
-    <div className="rounded-2xl border border-[#eff3f4] overflow-hidden">
+    <div className="rounded-lg border border-[#E4E7ED] overflow-hidden bg-white">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-[#eff3f4] bg-[#f7f9f9]">
-        <p className="text-[11px] font-bold uppercase tracking-widest text-[#536471]">NBA Today</p>
-        <p className="text-[11px] text-[#536471]">{today}</p>
+      <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#E4E7ED] bg-[#F3F4F6]">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#6B7280]">NBA Today</p>
+        <p className="text-[11px] text-[#9CA3AF]">{today}</p>
       </div>
 
       {/* Live indicator if any */}
       {live.length > 0 && (
-        <div className="flex items-center gap-1.5 px-4 py-2 bg-[#00ba7c]/5 border-b border-[#eff3f4]">
+        <div className="flex items-center gap-1.5 px-4 py-1.5 bg-[#059669]/5 border-b border-[#E4E7ED]">
           <span className="relative flex h-1.5 w-1.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00ba7c] opacity-75" />
-            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#00ba7c]" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#059669] opacity-75" />
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#059669]" />
           </span>
-          <span className="text-[11px] font-bold text-[#00ba7c]">{live.length} game{live.length > 1 ? 's' : ''} live</span>
+          <span className="text-[11px] font-semibold text-[#059669]">{live.length} game{live.length > 1 ? 's' : ''} live</span>
         </div>
       )}
 

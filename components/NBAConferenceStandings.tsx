@@ -98,7 +98,7 @@ export default function NBAConferenceStandings({ east, west }: Props) {
       <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
         Conference Standings
       </p>
-      <div className="flex gap-4 flex-col lg:flex-row">
+      <div className="flex gap-4 flex-col">
         <ConferenceTable label="East" rows={east} />
         <ConferenceTable label="West" rows={west} />
       </div>

@@ -28,13 +28,13 @@ export default async function NBALivePage() {
   const liveCount = games.filter((g) => g.status === 'live').length;
 
   return (
-    <div className="py-5 space-y-8">
+    <div className="py-5 space-y-6">
       {/* Page header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-[28px] font-bold tracking-tight text-[#F0F4F8]">NBA Live</h1>
           <p className="text-[15px] text-[#94A3B8] font-medium">
-            2024–25 Season
+            2025–26 Season
           </p>
         </div>
         {liveCount > 0 && (
@@ -50,26 +50,22 @@ export default async function NBALivePage() {
         )}
       </div>
 
-      {/* Today's games */}
-      <section>
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
-          Today&apos;s Games
-        </p>
-        <NBAScoreboard games={games} />
-      </section>
+      {/* 3-column layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        {/* Col 1 — Today's Games */}
+        <section>
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
+            Today&apos;s Games
+          </p>
+          <NBAScoreboard games={games} />
+        </section>
 
-      <div className="border-b border-[#1E3050]" />
+        {/* Col 2 — Stat Leaders */}
+        <NBAStatLeaders leaders={statLeaders} />
 
-      {/* Conference standings */}
-      {(east.length > 0 || west.length > 0) && (
-        <>
-          <NBAConferenceStandings east={east} west={west} />
-          <div className="border-b border-[#1E3050]" />
-        </>
-      )}
-
-      {/* Stat leaders */}
-      <NBAStatLeaders leaders={statLeaders} />
+        {/* Col 3 — Conference Standings */}
+        <NBAConferenceStandings east={east} west={west} />
+      </div>
     </div>
   );
 }

@@ -73,7 +73,7 @@ export async function getNBAConferenceStandings(): Promise<{
 }> {
   try {
     const res = await fetchWithTimeout(
-      'https://stats.nba.com/stats/leaguestandingsv3?LeagueID=00&Season=2024-25&SeasonType=Regular+Season',
+      'https://stats.nba.com/stats/leaguestandingsv3?LeagueID=00&Season=2025-26&SeasonType=Regular+Season',
       { headers: NBA_STATS_HEADERS, next: { revalidate: 3600 } }
     );
     if (!res.ok) return { east: [], west: [] };
@@ -123,7 +123,7 @@ async function fetchStatLeaders(statCategory: string, top: number = 3): Promise<
   try {
     const url =
       `https://stats.nba.com/stats/leagueleaders?LeagueID=00&PerMode=PerGame` +
-      `&Scope=S&Season=2024-25&SeasonType=Regular+Season&StatCategory=${statCategory}`;
+      `&Scope=S&Season=2025-26&SeasonType=Regular+Season&StatCategory=${statCategory}`;
     const res = await fetchWithTimeout(url, {
       headers: NBA_STATS_HEADERS,
       next: { revalidate: 3600 },

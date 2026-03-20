@@ -92,7 +92,7 @@ export default function NBAStatLeaders({ leaders }: Props) {
       <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
         Season Stat Leaders · Per Game
       </p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {STAT_CONFIGS.map((cfg) => (
           <StatCard
             key={cfg.key}

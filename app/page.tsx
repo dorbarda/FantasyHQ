@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
@@ -180,33 +181,14 @@ export default function HomePage() {
 
       {/* Logo */}
       <div className="flex justify-center mb-8">
-        <div className="flex items-center gap-4">
-          {/* Basketball / Shaq icon */}
-          <svg viewBox="0 0 64 64" fill="none" className="w-16 h-16 shrink-0">
-            <circle cx="32" cy="32" r="30" stroke="#C8956C" strokeWidth="2" fill="none" opacity="0.3"/>
-            <circle cx="32" cy="32" r="30" stroke="#C8956C" strokeWidth="1.5" fill="none"/>
-            {/* basketball seam lines */}
-            <path d="M4 32h56" stroke="#C8956C" strokeWidth="1.5" opacity="0.5"/>
-            <path d="M32 2c10 8 14 18 14 30s-4 22-14 30" stroke="#C8956C" strokeWidth="1.5" opacity="0.5" fill="none"/>
-            <path d="M32 2c-10 8-14 18-14 30s4 22 14 30" stroke="#C8956C" strokeWidth="1.5" opacity="0.5" fill="none"/>
-            {/* head silhouette */}
-            <ellipse cx="32" cy="26" rx="10" ry="11" fill="#C8956C" opacity="0.85"/>
-            {/* shoulders */}
-            <path d="M16 46c2-6 8-9 16-9s14 3 16 9" fill="#C8956C" opacity="0.85"/>
-            {/* face details */}
-            <ellipse cx="28.5" cy="24" rx="1.5" ry="1.8" fill="#0B1628"/>
-            <ellipse cx="35.5" cy="24" rx="1.5" ry="1.8" fill="#0B1628"/>
-            <path d="M28 29.5c1.2 1.5 3 1.8 8 0.5" stroke="#0B1628" strokeWidth="1" strokeLinecap="round" opacity="0.7"/>
-          </svg>
-          <div>
-            <h1 className="text-[40px] font-black leading-none tracking-tight" style={{ color: '#C8956C' }}>
-              Shaqtin
-            </h1>
-            <p className="text-[13px] font-bold tracking-[0.3em] uppercase text-[#94A3B8] mt-0.5">
-              Fantasy HQ
-            </p>
-          </div>
-        </div>
+        <Image
+          src="/logo.png"
+          alt="Shaqtin Fantasy HQ"
+          width={340}
+          height={130}
+          className="object-contain drop-shadow-2xl"
+          priority
+        />
       </div>
 
       {/* Two-column nav */}

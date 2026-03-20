@@ -29,6 +29,10 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+body:has(.page-home) {
+  background: #0F172A;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

@@ -2,6 +2,9 @@ import { hasEspnCredentials, getMatchupDepth } from '@/lib/espn';
 import type { MatchupDepthRow } from '@/lib/types';
 import AnalysisTable, { type TeamAnalytics } from '@/components/AnalysisTable';
 import WeeklyHighlights, { type WeeklyScoreEntry } from '@/components/WeeklyHighlights';
+import WeeklyTrendChart, { type WeeklyTrendEntry } from '@/components/WeeklyTrendChart';
+import EfficiencyScatterChart, { type ScatterPoint } from '@/components/EfficiencyScatterChart';
+import LuckDeltaChart, { type LuckDeltaEntry } from '@/components/LuckDeltaChart';
 
 export const revalidate = 1800;
 
@@ -26,6 +29,9 @@ function computeAnalytics(rows: MatchupDepthRow[]): {
   bottomScores: WeeklyScoreEntry[];
   biggestBlowouts: WeeklyScoreEntry[];
   leagueSummary: { totalWeeks: number; avgLeagueScore: number; highScore: number; lowScore: number };
+  weeklyTrend: WeeklyTrendEntry[];
+  scatterPoints: ScatterPoint[];
+  luckEntries: LuckDeltaEntry[];
 } {
   const completedRows = rows.filter(r => r.won !== null);
 
@@ -137,6 +143,33 @@ function computeAnalytics(rows: MatchupDepthRow[]): {
     .slice(0, 5);
 
   const allScores = completedRows.map(r => r.teamScore);
+
+  // Chart data
+  const weeklyTrend: WeeklyTrendEntry[] = completedRows
+    .filter(r => r.scorePP > 0 && isFinite(r.scorePP))
+    .map(r => ({
+      ownerName: r.ownerName,
+      isYou: r.isYou,
+      week: r.matchupPeriod,
+      scorePP: r.scorePP,
+    }));
+
+  const scatterPoints: ScatterPoint[] = teams.map(t => ({
+    ownerName: t.ownerName,
+    isYou: t.isYou,
+    avgScore: t.avgScore,
+    avgScorePP: t.avgScorePP,
+    wins: t.wins,
+  }));
+
+  const luckEntries: LuckDeltaEntry[] = teams.map(t => ({
+    ownerName: t.ownerName,
+    isYou: t.isYou,
+    luckDelta: t.luckDelta,
+    wins: t.wins,
+    expectedWins: t.expectedWins,
+  }));
+
   return {
     teams,
     topScores,
@@ -148,6 +181,9 @@ function computeAnalytics(rows: MatchupDepthRow[]): {
       highScore: Math.max(...allScores),
       lowScore: Math.min(...allScores),
     },
+    weeklyTrend,
+    scatterPoints,
+    luckEntries,
   };
 }
 
@@ -183,7 +219,7 @@ export default async function AnalysisPage() {
     );
   }
 
-  const { teams, topScores, bottomScores, biggestBlowouts, leagueSummary } = result;
+  const { teams, topScores, bottomScores, biggestBlowouts, leagueSummary, weeklyTrend, scatterPoints, luckEntries } = result;
 
   // Depth insight cards
   const mostPlayers = [...teams].sort((a, b) => b.avgPlayers - a.avgPlayers)[0];
@@ -218,6 +254,44 @@ export default async function AnalysisPage() {
           </div>
         ))}
       </div>
+
+      {/* Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {/* Weekly score/player trend */}
+        <section className="bg-[#161b22] border border-[#1E3050] rounded-xl px-4 py-4">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-1">
+            Score / Player — Weekly Trend
+          </p>
+          <p className="text-[11px] text-[#64748B] mb-4">
+            Normalizes for matchup length — longer weeks have more players
+          </p>
+          <WeeklyTrendChart entries={weeklyTrend} />
+        </section>
+
+        {/* Luck delta */}
+        <section className="bg-[#161b22] border border-[#1E3050] rounded-xl px-4 py-4">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-1">
+            Luck Delta
+          </p>
+          <p className="text-[11px] text-[#64748B] mb-4">
+            Actual wins minus expected wins — positive means you&apos;ve been lucky
+          </p>
+          <LuckDeltaChart entries={luckEntries} />
+        </section>
+      </div>
+
+      {/* Efficiency scatter */}
+      <section className="bg-[#161b22] border border-[#1E3050] rounded-xl px-4 py-4 mb-6">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-1">
+          Score vs Efficiency
+        </p>
+        <p className="text-[11px] text-[#64748B] mb-4">
+          X = avg score · Y = pts per player · Bubble size = wins &mdash; top-right is high-volume &amp; efficient
+        </p>
+        <EfficiencyScatterChart points={scatterPoints} />
+      </section>
+
+      <div className="border-b border-[#1E3050] mb-6" />
 
       {/* Team rankings table */}
       <section className="mb-6">

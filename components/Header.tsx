@@ -4,7 +4,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const navItems = [
-  { label: 'Standings', href: '/' },
+  { label: 'Home', href: '/' },
+  { label: 'League', href: '/league' },
+  { label: 'NBA Live', href: '/nba' },
   { label: 'Matchups', href: '/matchups' },
   { label: 'Players', href: '/players' },
   { label: 'Stats', href: '/stats' },
@@ -18,12 +20,16 @@ const navItems = [
 
 export default function Header() {
   const pathname = usePathname();
+  const isHome = pathname === '/';
 
   return (
     <header className="sticky top-0 z-50 bg-[#0F172A] border-b border-white/5">
       <div className="max-w-[1100px] mx-auto h-[52px] flex items-center justify-between px-4 xl:px-8">
-        {/* Logo */}
-        <Link href="/" className="flex items-center shrink-0">
+        {/* Logo / back arrow */}
+        <Link href="/" className="flex items-center gap-2 shrink-0">
+          {!isHome && (
+            <span className="text-[#94A3B8] text-[16px]">←</span>
+          )}
           <span className="font-bold text-[16px] text-white tracking-tight">Fantasy HQ</span>
         </Link>
 
@@ -36,7 +42,7 @@ export default function Header() {
                 key={item.href}
                 href={item.href}
                 className={`
-                  flex items-center h-[52px] px-3.5 text-[13px] font-medium whitespace-nowrap
+                  flex items-center h-[52px] px-3 text-[13px] font-medium whitespace-nowrap
                   transition-colors relative
                   ${isActive
                     ? 'text-white'

@@ -184,6 +184,42 @@ export interface NBAGame {
   awayTeam: NBATeam;
 }
 
+// ─── NBA Live Page ────────────────────────────────────────────────────────────
+
+export interface NBAConferenceStanding {
+  rank: number;
+  teamTricode: string;
+  teamCity: string;
+  teamName: string;
+  wins: number;
+  losses: number;
+  pct: number;
+  gb: string;
+  homeRecord: string;
+  awayRecord: string;
+  l10: string;
+  streak: string;
+  clinched: string;
+}
+
+export interface NBAStatLeader {
+  rank: number;
+  playerId: number;
+  playerName: string;
+  team: string;
+  gp: number;
+  value: number;
+}
+
+export interface NBAStatLeadersData {
+  pts: NBAStatLeader[];
+  reb: NBAStatLeader[];
+  ast: NBAStatLeader[];
+  stl: NBAStatLeader[];
+  blk: NBAStatLeader[];
+  tpm: NBAStatLeader[];
+}
+
 // ─── History ─────────────────────────────────────────────────────────────────
 
 export interface HistoricalTeam {

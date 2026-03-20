@@ -1,0 +1,75 @@
+import { getNBAScoreboard, getNBAConferenceStandings, getNBAStatLeaders } from '@/lib/nba';
+import type { NBAGame, NBAConferenceStanding, NBAStatLeadersData } from '@/lib/types';
+import NBAScoreboard from '@/components/NBAScoreboard';
+import NBAConferenceStandings from '@/components/NBAConferenceStandings';
+import NBAStatLeaders from '@/components/NBAStatLeaders';
+
+export const revalidate = 60;
+
+export default async function NBALivePage() {
+  let games: NBAGame[] = [];
+  let east: NBAConferenceStanding[] = [];
+  let west: NBAConferenceStanding[] = [];
+  let statLeaders: NBAStatLeadersData = { pts: [], reb: [], ast: [], stl: [], blk: [], tpm: [] };
+
+  const [gamesResult, standingsResult, leadersResult] = await Promise.allSettled([
+    getNBAScoreboard(),
+    getNBAConferenceStandings(),
+    getNBAStatLeaders(),
+  ]);
+
+  if (gamesResult.status === 'fulfilled') games = gamesResult.value;
+  if (standingsResult.status === 'fulfilled') {
+    east = standingsResult.value.east;
+    west = standingsResult.value.west;
+  }
+  if (leadersResult.status === 'fulfilled') statLeaders = leadersResult.value;
+
+  const liveCount = games.filter((g) => g.status === 'live').length;
+
+  return (
+    <div className="py-5 space-y-8">
+      {/* Page header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-[28px] font-bold tracking-tight text-[#111827]">NBA Live</h1>
+          <p className="text-[15px] text-[#6B7280] font-medium">
+            2024–25 Season
+          </p>
+        </div>
+        {liveCount > 0 && (
+          <div className="flex items-center gap-1.5">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#059669] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#059669]" />
+            </span>
+            <span className="text-[12px] font-semibold text-[#059669]">
+              {liveCount} game{liveCount > 1 ? 's' : ''} live
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Today's games */}
+      <section>
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#6B7280] mb-3">
+          Today&apos;s Games
+        </p>
+        <NBAScoreboard games={games} />
+      </section>
+
+      <div className="border-b border-[#E4E7ED]" />
+
+      {/* Conference standings */}
+      {(east.length > 0 || west.length > 0) && (
+        <>
+          <NBAConferenceStandings east={east} west={west} />
+          <div className="border-b border-[#E4E7ED]" />
+        </>
+      )}
+
+      {/* Stat leaders */}
+      <NBAStatLeaders leaders={statLeaders} />
+    </div>
+  );
+}

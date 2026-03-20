@@ -70,7 +70,7 @@ export default function CategoryRadarChart({ standings, teamCount }: Props) {
               fontSize: 12,
             }}
             itemStyle={{ color: '#F0F4F8' }}
-            formatter={(value: number, name: string) => [`${value}`, name]}
+            formatter={(value, name) => [`${value ?? ''}`, String(name)]}
           />
           <Legend
             wrapperStyle={{ fontSize: 11, color: '#94A3B8', paddingTop: 8 }}

@@ -90,6 +90,17 @@ function StatsIcon() {
   );
 }
 
+function AnalysisIcon() {
+  return (
+    <svg viewBox="0 0 48 48" fill="none" className="w-full h-full">
+      <circle cx="24" cy="24" r="14" stroke="#C8956C" strokeWidth="2" opacity="0.3"/>
+      <path d="M14 24h4l3-7 4 14 3-10 3 6 3-3h4" stroke="#C8956C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx="14" cy="24" r="2" fill="#E8B88A"/>
+      <circle cx="38" cy="24" r="2" fill="#E8B88A"/>
+    </svg>
+  );
+}
+
 function MovesIcon() {
   return (
     <svg viewBox="0 0 48 48" fill="none" className="w-full h-full">
@@ -166,11 +177,12 @@ const LEFT_SECTIONS: Section[] = [
 ];
 
 const RIGHT_SECTIONS: Section[] = [
-  { href: '/nba',          label: 'NBA Live',     desc: 'Live Scores & Real-Time Stats.',               Icon: NBALiveIcon  },
-  { href: '/stats',        label: 'Season Stats', desc: 'Full Season Performance & Leaderboards.',      Icon: StatsIcon    },
-  { href: '/transactions', label: 'Moves',        desc: 'Completed Player Transactions & Trends.',      Icon: MovesIcon    },
-  { href: '/records',      label: 'Records',      desc: 'All-Time League Records & Milestones.',        Icon: RecordsIcon  },
-  { href: '/rules',        label: 'Rules',        desc: 'Complete League Rules & Settings.',            Icon: RulesIcon    },
+  { href: '/nba',          label: 'NBA Live',     desc: 'Live Scores & Real-Time Stats.',               Icon: NBALiveIcon    },
+  { href: '/stats',        label: 'Season Stats', desc: 'Full Season Performance & Leaderboards.',      Icon: StatsIcon      },
+  { href: '/analysis',     label: 'Analysis',     desc: 'Luck, Consistency & Depth Insights.',          Icon: AnalysisIcon   },
+  { href: '/transactions', label: 'Moves',        desc: 'Completed Player Transactions & Trends.',      Icon: MovesIcon      },
+  { href: '/records',      label: 'Records',      desc: 'All-Time League Records & Milestones.',        Icon: RecordsIcon    },
+  { href: '/rules',        label: 'Rules',        desc: 'Complete League Rules & Settings.',            Icon: RulesIcon      },
 ];
 
 // ─── Page ─────────────────────────────────────────────────────────────────────

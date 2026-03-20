@@ -343,11 +343,34 @@ export interface FantasyTeamActivity {
   totalAdds: number;
 }
 
+export interface TradedPlayer {
+  playerId: number;
+  playerName: string;
+  proTeam: string;
+  position: string;
+}
+
+export interface TradeTeam {
+  teamId: number;
+  teamName: string;
+  ownerName: string;
+}
+
+export interface TradeEvent {
+  tradeId: string;
+  date: number; // ms timestamp
+  teamA: TradeTeam;
+  teamB: TradeTeam;
+  teamAReceived: TradedPlayer[];
+  teamBReceived: TradedPlayer[];
+}
+
 export interface TransactionsData {
   topAddedPlayers: TransactionPlayer[];
   addsByNbaTeam: { team: string; count: number }[];
   byFantasyTeam: FantasyTeamActivity[];
   totalAdds: number;
+  trades: TradeEvent[];
 }
 
 // ─── Rules ────────────────────────────────────────────────────────────────────

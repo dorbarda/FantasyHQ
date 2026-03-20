@@ -1,4 +1,4 @@
-import type { TransactionsData } from '@/lib/types';
+import type { TransactionsData, TradeEvent } from '@/lib/types';
 
 // ─── Shared bar chart primitives ──────────────────────────────────────────────
 
@@ -150,6 +150,76 @@ function FantasyTeamGrid({ teams }: { teams: TransactionsData['byFantasyTeam'] }
   );
 }
 
+// ─── Chart 4: Trade history ───────────────────────────────────────────────────
+
+function TradeCard({ trade }: { trade: TradeEvent }) {
+  const date = new Date(trade.date).toLocaleDateString('en-US', {
+    month: 'short', day: 'numeric',
+  });
+
+  return (
+    <div className="border border-[#E4E7ED] rounded-lg bg-white p-4">
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-[11px] text-[#9CA3AF] font-medium">{date}</span>
+      </div>
+
+      <div className="grid grid-cols-[1fr_auto_1fr] gap-2 items-start">
+        {/* Team A side */}
+        <div>
+          <p className="text-[12px] font-semibold text-[#111827] truncate">
+            {trade.teamA.ownerName.split(' ')[0]}
+          </p>
+          <p className="text-[10px] text-[#6B7280] truncate mb-2">{trade.teamA.teamName}</p>
+          <p className="text-[10px] text-[#9CA3AF] uppercase tracking-wide mb-1">Received</p>
+          <div className="space-y-1">
+            {trade.teamAReceived.map(p => (
+              <div key={p.playerId} className="flex items-center gap-1.5">
+                <TeamBadge team={p.proTeam} />
+                <span className="text-[11px] text-[#111827] font-medium truncate">{p.playerName}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Arrow */}
+        <div className="flex flex-col items-center justify-center pt-4">
+          <svg className="w-4 h-4 text-[#9CA3AF]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4M4 17h12m0 0l-4-4m4 4l-4 4" />
+          </svg>
+        </div>
+
+        {/* Team B side */}
+        <div>
+          <p className="text-[12px] font-semibold text-[#111827] truncate">
+            {trade.teamB.ownerName.split(' ')[0]}
+          </p>
+          <p className="text-[10px] text-[#6B7280] truncate mb-2">{trade.teamB.teamName}</p>
+          <p className="text-[10px] text-[#9CA3AF] uppercase tracking-wide mb-1">Received</p>
+          <div className="space-y-1">
+            {trade.teamBReceived.map(p => (
+              <div key={p.playerId} className="flex items-center gap-1.5">
+                <TeamBadge team={p.proTeam} />
+                <span className="text-[11px] text-[#111827] font-medium truncate">{p.playerName}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TradeHistory({ trades }: { trades: TradeEvent[] }) {
+  if (trades.length === 0) {
+    return <p className="text-[13px] text-[#6B7280]">No trades this season.</p>;
+  }
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {trades.map(t => <TradeCard key={t.tradeId} trade={t} />)}
+    </div>
+  );
+}
+
 // ─── Main export ──────────────────────────────────────────────────────────────
 
 export default function TransactionsCharts({ data }: { data: TransactionsData }) {
@@ -203,6 +273,14 @@ export default function TransactionsCharts({ data }: { data: TransactionsData })
           ? <FantasyTeamGrid teams={data.byFantasyTeam} />
           : <p className="text-[13px] text-[#6B7280]">No data yet.</p>
         }
+      </Section>
+
+      {/* Trade history */}
+      <Section
+        title="Trade History"
+        subtitle={`${data.trades.length} trade${data.trades.length !== 1 ? 's' : ''} this season · newest first`}
+      >
+        <TradeHistory trades={data.trades} />
       </Section>
     </div>
   );

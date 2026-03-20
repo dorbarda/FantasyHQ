@@ -6,6 +6,7 @@ import type {
   BracketMatchup, BracketTeam, PlayoffBracketData,
   MatchupDepthRow, MatchupDepthData,
   TransactionPlayer, FantasyTeamActivity, TransactionsData,
+  TradeEvent, TradedPlayer,
 } from './types';
 
 const ESPN_S2 = process.env.ESPN_S2;
@@ -683,9 +684,20 @@ export async function getTransactions(): Promise<TransactionsData> {
   const fantasyTeamPlayerAdds: Record<number, Record<number, number>> = {};
   const unknownIds = new Set<number>();
 
+  const rawTrades: any[] = [];
+
   for (const tx of transactions) {
     // Skip truly pending/failed transactions; accept any "executed" variant
     if (tx.status === 'PENDING' || tx.status === 'FAILED' || tx.status === 'DRAFT') continue;
+    const isTrade = (tx.type as string || '').toUpperCase().includes('TRADE');
+    if (isTrade) {
+      rawTrades.push(tx);
+      // Collect traded player IDs for name resolution
+      for (const item of (tx.items || []) as any[]) {
+        if (item.playerId && !playerInfo[item.playerId]) unknownIds.add(item.playerId);
+      }
+      continue;
+    }
     for (const item of (tx.items || []) as any[]) {
       if (item.type !== 'ADD') continue;
       const playerId: number = item.playerId;
@@ -707,7 +719,7 @@ export async function getTransactions(): Promise<TransactionsData> {
     for (let i = 0; i < idList.length; i += CHUNK) {
       const chunk = idList.slice(i, i + CHUNK);
       try {
-        const filter = JSON.stringify({ filterIds: { value: chunk } });
+        const filter = JSON.stringify({ players: { filterIds: { value: chunk } } });
         const data = await espnFetch(
           `?view=kona_player_info&scoringPeriodId=0`,
           { 'x-fantasy-filter': filter }
@@ -721,7 +733,9 @@ export async function getTransactions(): Promise<TransactionsData> {
             position: ['PG', 'SG', 'SF', 'PF', 'C', 'G', 'F', 'F'][p.defaultPositionId - 1] || 'F',
           };
         }
-      } catch { /* ignore chunk failures — names fall back to "Player {id}" */ }
+      } catch (e) {
+        console.error('[ESPN] kona_player_info chunk failed:', e);
+      }
     }
   }
 
@@ -772,7 +786,42 @@ export async function getTransactions(): Promise<TransactionsData> {
 
   const totalAdds = Object.values(playerAddCount).reduce((s, n) => s + n, 0);
 
-  return { topAddedPlayers, addsByNbaTeam, byFantasyTeam, totalAdds };
+  // Build trade history (two-team trades only; sort newest first)
+  const trades: TradeEvent[] = [];
+  for (const tx of rawTrades) {
+    const movements: { playerId: number; fromTeamId: number; toTeamId: number }[] = [];
+    for (const item of (tx.items || []) as any[]) {
+      // TRADED_AWAY: player moves away from fromTeamId to toTeamId
+      // Some ESPN responses use TRADED_FOR on the receiving side — skip dupes
+      if (item.type !== 'TRADED_AWAY') continue;
+      if (!item.playerId || item.fromTeamId == null || item.toTeamId == null) continue;
+      movements.push({ playerId: item.playerId, fromTeamId: item.fromTeamId, toTeamId: item.toTeamId });
+    }
+    if (movements.length === 0) continue;
+    const teamIdSet = new Set(movements.flatMap(m => [m.fromTeamId, m.toTeamId]));
+    if (teamIdSet.size !== 2) continue; // skip multi-team or malformed trades
+    const [teamAId, teamBId] = Array.from(teamIdSet) as [number, number];
+
+    const makePlayer = (id: number): TradedPlayer => {
+      const info = playerInfo[id] || { name: `Player ${id}`, proTeam: 'FA', position: 'F' };
+      return { playerId: id, playerName: info.name, proTeam: info.proTeam, position: info.position };
+    };
+
+    const metaA = teamMeta[teamAId] || { name: `Team ${teamAId}`, owner: 'Unknown', isYou: false };
+    const metaB = teamMeta[teamBId] || { name: `Team ${teamBId}`, owner: 'Unknown', isYou: false };
+
+    trades.push({
+      tradeId: tx.id,
+      date: tx.processDate ?? tx.executionDate ?? 0,
+      teamA: { teamId: teamAId, teamName: metaA.name, ownerName: metaA.owner },
+      teamB: { teamId: teamBId, teamName: metaB.name, ownerName: metaB.owner },
+      teamAReceived: movements.filter(m => m.toTeamId === teamAId).map(m => makePlayer(m.playerId)),
+      teamBReceived: movements.filter(m => m.toTeamId === teamBId).map(m => makePlayer(m.playerId)),
+    });
+  }
+  trades.sort((a, b) => b.date - a.date);
+
+  return { topAddedPlayers, addsByNbaTeam, byFantasyTeam, totalAdds, trades };
 }
 
 // ─── STATIC DATA ─────────────────────────────────────────────────────────────

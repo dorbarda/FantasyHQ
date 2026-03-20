@@ -30,19 +30,19 @@ function StatCard({
   players: NBAStatLeader[];
 }) {
   return (
-    <div className="rounded-2xl border border-[#E4E7ED] overflow-hidden">
+    <div className="rounded-2xl border border-[#1E3050] overflow-hidden">
       {/* Card header */}
       <div
         className="px-4 py-2.5 flex items-center justify-between"
         style={{ borderLeft: `3px solid ${color}` }}
       >
-        <span className="text-[13px] font-bold text-[#111827]">{label}</span>
-        <span className="text-[11px] font-semibold text-[#9CA3AF]">{unit}</span>
+        <span className="text-[13px] font-bold text-[#F0F4F8]">{label}</span>
+        <span className="text-[11px] font-semibold text-[#64748B]">{unit}</span>
       </div>
 
       <div className="divide-y divide-[#F3F4F6]">
         {players.length === 0 ? (
-          <div className="px-4 py-3 text-[12px] text-[#9CA3AF]">No data</div>
+          <div className="px-4 py-3 text-[12px] text-[#64748B]">No data</div>
         ) : (
           players.map((p) => (
             <div key={p.playerId} className="px-4 py-2.5 flex items-center gap-3">
@@ -63,10 +63,10 @@ function StatCard({
 
               {/* Player info */}
               <div className="flex-1 min-w-0">
-                <p className="text-[13px] font-semibold text-[#111827] truncate leading-tight">
+                <p className="text-[13px] font-semibold text-[#F0F4F8] truncate leading-tight">
                   {p.playerName}
                 </p>
-                <p className="text-[11px] text-[#6B7280]">
+                <p className="text-[11px] text-[#94A3B8]">
                   {p.team} · {p.gp} GP
                 </p>
               </div>
@@ -89,7 +89,7 @@ function StatCard({
 export default function NBAStatLeaders({ leaders }: Props) {
   return (
     <section>
-      <p className="text-[11px] font-semibold uppercase tracking-widest text-[#6B7280] mb-3">
+      <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
         Season Stat Leaders · Per Game
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

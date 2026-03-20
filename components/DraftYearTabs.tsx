@@ -24,8 +24,8 @@ export default function DraftYearTabs({ years, currentYear }: DraftYearTabsProps
             onClick={() => router.push(`/draft?year=${y}`)}
             className={`px-3 py-1.5 rounded text-[13px] font-medium transition-colors ${
               active
-                ? 'bg-[#111827] text-white'
-                : 'bg-white border border-[#E4E7ED] text-[#6B7280] hover:bg-[#F8F9FB] hover:text-[#111827]'
+                ? 'bg-[#2A4066] text-white'
+                : 'bg-[#142035] border border-[#1E3050] text-[#94A3B8] hover:bg-[#0B1628] hover:text-[#F0F4F8]'
             }`}
           >
             {seasonLabel(y)}

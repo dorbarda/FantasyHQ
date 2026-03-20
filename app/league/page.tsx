@@ -37,13 +37,13 @@ export default async function LeaguePage() {
       ) : (
         <>
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-[28px] font-bold tracking-tight text-[#111827]">Standings</h1>
+            <h1 className="text-[28px] font-bold tracking-tight text-[#F0F4F8]">Standings</h1>
             <div className="flex items-center gap-1.5">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#059669] opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#059669]" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#34D399] opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#34D399]" />
               </span>
-              <span className="text-[12px] font-semibold text-[#059669]">Live · Week {week}</span>
+              <span className="text-[12px] font-semibold text-[#34D399]">Live · Week {week}</span>
             </div>
           </div>
           <StandingsTable standings={standings} />

@@ -16,8 +16,8 @@ export default async function DraftPage({ searchParams }: PageProps) {
   if (!hasEspnCredentials()) {
     return (
       <div className="py-5">
-        <h1 className="text-[28px] font-bold tracking-tight text-[#111827] mb-2">Draft Board</h1>
-        <p className="text-[15px] text-[#6B7280]">ESPN credentials required.</p>
+        <h1 className="text-[28px] font-bold tracking-tight text-[#F0F4F8] mb-2">Draft Board</h1>
+        <p className="text-[15px] text-[#94A3B8]">ESPN credentials required.</p>
       </div>
     );
   }
@@ -39,8 +39,8 @@ export default async function DraftPage({ searchParams }: PageProps) {
     <div className="py-5">
       {/* Header */}
       <div className="mb-4">
-        <h1 className="text-[28px] font-bold tracking-tight text-[#111827]">Draft Board</h1>
-        <p className="text-[15px] text-[#6B7280] font-medium">
+        <h1 className="text-[28px] font-bold tracking-tight text-[#F0F4F8]">Draft Board</h1>
+        <p className="text-[15px] text-[#94A3B8] font-medium">
           Pick grades based on season rank vs. draft position
         </p>
       </div>
@@ -51,23 +51,23 @@ export default async function DraftPage({ searchParams }: PageProps) {
       </div>
 
       {error && (
-        <p className="text-[15px] text-[#6B7280]">Could not load draft data — try again later.</p>
+        <p className="text-[15px] text-[#94A3B8]">Could not load draft data — try again later.</p>
       )}
 
       {data && data.picks.length === 0 && (
-        <div className="border border-[#E4E7ED] rounded-lg px-6 py-10 text-center">
-          <p className="text-[15px] font-bold text-[#111827]">Draft not yet held</p>
-          <p className="text-[13px] text-[#6B7280] mt-1">Check back once the {data.seasonLabel} draft is complete.</p>
+        <div className="border border-[#1E3050] rounded-lg px-6 py-10 text-center">
+          <p className="text-[15px] font-bold text-[#F0F4F8]">Draft not yet held</p>
+          <p className="text-[13px] text-[#94A3B8] mt-1">Check back once the {data.seasonLabel} draft is complete.</p>
         </div>
       )}
 
       {data && data.picks.length > 0 && (
         <>
           {/* Summary row */}
-          <div className="flex items-center gap-4 mb-4 text-[13px] text-[#6B7280]">
+          <div className="flex items-center gap-4 mb-4 text-[13px] text-[#94A3B8]">
             <span>{data.rounds} rounds · {data.picks.length} picks · {data.teams.length} teams</span>
             {!data.hasStats && (
-              <span className="text-[#D97706] font-medium">Season in progress — grades pending</span>
+              <span className="text-[#FB923C] font-medium">Season in progress — grades pending</span>
             )}
           </div>
 

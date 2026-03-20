@@ -5,15 +5,15 @@ import type { MatchupDepthData } from '@/lib/types';
 function heatColor(value: number, min: number, max: number): string {
   if (max === min) return '';
   const pct = (value - min) / (max - min);
-  if (pct >= 0.7) return 'bg-[#059669]/10 text-[#059669]';
-  if (pct >= 0.4) return 'bg-[#F3F4F6] text-[#6B7280]';
-  return 'bg-[#DC2626]/8 text-[#DC2626]';
+  if (pct >= 0.7) return 'bg-[#34D399]/10 text-[#34D399]';
+  if (pct >= 0.4) return 'bg-[#0E1929] text-[#94A3B8]';
+  return 'bg-[#F87171]/8 text-[#F87171]';
 }
 
 function WL({ won }: { won: boolean | null }) {
-  if (won === null) return <span className="text-[#9CA3AF] text-[11px]">—</span>;
+  if (won === null) return <span className="text-[#64748B] text-[11px]">—</span>;
   return (
-    <span className={`text-[11px] font-semibold px-1.5 py-0.5 rounded ${won ? 'bg-[#059669]/15 text-[#059669]' : 'bg-[#DC2626]/10 text-[#DC2626]'}`}>
+    <span className={`text-[11px] font-semibold px-1.5 py-0.5 rounded ${won ? 'bg-[#34D399]/15 text-[#34D399]' : 'bg-[#F87171]/10 text-[#F87171]'}`}>
       {won ? 'W' : 'L'}
     </span>
   );
@@ -30,9 +30,9 @@ export default function MatchupDepthTable({ data }: Props) {
 
   if (rows.length === 0) {
     return (
-      <div className="border border-[#E4E7ED] rounded-lg px-6 py-10 text-center bg-white">
-        <p className="text-[15px] font-semibold text-[#111827]">No completed matchups yet</p>
-        <p className="text-[13px] text-[#6B7280] mt-1">Data will appear once week 1 is complete.</p>
+      <div className="border border-[#1E3050] rounded-lg px-6 py-10 text-center bg-[#142035]">
+        <p className="text-[15px] font-semibold text-[#F0F4F8]">No completed matchups yet</p>
+        <p className="text-[13px] text-[#94A3B8] mt-1">Data will appear once week 1 is complete.</p>
       </div>
     );
   }
@@ -47,23 +47,23 @@ export default function MatchupDepthTable({ data }: Props) {
   const dayLabels = Array.from({ length: daysPerMatchup }, (_, i) => `D${i + 1}`);
 
   return (
-    <div className="border border-[#E4E7ED] rounded-lg overflow-hidden bg-white">
+    <div className="border border-[#1E3050] rounded-lg overflow-hidden bg-[#142035]">
       <div className="overflow-x-auto">
         <table style={{ minWidth: 900, width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr className="border-b border-[#E4E7ED] bg-[#F3F4F6]">
-              <th className="sticky left-0 bg-[#F3F4F6] px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-widest text-[#6B7280] w-8">WK</th>
-              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-widest text-[#6B7280] min-w-[140px]">Team</th>
+            <tr className="border-b border-[#1E3050] bg-[#0E1929]">
+              <th className="sticky left-0 bg-[#0E1929] px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8] w-8">WK</th>
+              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8] min-w-[140px]">Team</th>
               {dayLabels.map(d => (
-                <th key={d} className="px-2 py-2 text-center text-[10px] font-semibold uppercase tracking-widest text-[#6B7280] w-8">{d}</th>
+                <th key={d} className="px-2 py-2 text-center text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8] w-8">{d}</th>
               ))}
-              <th className="px-3 py-2 text-center text-[10px] font-semibold uppercase tracking-widest text-[#6B7280]">Total</th>
-              <th className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-widest text-[#6B7280]">Score</th>
-              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-widest text-[#6B7280] min-w-[110px]">Opponent</th>
-              <th className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-widest text-[#6B7280]">Opp Score</th>
-              <th className="px-3 py-2 text-center text-[10px] font-semibold uppercase tracking-widest text-[#6B7280]">W/L</th>
-              <th className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-widest text-[#6B7280]">Score/PP</th>
-              <th className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-widest text-[#6B7280]">Efficiency</th>
+              <th className="px-3 py-2 text-center text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8]">Total</th>
+              <th className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8]">Score</th>
+              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8] min-w-[110px]">Opponent</th>
+              <th className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8]">Opp Score</th>
+              <th className="px-3 py-2 text-center text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8]">W/L</th>
+              <th className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8]">Score/PP</th>
+              <th className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8]">Efficiency</th>
             </tr>
           </thead>
           <tbody>
@@ -72,24 +72,24 @@ export default function MatchupDepthTable({ data }: Props) {
               return periodRows.map((row, rowIdx) => (
                 <tr
                   key={`${period}-${row.teamId}`}
-                  className={`border-b border-[#E4E7ED] last:border-0
+                  className={`border-b border-[#1E3050] last:border-0
                     ${rowIdx === 0 ? 'border-t-2 border-t-[#E4E7ED]' : ''}
-                    hover:bg-[#F8F9FB]
+                    hover:bg-[#0B1628]
                   `}
                 >
                   {/* Week */}
                   <td className="sticky left-0 bg-inherit px-3 py-2 text-center">
                     {rowIdx === 0 ? (
-                      <span className="text-[11px] font-semibold text-[#6B7280]">{period}</span>
+                      <span className="text-[11px] font-semibold text-[#94A3B8]">{period}</span>
                     ) : null}
                   </td>
 
                   {/* Team name */}
                   <td className="px-3 py-2">
-                    <p className="text-[12px] font-semibold truncate max-w-[130px] text-[#111827]">
+                    <p className="text-[12px] font-semibold truncate max-w-[130px] text-[#F0F4F8]">
                       {row.ownerName.split(' ')[0]}
                     </p>
-                    <p className="text-[10px] text-[#9CA3AF] truncate max-w-[130px]">{row.teamName}</p>
+                    <p className="text-[10px] text-[#64748B] truncate max-w-[130px]">{row.teamName}</p>
                   </td>
 
                   {/* Daily player counts */}
@@ -115,21 +115,21 @@ export default function MatchupDepthTable({ data }: Props) {
 
                   {/* Team score */}
                   <td className="px-3 py-2 text-right">
-                    <span className={`text-[12px] font-bold tabular-nums ${row.won === true ? 'text-[#111827]' : 'text-[#6B7280]'}`}>
+                    <span className={`text-[12px] font-bold tabular-nums ${row.won === true ? 'text-[#F0F4F8]' : 'text-[#94A3B8]'}`}>
                       {row.teamScore.toLocaleString()}
                     </span>
                   </td>
 
                   {/* Opponent */}
                   <td className="px-3 py-2">
-                    <span className="text-[12px] text-[#6B7280] truncate block max-w-[100px]">
+                    <span className="text-[12px] text-[#94A3B8] truncate block max-w-[100px]">
                       {row.opponentName.split(' ')[0]}
                     </span>
                   </td>
 
                   {/* Opponent score */}
                   <td className="px-3 py-2 text-right">
-                    <span className="text-[12px] tabular-nums text-[#6B7280]">
+                    <span className="text-[12px] tabular-nums text-[#94A3B8]">
                       {row.opponentScore.toLocaleString()}
                     </span>
                   </td>
@@ -160,15 +160,15 @@ export default function MatchupDepthTable({ data }: Props) {
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap items-center gap-4 px-4 py-3 border-t border-[#E4E7ED] bg-[#F3F4F6] text-[10px] text-[#6B7280]">
+      <div className="flex flex-wrap items-center gap-4 px-4 py-3 border-t border-[#1E3050] bg-[#0E1929] text-[10px] text-[#94A3B8]">
         <span><strong>Score/PP</strong> = Team Score ÷ Players Played</span>
         <span><strong>Efficiency</strong> = Score/PP ÷ Players Played</span>
         <span className="flex items-center gap-1">
-          <span className="inline-block w-3 h-3 rounded bg-[#059669]/20" /> high
-          <span className="inline-block w-3 h-3 rounded bg-[#DC2626]/10 ml-1" /> low
+          <span className="inline-block w-3 h-3 rounded bg-[#34D399]/20" /> high
+          <span className="inline-block w-3 h-3 rounded bg-[#F87171]/10 ml-1" /> low
         </span>
         {rows.some(r => r.totalPlayers === 0) && (
-          <span className="text-[#D97706]">— = per-day roster data unavailable (team totals still shown)</span>
+          <span className="text-[#FB923C]">— = per-day roster data unavailable (team totals still shown)</span>
         )}
       </div>
     </div>

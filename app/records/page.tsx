@@ -11,8 +11,8 @@ export default async function RecordsPage() {
   if (!hasEspnCredentials()) {
     return (
       <div className="py-5">
-        <h1 className="text-[28px] font-bold tracking-tight text-[#111827] mb-2">Records</h1>
-        <p className="text-[15px] text-[#6B7280]">
+        <h1 className="text-[28px] font-bold tracking-tight text-[#F0F4F8] mb-2">Records</h1>
+        <p className="text-[15px] text-[#94A3B8]">
           ESPN credentials required to compute all-time records.
         </p>
       </div>
@@ -32,8 +32,8 @@ export default async function RecordsPage() {
   if (error || !data) {
     return (
       <div className="py-5">
-        <h1 className="text-[28px] font-bold tracking-tight text-[#111827] mb-2">Records</h1>
-        <p className="text-[15px] text-[#6B7280]">Could not load records — try again later.</p>
+        <h1 className="text-[28px] font-bold tracking-tight text-[#F0F4F8] mb-2">Records</h1>
+        <p className="text-[15px] text-[#94A3B8]">Could not load records — try again later.</p>
       </div>
     );
   }
@@ -42,35 +42,35 @@ export default async function RecordsPage() {
     <div className="py-5">
       {/* Header */}
       <div className="mb-5">
-        <h1 className="text-[28px] font-bold tracking-tight text-[#111827]">Records</h1>
-        <p className="text-[15px] text-[#6B7280] font-medium">
+        <h1 className="text-[28px] font-bold tracking-tight text-[#F0F4F8]">Records</h1>
+        <p className="text-[15px] text-[#94A3B8] font-medium">
           All-time stats across every season
         </p>
       </div>
 
       {/* ── Hall of Fame ──────────────────────────────────────── */}
       <section className="mb-5">
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#6B7280] mb-3">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
           Hall of Fame
         </p>
         <HallOfFame careers={data.hallOfFame} />
       </section>
 
-      <div className="border-b border-[#E4E7ED] mb-5" />
+      <div className="border-b border-[#1E3050] mb-5" />
 
       {/* ── All-Time Records ──────────────────────────────────── */}
       <section className="mb-5">
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#6B7280] mb-3">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
           All-Time Records
         </p>
         <SuperlativesGrid superlatives={data.superlatives} />
       </section>
 
-      <div className="border-b border-[#E4E7ED] mb-5" />
+      <div className="border-b border-[#1E3050] mb-5" />
 
       {/* ── Head-to-Head Matrix ───────────────────────────────── */}
       <section>
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#6B7280] mb-3">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
           Head-to-Head · All Time
         </p>
         <H2HMatrix h2hMap={data.h2hMap} ownerNames={data.ownerNames} />

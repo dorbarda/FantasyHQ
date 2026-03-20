@@ -8,26 +8,26 @@ export default function LuckTable({ entries }: LuckTableProps) {
   const sorted = [...entries].sort((a, b) => b.pf - a.pf);
 
   return (
-    <div className="border border-[#E4E7ED] rounded-lg overflow-hidden bg-white">
+    <div className="border border-[#1E3050] rounded-lg overflow-hidden bg-[#142035]">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-[#E4E7ED] bg-[#F3F4F6]">
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#6B7280]">
+      <div className="px-4 py-3 border-b border-[#1E3050] bg-[#0E1929]">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8]">
           Points For / Against
         </p>
-        <p className="text-[12px] text-[#6B7280] mt-0.5">
+        <p className="text-[12px] text-[#94A3B8] mt-0.5">
           Luck vs. performance
         </p>
       </div>
 
       {/* Column headers */}
-      <div className="grid grid-cols-[1fr_64px_64px_64px_56px_56px_68px] gap-x-2 px-4 py-2 border-b border-[#E4E7ED] bg-[#F3F4F6]">
-        <span className="text-[11px] font-semibold uppercase tracking-widest text-[#6B7280]">Team</span>
-        <span className="text-[11px] font-semibold uppercase tracking-widest text-[#6B7280] text-right">PF</span>
-        <span className="text-[11px] font-semibold uppercase tracking-widest text-[#6B7280] text-right">PA</span>
-        <span className="text-[11px] font-semibold uppercase tracking-widest text-[#6B7280] text-right">Diff</span>
-        <span className="text-[11px] font-semibold uppercase tracking-widest text-[#6B7280] text-right">PF/M</span>
-        <span className="text-[11px] font-semibold uppercase tracking-widest text-[#6B7280] text-right">PA/M</span>
-        <span className="text-[11px] font-semibold uppercase tracking-widest text-[#6B7280] text-right">Moves/M</span>
+      <div className="grid grid-cols-[1fr_64px_64px_64px_56px_56px_68px] gap-x-2 px-4 py-2 border-b border-[#1E3050] bg-[#0E1929]">
+        <span className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8]">Team</span>
+        <span className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] text-right">PF</span>
+        <span className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] text-right">PA</span>
+        <span className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] text-right">Diff</span>
+        <span className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] text-right">PF/M</span>
+        <span className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] text-right">PA/M</span>
+        <span className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] text-right">Moves/M</span>
       </div>
 
       {sorted.map((entry, idx) => (
@@ -36,38 +36,38 @@ export default function LuckTable({ entries }: LuckTableProps) {
           className={`
             grid grid-cols-[1fr_64px_64px_64px_56px_56px_68px] gap-x-2 items-center px-4 py-2.5
             transition-colors cursor-default
-            ${idx < sorted.length - 1 ? 'border-b border-[#E4E7ED]' : ''}
-            hover:bg-[#F8F9FB]
+            ${idx < sorted.length - 1 ? 'border-b border-[#1E3050]' : ''}
+            hover:bg-[#0B1628]
           `}
         >
           <div className="min-w-0">
-            <p className="text-[13px] font-semibold tracking-tight text-[#111827] truncate">{entry.teamName}</p>
-            <p className="text-[11px] text-[#9CA3AF] truncate">{entry.ownerName}</p>
+            <p className="text-[13px] font-semibold tracking-tight text-[#F0F4F8] truncate">{entry.teamName}</p>
+            <p className="text-[11px] text-[#64748B] truncate">{entry.ownerName}</p>
           </div>
 
-          <span className="text-[13px] font-medium text-[#111827] text-right tabular-nums">
+          <span className="text-[13px] font-medium text-[#F0F4F8] text-right tabular-nums">
             {entry.pf.toLocaleString()}
           </span>
 
-          <span className="text-[13px] font-medium text-[#111827] text-right tabular-nums">
+          <span className="text-[13px] font-medium text-[#F0F4F8] text-right tabular-nums">
             {entry.pa.toLocaleString()}
           </span>
 
           <span className={`text-[13px] font-semibold text-right tabular-nums ${
-            entry.diff > 0 ? 'text-[#059669]' : entry.diff < 0 ? 'text-[#DC2626]' : 'text-[#6B7280]'
+            entry.diff > 0 ? 'text-[#34D399]' : entry.diff < 0 ? 'text-[#F87171]' : 'text-[#94A3B8]'
           }`}>
             {entry.diff > 0 ? '+' : ''}{entry.diff.toLocaleString()}
           </span>
 
-          <span className="text-[13px] font-medium text-[#111827] text-right tabular-nums">
+          <span className="text-[13px] font-medium text-[#F0F4F8] text-right tabular-nums">
             {entry.pfPerMatch.toLocaleString()}
           </span>
 
-          <span className="text-[13px] font-medium text-[#6B7280] text-right tabular-nums">
+          <span className="text-[13px] font-medium text-[#94A3B8] text-right tabular-nums">
             {entry.paPerMatch.toLocaleString()}
           </span>
 
-          <span className="text-[13px] font-medium text-[#6B7280] text-right tabular-nums">
+          <span className="text-[13px] font-medium text-[#94A3B8] text-right tabular-nums">
             {entry.movesPerMatch.toFixed(2)}
           </span>
         </div>

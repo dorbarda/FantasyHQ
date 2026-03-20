@@ -8,8 +8,8 @@ export default async function TransactionsPage() {
   if (!hasEspnCredentials()) {
     return (
       <div className="py-5">
-        <h1 className="text-[28px] font-bold tracking-tight text-[#111827] mb-2">Transactions</h1>
-        <p className="text-[15px] text-[#6B7280]">ESPN credentials required.</p>
+        <h1 className="text-[28px] font-bold tracking-tight text-[#F0F4F8] mb-2">Transactions</h1>
+        <p className="text-[15px] text-[#94A3B8]">ESPN credentials required.</p>
       </div>
     );
   }
@@ -27,19 +27,19 @@ export default async function TransactionsPage() {
   return (
     <div className="py-5">
       <div className="mb-6">
-        <h1 className="text-[28px] font-bold tracking-tight text-[#111827]">Transactions</h1>
-        <p className="text-[15px] text-[#6B7280] font-medium">
+        <h1 className="text-[28px] font-bold tracking-tight text-[#F0F4F8]">Transactions</h1>
+        <p className="text-[15px] text-[#94A3B8] font-medium">
           Season pickup activity · most targeted players · busiest managers
         </p>
       </div>
 
       {error && (
-        <p className="text-[15px] text-[#6B7280]">Could not load transaction data — try again later.</p>
+        <p className="text-[15px] text-[#94A3B8]">Could not load transaction data — try again later.</p>
       )}
 
       {data && data.totalAdds === 0 && (
-        <div className="border border-[#E4E7ED] rounded-lg px-6 py-10 text-center">
-          <p className="text-[15px] font-bold text-[#111827]">No transactions yet this season</p>
+        <div className="border border-[#1E3050] rounded-lg px-6 py-10 text-center">
+          <p className="text-[15px] font-bold text-[#F0F4F8]">No transactions yet this season</p>
         </div>
       )}
 

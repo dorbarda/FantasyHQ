@@ -12,30 +12,30 @@ function shortName(name: string): string {
 }
 
 function cellColor(rec: H2HRecord): string {
-  if (rec.wins > rec.losses) return 'text-[#059669] font-semibold';
-  if (rec.wins < rec.losses) return 'text-[#DC2626] font-semibold';
-  return 'text-[#6B7280]';
+  if (rec.wins > rec.losses) return 'text-[#34D399] font-semibold';
+  if (rec.wins < rec.losses) return 'text-[#F87171] font-semibold';
+  return 'text-[#94A3B8]';
 }
 
 function cellBg(rec: H2HRecord): string {
-  if (rec.wins > rec.losses) return 'bg-[#059669]/[0.06]';
-  if (rec.wins < rec.losses) return 'bg-[#DC2626]/[0.04]';
+  if (rec.wins > rec.losses) return 'bg-[#34D399]/[0.06]';
+  if (rec.wins < rec.losses) return 'bg-[#F87171]/[0.04]';
   return '';
 }
 
 export default function H2HMatrix({ h2hMap, ownerNames }: H2HMatrixProps) {
   return (
-    <div className="border border-[#E4E7ED] rounded-lg overflow-hidden bg-white">
+    <div className="border border-[#1E3050] rounded-lg overflow-hidden bg-[#142035]">
       <div className="overflow-x-auto">
         <table className="w-full" style={{ minWidth: `${160 + ownerNames.length * 72}px` }}>
           <thead>
-            <tr className="border-b border-[#E4E7ED] bg-[#F3F4F6]">
-              <th className="sticky left-0 bg-[#F3F4F6] px-4 py-2 text-left w-[160px]">
-                <span className="text-[11px] font-semibold uppercase tracking-widest text-[#6B7280]">vs.</span>
+            <tr className="border-b border-[#1E3050] bg-[#0E1929]">
+              <th className="sticky left-0 bg-[#0E1929] px-4 py-2 text-left w-[160px]">
+                <span className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8]">vs.</span>
               </th>
               {ownerNames.map(col => (
                 <th key={col} className="px-2 py-2 text-center min-w-[72px]">
-                  <span className="text-[11px] font-semibold text-[#6B7280] whitespace-nowrap">
+                  <span className="text-[11px] font-semibold text-[#94A3B8] whitespace-nowrap">
                     {shortName(col)}
                   </span>
                 </th>
@@ -46,17 +46,17 @@ export default function H2HMatrix({ h2hMap, ownerNames }: H2HMatrixProps) {
             {ownerNames.map((row, rowIdx) => (
               <tr
                 key={row}
-                className={rowIdx < ownerNames.length - 1 ? 'border-b border-[#E4E7ED]' : ''}
+                className={rowIdx < ownerNames.length - 1 ? 'border-b border-[#1E3050]' : ''}
               >
-                <td className="sticky left-0 bg-white px-4 py-2.5 border-r border-[#E4E7ED]">
-                  <p className="text-[13px] font-semibold text-[#111827] whitespace-nowrap">
+                <td className="sticky left-0 bg-[#142035] px-4 py-2.5 border-r border-[#1E3050]">
+                  <p className="text-[13px] font-semibold text-[#F0F4F8] whitespace-nowrap">
                     {shortName(row)}
                   </p>
                 </td>
                 {ownerNames.map(col => {
                   if (row === col) {
                     return (
-                      <td key={col} className="px-2 py-2.5 text-center bg-[#F3F4F6]">
+                      <td key={col} className="px-2 py-2.5 text-center bg-[#0E1929]">
                         <span className="text-[14px] text-[#E4E7ED] font-bold">—</span>
                       </td>
                     );
@@ -75,11 +75,11 @@ export default function H2HMatrix({ h2hMap, ownerNames }: H2HMatrixProps) {
           </tbody>
         </table>
       </div>
-      <div className="px-4 py-2 border-t border-[#E4E7ED] bg-[#F3F4F6] flex items-center gap-4 flex-wrap">
-        <span className="text-[11px] text-[#6B7280]">Read as: Row owner&apos;s W&#8211;L record <em>against</em> column owner</span>
+      <div className="px-4 py-2 border-t border-[#1E3050] bg-[#0E1929] flex items-center gap-4 flex-wrap">
+        <span className="text-[11px] text-[#94A3B8]">Read as: Row owner&apos;s W&#8211;L record <em>against</em> column owner</span>
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-[#059669]/10" /><span className="text-[11px] text-[#6B7280]">Winning</span></div>
-          <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-[#DC2626]/10" /><span className="text-[11px] text-[#6B7280]">Losing</span></div>
+          <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-[#34D399]/10" /><span className="text-[11px] text-[#94A3B8]">Winning</span></div>
+          <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-[#F87171]/10" /><span className="text-[11px] text-[#94A3B8]">Losing</span></div>
         </div>
       </div>
     </div>

@@ -7,14 +7,14 @@ interface DraftBoardProps {
 // ─── Grade badge ──────────────────────────────────────────────────────────────
 
 const GRADE_STYLES: Record<DraftGrade, string> = {
-  'A+': 'bg-[#059669] text-white',
-  'A':  'bg-[#059669]/20 text-[#059669]',
-  'B':  'bg-[#2563EB]/15 text-[#2563EB]',
-  'C':  'bg-[#6B7280]/10 text-[#6B7280]',
-  'D':  'bg-[#D97706]/15 text-[#D97706]',
-  'F':  'bg-[#DC2626]/15 text-[#DC2626]',
-  'INJ': 'bg-[#6B7280]/10 text-[#6B7280]',
-  '?':  'bg-[#6B7280]/10 text-[#6B7280]',
+  'A+': 'bg-[#34D399] text-white',
+  'A':  'bg-[#34D399]/20 text-[#34D399]',
+  'B':  'bg-[#C8956C]/15 text-[#C8956C]',
+  'C':  'bg-[#6B7280]/10 text-[#94A3B8]',
+  'D':  'bg-[#FB923C]/15 text-[#FB923C]',
+  'F':  'bg-[#F87171]/15 text-[#F87171]',
+  'INJ': 'bg-[#6B7280]/10 text-[#94A3B8]',
+  '?':  'bg-[#6B7280]/10 text-[#94A3B8]',
 };
 
 function GradeBadge({ grade }: { grade: DraftGrade }) {
@@ -31,18 +31,18 @@ function PickCell({ pick, hasStats }: { pick: DraftPick; hasStats: boolean }) {
   const isINJ = pick.grade === 'INJ';
   return (
     <div className="h-full flex flex-col justify-between gap-1">
-      <p className="text-[9px] font-semibold text-[#9CA3AF] tabular-nums">#{pick.overallPick}</p>
+      <p className="text-[9px] font-semibold text-[#64748B] tabular-nums">#{pick.overallPick}</p>
 
       <div className="flex-1">
-        <p className={`text-[11px] font-semibold leading-tight truncate ${isINJ ? 'text-[#9CA3AF] line-through' : 'text-[#111827]'}`}>
+        <p className={`text-[11px] font-semibold leading-tight truncate ${isINJ ? 'text-[#64748B] line-through' : 'text-[#F0F4F8]'}`}>
           {pick.playerName}
         </p>
-        <p className="text-[10px] text-[#9CA3AF] truncate">{pick.position} · {pick.proTeam}</p>
+        <p className="text-[10px] text-[#64748B] truncate">{pick.position} · {pick.proTeam}</p>
       </div>
 
       <div className="flex items-center justify-between gap-1 mt-1">
         {hasStats && (
-          <p className={`text-[10px] tabular-nums ${isINJ ? 'text-[#9CA3AF]' : 'text-[#111827]'}`}>
+          <p className={`text-[10px] tabular-nums ${isINJ ? 'text-[#64748B]' : 'text-[#F0F4F8]'}`}>
             {isINJ ? 'DNP' : `${pick.fp.toFixed(0)} fp`}
           </p>
         )}
@@ -67,11 +67,11 @@ function Legend() {
     ['INJ','Did not play'],
   ];
   return (
-    <div className="flex flex-wrap gap-2 px-4 py-3 border-t border-[#E4E7ED] bg-[#F3F4F6]">
+    <div className="flex flex-wrap gap-2 px-4 py-3 border-t border-[#1E3050] bg-[#0E1929]">
       {items.map(([g, label]) => (
         <div key={g} className="flex items-center gap-1">
           <GradeBadge grade={g} />
-          <span className="text-[10px] text-[#6B7280]">{label}</span>
+          <span className="text-[10px] text-[#94A3B8]">{label}</span>
         </div>
       ))}
     </div>
@@ -92,22 +92,22 @@ export default function DraftBoard({ data }: DraftBoardProps) {
   const totalWidth = 64 + teams.length * CELL_W;
 
   return (
-    <div className="border border-[#E4E7ED] rounded-lg overflow-hidden bg-white">
+    <div className="border border-[#1E3050] rounded-lg overflow-hidden bg-[#142035]">
       <div className="overflow-x-auto">
         <table style={{ minWidth: totalWidth, width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr className="border-b border-[#E4E7ED] bg-[#F3F4F6]">
-              <th className="sticky left-0 bg-[#F3F4F6] w-[64px] px-2 py-2 text-left">
-                <span className="text-[10px] font-semibold uppercase tracking-widest text-[#6B7280]">Rd</span>
+            <tr className="border-b border-[#1E3050] bg-[#0E1929]">
+              <th className="sticky left-0 bg-[#0E1929] w-[64px] px-2 py-2 text-left">
+                <span className="text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8]">Rd</span>
               </th>
               {teams.map(t => (
                 <th
                   key={t.teamId}
                   style={{ width: CELL_W, minWidth: CELL_W }}
-                  className="px-2 py-2 border-l border-[#E4E7ED] text-left"
+                  className="px-2 py-2 border-l border-[#1E3050] text-left"
                 >
-                  <p className="text-[11px] font-semibold text-[#111827] truncate">{t.ownerName.split(' ')[0]}</p>
-                  <p className="text-[10px] text-[#9CA3AF] truncate">{t.teamName}</p>
+                  <p className="text-[11px] font-semibold text-[#F0F4F8] truncate">{t.ownerName.split(' ')[0]}</p>
+                  <p className="text-[10px] text-[#64748B] truncate">{t.teamName}</p>
                 </th>
               ))}
             </tr>
@@ -115,9 +115,9 @@ export default function DraftBoard({ data }: DraftBoardProps) {
 
           <tbody>
             {Array.from({ length: rounds }, (_, i) => i + 1).map(round => (
-              <tr key={round} className="border-b border-[#E4E7ED] last:border-0">
-                <td className="sticky left-0 bg-white px-2 py-1.5 border-r border-[#E4E7ED] align-middle">
-                  <span className="text-[11px] font-semibold text-[#9CA3AF]">{round}</span>
+              <tr key={round} className="border-b border-[#1E3050] last:border-0">
+                <td className="sticky left-0 bg-[#142035] px-2 py-1.5 border-r border-[#1E3050] align-middle">
+                  <span className="text-[11px] font-semibold text-[#64748B]">{round}</span>
                 </td>
 
                 {teams.map(t => {
@@ -126,7 +126,7 @@ export default function DraftBoard({ data }: DraftBoardProps) {
                     <td
                       key={t.teamId}
                       style={{ width: CELL_W, minWidth: CELL_W }}
-                      className="px-2 py-1.5 border-l border-[#E4E7ED] align-top h-[80px]"
+                      className="px-2 py-1.5 border-l border-[#1E3050] align-top h-[80px]"
                     >
                       {pick ? (
                         <PickCell pick={pick} hasStats={hasStats} />
@@ -144,8 +144,8 @@ export default function DraftBoard({ data }: DraftBoardProps) {
 
       {hasStats && <Legend />}
       {!hasStats && (
-        <div className="px-4 py-2 border-t border-[#E4E7ED] bg-[#F3F4F6]">
-          <span className="text-[11px] text-[#6B7280]">Player stats unavailable for this season — grades will appear once the season ends.</span>
+        <div className="px-4 py-2 border-t border-[#1E3050] bg-[#0E1929]">
+          <span className="text-[11px] text-[#94A3B8]">Player stats unavailable for this season — grades will appear once the season ends.</span>
         </div>
       )}
     </div>

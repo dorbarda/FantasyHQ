@@ -11,8 +11,8 @@ export default function StreakBadge({ streak }: StreakBadgeProps) {
       className={`
         inline-flex items-center rounded px-2 py-0.5 text-[12px] font-semibold
         ${isWin
-          ? 'bg-[#059669]/10 text-[#059669]'
-          : 'bg-[#DC2626]/10 text-[#DC2626]'
+          ? 'bg-[#34D399]/10 text-[#34D399]'
+          : 'bg-[#F87171]/10 text-[#F87171]'
         }
       `}
     >

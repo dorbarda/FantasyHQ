@@ -26,23 +26,23 @@ export default async function MatchupsPage() {
     <div className="py-5">
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h1 className="text-[28px] font-bold tracking-tight text-[#111827]">Matchups</h1>
-          <p className="text-[15px] text-[#6B7280] font-medium">Week {data.week} · Head-to-Head</p>
+          <h1 className="text-[28px] font-bold tracking-tight text-[#F0F4F8]">Matchups</h1>
+          <p className="text-[15px] text-[#94A3B8] font-medium">Week {data.week} · Head-to-Head</p>
         </div>
         {liveMatchups.length > 0 && (
           <div className="flex items-center gap-1.5">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#059669] opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#059669]"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#34D399] opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#34D399]"></span>
             </span>
-            <span className="text-[12px] font-semibold text-[#059669]">Live</span>
+            <span className="text-[12px] font-semibold text-[#34D399]">Live</span>
           </div>
         )}
       </div>
 
       {liveMatchups.length > 0 && (
         <section className="mb-5">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-[#6B7280] mb-3">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
             In Progress
           </p>
           <div className="flex flex-col gap-3">
@@ -54,12 +54,12 @@ export default async function MatchupsPage() {
       )}
 
       {liveMatchups.length > 0 && upcomingMatchups.length > 0 && (
-        <div className="border-b border-[#E4E7ED] mb-5" />
+        <div className="border-b border-[#1E3050] mb-5" />
       )}
 
       {upcomingMatchups.length > 0 && (
         <section>
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-[#6B7280] mb-3">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
             Projected
           </p>
           <div className="flex flex-col gap-3">

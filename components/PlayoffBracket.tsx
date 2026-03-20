@@ -14,21 +14,21 @@ function TeamRow({
   return (
     <div
       className={`flex items-center justify-between gap-3 px-3 py-2 rounded transition-colors
-        ${isWinner ? 'bg-[#059669]/10' : isLoser ? 'bg-transparent opacity-40' : 'bg-transparent'}
+        ${isWinner ? 'bg-[#34D399]/10' : isLoser ? 'bg-transparent opacity-40' : 'bg-transparent'}
       `}
     >
       <div className="flex items-center gap-2 min-w-0">
-        <span className="text-[10px] font-semibold text-[#9CA3AF] w-4 shrink-0">
+        <span className="text-[10px] font-semibold text-[#64748B] w-4 shrink-0">
           {team.seed > 0 ? `#${team.seed}` : ''}
         </span>
         <div className="min-w-0">
-          <p className={`text-[13px] font-semibold truncate ${isWinner ? 'text-[#059669]' : 'text-[#111827]'}`}>
+          <p className={`text-[13px] font-semibold truncate ${isWinner ? 'text-[#34D399]' : 'text-[#F0F4F8]'}`}>
             {team.ownerName.split(' ')[0]}
           </p>
-          <p className="text-[10px] text-[#9CA3AF] truncate">{team.teamName}</p>
+          <p className="text-[10px] text-[#64748B] truncate">{team.teamName}</p>
         </div>
       </div>
-      <span className={`text-[14px] font-bold tabular-nums shrink-0 ${isWinner ? 'text-[#059669]' : 'text-[#111827]'}`}>
+      <span className={`text-[14px] font-bold tabular-nums shrink-0 ${isWinner ? 'text-[#34D399]' : 'text-[#F0F4F8]'}`}>
         {team.score > 0 ? team.score.toFixed(1) : '—'}
       </span>
     </div>
@@ -47,32 +47,32 @@ function MatchupCard({ matchup, label }: { matchup: BracketMatchup; label?: stri
   return (
     <div
       className={`rounded-lg border overflow-hidden min-w-[200px]
-        ${isCurrentRound ? 'border-[#2563EB]/40 shadow-sm' : 'border-[#E4E7ED]'}
+        ${isCurrentRound ? 'border-[#C8956C]/40 shadow-sm' : 'border-[#1E3050]'}
       `}
     >
       {label && (
         <div className={`px-3 py-1 text-[10px] font-semibold uppercase tracking-widest
-          ${isCurrentRound ? 'bg-[#2563EB]/10 text-[#2563EB]' : 'bg-[#F3F4F6] text-[#6B7280]'}
+          ${isCurrentRound ? 'bg-[#C8956C]/10 text-[#C8956C]' : 'bg-[#0E1929] text-[#94A3B8]'}
         `}>
           {label}
         </div>
       )}
-      <div className="p-1 bg-white">
+      <div className="p-1 bg-[#142035]">
         <TeamRow team={home} isWinner={homeWon} isLoser={!ongoing && awayWon} />
-        <div className="border-t border-[#E4E7ED] mx-2" />
+        <div className="border-t border-[#1E3050] mx-2" />
         {away ? (
           <TeamRow team={away} isWinner={awayWon} isLoser={!ongoing && homeWon} />
         ) : (
-          <div className="px-3 py-2 text-[12px] text-[#9CA3AF] italic">BYE</div>
+          <div className="px-3 py-2 text-[12px] text-[#64748B] italic">BYE</div>
         )}
       </div>
       {ongoing && isCurrentRound && (
-        <div className="flex items-center gap-1 px-3 pb-2 bg-white">
+        <div className="flex items-center gap-1 px-3 pb-2 bg-[#142035]">
           <span className="relative flex h-1.5 w-1.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2563EB] opacity-75" />
-            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#2563EB]" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C8956C] opacity-75" />
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#C8956C]" />
           </span>
-          <span className="text-[10px] font-semibold text-[#2563EB]">Live</span>
+          <span className="text-[10px] font-semibold text-[#C8956C]">Live</span>
         </div>
       )}
     </div>
@@ -83,10 +83,10 @@ function MatchupCard({ matchup, label }: { matchup: BracketMatchup; label?: stri
 
 function Connector() {
   return (
-    <div className="flex items-center self-stretch px-1 text-[#E4E7ED] select-none">
+    <div className="flex items-center self-stretch px-1 text-[#1E3050] select-none">
       <svg width="20" height="100%" viewBox="0 0 20 60" fill="none" className="h-full min-h-[60px]">
-        <path d="M2 30 L18 30" stroke="#E4E7ED" strokeWidth="1.5" />
-        <path d="M14 26 L18 30 L14 34" stroke="#E4E7ED" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M2 30 L18 30" stroke="#2A4A7A" strokeWidth="1.5" />
+        <path d="M14 26 L18 30 L14 34" stroke="#2A4A7A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </div>
   );
@@ -96,7 +96,7 @@ function Connector() {
 
 function RoundLabel({ label }: { label: string }) {
   return (
-    <p className="text-[10px] font-semibold uppercase tracking-widest text-[#6B7280] mb-3">
+    <p className="text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
       {label}
     </p>
   );
@@ -125,12 +125,12 @@ export default function PlayoffBracket({ data }: { data: PlayoffBracketData }) {
     <div>
       {/* Main bracket header */}
       <div className="flex items-center gap-3 mb-5">
-        <h2 className="text-[22px] font-bold tracking-tight text-[#111827]">Playoff Bracket</h2>
+        <h2 className="text-[22px] font-bold tracking-tight text-[#F0F4F8]">Playoff Bracket</h2>
         {data.isPlayoffs && (
-          <span className="flex items-center gap-1.5 text-[12px] font-semibold text-[#2563EB]">
+          <span className="flex items-center gap-1.5 text-[12px] font-semibold text-[#C8956C]">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2563EB] opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#2563EB]" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C8956C] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#C8956C]" />
             </span>
             In Progress
           </span>
@@ -162,11 +162,11 @@ export default function PlayoffBracket({ data }: { data: PlayoffBracketData }) {
                 <Connector />
               ) : champion ? (
                 <div className="flex items-center pl-4 self-stretch">
-                  <div className="flex items-center gap-3 bg-[#059669]/10 border border-[#059669]/30 rounded-lg px-4 py-3">
+                  <div className="flex items-center gap-3 bg-[#34D399]/10 border border-[#059669]/30 rounded-lg px-4 py-3">
                     <div>
-                      <p className="text-[11px] font-semibold uppercase tracking-widest text-[#059669]">Champion</p>
-                      <p className="text-[15px] font-bold text-[#111827]">{champion.ownerName.split(' ')[0]}</p>
-                      <p className="text-[11px] text-[#6B7280]">{champion.teamName}</p>
+                      <p className="text-[11px] font-semibold uppercase tracking-widest text-[#34D399]">Champion</p>
+                      <p className="text-[15px] font-bold text-[#F0F4F8]">{champion.ownerName.split(' ')[0]}</p>
+                      <p className="text-[11px] text-[#94A3B8]">{champion.teamName}</p>
                     </div>
                   </div>
                 </div>
@@ -179,7 +179,7 @@ export default function PlayoffBracket({ data }: { data: PlayoffBracketData }) {
       {/* Consolation bracket */}
       {hasConsolation && (
         <div className="mt-8">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[#6B7280] mb-3">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
             3rd Place
           </p>
           <div className="flex flex-wrap gap-3">
@@ -192,8 +192,8 @@ export default function PlayoffBracket({ data }: { data: PlayoffBracketData }) {
 
       {/* Playoff seeds */}
       {winners.length > 0 && (
-        <div className="mt-8 border-t border-[#E4E7ED] pt-6">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[#6B7280] mb-3">
+        <div className="mt-8 border-t border-[#1E3050] pt-6">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
             Playoff Seeds
           </p>
           <div className="flex flex-wrap gap-2">
@@ -206,13 +206,13 @@ export default function PlayoffBracket({ data }: { data: PlayoffBracketData }) {
                 <div
                   key={team.teamId}
                   className={`flex items-center gap-2 px-3 py-1.5 rounded border text-[12px]
-                    ${champion?.teamId === team.teamId ? 'border-[#059669] bg-[#059669]/5' : 'border-[#E4E7ED] bg-white'}
+                    ${champion?.teamId === team.teamId ? 'border-[#059669] bg-[#34D399]/5' : 'border-[#1E3050] bg-[#142035]'}
                   `}
                 >
-                  <span className="text-[#9CA3AF] font-semibold">#{team.seed}</span>
-                  <span className="text-[#111827]">{team.ownerName.split(' ')[0]}</span>
+                  <span className="text-[#64748B] font-semibold">#{team.seed}</span>
+                  <span className="text-[#F0F4F8]">{team.ownerName.split(' ')[0]}</span>
                   {champion?.teamId === team.teamId && (
-                    <span className="text-[10px] font-semibold text-[#059669]">Champion</span>
+                    <span className="text-[10px] font-semibold text-[#34D399]">Champion</span>
                   )}
                 </div>
               ))}

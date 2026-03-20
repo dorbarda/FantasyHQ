@@ -8,18 +8,20 @@
 @tailwind utilities;
 
 :root {
-  --background: #F8F9FB;
-  --surface: #FFFFFF;
-  --border: #E4E7ED;
-  --nav-bg: #0F172A;
-  --foreground: #111827;
-  --foreground-secondary: #6B7280;
-  --foreground-muted: #9CA3AF;
-  --accent: #2563EB;
-  --accent-light: #EFF6FF;
-  --green: #059669;
-  --red: #DC2626;
-  --orange: #D97706;
+  --background: #0B1628;
+  --surface: #142035;
+  --surface-header: #0E1929;
+  --border: #1E3050;
+  --foreground: #F0F4F8;
+  --foreground-secondary: #94A3B8;
+  --foreground-muted: #64748B;
+  --accent: #C8956C;
+  --accent-hover: #D4A77C;
+  --accent-light: rgba(200,149,108,0.15);
+  --green: #34D399;
+  --red: #F87171;
+  --orange: #FB923C;
+  --blue: #60A5FA;
 }
 
 body {
@@ -29,8 +31,13 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-body:has(.page-home) {
-  background: #0F172A;
+/* Arena gradient for home page */
+.page-home {
+  background:
+    radial-gradient(ellipse 140% 40% at 50% -5%, rgba(42, 82, 152, 0.55) 0%, transparent 55%),
+    radial-gradient(ellipse 80% 70% at 10% 45%, rgba(20, 45, 95, 0.3) 0%, transparent 50%),
+    radial-gradient(ellipse 80% 70% at 90% 45%, rgba(20, 45, 95, 0.3) 0%, transparent 50%),
+    linear-gradient(180deg, #080e1c 0%, #0c1628 30%, #10203a 60%, #0b1525 100%);
 }
 
 @layer utilities {

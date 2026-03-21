@@ -61,51 +61,50 @@ function SemiFinalsCard({ matchups }: { matchups: BracketMatchup[] }) {
                 Matchup {idx + 1}
               </p>
 
-              <div className="space-y-2.5">
+              <div className="grid grid-cols-[1fr_auto_1fr] gap-2 items-stretch">
                 {(
                   [
                     { team: home, won: homeWon, leading: homeLeading, lost: awayWon },
                     away ? { team: away, won: awayWon, leading: awayLeading, lost: homeWon } : null,
                   ].filter(Boolean) as { team: import('@/lib/types').BracketTeam; won: boolean; leading: boolean; lost: boolean }[]
-                ).map(({ team, won, leading, lost }) => (
-                  <div
-                    key={team.teamId}
-                    className={`flex items-center justify-between gap-3 rounded-lg px-3 py-2 transition-colors ${
-                      won ? 'bg-[#10B981]/10' : lost ? 'opacity-40' : leading ? 'bg-white/5' : ''
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <span className="text-[10px] font-bold text-[#475569] shrink-0 w-5 text-center">
-                        #{team.seed}
-                      </span>
-                      {teamLogoSrc(team.teamName) && (
-                        <Image src={teamLogoSrc(team.teamName)!} alt={team.teamName} width={28} height={28} className="rounded-full object-cover object-top w-7 h-7 shrink-0" />
+                ).map(({ team, won, leading, lost }, ti) => (
+                  <>
+                    {ti === 1 && (
+                      <div key="vs" className="flex items-center justify-center px-1">
+                        <span className="text-[11px] font-bold text-[#334155]">VS</span>
+                      </div>
+                    )}
+                    <div
+                      key={team.teamId}
+                      className={`flex flex-col items-center gap-2 rounded-xl px-3 py-4 text-center transition-colors ${
+                        won ? 'bg-[#10B981]/10 border border-[#10B981]/20' : lost ? 'opacity-40 bg-white/3' : leading ? 'bg-white/5' : 'bg-white/3'
+                      }`}
+                    >
+                      <span className="text-[10px] font-bold text-[#475569]">#{team.seed}</span>
+                      {teamLogoSrc(team.teamName) ? (
+                        <Image src={teamLogoSrc(team.teamName)!} alt={team.teamName} width={56} height={56} className="rounded-full object-cover object-top w-14 h-14" />
+                      ) : (
+                        <div className="w-14 h-14 rounded-full bg-white/10" />
                       )}
-                      <div className="min-w-0">
-                        <p className={`text-[14px] font-bold leading-tight truncate ${won ? 'text-[#10B981]' : 'text-white'}`}>
+                      <div className="min-w-0 w-full">
+                        <p className={`text-[13px] font-bold leading-tight truncate ${won ? 'text-[#10B981]' : 'text-white'}`}>
                           {team.ownerName}
                         </p>
                         <p className="text-[10px] text-[#475569] truncate">{team.teamName}</p>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      {won && (
-                        <span className="text-[9px] font-bold bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/30 rounded px-1.5 py-0.5">
-                          ADV
-                        </span>
-                      )}
-                      {leading && team.score > 0 && (
-                        <span className="text-[9px] font-bold bg-[#C8956C]/20 text-[#C8956C] border border-[#C8956C]/30 rounded px-1.5 py-0.5">
-                          LEAD
-                        </span>
-                      )}
-                      <span className={`text-[20px] font-bold tabular-nums ${
+                      <p className={`text-[28px] font-bold tabular-nums leading-none ${
                         won ? 'text-[#10B981]' : leading ? 'text-white' : 'text-[#64748B]'
                       }`}>
                         {team.score > 0 ? team.score.toFixed(1) : '—'}
-                      </span>
+                      </p>
+                      {won && (
+                        <span className="text-[9px] font-bold bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/30 rounded px-2 py-0.5">ADV</span>
+                      )}
+                      {leading && team.score > 0 && (
+                        <span className="text-[9px] font-bold bg-[#C8956C]/20 text-[#C8956C] border border-[#C8956C]/30 rounded px-2 py-0.5">LEAD</span>
+                      )}
                     </div>
-                  </div>
+                  </>
                 ))}
               </div>
             </div>
@@ -271,29 +270,32 @@ function WeekScoreCards({ matchups, closestId, week }: { matchups: Matchup[]; cl
                 </span>
               </div>
 
-              {/* Teams + Scores */}
-              <div className="space-y-2">
+              {/* Teams + Scores — 2 side-by-side boxes */}
+              <div className="grid grid-cols-[1fr_auto_1fr] gap-2 items-stretch">
                 {[m.home, m.away].map((team, ti) => {
                   const isLeading = hasScores && (ti === 0 ? homeLeading : !homeLeading);
                   return (
-                    <div key={team.teamId} className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        {teamLogoSrc(team.teamName) && (
-                          <Image src={teamLogoSrc(team.teamName)!} alt={team.teamName} width={32} height={32} className="rounded-full object-cover object-top w-8 h-8 shrink-0" />
-                        )}
-                        <div>
-                          <p className={`text-[13px] font-bold leading-tight ${isLeading ? 'text-white' : 'text-white/60'}`}>
-                            {team.ownerName}
-                          </p>
-                          <p className="text-[10px] text-white/30 mt-0.5 truncate max-w-[140px]">
-                            {team.teamName}
-                          </p>
+                    <>
+                      {ti === 1 && (
+                        <div key="vs" className="flex items-center justify-center">
+                          <span className="text-[10px] font-bold text-white/20">VS</span>
                         </div>
+                      )}
+                      <div key={team.teamId} className={`flex flex-col items-center gap-1.5 rounded-lg p-3 text-center ${isLeading ? 'bg-white/8' : 'bg-white/3'}`}>
+                        {teamLogoSrc(team.teamName) ? (
+                          <Image src={teamLogoSrc(team.teamName)!} alt={team.teamName} width={48} height={48} className="rounded-full object-cover object-top w-12 h-12" />
+                        ) : (
+                          <div className="w-12 h-12 rounded-full bg-white/10" />
+                        )}
+                        <p className={`text-[12px] font-bold leading-tight truncate w-full ${isLeading ? 'text-white' : 'text-white/60'}`}>
+                          {team.ownerName}
+                        </p>
+                        <p className="text-[9px] text-white/30 truncate w-full">{team.teamName}</p>
+                        <p className={`text-[24px] font-bold tabular-nums leading-none ${isLeading ? 'text-white' : 'text-white/40'}`}>
+                          {hasScores ? team.actualScore.toFixed(1) : '—'}
+                        </p>
                       </div>
-                      <p className={`text-[22px] font-bold tabular-nums leading-none ${isLeading ? 'text-white' : 'text-white/50'}`}>
-                        {hasScores ? team.actualScore.toFixed(1) : '—'}
-                      </p>
-                    </div>
+                    </>
                   );
                 })}
               </div>

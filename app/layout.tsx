@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import Header from '@/components/Header';
+import Sidebar from '@/components/Sidebar';
 
 export const metadata: Metadata = {
   title: 'Fantasy HQ',
@@ -14,9 +14,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-[#0B1628] text-[#F0F4F8]">
-        <Header />
-        <main className="max-w-[1600px] mx-auto px-6 xl:px-12">
+      <body className="bg-[#F8FAFC] text-[#0F172A] flex min-h-screen">
+        <Sidebar />
+        <main className="flex-1 ml-[220px] min-h-screen">
           {children}
         </main>
       </body>

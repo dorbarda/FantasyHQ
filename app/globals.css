@@ -8,20 +8,34 @@
 @tailwind utilities;
 
 :root {
-  --background: #0B1628;
-  --surface: #142035;
-  --surface-header: #0E1929;
-  --border: #1E3050;
-  --foreground: #F0F4F8;
-  --foreground-secondary: #94A3B8;
-  --foreground-muted: #64748B;
-  --accent: #C8956C;
-  --accent-hover: #D4A77C;
-  --accent-light: rgba(200,149,108,0.15);
-  --green: #34D399;
-  --red: #F87171;
-  --orange: #FB923C;
-  --blue: #60A5FA;
+  /* Main surface */
+  --background:           #F8FAFC;
+  --surface:              #FFFFFF;
+  --surface-secondary:    #F1F5F9;
+  --border:               #E2E8F0;
+
+  /* Text */
+  --foreground:           #0F172A;
+  --foreground-secondary: #475569;
+  --foreground-muted:     #94A3B8;
+
+  /* Sidebar (stays dark) */
+  --sidebar-bg:           #0B1628;
+  --sidebar-active:       #1E3A5F;
+  --sidebar-border:       #1E3050;
+  --sidebar-text:         #CBD5E1;
+  --sidebar-text-active:  #F0F4F8;
+
+  /* Accent */
+  --accent:               #C8956C;
+  --accent-hover:         #D4A77C;
+  --accent-light:         rgba(200,149,108,0.15);
+
+  /* Status */
+  --green:                #10B981;
+  --red:                  #EF4444;
+  --orange:               #F59E0B;
+  --blue:                 #3B82F6;
 }
 
 body {
@@ -29,15 +43,6 @@ body {
   background: var(--background);
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
-}
-
-/* Arena gradient for home page */
-.page-home {
-  background:
-    radial-gradient(ellipse 140% 40% at 50% -5%, rgba(42, 82, 152, 0.55) 0%, transparent 55%),
-    radial-gradient(ellipse 80% 70% at 10% 45%, rgba(20, 45, 95, 0.3) 0%, transparent 50%),
-    radial-gradient(ellipse 80% 70% at 90% 45%, rgba(20, 45, 95, 0.3) 0%, transparent 50%),
-    linear-gradient(180deg, #080e1c 0%, #0c1628 30%, #10203a 60%, #0b1525 100%);
 }
 
 @layer utilities {

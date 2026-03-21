@@ -1,236 +1,369 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { hasEspnCredentials, getMatchups, getStandings } from '@/lib/espn';
+import matchupsJson from '@/data/matchups.json';
+import standingsJson from '@/data/standings.json';
+import type { Matchup, MatchupsData, StandingEntry } from '@/lib/types';
+import ScoreStrip from '@/components/ScoreStrip';
 
-// ─── Icons ────────────────────────────────────────────────────────────────────
+export const revalidate = 1800;
 
-function LeagueIcon() {
-  return (
-    <svg viewBox="0 0 48 48" fill="none" className="w-full h-full">
-      <rect x="8" y="28" width="8" height="12" rx="1.5" fill="#C8956C" opacity="0.9"/>
-      <rect x="20" y="18" width="8" height="22" rx="1.5" fill="#C8956C"/>
-      <rect x="32" y="22" width="8" height="18" rx="1.5" fill="#C8956C" opacity="0.7"/>
-      <path d="M9 26l11-10 10 6 11-10" stroke="#E8B88A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  );
+// ─── Closest matchup ──────────────────────────────────────────────────────────
+
+function findClosestMatchup(matchups: Matchup[]): Matchup {
+  return matchups.reduce((closest, m) => {
+    const diff = Math.abs(m.home.actualScore - m.away.actualScore);
+    const closestDiff = Math.abs(closest.home.actualScore - closest.away.actualScore);
+    return diff < closestDiff ? m : closest;
+  });
 }
 
-function MatchupsIcon() {
+// ─── Closest Matchup Hero Card ────────────────────────────────────────────────
+
+function ClosestMatchupCard({ matchup, week }: { matchup: Matchup; week: number }) {
+  const { home, away, isFinal, isLive } = matchup;
+  const margin = Math.abs(home.actualScore - away.actualScore);
+  const leader = home.actualScore >= away.actualScore ? home : away;
+  const trailer = home.actualScore >= away.actualScore ? away : home;
+  const hasScores = home.actualScore > 0 || away.actualScore > 0;
+
   return (
-    <svg viewBox="0 0 48 48" fill="none" className="w-full h-full">
-      <circle cx="24" cy="24" r="12" stroke="#C8956C" strokeWidth="2"/>
-      <path d="M12 24h24" stroke="#C8956C" strokeWidth="2"/>
-      <path d="M24 12c3.5 4 5.5 8 5.5 12s-2 8-5.5 12" stroke="#C8956C" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M24 12c-3.5 4-5.5 8-5.5 12s2 8 5.5 12" stroke="#C8956C" strokeWidth="2" strokeLinecap="round"/>
-      <circle cx="14" cy="16" r="3" fill="#E8B88A" opacity="0.8"/>
-      <circle cx="34" cy="16" r="3" fill="#E8B88A" opacity="0.8"/>
-      <path d="M11 34l4-4M33 34l4-4" stroke="#C8956C" strokeWidth="1.5" strokeLinecap="round"/>
-    </svg>
-  );
-}
-
-function DepthIcon() {
-  return (
-    <svg viewBox="0 0 48 48" fill="none" className="w-full h-full">
-      <rect x="8" y="10" width="32" height="6" rx="2" fill="#C8956C"/>
-      <rect x="8" y="21" width="24" height="5" rx="2" fill="#C8956C" opacity="0.7"/>
-      <rect x="8" y="31" width="18" height="5" rx="2" fill="#C8956C" opacity="0.5"/>
-      <circle cx="38" cy="33.5" r="4.5" stroke="#E8B88A" strokeWidth="1.5"/>
-      <path d="M36.5 33.5h3M38 32v3" stroke="#E8B88A" strokeWidth="1.5" strokeLinecap="round"/>
-    </svg>
-  );
-}
-
-function DraftIcon() {
-  return (
-    <svg viewBox="0 0 48 48" fill="none" className="w-full h-full">
-      <rect x="12" y="8" width="24" height="32" rx="3" stroke="#C8956C" strokeWidth="2"/>
-      <path d="M20 8v4h8V8" stroke="#C8956C" strokeWidth="2" strokeLinejoin="round"/>
-      <path d="M18 22h12M18 28h9" stroke="#C8956C" strokeWidth="1.5" strokeLinecap="round"/>
-      <path d="M18 16h12" stroke="#E8B88A" strokeWidth="1.5" strokeLinecap="round"/>
-      <path d="M30 32l2 2 4-4" stroke="#34D399" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  );
-}
-
-function HistoryIcon() {
-  return (
-    <svg viewBox="0 0 48 48" fill="none" className="w-full h-full">
-      <path d="M16 10h16v14c0 6-4 10-8 12-4-2-8-6-8-12V10z" stroke="#C8956C" strokeWidth="2" strokeLinejoin="round"/>
-      <path d="M20 22l2.5 2.5L28 19" stroke="#E8B88A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M24 36v4M18 40h12" stroke="#C8956C" strokeWidth="2" strokeLinecap="round"/>
-    </svg>
-  );
-}
-
-function NBALiveIcon() {
-  return (
-    <svg viewBox="0 0 48 48" fill="none" className="w-full h-full">
-      <rect x="8" y="12" width="32" height="20" rx="3" stroke="#C8956C" strokeWidth="2"/>
-      <rect x="18" y="32" width="12" height="4" fill="#C8956C" opacity="0.5"/>
-      <path d="M14 36h20" stroke="#C8956C" strokeWidth="2" strokeLinecap="round"/>
-      <circle cx="24" cy="22" r="1.5" fill="#F87171"/>
-      <rect x="13" y="17" width="10" height="6" rx="1" fill="#F87171" opacity="0.2"/>
-      <text x="13.5" y="22" fontSize="4.5" fontWeight="bold" fill="#F87171" fontFamily="sans-serif">LIVE</text>
-      <path d="M30 18v8M33 19.5v5M27 20v4" stroke="#E8B88A" strokeWidth="1.5" strokeLinecap="round"/>
-    </svg>
-  );
-}
-
-function StatsIcon() {
-  return (
-    <svg viewBox="0 0 48 48" fill="none" className="w-full h-full">
-      <path d="M10 36l9-10 7 5 12-16" stroke="#C8956C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      <circle cx="36" cy="14" r="7" stroke="#C8956C" strokeWidth="2" opacity="0.8"/>
-      <path d="M36 14l4.5-4.5" stroke="#E8B88A" strokeWidth="1.5" strokeLinecap="round"/>
-      <path d="M36 11v3h3" stroke="#C8956C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      <circle cx="10" cy="36" r="2" fill="#C8956C"/>
-      <circle cx="19" cy="26" r="2" fill="#C8956C"/>
-      <circle cx="26" cy="31" r="2" fill="#C8956C"/>
-    </svg>
-  );
-}
-
-function AnalysisIcon() {
-  return (
-    <svg viewBox="0 0 48 48" fill="none" className="w-full h-full">
-      <circle cx="24" cy="24" r="14" stroke="#C8956C" strokeWidth="2" opacity="0.3"/>
-      <path d="M14 24h4l3-7 4 14 3-10 3 6 3-3h4" stroke="#C8956C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      <circle cx="14" cy="24" r="2" fill="#E8B88A"/>
-      <circle cx="38" cy="24" r="2" fill="#E8B88A"/>
-    </svg>
-  );
-}
-
-function MovesIcon() {
-  return (
-    <svg viewBox="0 0 48 48" fill="none" className="w-full h-full">
-      <rect x="8" y="13" width="10" height="5" rx="1.5" fill="#E8B88A" opacity="0.8"/>
-      <rect x="30" y="13" width="10" height="5" rx="1.5" fill="#C8956C" opacity="0.8"/>
-      <path d="M18 15.5h6l-2-2M24 15.5l-2 2" stroke="#C8956C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M30 15.5h-6" stroke="#C8956C" strokeWidth="1.5" strokeLinecap="round"/>
-      <rect x="8" y="30" width="10" height="5" rx="1.5" fill="#C8956C" opacity="0.8"/>
-      <rect x="30" y="30" width="10" height="5" rx="1.5" fill="#E8B88A" opacity="0.8"/>
-      <path d="M18 32.5h12M26 30.5l2 2-2 2" stroke="#E8B88A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  );
-}
-
-function RecordsIcon() {
-  return (
-    <svg viewBox="0 0 48 48" fill="none" className="w-full h-full">
-      <path d="M24 8l3.5 7.5 8 1-6 5.5 1.5 8L24 26l-7 4 1.5-8-6-5.5 8-1z" stroke="#C8956C" strokeWidth="2" strokeLinejoin="round" fill="#C8956C" fillOpacity="0.15"/>
-      <path d="M18 34v6M30 34v6M15 40h18" stroke="#C8956C" strokeWidth="1.5" strokeLinecap="round"/>
-    </svg>
-  );
-}
-
-function RulesIcon() {
-  return (
-    <svg viewBox="0 0 48 48" fill="none" className="w-full h-full">
-      <path d="M10 12c4-2 8-2 14 0 6-2 10-2 14 0v24c-4-2-8-2-14 0-6-2-10-2-14 0V12z" stroke="#C8956C" strokeWidth="2" strokeLinejoin="round"/>
-      <path d="M24 12v24" stroke="#C8956C" strokeWidth="1.5" strokeDasharray="2 2"/>
-      <path d="M16 18h5M16 23h5M16 28h5" stroke="#E8B88A" strokeWidth="1.5" strokeLinecap="round"/>
-      <path d="M27 18h5M27 23h5M27 28h5" stroke="#E8B88A" strokeWidth="1.5" strokeLinecap="round"/>
-    </svg>
-  );
-}
-
-// ─── Nav card ─────────────────────────────────────────────────────────────────
-
-interface Section {
-  href: string;
-  label: string;
-  desc: string;
-  Icon: () => JSX.Element;
-}
-
-function NavCard({ section }: { section: Section }) {
-  const { href, label, desc, Icon } = section;
-  return (
-    <Link
-      href={href}
-      className="group flex items-center gap-4 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm px-4 py-4 transition-all duration-200 hover:bg-white/10 hover:border-[#C8956C]/40 hover:scale-[1.02] active:scale-[0.98]"
-    >
-      <div className="w-12 h-12 shrink-0 opacity-90 group-hover:opacity-100 transition-opacity">
-        <Icon />
+    <div className="rounded-2xl overflow-hidden bg-[#0B1628] text-white">
+      {/* Header bar */}
+      <div className="flex items-center justify-between px-5 py-3 border-b border-white/10">
+        <div className="flex items-center gap-2">
+          <svg viewBox="0 0 12 12" fill="#C8956C" className="w-3 h-3">
+            <path d="M6 1l1.3 3h3l-2.4 1.8.9 3L6 7l-2.8 1.8.9-3L1.7 4h3z"/>
+          </svg>
+          <span className="text-[12px] font-semibold text-[#C8956C] uppercase tracking-wider">
+            Week {week} · Closest Game
+          </span>
+        </div>
+        {isLive && (
+          <div className="flex items-center gap-1.5">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75" />
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#10B981]" />
+            </span>
+            <span className="text-[11px] font-semibold text-[#10B981]">Live</span>
+          </div>
+        )}
+        {isFinal && (
+          <span className="text-[11px] font-semibold text-[#94A3B8]">Final</span>
+        )}
       </div>
-      <div className="min-w-0">
-        <p className="text-[16px] font-bold text-[#F0F4F8] leading-tight group-hover:text-[#C8956C] transition-colors">
-          {label}
-        </p>
-        <p className="text-[12px] text-[#64748B] leading-snug mt-0.5 truncate">
-          {desc}
-        </p>
+
+      {/* Scores */}
+      <div className="px-5 py-6">
+        {hasScores ? (
+          <div className="flex items-center justify-center gap-4">
+            {/* Leader */}
+            <div className="flex-1 text-right">
+              <p className="text-[13px] font-medium text-[#94A3B8] mb-1">{leader.ownerName}</p>
+              <p className="text-[48px] font-bold tabular-nums leading-none text-white">
+                {leader.actualScore.toFixed(1)}
+              </p>
+              <p className="text-[12px] text-[#475569] mt-1 truncate">{leader.teamName}</p>
+            </div>
+
+            {/* Divider */}
+            <div className="flex flex-col items-center shrink-0 px-2">
+              <span className="text-[20px] font-light text-[#334155]">—</span>
+              <div className="mt-2 px-3 py-1 rounded-full bg-[#C8956C]/20 border border-[#C8956C]/30">
+                <span className="text-[12px] font-bold text-[#C8956C]">
+                  ±{margin.toFixed(1)}
+                </span>
+              </div>
+            </div>
+
+            {/* Trailer */}
+            <div className="flex-1 text-left">
+              <p className="text-[13px] font-medium text-[#94A3B8] mb-1">{trailer.ownerName}</p>
+              <p className="text-[48px] font-bold tabular-nums leading-none text-[#64748B]">
+                {trailer.actualScore.toFixed(1)}
+              </p>
+              <p className="text-[12px] text-[#475569] mt-1 truncate">{trailer.teamName}</p>
+            </div>
+          </div>
+        ) : (
+          <div className="text-center py-4">
+            <p className="text-[15px] text-[#475569]">{home.ownerName} vs {away.ownerName}</p>
+            <p className="text-[12px] text-[#334155] mt-1">Scores not yet available</p>
+          </div>
+        )}
       </div>
-    </Link>
+
+      {/* Projected row */}
+      {!isFinal && (home.projectedScore > 0 || away.projectedScore > 0) && (
+        <div className="flex items-center justify-between px-5 py-3 border-t border-white/5 bg-white/3">
+          <div className="text-right flex-1">
+            <span className="text-[11px] text-[#475569]">Proj </span>
+            <span className="text-[12px] font-semibold text-[#64748B] tabular-nums">
+              {(home.actualScore >= away.actualScore ? leader : trailer).projectedScore.toFixed(1)}
+            </span>
+          </div>
+          <span className="text-[10px] text-[#334155] px-3">PROJECTED</span>
+          <div className="text-left flex-1">
+            <span className="text-[11px] text-[#475569]">Proj </span>
+            <span className="text-[12px] font-semibold text-[#64748B] tabular-nums">
+              {(home.actualScore >= away.actualScore ? trailer : leader).projectedScore.toFixed(1)}
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
-// ─── Sections ─────────────────────────────────────────────────────────────────
+// ─── Weekly Score Cards (Statmuse-style) ─────────────────────────────────────
 
-const LEFT_SECTIONS: Section[] = [
-  { href: '/league',        label: 'League Now',   desc: 'Current Standings & Team Rankings.',           Icon: LeagueIcon   },
-  { href: '/matchups',      label: 'Matchups',     desc: 'Weekly Head-to-Head & Playoff Outlook.',       Icon: MatchupsIcon },
-  { href: '/matchup-depth', label: 'Depth',        desc: 'Full Roster & Player Status.',                 Icon: DepthIcon    },
-  { href: '/draft',         label: 'Draft Board',  desc: 'Past Draft & Pick Tracking.',                  Icon: DraftIcon    },
-  { href: '/history',       label: 'History',      desc: 'League Champion Hall of Fame.',                Icon: HistoryIcon  },
+const CARD_COLORS = [
+  { bg: '#1E3A5F', border: '#2D5A8E' },  // navy
+  { bg: '#7F1D1D', border: '#991B1B' },  // deep red
+  { bg: '#064E3B', border: '#065F46' },  // teal
+  { bg: '#78350F', border: '#92400E' },  // amber
+  { bg: '#312E81', border: '#3730A3' },  // indigo
+  { bg: '#134E4A', border: '#115E59' },  // cyan
 ];
 
-const RIGHT_SECTIONS: Section[] = [
-  { href: '/nba',          label: 'NBA Live',     desc: 'Live Scores & Real-Time Stats.',               Icon: NBALiveIcon    },
-  { href: '/stats',        label: 'Season Stats', desc: 'Full Season Performance & Leaderboards.',      Icon: StatsIcon      },
-  { href: '/analysis',     label: 'Analysis',     desc: 'Luck, Consistency & Depth Insights.',          Icon: AnalysisIcon   },
-  { href: '/transactions', label: 'Moves',        desc: 'Completed Player Transactions & Trends.',      Icon: MovesIcon      },
-  { href: '/records',      label: 'Records',      desc: 'All-Time League Records & Milestones.',        Icon: RecordsIcon    },
-  { href: '/rules',        label: 'Rules',        desc: 'Complete League Rules & Settings.',            Icon: RulesIcon      },
+function WeekScoreCards({ matchups, closestId, week }: { matchups: Matchup[]; closestId: string; week: number }) {
+  const others = matchups.filter((m) => m.id !== closestId);
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8]">
+          All Matchups · Week {week}
+        </p>
+        <Link href="/matchups" className="text-[12px] font-medium text-[#C8956C] hover:text-[#D4A77C] transition-colors">
+          See all →
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {others.map((m, i) => {
+          const color = CARD_COLORS[i % CARD_COLORS.length];
+          const homeLeading = m.home.actualScore >= m.away.actualScore;
+          const hasScores = m.home.actualScore > 0 || m.away.actualScore > 0;
+
+          return (
+            <div
+              key={m.id}
+              style={{ backgroundColor: color.bg, borderColor: color.border }}
+              className="rounded-xl border p-4 flex flex-col gap-3"
+            >
+              {/* Status */}
+              <div className="flex items-center gap-1.5">
+                {m.isLive && (
+                  <span className="relative flex h-1.5 w-1.5 mr-0.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75" />
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#10B981]" />
+                  </span>
+                )}
+                <span className={`text-[10px] font-semibold uppercase tracking-wider ${
+                  m.isLive ? 'text-[#10B981]' : m.isFinal ? 'text-white/40' : 'text-white/30'
+                }`}>
+                  {m.isLive ? 'Live' : m.isFinal ? 'Final' : 'Upcoming'}
+                </span>
+              </div>
+
+              {/* Teams + Scores */}
+              <div className="space-y-2">
+                {[m.home, m.away].map((team, ti) => {
+                  const isLeading = hasScores && (ti === 0 ? homeLeading : !homeLeading);
+                  return (
+                    <div key={team.teamId} className="flex items-center justify-between">
+                      <div>
+                        <p className={`text-[13px] font-bold leading-tight ${isLeading ? 'text-white' : 'text-white/60'}`}>
+                          {team.ownerName}
+                        </p>
+                        <p className="text-[10px] text-white/30 mt-0.5 truncate max-w-[140px]">
+                          {team.teamName}
+                        </p>
+                      </div>
+                      <p className={`text-[22px] font-bold tabular-nums leading-none ${isLeading ? 'text-white' : 'text-white/50'}`}>
+                        {hasScores ? team.actualScore.toFixed(1) : '—'}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* H2H record */}
+              {m.h2h && (
+                <p className="text-[10px] text-white/25 border-t border-white/10 pt-2 mt-1">
+                  H2H: {m.home.ownerName} {m.h2h.homeWins}–{m.h2h.awayWins} {m.away.ownerName}
+                </p>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ─── Standings Panel ──────────────────────────────────────────────────────────
+
+function HomeStandingsPanel({ standings }: { standings: StandingEntry[] }) {
+  const top = standings.slice(0, 8);
+
+  return (
+    <div className="bg-white rounded-xl border border-[#E2E8F0] overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-[#E2E8F0]">
+        <p className="text-[13px] font-bold text-[#0F172A]">Standings</p>
+        <Link href="/league" className="text-[12px] font-medium text-[#C8956C] hover:text-[#D4A77C] transition-colors">
+          Full table →
+        </Link>
+      </div>
+
+      <div className="divide-y divide-[#F1F5F9]">
+        {top.map((entry) => {
+          const isTop3 = entry.rank <= 3;
+          const rankColor = entry.rank === 1 ? '#F59E0B' : entry.rank === 2 ? '#94A3B8' : entry.rank === 3 ? '#C8956C' : '#CBD5E1';
+
+          return (
+            <div key={entry.teamId} className="flex items-center gap-3 px-4 py-2.5 hover:bg-[#F8FAFC] transition-colors">
+              <span
+                className="text-[12px] font-bold w-5 text-center shrink-0 tabular-nums"
+                style={{ color: rankColor }}
+              >
+                {entry.rank}
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className={`text-[13px] font-semibold leading-tight truncate ${isTop3 ? 'text-[#0F172A]' : 'text-[#334155]'}`}>
+                  {entry.ownerName}
+                </p>
+                <p className="text-[10px] text-[#94A3B8] truncate">{entry.teamName}</p>
+              </div>
+              <div className="text-right shrink-0">
+                <p className="text-[12px] font-bold tabular-nums text-[#0F172A]">
+                  {entry.wins}–{entry.losses}
+                </p>
+                <p className="text-[10px] text-[#94A3B8] tabular-nums">
+                  {entry.points.toFixed(0)} pts
+                </p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ─── Quick Links ──────────────────────────────────────────────────────────────
+
+const QUICK_LINKS = [
+  { href: '/draft',     label: 'Draft',    emoji: '📋' },
+  { href: '/stats',     label: 'Stats',    emoji: '📊' },
+  { href: '/records',   label: 'Records',  emoji: '🏆' },
+  { href: '/nba',       label: 'NBA Live', emoji: '🏀' },
+  { href: '/analysis',  label: 'Analysis', emoji: '🔬' },
+  { href: '/history',   label: 'History',  emoji: '📖' },
 ];
+
+function HomeQuickLinks() {
+  return (
+    <div className="bg-white rounded-xl border border-[#E2E8F0] p-4">
+      <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
+        Quick Links
+      </p>
+      <div className="grid grid-cols-3 gap-2">
+        {QUICK_LINKS.map(({ href, label, emoji }) => (
+          <Link
+            key={href}
+            href={href}
+            className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-[#F1F5F9] transition-colors text-center group"
+          >
+            <span className="text-[18px]">{emoji}</span>
+            <span className="text-[11px] font-medium text-[#475569] group-hover:text-[#0F172A] transition-colors">
+              {label}
+            </span>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
-export default function HomePage() {
-  return (
-    <div className="page-home min-h-screen -mx-4 xl:-mx-8 px-4 xl:px-8 pt-10 pb-10 flex flex-col">
+export default async function HomePage() {
+  // Fetch data
+  let matchupsData: MatchupsData = matchupsJson as MatchupsData;
+  let standings: StandingEntry[] = standingsJson as StandingEntry[];
 
-      {/* Logo */}
-      <div className="flex justify-center mb-8">
-        <Image
-          src="/logo.png"
-          alt="Shaqtin Fantasy HQ"
-          width={340}
-          height={130}
-          className="object-contain drop-shadow-2xl"
-          priority
+  if (hasEspnCredentials()) {
+    const [matchupsResult, standingsResult] = await Promise.allSettled([
+      getMatchups(),
+      getStandings(),
+    ]);
+    if (matchupsResult.status === 'fulfilled') matchupsData = matchupsResult.value;
+    if (standingsResult.status === 'fulfilled') standings = standingsResult.value;
+  }
+
+  const { matchups, week } = matchupsData;
+  const closestMatchup = matchups.length > 0 ? findClosestMatchup(matchups) : null;
+
+  return (
+    <div className="min-h-screen bg-[#F8FAFC]">
+      {/* Score strip */}
+      {matchups.length > 0 && (
+        <ScoreStrip
+          matchups={matchups}
+          week={week}
+          closestMatchupId={closestMatchup?.id ?? ''}
         />
+      )}
+
+      {/* Logo + title */}
+      <div className="px-6 pt-6 pb-4">
+        <div className="flex items-center gap-4">
+          <Image
+            src="/logo.png"
+            alt="Fantasy HQ"
+            width={160}
+            height={60}
+            className="object-contain"
+            priority
+          />
+          <div className="hidden sm:block h-8 w-px bg-[#E2E8F0]" />
+          <div className="hidden sm:block">
+            <p className="text-[13px] font-medium text-[#475569]">Season 2025–26</p>
+            <p className="text-[12px] text-[#94A3B8]">Private NBA Fantasy League</p>
+          </div>
+        </div>
       </div>
 
-      {/* Two-column nav */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-4 max-w-[900px] mx-auto w-full">
+      {/* Main grid */}
+      <div className="px-6 pb-8 grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-6 max-w-[1400px]">
 
         {/* Left column */}
-        <div className="space-y-2.5">
-          <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#64748B] mb-3 px-1">
-            Manage Your Team
-          </p>
-          {LEFT_SECTIONS.map((s) => (
-            <NavCard key={s.href} section={s} />
-          ))}
+        <div className="space-y-6">
+          {closestMatchup ? (
+            <ClosestMatchupCard matchup={closestMatchup} week={week} />
+          ) : (
+            <div className="rounded-2xl bg-[#0B1628] p-8 text-center">
+              <p className="text-[#475569]">No matchup data available.</p>
+            </div>
+          )}
+
+          {matchups.length > 1 && closestMatchup && (
+            <WeekScoreCards
+              matchups={matchups}
+              closestId={closestMatchup.id}
+              week={week}
+            />
+          )}
         </div>
 
         {/* Right column */}
-        <div className="space-y-2.5">
-          <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#64748B] mb-3 px-1">
-            League Data
-          </p>
-          {RIGHT_SECTIONS.map((s) => (
-            <NavCard key={s.href} section={s} />
-          ))}
+        <div className="space-y-4">
+          <HomeStandingsPanel standings={standings} />
+          <HomeQuickLinks />
         </div>
       </div>
-
-      {/* Footer */}
-      <p className="text-center text-[11px] text-[#1E3050] mt-8">
-        © {new Date().getFullYear()} Shaqtin Fantasy HQ
-      </p>
     </div>
   );
 }

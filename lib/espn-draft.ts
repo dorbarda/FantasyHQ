@@ -66,11 +66,25 @@ function extractStats(player: any): { fp: number; pts: number; gp: number } {
       .sort((a: any, b: any) => (b.stats?.['0'] || 0) - (a.stats?.['0'] || 0))[0];
 
   const s = seasonStat?.stats || {};
-  const pts = Math.round((s['0']  || 0) * 10) / 10;
-  const reb = Math.round((s['6']  || 0) * 10) / 10;
-  const ast = Math.round((s['3']  || 0) * 10) / 10;
-  const tpm = Math.round((s['17'] || 0) * 10) / 10;
-  const fp  = Math.round((pts + reb * 1.2 + ast * 1.5 + tpm * 3) * 10) / 10;
+  // FP using league scoring rules (total-points format):
+  // FGM×2, FGA×-1, FTM×1, FTA×-1, 3PM×1, REB×1, AST×2, STL×4, BLK×4, TO×-2, PTS×1, TD×5, TF×-2, EJ×-5
+  const fp  = Math.round((
+    (s['0']  || 0) * 1  +  // PTS
+    (s['1']  || 0) * 4  +  // BLK
+    (s['2']  || 0) * 4  +  // STL
+    (s['3']  || 0) * 2  +  // AST
+    (s['6']  || 0) * 1  +  // REB
+    (s['11'] || 0) * -2 +  // TO
+    (s['13'] || 0) * 2  +  // FGM
+    (s['14'] || 0) * -1 +  // FGA
+    (s['15'] || 0) * 1  +  // FTM
+    (s['16'] || 0) * -1 +  // FTA
+    (s['17'] || 0) * 1  +  // 3PM
+    (s['38'] || 0) * 5  +  // TD
+    (s['41'] || 0) * -2 +  // TF
+    (s['42'] || 0) * -5    // EJ
+  ) * 10) / 10;
+  const pts = Math.round((s['0'] || 0) * 10) / 10;
   const gp  = Math.round((s['40'] || 0) / 30);
   return { fp, pts, gp };
 }

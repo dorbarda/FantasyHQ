@@ -287,10 +287,6 @@ export async function getMatchups(targetWeek?: number): Promise<MatchupsData> {
 
 // ─── PLAYERS ──────────────────────────────────────────────────────────────────
 
-// Percentage-component stat IDs excluded from raw FP sum
-// (FGM=13, FGA=14, FTM=15, FTA=16 contribute via FG%/FT% categories)
-const PCT_STAT_IDS = new Set(['13', '14', '15', '16']);
-
 interface ScoringItem {
   statId: string;
   pointValue: number;
@@ -301,7 +297,6 @@ function buildFPCalc(items: ScoringItem[]) {
   return function calcFP(stats: Record<string, number>): number {
     let fp = 0;
     for (const item of items) {
-      if (PCT_STAT_IDS.has(item.statId)) continue;
       const val = stats[item.statId] || 0;
       fp += item.isReverseItem ? -val * item.pointValue : val * item.pointValue;
     }
@@ -309,15 +304,23 @@ function buildFPCalc(items: ScoringItem[]) {
   };
 }
 
-// Fallback scoring items for this 9-cat H2H league (pointValue=1 each)
+// Fallback scoring items matching league rules (total-points format)
+// ESPN stat IDs: 0=PTS,1=BLK,2=STL,3=AST,6=REB,11=TO,13=FGM,14=FGA,15=FTM,16=FTA,17=3PM,38=TD,41=TF,42=EJ
 const FALLBACK_SCORING_ITEMS: ScoringItem[] = [
-  { statId: '0',  pointValue: 1, isReverseItem: false }, // PTS
-  { statId: '1',  pointValue: 1, isReverseItem: false }, // BLK
-  { statId: '2',  pointValue: 1, isReverseItem: false }, // STL
-  { statId: '3',  pointValue: 1, isReverseItem: false }, // AST
-  { statId: '6',  pointValue: 1, isReverseItem: false }, // REB
-  { statId: '11', pointValue: 1, isReverseItem: true  }, // TO (lower is better)
-  { statId: '17', pointValue: 1, isReverseItem: false }, // 3PM
+  { statId: '0',  pointValue: 1,  isReverseItem: false }, // PTS  ×1
+  { statId: '1',  pointValue: 4,  isReverseItem: false }, // BLK  ×4
+  { statId: '2',  pointValue: 4,  isReverseItem: false }, // STL  ×4
+  { statId: '3',  pointValue: 2,  isReverseItem: false }, // AST  ×2
+  { statId: '6',  pointValue: 1,  isReverseItem: false }, // REB  ×1
+  { statId: '11', pointValue: 2,  isReverseItem: true  }, // TO   ×-2
+  { statId: '13', pointValue: 2,  isReverseItem: false }, // FGM  ×2
+  { statId: '14', pointValue: 1,  isReverseItem: true  }, // FGA  ×-1
+  { statId: '15', pointValue: 1,  isReverseItem: false }, // FTM  ×1
+  { statId: '16', pointValue: 1,  isReverseItem: true  }, // FTA  ×-1
+  { statId: '17', pointValue: 1,  isReverseItem: false }, // 3PM  ×1
+  { statId: '38', pointValue: 5,  isReverseItem: false }, // TD   ×5
+  { statId: '41', pointValue: 2,  isReverseItem: true  }, // TF   ×-2
+  { statId: '42', pointValue: 5,  isReverseItem: true  }, // EJ   ×-5
 ];
 
 function r1(n: number) { return Math.round(n * 10) / 10; }

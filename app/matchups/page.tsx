@@ -35,12 +35,12 @@ export default async function MatchupsPage({
   const projectedMatchups = data.matchups.filter((m) => !m.isLive && !m.isFinal);
 
   return (
-    <div className="py-5">
+    <div className="min-h-screen bg-[#071120] px-4 sm:px-6 lg:px-8 py-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h1 className="text-[28px] font-bold tracking-tight text-[#F0F4F8]">Matchups</h1>
-          <p className="text-[15px] text-[#94A3B8] font-medium">
+          <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#F0F4F8]">Matchups</h1>
+          <p className="text-[14px] text-[#64748B] mt-1">
             Week {data.week} · Head-to-Head{!isCurrentWeek ? ' · Final' : ''}
           </p>
         </div>
@@ -56,7 +56,7 @@ export default async function MatchupsPage({
       </div>
 
       {/* Week navigation */}
-      <div className="flex items-center justify-center gap-5 mb-5">
+      <div className="flex items-center justify-center gap-6 mb-6 bg-[#0B1628] border border-[#1E3050] rounded-xl px-4 py-3">
         {prevWeek ? (
           <Link
             href={`/matchups?week=${prevWeek}`}
@@ -84,11 +84,11 @@ export default async function MatchupsPage({
 
       {/* In Progress */}
       {liveMatchups.length > 0 && (
-        <section className="mb-5">
+        <section className="mb-6">
           <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
             In Progress
           </p>
-          <div className="flex flex-col gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {liveMatchups.map((matchup) => (
               <MatchupCard key={matchup.id} matchup={matchup} />
             ))}
@@ -102,11 +102,11 @@ export default async function MatchupsPage({
 
       {/* Final (past weeks) */}
       {finalMatchups.length > 0 && (
-        <section className="mb-5">
+        <section className="mb-6">
           <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
             Final
           </p>
-          <div className="flex flex-col gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {finalMatchups.map((matchup) => (
               <MatchupCard key={matchup.id} matchup={matchup} />
             ))}
@@ -116,11 +116,11 @@ export default async function MatchupsPage({
 
       {/* Projected (current week, not started) */}
       {projectedMatchups.length > 0 && (
-        <section>
+        <section className="mb-6">
           <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
             Projected
           </p>
-          <div className="flex flex-col gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {projectedMatchups.map((matchup) => (
               <MatchupCard key={matchup.id} matchup={matchup} />
             ))}

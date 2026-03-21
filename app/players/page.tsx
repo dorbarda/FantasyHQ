@@ -26,11 +26,11 @@ export default async function PlayersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#071120] py-6 px-4 sm:px-6">
+    <div className="min-h-screen bg-[#071120] px-4 sm:px-6 lg:px-8 py-6">
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-1">
-          <h1 className="text-[28px] font-black tracking-tight text-[#F0F4F8]">Players</h1>
+          <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#F0F4F8]">Players</h1>
           <span className="flex items-center gap-1.5 text-[12px] font-semibold text-[#34D399]">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#34D399] opacity-75" />

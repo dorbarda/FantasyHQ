@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
@@ -123,17 +124,27 @@ function RulesIcon() {
   );
 }
 
+function PlayersIcon() {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4 shrink-0">
+      <circle cx="10" cy="7" r="3" stroke="currentColor" strokeWidth="1.5"/>
+      <path d="M4 17c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
 // ─── Nav config ───────────────────────────────────────────────────────────────
 
 const NAV_GROUPS = [
   {
     label: 'LEAGUE',
     items: [
-      { href: '/',              label: 'Home',       Icon: HomeIcon     },
-      { href: '/league',        label: 'League',     Icon: LeagueIcon   },
-      { href: '/matchups',      label: 'Matchups',   Icon: MatchupsIcon },
-      { href: '/matchup-depth', label: 'Depth',      Icon: DepthIcon    },
-      { href: '/draft',         label: 'Draft',      Icon: DraftIcon    },
+      { href: '/',              label: 'Home',        Icon: HomeIcon     },
+      { href: '/league',        label: 'League',      Icon: LeagueIcon   },
+      { href: '/matchups',      label: 'Matchups',    Icon: MatchupsIcon },
+      { href: '/matchup-depth', label: 'Depth',       Icon: DepthIcon    },
+      { href: '/draft',         label: 'Draft',       Icon: DraftIcon    },
+      { href: '/players',       label: 'Players',     Icon: PlayersIcon  },
     ],
   },
   {
@@ -160,23 +171,23 @@ const NAV_GROUPS = [
   },
 ];
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// Flat list for bottom nav (most important pages only)
+const BOTTOM_NAV = [
+  { href: '/',         label: 'Home',     Icon: HomeIcon     },
+  { href: '/league',   label: 'League',   Icon: LeagueIcon   },
+  { href: '/matchups', label: 'Matchups', Icon: MatchupsIcon },
+  { href: '/players',  label: 'Players',  Icon: PlayersIcon  },
+  { href: '/stats',    label: 'Stats',    Icon: StatsIcon    },
+];
 
-export default function Sidebar() {
-  const pathname = usePathname();
+// ─── Sidebar (desktop) ────────────────────────────────────────────────────────
 
+function DesktopSidebar({ pathname }: { pathname: string }) {
   return (
-    <aside className="fixed top-0 left-0 h-screen w-[220px] bg-[#0B1628] border-r border-[#1E3050] flex flex-col z-50 overflow-y-auto">
+    <aside className="hidden md:flex fixed top-0 left-0 h-screen w-[220px] bg-[#0B1628] border-r border-[#1E3050] flex-col z-50 overflow-y-auto">
       {/* Logo */}
       <div className="px-4 py-5 border-b border-[#1E3050] shrink-0">
-        <Image
-          src="/logo.png"
-          alt="Fantasy HQ"
-          width={140}
-          height={52}
-          className="object-contain"
-          priority
-        />
+        <Image src="/logo.png" alt="Fantasy HQ" width={140} height={52} className="object-contain" priority />
       </div>
 
       {/* Nav */}
@@ -193,13 +204,11 @@ export default function Sidebar() {
                   <li key={href}>
                     <Link
                       href={href}
-                      className={`
-                        flex items-center gap-2.5 px-2 py-2 rounded-md text-[13px] font-medium transition-all duration-150
-                        ${isActive
+                      className={`flex items-center gap-2.5 px-2 py-2 rounded-md text-[13px] font-medium transition-all duration-150 ${
+                        isActive
                           ? 'bg-[#1E3A5F] text-[#F0F4F8] border-l-2 border-[#C8956C] pl-[6px]'
                           : 'text-[#CBD5E1] hover:bg-white/5 hover:text-[#F0F4F8]'
-                        }
-                      `}
+                      }`}
                     >
                       <span className={isActive ? 'text-[#C8956C]' : 'text-[#64748B]'}>
                         <Icon />
@@ -214,10 +223,137 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* Footer */}
       <div className="px-4 py-3 border-t border-[#1E3050] shrink-0">
         <p className="text-[10px] text-[#334155]">© {new Date().getFullYear()} Fantasy HQ</p>
       </div>
     </aside>
+  );
+}
+
+// ─── Mobile top bar + drawer ──────────────────────────────────────────────────
+
+function MobileNav({ pathname }: { pathname: string }) {
+  const [open, setOpen] = useState(false);
+
+  // Close drawer on route change
+  useEffect(() => { setOpen(false); }, [pathname]);
+
+  // Prevent body scroll when drawer is open
+  useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
+  return (
+    <>
+      {/* Top bar */}
+      <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-[#0B1628] border-b border-[#1E3050] flex items-center justify-between px-4 z-50">
+        <Link href="/">
+          <Image src="/logo.png" alt="Fantasy HQ" width={100} height={38} className="object-contain" priority />
+        </Link>
+        <button
+          onClick={() => setOpen(true)}
+          className="flex flex-col gap-1.5 p-2 rounded-md hover:bg-white/5 transition-colors"
+          aria-label="Open menu"
+        >
+          <span className="block w-5 h-0.5 bg-[#94A3B8]" />
+          <span className="block w-5 h-0.5 bg-[#94A3B8]" />
+          <span className="block w-5 h-0.5 bg-[#94A3B8]" />
+        </button>
+      </header>
+
+      {/* Backdrop */}
+      {open && (
+        <div
+          className="md:hidden fixed inset-0 bg-black/60 z-[60] backdrop-blur-sm"
+          onClick={() => setOpen(false)}
+        />
+      )}
+
+      {/* Drawer */}
+      <div className={`md:hidden fixed top-0 right-0 h-full w-[280px] bg-[#0B1628] border-l border-[#1E3050] z-[70] flex flex-col transition-transform duration-300 ${open ? 'translate-x-0' : 'translate-x-full'}`}>
+        {/* Drawer header */}
+        <div className="flex items-center justify-between px-4 py-4 border-b border-[#1E3050]">
+          <Image src="/logo.png" alt="Fantasy HQ" width={100} height={38} className="object-contain" />
+          <button
+            onClick={() => setOpen(false)}
+            className="p-2 rounded-md hover:bg-white/5 text-[#94A3B8] transition-colors"
+            aria-label="Close menu"
+          >
+            <svg viewBox="0 0 20 20" fill="none" className="w-5 h-5">
+              <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        {/* Nav */}
+        <nav className="flex-1 px-3 py-4 space-y-5 overflow-y-auto">
+          {NAV_GROUPS.map((group) => (
+            <div key={group.label}>
+              <p className="px-2 mb-1 text-[10px] font-semibold tracking-[0.15em] text-[#475569] uppercase">
+                {group.label}
+              </p>
+              <ul className="space-y-0.5">
+                {group.items.map(({ href, label, Icon }) => {
+                  const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href);
+                  return (
+                    <li key={href}>
+                      <Link
+                        href={href}
+                        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] font-medium transition-all ${
+                          isActive
+                            ? 'bg-[#1E3A5F] text-[#F0F4F8] border-l-2 border-[#C8956C] pl-[10px]'
+                            : 'text-[#CBD5E1] hover:bg-white/5'
+                        }`}
+                      >
+                        <span className={isActive ? 'text-[#C8956C]' : 'text-[#64748B]'}>
+                          <Icon />
+                        </span>
+                        {label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
+        </nav>
+
+        <div className="px-4 py-3 border-t border-[#1E3050]">
+          <p className="text-[10px] text-[#334155]">© {new Date().getFullYear()} Fantasy HQ</p>
+        </div>
+      </div>
+
+      {/* Bottom navigation */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0B1628] border-t border-[#1E3050] z-50 flex">
+        {BOTTOM_NAV.map(({ href, label, Icon }) => {
+          const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href);
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={`flex-1 flex flex-col items-center gap-1 py-2 transition-colors ${
+                isActive ? 'text-[#C8956C]' : 'text-[#475569] hover:text-[#94A3B8]'
+              }`}
+            >
+              <Icon />
+              <span className="text-[9px] font-semibold">{label}</span>
+            </Link>
+          );
+        })}
+      </nav>
+    </>
+  );
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
+export default function Sidebar() {
+  const pathname = usePathname();
+  return (
+    <>
+      <DesktopSidebar pathname={pathname} />
+      <MobileNav pathname={pathname} />
+    </>
   );
 }

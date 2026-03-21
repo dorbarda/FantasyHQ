@@ -28,12 +28,12 @@ export default async function NBALivePage() {
   const liveCount = games.filter((g) => g.status === 'live').length;
 
   return (
-    <div className="py-5 space-y-6">
+    <div className="min-h-screen bg-[#071120] px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       {/* Page header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-[28px] font-bold tracking-tight text-[#F0F4F8]">NBA Live</h1>
-          <p className="text-[15px] text-[#94A3B8] font-medium">
+          <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#F0F4F8]">NBA Live</h1>
+          <p className="text-[14px] text-[#64748B] mt-1">
             2025–26 Season
           </p>
         </div>

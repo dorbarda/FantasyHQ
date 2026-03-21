@@ -24,12 +24,12 @@ export default async function StatsPage() {
   const teamCount = data.categoryStandings.length;
 
   return (
-    <div className="py-5">
+    <div className="min-h-screen bg-[#071120] px-4 sm:px-6 lg:px-8 py-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h1 className="text-[28px] font-bold tracking-tight text-[#F0F4F8]">Stats</h1>
-          <p className="text-[15px] text-[#94A3B8] font-medium">
+          <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#F0F4F8]">Stats</h1>
+          <p className="text-[14px] text-[#64748B] mt-1">
             Season totals · {data.matchesPlayed} matchups played
           </p>
         </div>
@@ -43,28 +43,24 @@ export default async function StatsPage() {
       </div>
 
       {/* Category Radar */}
-      <section className="mb-5">
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
+      <section className="mb-6 bg-[#0B1628] border border-[#1E3050] rounded-xl px-4 sm:px-6 py-5">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-4">
           Category Standings
         </p>
         <CategoryRadarChart standings={data.categoryStandings} teamCount={teamCount} />
       </section>
 
-      <div className="border-b border-[#1E3050] mb-5" />
-
       {/* Season Totals Bar Chart */}
-      <section className="mb-5">
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
+      <section className="mb-6 bg-[#0B1628] border border-[#1E3050] rounded-xl px-4 sm:px-6 py-5">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-4">
           Season Totals
         </p>
         <SeasonStatsChart stats={data.seasonStats} />
       </section>
 
-      <div className="border-b border-[#1E3050] mb-5" />
-
       {/* Points For / Against Scatter */}
-      <section>
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
+      <section className="mb-6 bg-[#0B1628] border border-[#1E3050] rounded-xl px-4 sm:px-6 py-5">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-4">
           Points For / Against
         </p>
         <PfPaScatterChart entries={data.luckTable} />

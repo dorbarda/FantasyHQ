@@ -192,9 +192,9 @@ function computeAnalytics(rows: MatchupDepthRow[]): {
 export default async function AnalysisPage() {
   if (!hasEspnCredentials()) {
     return (
-      <div className="py-5">
-        <h1 className="text-[28px] font-bold tracking-tight text-[#F0F4F8] mb-2">Analysis</h1>
-        <p className="text-[15px] text-[#94A3B8]">ESPN credentials required.</p>
+      <div className="min-h-screen bg-[#071120] px-4 sm:px-6 lg:px-8 py-6">
+        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#F0F4F8] mb-2">Analysis</h1>
+        <p className="text-[14px] text-[#64748B] mt-1">ESPN credentials required.</p>
       </div>
     );
   }
@@ -212,9 +212,9 @@ export default async function AnalysisPage() {
 
   if (error || !result) {
     return (
-      <div className="py-5">
-        <h1 className="text-[28px] font-bold tracking-tight text-[#F0F4F8] mb-2">Analysis</h1>
-        <p className="text-[15px] text-[#94A3B8]">Could not load data — try again later.</p>
+      <div className="min-h-screen bg-[#071120] px-4 sm:px-6 lg:px-8 py-6">
+        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#F0F4F8] mb-2">Analysis</h1>
+        <p className="text-[14px] text-[#64748B] mt-1">Could not load data — try again later.</p>
       </div>
     );
   }
@@ -228,11 +228,11 @@ export default async function AnalysisPage() {
   const mostEfficient = [...teams].sort((a, b) => b.avgScorePP - a.avgScorePP)[0];
 
   return (
-    <div className="py-5">
+    <div className="min-h-screen bg-[#071120] px-4 sm:px-6 lg:px-8 py-6">
       {/* Header */}
       <div className="mb-5">
-        <h1 className="text-[28px] font-bold tracking-tight text-[#F0F4F8]">Analysis</h1>
-        <p className="text-[15px] text-[#94A3B8] font-medium">
+        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#F0F4F8]">Analysis</h1>
+        <p className="text-[14px] text-[#64748B] mt-1">
           {leagueSummary.totalWeeks} week{leagueSummary.totalWeeks !== 1 ? 's' : ''} · avg {leagueSummary.avgLeagueScore.toFixed(1)} pts/team · season high {leagueSummary.highScore.toFixed(1)}
         </p>
       </div>

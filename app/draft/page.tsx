@@ -17,9 +17,9 @@ interface PageProps {
 export default async function DraftPage({ searchParams }: PageProps) {
   if (!hasEspnCredentials()) {
     return (
-      <div className="py-5">
-        <h1 className="text-[28px] font-bold tracking-tight text-[#F0F4F8] mb-2">Draft Board</h1>
-        <p className="text-[15px] text-[#94A3B8]">ESPN credentials required.</p>
+      <div className="min-h-screen bg-[#071120] px-4 sm:px-6 lg:px-8 py-6">
+        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#F0F4F8] mb-2">Draft Board</h1>
+        <p className="text-[14px] text-[#64748B] mt-1">ESPN credentials required.</p>
       </div>
     );
   }
@@ -46,11 +46,11 @@ export default async function DraftPage({ searchParams }: PageProps) {
   }
 
   return (
-    <div className="py-5">
+    <div className="min-h-screen bg-[#071120] px-4 sm:px-6 lg:px-8 py-6">
       {/* Header */}
       <div className="mb-4">
-        <h1 className="text-[28px] font-bold tracking-tight text-[#F0F4F8]">Draft Board</h1>
-        <p className="text-[15px] text-[#94A3B8] font-medium">
+        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#F0F4F8]">Draft Board</h1>
+        <p className="text-[14px] text-[#64748B] mt-1">
           {isHistory
             ? 'Search a player to see their full draft history'
             : isValueAnalysis
@@ -71,7 +71,7 @@ export default async function DraftPage({ searchParams }: PageProps) {
       {!isHistory && (
         <>
           {error && (
-            <p className="text-[15px] text-[#94A3B8]">Could not load draft data — try again later.</p>
+            <p className="text-[14px] text-[#64748B]">Could not load draft data — try again later.</p>
           )}
 
           {data && data.picks.length === 0 && (

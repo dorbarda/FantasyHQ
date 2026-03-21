@@ -7,9 +7,9 @@ export const revalidate = 3600; // refresh hourly
 export default async function TransactionsPage() {
   if (!hasEspnCredentials()) {
     return (
-      <div className="py-5">
-        <h1 className="text-[28px] font-bold tracking-tight text-[#F0F4F8] mb-2">Transactions</h1>
-        <p className="text-[15px] text-[#94A3B8]">ESPN credentials required.</p>
+      <div className="min-h-screen bg-[#071120] px-4 sm:px-6 lg:px-8 py-6">
+        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#F0F4F8] mb-2">Transactions</h1>
+        <p className="text-[14px] text-[#64748B] mt-1">ESPN credentials required.</p>
       </div>
     );
   }
@@ -25,16 +25,16 @@ export default async function TransactionsPage() {
   }
 
   return (
-    <div className="py-5">
+    <div className="min-h-screen bg-[#071120] px-4 sm:px-6 lg:px-8 py-6">
       <div className="mb-6">
-        <h1 className="text-[28px] font-bold tracking-tight text-[#F0F4F8]">Transactions</h1>
-        <p className="text-[15px] text-[#94A3B8] font-medium">
+        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#F0F4F8]">Transactions</h1>
+        <p className="text-[14px] text-[#64748B] mt-1">
           Season pickup activity · most targeted players · busiest managers
         </p>
       </div>
 
       {error && (
-        <p className="text-[15px] text-[#94A3B8]">Could not load transaction data — try again later.</p>
+        <p className="text-[14px] text-[#64748B]">Could not load transaction data — try again later.</p>
       )}
 
       {data && data.totalAdds === 0 && (

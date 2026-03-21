@@ -280,7 +280,7 @@ export default function DraftValueAnalysis({ data, topPlayers }: Props) {
             Below round benchmark
           </div>
           <span className="text-[#64748B]">
-            Benchmark = avg FP of top-{TIER_SIZE} players per performance tier · delta shown per pick · Surplus = sum of all deltas
+            Benchmark = avg FP of top-130 players (incl. undrafted) per round tier · delta shown per pick · Surplus = sum of all deltas
           </span>
         </div>
       </div>

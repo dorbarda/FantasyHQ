@@ -51,11 +51,24 @@ export interface Player {
   name: string;
   team: string;
   position: 'G' | 'F' | 'C';
+  // Full season per-game averages
   pts: number;
   reb: number;
   ast: number;
+  stl: number;
+  blk: number;
   tpm: number;
-  fp: number;
+  to: number;
+  fp: number;   // FP/g from league scoring rules
+  // Last 7 days per-game averages
+  pts7: number;
+  reb7: number;
+  ast7: number;
+  stl7: number;
+  blk7: number;
+  tpm7: number;
+  to7: number;
+  fp7: number;  // L7 FP/g from league scoring rules
 }
 
 export interface SeasonStats {

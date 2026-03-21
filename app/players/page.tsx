@@ -68,7 +68,7 @@ export default async function PlayersPage() {
           <div className="flex items-center gap-1 text-[11px] text-[#475569] bg-[#0B1628] border border-[#1E3050] rounded-full px-3 py-1">
             <span className="font-semibold text-[#C8956C]">FP/g</span>
             <span>=</span>
-            <span>PTS + REB×1.2 + AST×1.5 + 3PM×3</span>
+            <span>PTS+REB+AST+STL+BLK+3PM−TO (league rules)</span>
           </div>
         </div>
       </div>

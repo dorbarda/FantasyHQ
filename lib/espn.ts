@@ -287,53 +287,132 @@ export async function getMatchups(targetWeek?: number): Promise<MatchupsData> {
 
 // ─── PLAYERS ──────────────────────────────────────────────────────────────────
 
+// Percentage-component stat IDs excluded from raw FP sum
+// (FGM=13, FGA=14, FTM=15, FTA=16 contribute via FG%/FT% categories)
+const PCT_STAT_IDS = new Set(['13', '14', '15', '16']);
+
+interface ScoringItem {
+  statId: string;
+  pointValue: number;
+  isReverseItem: boolean;
+}
+
+function buildFPCalc(items: ScoringItem[]) {
+  return function calcFP(stats: Record<string, number>): number {
+    let fp = 0;
+    for (const item of items) {
+      if (PCT_STAT_IDS.has(item.statId)) continue;
+      const val = stats[item.statId] || 0;
+      fp += item.isReverseItem ? -val * item.pointValue : val * item.pointValue;
+    }
+    return Math.round(fp * 10) / 10;
+  };
+}
+
+// Fallback scoring items for this 9-cat H2H league (pointValue=1 each)
+const FALLBACK_SCORING_ITEMS: ScoringItem[] = [
+  { statId: '0',  pointValue: 1, isReverseItem: false }, // PTS
+  { statId: '1',  pointValue: 1, isReverseItem: false }, // BLK
+  { statId: '2',  pointValue: 1, isReverseItem: false }, // STL
+  { statId: '3',  pointValue: 1, isReverseItem: false }, // AST
+  { statId: '6',  pointValue: 1, isReverseItem: false }, // REB
+  { statId: '11', pointValue: 1, isReverseItem: true  }, // TO (lower is better)
+  { statId: '17', pointValue: 1, isReverseItem: false }, // 3PM
+];
+
+function r1(n: number) { return Math.round(n * 10) / 10; }
+
+// Extract per-game averages from ESPN stats array.
+// Prefers statSplitTypeId=1 (per-game); falls back to totals ÷ estimated GP.
+function extractPerGame(stats: any[]): Record<string, number> {
+  const pg = stats.find((s: any) => s.statSourceId === 0 && s.statSplitTypeId === 1);
+  if (pg?.stats) return pg.stats;
+  const tot = stats.find((s: any) => s.statSourceId === 0 && s.statSplitTypeId === 0);
+  if (!tot?.stats) return {};
+  const s = tot.stats as Record<string, number>;
+  const gp = Math.max(1, Math.round((s['40'] || 0) / 30));
+  const out: Record<string, number> = {};
+  for (const [k, v] of Object.entries(s)) out[k] = v / gp;
+  return out;
+}
+
 export async function getPlayers(): Promise<Player[]> {
-  const data = await espnFetch('?view=mRoster&view=mTeam');
-  const scoringPeriodId: number = data.scoringPeriodId || 1;
   const posGroupMap: Record<number, 'G' | 'F' | 'C'> = {
     1: 'G', 2: 'G', 3: 'F', 4: 'F', 5: 'C', 6: 'G', 7: 'F', 8: 'F',
   };
 
+  // Fetch scoring settings, roster, and last-7-days stats in parallel
+  const [settingsResult, rosterData, l7Result] = await Promise.all([
+    espnFetch('?view=mSettings').catch(() => null),
+    espnFetch('?view=mRoster&view=mTeam'),
+    espnFetch('?view=kona_player_info', {
+      'x-fantasy-filter': JSON.stringify({
+        players: { limit: 500, filterStatsForTopScoringPeriodIds: { value: 7 } },
+      }),
+    }).catch(() => null),
+  ]);
+
+  // Build scoring function from league settings (falls back to 9-cat defaults)
+  const rawItems: any[] = settingsResult?.settings?.scoringSettings?.scoringItems || [];
+  const scoringItems: ScoringItem[] = rawItems.length > 0
+    ? rawItems.map((item: any) => ({
+        statId: String(item.statId),
+        pointValue: item.pointValue ?? 1,
+        isReverseItem: item.isReverseItem ?? false,
+      }))
+    : FALLBACK_SCORING_ITEMS;
+  const calcFP = buildFPCalc(scoringItems);
+
+  // Build L7 per-game map: playerId → per-game stats
+  const l7Map = new Map<number, Record<string, number>>();
+  for (const entry of ((l7Result?.players || []) as any[])) {
+    const player = entry.playerPoolEntry?.player;
+    if (!player) continue;
+    const pg = extractPerGame(player.stats || []);
+    if (Object.keys(pg).length > 0) l7Map.set(player.id as number, pg);
+  }
+
   const allPlayers: Player[] = [];
-  for (const team of (data.teams || []) as any[]) {
+  for (const team of (rosterData.teams || []) as any[]) {
     for (const entry of (team.roster?.entries || []) as any[]) {
       const p = entry.playerPoolEntry?.player;
       if (!p) continue;
-      const stats = (p.stats || []) as any[];
 
-      // Prefer season per-game averages (statSplitTypeId=1), fall back to
-      // season totals (statSplitTypeId=0), then current week as last resort
-      const seasonAvg = stats.find(
-        (s: any) => s.statSourceId === 0 && s.statSplitTypeId === 1
-      );
-      const seasonTotals = stats.find(
-        (s: any) => s.statSourceId === 0 && s.statSplitTypeId === 0
-      );
-      const weekStats = stats.find(
-        (s: any) => s.statSourceId === 0 && s.scoringPeriodId === scoringPeriodId
-      );
-      const statEntry = seasonAvg || weekStats || seasonTotals;
-      const s = statEntry?.stats || {};
+      // Season per-game averages
+      const s = extractPerGame(p.stats || []);
+      const pts = r1(s['0']  || 0);
+      const reb = r1(s['6']  || 0);
+      const ast = r1(s['3']  || 0);
+      const stl = r1(s['2']  || 0);
+      const blk = r1(s['1']  || 0);
+      const tpm = r1(s['17'] || 0);
+      const to  = r1(s['11'] || 0);
+      const fp  = calcFP(s);
 
-      const posId: number = p.defaultPositionId || 5;
-      const pts = Math.round((s['0'] || 0) * 10) / 10;
-      const reb = Math.round((s['6'] || 0) * 10) / 10;
-      const ast = Math.round((s['3'] || 0) * 10) / 10;
-      const tpm = Math.round((s['17'] || 0) * 10) / 10;
-      const fp = Math.round((pts + reb * 1.2 + ast * 1.5 + tpm * 3) * 10) / 10;
-
-      // Skip players with no meaningful stats
       if (pts === 0 && reb === 0 && ast === 0) continue;
+
+      // Last 7 days per-game averages
+      const l7 = l7Map.get(p.id as number) || {};
+      const pts7 = r1(l7['0']  || 0);
+      const reb7 = r1(l7['6']  || 0);
+      const ast7 = r1(l7['3']  || 0);
+      const stl7 = r1(l7['2']  || 0);
+      const blk7 = r1(l7['1']  || 0);
+      const tpm7 = r1(l7['17'] || 0);
+      const to7  = r1(l7['11'] || 0);
+      const fp7  = calcFP(l7);
 
       allPlayers.push({
         id: `p${p.id}`,
         name: p.fullName || 'Unknown',
         team: PRO_TEAMS[p.proTeamId] || 'NBA',
-        position: posGroupMap[posId] || 'F',
-        pts, reb, ast, tpm, fp,
+        position: posGroupMap[p.defaultPositionId || 5] || 'F',
+        pts, reb, ast, stl, blk, tpm, to, fp,
+        pts7, reb7, ast7, stl7, blk7, tpm7, to7, fp7,
       });
     }
   }
+
   return allPlayers
     .sort((a, b) => b.fp - a.fp)
     .slice(0, 30)

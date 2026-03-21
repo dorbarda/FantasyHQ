@@ -42,9 +42,37 @@ function StatBar({ value, max, color }: { value: number; max: number; color: str
 const MEDAL_COLORS = ['#F59E0B', '#94A3B8', '#C8956C'];
 const MEDAL_LABELS = ['1st', '2nd', '3rd'];
 
-function PodiumCard({ player, rank }: { player: Player; rank: number }) {
+type View = 'season' | 'l7';
+
+function getViewStats(player: Player, view: View) {
+  if (view === 'l7') {
+    return {
+      pts: player.pts7,
+      reb: player.reb7,
+      ast: player.ast7,
+      tpm: player.tpm7,
+      stl: player.stl7,
+      blk: player.blk7,
+      to: player.to7,
+      fp: player.fp7,
+    };
+  }
+  return {
+    pts: player.pts,
+    reb: player.reb,
+    ast: player.ast,
+    tpm: player.tpm,
+    stl: player.stl,
+    blk: player.blk,
+    to: player.to,
+    fp: player.fp,
+  };
+}
+
+function PodiumCard({ player, rank, view }: { player: Player; rank: number; view: View }) {
   const medal = MEDAL_COLORS[rank] ?? '#64748B';
   const isFirst = rank === 0;
+  const vs = getViewStats(player, view);
 
   return (
     <div
@@ -75,7 +103,7 @@ function PodiumCard({ player, rank }: { player: Player; rank: number }) {
           className="text-[36px] font-black tabular-nums leading-none"
           style={{ color: isFirst ? '#F59E0B' : '#C8956C' }}
         >
-          {player.fp.toFixed(1)}
+          {vs.fp.toFixed(1)}
         </span>
         <span className="text-[11px] text-[#64748B] mb-1">FP/g</span>
       </div>
@@ -83,10 +111,10 @@ function PodiumCard({ player, rank }: { player: Player; rank: number }) {
       {/* Stats row */}
       <div className="grid grid-cols-4 gap-1 pt-3 border-t border-[#1E3050]">
         {[
-          { label: 'PTS', v: player.pts },
-          { label: 'REB', v: player.reb },
-          { label: 'AST', v: player.ast },
-          { label: '3PM', v: player.tpm },
+          { label: 'PTS', v: vs.pts },
+          { label: 'REB', v: vs.reb },
+          { label: 'AST', v: vs.ast },
+          { label: '3PM', v: vs.tpm },
         ].map(({ label, v }) => (
           <div key={label} className="text-center">
             <p className="text-[14px] font-bold tabular-nums text-[#F0F4F8]">{v.toFixed(1)}</p>
@@ -109,6 +137,8 @@ const SORT_OPTIONS: { key: SortKey; label: string }[] = [
   { key: 'tpm', label: '3PM' },
 ];
 
+type MaxesKey = SortKey;
+
 // ─── Table row ────────────────────────────────────────────────────────────────
 
 function TableRow({
@@ -116,11 +146,13 @@ function TableRow({
   rank,
   maxes,
   sortKey,
+  view,
 }: {
   player: Player;
   rank: number;
-  maxes: Record<SortKey, number>;
+  maxes: Record<MaxesKey, number>;
   sortKey: SortKey;
+  view: View;
 }) {
   const BAR_COLORS: Record<SortKey, string> = {
     fp:  '#C8956C',
@@ -129,6 +161,8 @@ function TableRow({
     ast: '#3B82F6',
     tpm: '#A78BFA',
   };
+
+  const vs = getViewStats(player, view);
 
   return (
     <div className="grid grid-cols-[32px_1fr_56px_56px_56px_56px_68px] gap-x-2 items-center px-4 py-3 border-b border-[#1E3050] last:border-0 hover:bg-[#0E1929] transition-colors group">
@@ -148,10 +182,10 @@ function TableRow({
       {(['pts', 'reb', 'ast', 'tpm'] as const).map((key) => (
         <div key={key} className="text-right">
           <p className={`text-[13px] tabular-nums font-semibold ${sortKey === key ? 'text-[#C8956C]' : 'text-[#94A3B8]'}`}>
-            {player[key].toFixed(1)}
+            {vs[key].toFixed(1)}
           </p>
           <div className="mt-1">
-            <StatBar value={player[key]} max={maxes[key]} color={BAR_COLORS[key]} />
+            <StatBar value={vs[key]} max={maxes[key]} color={BAR_COLORS[key]} />
           </div>
         </div>
       ))}
@@ -159,10 +193,10 @@ function TableRow({
       {/* FP */}
       <div className="text-right">
         <p className={`text-[14px] font-bold tabular-nums ${sortKey === 'fp' ? 'text-[#C8956C]' : 'text-[#F0F4F8]'}`}>
-          {player.fp.toFixed(1)}
+          {vs.fp.toFixed(1)}
         </p>
         <div className="mt-1">
-          <StatBar value={player.fp} max={maxes.fp} color="#C8956C" />
+          <StatBar value={vs.fp} max={maxes.fp} color="#C8956C" />
         </div>
       </div>
     </div>
@@ -174,19 +208,29 @@ function TableRow({
 export default function PlayersClient({ players }: { players: Player[] }) {
   const [posFilter, setPosFilter] = useState<'All' | 'G' | 'F' | 'C'>('All');
   const [sortKey, setSortKey] = useState<SortKey>('fp');
+  const [view, setView] = useState<View>('season');
+
+  const fpKey: keyof Player = view === 'l7' ? 'fp7' : 'fp';
 
   const filtered = useMemo(() => {
     const base = posFilter === 'All' ? players : players.filter(p => p.position === posFilter);
-    return [...base].sort((a, b) => b[sortKey] - a[sortKey]);
-  }, [players, posFilter, sortKey]);
+    return [...base].sort((a, b) => {
+      const aVal = view === 'l7' ? getViewStats(a, 'l7')[sortKey] : getViewStats(a, 'season')[sortKey];
+      const bVal = view === 'l7' ? getViewStats(b, 'l7')[sortKey] : getViewStats(b, 'season')[sortKey];
+      return bVal - aVal;
+    });
+  }, [players, posFilter, sortKey, view, fpKey]);
 
-  const maxes = useMemo<Record<SortKey, number>>(() => ({
-    fp:  Math.max(...filtered.map(p => p.fp),  1),
-    pts: Math.max(...filtered.map(p => p.pts), 1),
-    reb: Math.max(...filtered.map(p => p.reb), 1),
-    ast: Math.max(...filtered.map(p => p.ast), 1),
-    tpm: Math.max(...filtered.map(p => p.tpm), 1),
-  }), [filtered]);
+  const maxes = useMemo<Record<MaxesKey, number>>(() => {
+    const vs = filtered.map(p => getViewStats(p, view));
+    return {
+      fp:  Math.max(...vs.map(s => s.fp),  1),
+      pts: Math.max(...vs.map(s => s.pts), 1),
+      reb: Math.max(...vs.map(s => s.reb), 1),
+      ast: Math.max(...vs.map(s => s.ast), 1),
+      tpm: Math.max(...vs.map(s => s.tpm), 1),
+    };
+  }, [filtered, view]);
 
   const podium = filtered.slice(0, 3);
   const rest   = filtered.slice(3);
@@ -195,21 +239,44 @@ export default function PlayersClient({ players }: { players: Player[] }) {
     <div className="space-y-6">
       {/* Controls */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        {/* Position filter */}
-        <div className="flex items-center gap-1 bg-[#0B1628] rounded-lg p-1 border border-[#1E3050]">
-          {(['All', 'G', 'F', 'C'] as const).map((pos) => (
+        {/* Left: position filter + season/L7 toggle */}
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Position filter */}
+          <div className="flex items-center gap-1 bg-[#0B1628] rounded-lg p-1 border border-[#1E3050]">
+            {(['All', 'G', 'F', 'C'] as const).map((pos) => (
+              <button
+                key={pos}
+                onClick={() => setPosFilter(pos)}
+                className={`px-3 py-1.5 rounded text-[12px] font-semibold transition-colors ${
+                  posFilter === pos
+                    ? 'bg-[#C8956C] text-white'
+                    : 'text-[#94A3B8] hover:text-[#F0F4F8]'
+                }`}
+              >
+                {pos}
+              </button>
+            ))}
+          </div>
+
+          {/* Season / Last 7 toggle */}
+          <div className="flex items-center gap-1 bg-[#0B1628] rounded-lg p-1 border border-[#1E3050]">
             <button
-              key={pos}
-              onClick={() => setPosFilter(pos)}
+              onClick={() => setView('season')}
               className={`px-3 py-1.5 rounded text-[12px] font-semibold transition-colors ${
-                posFilter === pos
-                  ? 'bg-[#C8956C] text-white'
-                  : 'text-[#94A3B8] hover:text-[#F0F4F8]'
+                view === 'season' ? 'bg-[#1E3050] text-[#C8956C]' : 'text-[#64748B] hover:text-[#94A3B8]'
               }`}
             >
-              {pos}
+              Season
             </button>
-          ))}
+            <button
+              onClick={() => setView('l7')}
+              className={`px-3 py-1.5 rounded text-[12px] font-semibold transition-colors ${
+                view === 'l7' ? 'bg-[#1E3050] text-[#C8956C]' : 'text-[#64748B] hover:text-[#94A3B8]'
+              }`}
+            >
+              Last 7
+            </button>
+          </div>
         </div>
 
         {/* Sort selector */}
@@ -240,7 +307,7 @@ export default function PlayersClient({ players }: { players: Player[] }) {
           {/* Podium */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {podium.map((p, i) => (
-              <PodiumCard key={p.id} player={p} rank={i} />
+              <PodiumCard key={p.id} player={p} rank={i} view={view} />
             ))}
           </div>
 
@@ -266,7 +333,7 @@ export default function PlayersClient({ players }: { players: Player[] }) {
               </div>
 
               {rest.map((p, i) => (
-                <TableRow key={p.id} player={p} rank={i + 4} maxes={maxes} sortKey={sortKey} />
+                <TableRow key={p.id} player={p} rank={i + 4} maxes={maxes} sortKey={sortKey} view={view} />
               ))}
             </div>
           )}

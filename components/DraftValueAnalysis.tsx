@@ -6,11 +6,13 @@ interface Props {
 
 const TIER_SIZE = 10;
 
-function computeBenchmarks(picks: DraftPick[]): number[] {
-  const sorted = [...picks].sort((a, b) => b.fp - a.fp);
-  const tierCount = Math.ceil(sorted.length / TIER_SIZE);
-  return Array.from({ length: tierCount }, (_, t) => {
-    const tier = sorted.slice(t * TIER_SIZE, (t + 1) * TIER_SIZE);
+function computeBenchmarks(picks: DraftPick[], rounds: number): number[] {
+  // Only include players who actually have stats (fp > 0)
+  const active = [...picks].filter(p => p.fp > 0).sort((a, b) => b.fp - a.fp);
+  const tierSize = Math.ceil(active.length / rounds);
+  return Array.from({ length: rounds }, (_, t) => {
+    const tier = active.slice(t * tierSize, (t + 1) * tierSize);
+    if (tier.length === 0) return 0;
     return tier.reduce((sum, p) => sum + p.fp, 0) / tier.length;
   });
 }
@@ -88,7 +90,7 @@ export default function DraftValueAnalysis({ data }: Props) {
     );
   }
 
-  const benchmarks = computeBenchmarks(picks);
+  const benchmarks = computeBenchmarks(picks, rounds);
 
   // Pick lookup: "round-draftSlot" → pick
   const grid = new Map<string, DraftPick>();

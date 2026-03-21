@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { HistoricalSeason, HistoricalTeam } from '@/lib/types';
 
 interface SeasonCardProps {
@@ -8,7 +9,36 @@ interface SeasonCardProps {
   isBackToBack?: boolean;
 }
 
-// ── Avatar helpers ────────────────────────────────────────────────────────────
+// ── Logo helpers ──────────────────────────────────────────────────────────────
+
+const LOGO_SLUGS = [
+  'flint-tropics',
+  'inglourious-basterds',
+  'king-ozniyon',
+  'leagues-american-problem',
+  'libis-legacy',
+  'nordau-peaky-blinder',
+  'plottke',
+  'slotzki',
+  'team-mamba-forever',
+  'team-miller',
+];
+
+function teamLogoPath(teamName: string): string | null {
+  const slug = teamName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  if (LOGO_SLUGS.includes(slug)) return `/teams/${slug}.png`;
+  // Find best word-overlap match
+  const teamWords = new Set(slug.split('-').filter(Boolean));
+  let bestSlug: string | null = null;
+  let bestScore = 0;
+  for (const logoSlug of LOGO_SLUGS) {
+    const score = logoSlug.split('-').filter(w => teamWords.has(w)).length;
+    if (score > bestScore) { bestScore = score; bestSlug = logoSlug; }
+  }
+  return bestScore > 0 ? `/teams/${bestSlug}.png` : null;
+}
+
+// ── Avatar (logo or initials fallback) ───────────────────────────────────────
 
 const AVATAR_COLORS = [
   '#C8956C', '#3B82F6', '#10B981', '#8B5CF6',
@@ -32,17 +62,28 @@ function initials(teamName: string): string {
     .join('') || teamName.slice(0, 2).toUpperCase();
 }
 
-// ── Sub-components ────────────────────────────────────────────────────────────
-
 function Avatar({ teamName, size = 'md' }: { teamName: string; size?: 'sm' | 'md' | 'lg' }) {
+  const logo = teamLogoPath(teamName);
+  const px = size === 'lg' ? 56 : size === 'md' ? 44 : 32;
+  const sizeClass = size === 'lg' ? 'w-14 h-14' : size === 'md' ? 'w-11 h-11' : 'w-8 h-8';
+
+  if (logo) {
+    return (
+      <div className={`${sizeClass} rounded-full overflow-hidden shrink-0 ring-2 ring-white bg-white shadow-sm`}>
+        <Image src={logo} alt={teamName} width={px} height={px} className="w-full h-full object-cover" />
+      </div>
+    );
+  }
+
+  // Fallback: colored initials circle
   const color = teamColor(teamName);
-  const sizeClass = size === 'lg' ? 'w-14 h-14 text-[18px]' : size === 'md' ? 'w-11 h-11 text-[14px]' : 'w-8 h-8 text-[11px]';
+  const textClass = size === 'lg' ? 'text-[18px]' : size === 'md' ? 'text-[14px]' : 'text-[11px]';
   return (
     <div
       className={`${sizeClass} rounded-full flex items-center justify-center font-black text-white shrink-0 ring-2 ring-white`}
       style={{ backgroundColor: color }}
     >
-      {initials(teamName)}
+      <span className={textClass}>{initials(teamName)}</span>
     </div>
   );
 }
@@ -189,7 +230,16 @@ export default function SeasonCard({ season, isBackToBack = false }: SeasonCardP
       {/* ── Last place "Shame" section ─────────────────────────────── */}
       {season.lastPlace && (
         <div className="mx-5 mb-4 px-3 py-2.5 rounded-xl bg-[#FEF2F2] border border-[#FCA5A5]/40 flex items-center gap-2.5">
-          <span className="text-[18px] shrink-0">🚽</span>
+          {teamLogoPath(season.lastPlace.teamName) ? (
+            <Image
+              src={teamLogoPath(season.lastPlace.teamName)!}
+              alt={season.lastPlace.teamName}
+              width={32} height={32}
+              className="w-8 h-8 rounded-full object-cover shrink-0 ring-1 ring-[#FCA5A5]/40 bg-white"
+            />
+          ) : (
+            <span className="text-[18px] shrink-0">🚽</span>
+          )}
           <div className="min-w-0">
             <p className="text-[11px] font-black uppercase tracking-widest text-[#DC2626] mb-0.5">Toilet Bowl Champion</p>
             <p className="text-[13px] font-semibold text-[#0F172A] truncate">{season.lastPlace.teamName}</p>
@@ -236,19 +286,28 @@ export default function SeasonCard({ season, isBackToBack = false }: SeasonCardP
                 const isRunnerup = team.teamName === season.runnerUp?.teamName;
                 const isThird    = thirdPlace && team.teamName === thirdPlace.teamName;
                 const isLast     = team.teamName === season.lastPlace?.teamName;
+                const logo       = teamLogoPath(team.teamName);
                 const color      = teamColor(team.teamName);
 
                 return (
                   <div
                     key={`${team.teamName}-${idx}`}
-                    className={`grid grid-cols-[28px_1fr_56px_68px] gap-x-2 items-center px-5 py-2.5 ${
+                    className={`grid grid-cols-[36px_1fr_56px_68px] gap-x-2 items-center px-5 py-2.5 ${
                       idx < season.finalStandings.length - 1 ? 'border-b border-[#E2E8F0]' : ''
                     } ${isChamp ? 'bg-[#FFFBEB]' : isLast ? 'bg-[#FEF2F2]' : ''}`}
                   >
-                    <div className="flex items-center">
-                      <div className="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-white shrink-0" style={{ backgroundColor: color }}>
+                    {/* Logo or colored rank bubble */}
+                    <div className="relative w-8 h-8 shrink-0">
+                      {logo ? (
+                        <Image src={logo} alt={team.teamName} width={32} height={32} className="w-8 h-8 rounded-full object-cover ring-1 ring-[#E2E8F0] bg-white" />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white" style={{ backgroundColor: color }}>
+                          {initials(team.teamName)}
+                        </div>
+                      )}
+                      <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#0F172A] text-white text-[8px] font-black flex items-center justify-center ring-1 ring-white">
                         {idx + 1}
-                      </div>
+                      </span>
                     </div>
 
                     <div className="min-w-0">

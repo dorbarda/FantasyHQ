@@ -1,4 +1,6 @@
+import Image from 'next/image';
 import { Matchup } from '@/lib/types';
+import { teamLogoSrc } from '@/lib/team-logos';
 
 interface MatchupCardProps {
   matchup: Matchup;
@@ -15,8 +17,13 @@ function TeamSide({ team, isWinning, isLive, isFinal }: {
       ? isWinning ? 'text-[#F0F4F8]' : 'text-[#64748B]'
       : isLive && isWinning ? 'text-[#F0F4F8]' : 'text-[#94A3B8]';
 
+  const logoSrc = teamLogoSrc(team.teamName);
+
   return (
     <div className="flex-1 flex flex-col items-center gap-1 py-4 px-3">
+      {logoSrc && (
+        <Image src={logoSrc} alt={team.teamName} width={48} height={48} className="rounded-full object-cover object-top w-12 h-12 mb-1" />
+      )}
       <div className="text-center">
         <p className="text-[13px] font-semibold tracking-tight truncate max-w-[120px] text-[#F0F4F8]">
           {team.teamName}

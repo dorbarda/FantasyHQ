@@ -1,4 +1,6 @@
+import Image from 'next/image';
 import { StandingEntry } from '@/lib/types';
+import { teamLogoSrc } from '@/lib/team-logos';
 import StreakBadge from './StreakBadge';
 
 interface StandingsTableProps {
@@ -9,9 +11,10 @@ export default function StandingsTable({ standings }: StandingsTableProps) {
   return (
     <div className="border border-[#1E3050] rounded-lg overflow-hidden bg-[#142035]">
       {/* Header */}
-      <div className="grid grid-cols-[28px_28px_1fr_72px_64px_64px] gap-x-2 px-4 py-2 border-b border-[#1E3050] bg-[#0E1929]">
+      <div className="grid grid-cols-[28px_28px_36px_1fr_72px_64px_64px] gap-x-2 px-4 py-2 border-b border-[#1E3050] bg-[#0E1929]">
         <span className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8]">#</span>
         <span className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8]">PR</span>
+        <span />
         <span className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8]">Team</span>
         <span className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] text-right">W–L</span>
         <span className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] text-right">PTS</span>
@@ -22,7 +25,7 @@ export default function StandingsTable({ standings }: StandingsTableProps) {
         <div
           key={entry.teamId}
           className={`
-            grid grid-cols-[28px_28px_1fr_72px_64px_64px] gap-x-2 items-center px-4 py-2.5
+            grid grid-cols-[28px_28px_36px_1fr_72px_64px_64px] gap-x-2 items-center px-4 py-2.5
             transition-colors cursor-default hover:bg-[#0B1628]
             ${idx < standings.length - 1 ? 'border-b border-[#1E3050]' : ''}
           `}
@@ -40,6 +43,14 @@ export default function StandingsTable({ standings }: StandingsTableProps) {
           }`}>
             {entry.powerRank}
           </span>
+
+          {/* Avatar */}
+          {(() => {
+            const src = teamLogoSrc(entry.teamName);
+            return src ? (
+              <Image src={src} alt={entry.teamName} width={28} height={28} className="rounded-full object-cover object-top w-7 h-7" />
+            ) : <span />;
+          })()}
 
           {/* Team */}
           <div className="min-w-0">

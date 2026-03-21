@@ -1,17 +1,18 @@
 import { DraftBoardData, DraftPick } from '@/lib/types';
+import { AllPlayerFP } from '@/lib/espn-draft';
 
 interface Props {
   data: DraftBoardData;
+  topPlayers: AllPlayerFP[]; // top 130 by FP across whole league, including undrafted
 }
 
-const TIER_SIZE = 10;
-
-function computeBenchmarks(picks: DraftPick[], rounds: number): number[] {
-  // Only include players who actually have stats (fp > 0)
-  const active = [...picks].filter(p => p.fp > 0).sort((a, b) => b.fp - a.fp);
-  const tierSize = Math.ceil(active.length / rounds);
+// Split the top players (already sorted fp desc) into `rounds` equal groups
+// and return the average FP per group. These are the round benchmarks.
+function computeBenchmarks(topPlayers: AllPlayerFP[], rounds: number): number[] {
+  if (topPlayers.length === 0) return Array(rounds).fill(0);
+  const tierSize = Math.ceil(topPlayers.length / rounds);
   return Array.from({ length: rounds }, (_, t) => {
-    const tier = active.slice(t * tierSize, (t + 1) * tierSize);
+    const tier = topPlayers.slice(t * tierSize, (t + 1) * tierSize);
     if (tier.length === 0) return 0;
     return tier.reduce((sum, p) => sum + p.fp, 0) / tier.length;
   });
@@ -76,7 +77,7 @@ function PickCell({ pick, benchmark }: { pick: DraftPick; benchmark: number }) {
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
-export default function DraftValueAnalysis({ data }: Props) {
+export default function DraftValueAnalysis({ data, topPlayers }: Props) {
   const { teams, picks, rounds, hasStats } = data;
 
   if (!hasStats) {
@@ -90,7 +91,9 @@ export default function DraftValueAnalysis({ data }: Props) {
     );
   }
 
-  const benchmarks = computeBenchmarks(picks, rounds);
+  // Use full league top-130 for benchmarks (falls back to drafted players if unavailable)
+  const benchmarkSource = topPlayers.length > 0 ? topPlayers : picks.filter(p => p.fp > 0).sort((a, b) => b.fp - a.fp);
+  const benchmarks = computeBenchmarks(benchmarkSource, rounds);
 
   // Pick lookup: "round-draftSlot" → pick
   const grid = new Map<string, DraftPick>();
@@ -168,10 +171,13 @@ export default function DraftValueAnalysis({ data }: Props) {
   ];
 
   // ── Position comparison table data ──────────────────────────────────────────
-  // Assign end-of-season rank: sort active picks by fp desc → rank 1 = best
-  const rankedByFP = [...picks].sort((a, b) => b.fp - a.fp);
+  // Season rank = rank among the full league top-130 (includes undrafted players)
   const seasonRankMap = new Map<number, number>();
-  rankedByFP.forEach((p, i) => seasonRankMap.set(p.playerId, i + 1));
+  if (topPlayers.length > 0) {
+    topPlayers.forEach((p, i) => seasonRankMap.set(p.playerId, i + 1));
+  } else {
+    [...picks].sort((a, b) => b.fp - a.fp).forEach((p, i) => seasonRankMap.set(p.playerId, i + 1));
+  }
 
   // Sort all picks by draft position
   const picksByDraftPos = [...picks].sort((a, b) => a.overallPick - b.overallPick);
@@ -283,7 +289,7 @@ export default function DraftValueAnalysis({ data }: Props) {
       <div className="border border-[#1E3050] rounded-lg overflow-hidden bg-[#142035]">
         <div className="px-4 py-3 border-b border-[#1E3050] bg-[#0E1929]">
           <p className="text-[13px] font-semibold text-[#F0F4F8]">Draft Position vs. End-of-Season Rank</p>
-          <p className="text-[11px] text-[#64748B] mt-0.5">Sorted by draft position · green = ranked higher than drafted · red = ranked lower</p>
+          <p className="text-[11px] text-[#64748B] mt-0.5">Sorted by draft position · rank among all top-130 league players including undrafted · green = ranked higher than drafted · red = ranked lower</p>
         </div>
 
         <div className="overflow-x-auto">
@@ -303,10 +309,11 @@ export default function DraftValueAnalysis({ data }: Props) {
             </thead>
             <tbody>
               {picksByDraftPos.map(pick => {
-                const seasonRank = seasonRankMap.get(pick.playerId) ?? pick.overallPick;
+                const seasonRank = seasonRankMap.get(pick.playerId); // undefined = outside top 130
                 const isINJ = pick.grade === 'INJ';
-                const improved = !isINJ && seasonRank < pick.overallPick;
-                const declined = !isINJ && seasonRank > pick.overallPick;
+                const outsideTop130 = !isINJ && seasonRank === undefined;
+                const improved = !isINJ && seasonRank !== undefined && seasonRank < pick.overallPick;
+                const declined = !isINJ && (outsideTop130 || (seasonRank !== undefined && seasonRank > pick.overallPick));
                 const nameColor = isINJ
                   ? 'text-[#64748B] line-through'
                   : improved
@@ -314,9 +321,11 @@ export default function DraftValueAnalysis({ data }: Props) {
                   : declined
                   ? 'text-[#F87171]'
                   : 'text-[#F0F4F8]';
-                const movement = improved
+                const movement = improved && seasonRank !== undefined
                   ? `▲ ${pick.overallPick - seasonRank}`
-                  : declined
+                  : outsideTop130
+                  ? '▼ out'
+                  : declined && seasonRank !== undefined
                   ? `▼ ${seasonRank - pick.overallPick}`
                   : '—';
                 const movColor = improved ? 'text-[#34D399]' : declined ? 'text-[#F87171]' : 'text-[#64748B]';
@@ -333,6 +342,11 @@ export default function DraftValueAnalysis({ data }: Props) {
                     <td className="px-4 py-2 text-center">
                       {isINJ ? (
                         <span className="text-[11px] text-[#64748B]">DNP</span>
+                      ) : outsideTop130 ? (
+                        <div className="flex items-center justify-center gap-1.5">
+                          <span className="text-[11px] text-[#64748B]">&gt;130</span>
+                          <span className="text-[10px] font-medium text-[#F87171]">▼ out</span>
+                        </div>
                       ) : (
                         <div className="flex items-center justify-center gap-1.5">
                           <span className="text-[12px] font-semibold tabular-nums text-[#94A3B8]">#{seasonRank}</span>

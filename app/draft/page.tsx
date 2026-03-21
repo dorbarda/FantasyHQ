@@ -1,5 +1,5 @@
 import { hasEspnCredentials } from '@/lib/espn';
-import { getDraftBoard, DRAFT_YEARS } from '@/lib/espn-draft';
+import { getDraftBoard, getTopPlayersFP, DRAFT_YEARS, AllPlayerFP } from '@/lib/espn-draft';
 import { DraftBoardData } from '@/lib/types';
 import DraftBoard from '@/components/DraftBoard';
 import DraftYearTabs from '@/components/DraftYearTabs';
@@ -30,17 +30,20 @@ export default async function DraftPage({ searchParams }: PageProps) {
   const year = DRAFT_YEARS.includes(requestedYear) ? requestedYear : DEFAULT_YEAR;
 
   let data: DraftBoardData | null = null;
+  let topPlayers: AllPlayerFP[] = [];
   let error = false;
 
   if (!isHistory) {
     try {
-      data = await getDraftBoard(year);
+      [data, topPlayers] = await Promise.all([
+        getDraftBoard(year),
+        isValueAnalysis ? getTopPlayersFP(year, 130) : Promise.resolve([]),
+      ]);
     } catch (err) {
       console.error('Draft board fetch failed:', err);
       error = true;
     }
   }
-
 
   return (
     <div className="py-5">
@@ -88,7 +91,7 @@ export default async function DraftPage({ searchParams }: PageProps) {
               </div>
 
               {isValueAnalysis ? (
-                <DraftValueAnalysis data={data} />
+                <DraftValueAnalysis data={data} topPlayers={topPlayers} />
               ) : (
                 <DraftBoard data={data} />
               )}

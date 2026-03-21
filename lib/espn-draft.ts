@@ -156,6 +156,44 @@ async function fetchPlayerData(year: number, draftedIds: number[]): Promise<Map<
   return map;
 }
 
+// ─── Top players across whole league (including undrafted) ────────────────────
+
+export interface AllPlayerFP {
+  playerId: number;
+  name: string;
+  position: string;
+  proTeam: string;
+  fp: number;
+}
+
+export async function getTopPlayersFP(year: number, limit = 130): Promise<AllPlayerFP[]> {
+  try {
+    // Fetch extra to account for players with fp=0 in the result set
+    const fetchLimit = Math.ceil(limit * 1.5);
+    const filter = JSON.stringify({
+      players: {
+        limit: fetchLimit,
+        sortAppliedStatTotal: { sortAsc: false, sortPriority: 1, value: `00${year}` },
+        filterStatsForTopScoringPeriodIds: { value: 17, additionalValue: [`00${year}`] },
+      },
+    });
+    const data = await espnGet(year, '?view=kona_player_info', { 'x-fantasy-filter': filter });
+    const results: AllPlayerFP[] = [];
+    for (const entry of (data.players || []) as any[]) {
+      const p = entry.playerPoolEntry?.player;
+      if (!p) continue;
+      const meta = playerMeta(p);
+      if (meta.fp <= 0) continue;
+      results.push({ playerId: p.id as number, name: meta.name, position: meta.position, proTeam: meta.proTeam, fp: meta.fp });
+      if (results.length >= limit) break;
+    }
+    return results; // already sorted fp desc by kona
+  } catch (e) {
+    console.error(`[draft] getTopPlayersFP failed year=${year}:`, e);
+    return [];
+  }
+}
+
 // ─── Grade ────────────────────────────────────────────────────────────────────
 
 function computeGrade(fp: number, pts: number, delta: number): DraftGrade {

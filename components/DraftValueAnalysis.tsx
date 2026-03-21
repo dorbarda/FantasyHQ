@@ -127,10 +127,10 @@ export default function DraftValueAnalysis({ data }: Props) {
   let worstDrafterId: number | null = null;
   let worstSurplus = Infinity;
 
-  for (const [teamId, surplus] of surplusMap) {
+  surplusMap.forEach((surplus, teamId) => {
     if (surplus > bestSurplus) { bestSurplus = surplus; bestDrafterId = teamId; }
     if (surplus < worstSurplus) { worstSurplus = surplus; worstDrafterId = teamId; }
-  }
+  });
 
   const teamById = new Map(teams.map(t => [t.teamId, t]));
 

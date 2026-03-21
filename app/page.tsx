@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { hasEspnCredentials, getMatchups, getStandings } from '@/lib/espn';
+import { hasEspnCredentials, getMatchups, getStandings, getPlayoffBracket, getPlayers } from '@/lib/espn';
 import matchupsJson from '@/data/matchups.json';
 import standingsJson from '@/data/standings.json';
-import type { Matchup, MatchupsData, StandingEntry } from '@/lib/types';
+import playersJson from '@/data/players.json';
+import type { Matchup, MatchupsData, StandingEntry, PlayoffBracketData, BracketMatchup, Player } from '@/lib/types';
 import ScoreStrip from '@/components/ScoreStrip';
 
 export const revalidate = 1800;
@@ -16,6 +17,105 @@ function findClosestMatchup(matchups: Matchup[]): Matchup {
     const closestDiff = Math.abs(closest.home.actualScore - closest.away.actualScore);
     return diff < closestDiff ? m : closest;
   });
+}
+
+// ─── Semi-Finals Card ─────────────────────────────────────────────────────────
+
+function SemiFinalsCard({ matchups }: { matchups: BracketMatchup[] }) {
+  return (
+    <div className="rounded-2xl overflow-hidden bg-[#0B1628] text-white">
+      {/* Header */}
+      <div className="flex items-center justify-between px-5 py-3 border-b border-white/10">
+        <div className="flex items-center gap-2">
+          <svg viewBox="0 0 16 16" fill="none" className="w-3.5 h-3.5 shrink-0">
+            <path d="M8 2l1.8 4H14l-3.6 2.6 1.4 4.4L8 10.5 4.2 13 5.6 8.6 2 6h4.2z" fill="#C8956C"/>
+          </svg>
+          <span className="text-[12px] font-semibold text-[#C8956C] uppercase tracking-wider">
+            Playoffs · Semi-Finals
+          </span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C8956C] opacity-75" />
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#C8956C]" />
+          </span>
+          <span className="text-[11px] font-semibold text-[#C8956C]">In Progress</span>
+        </div>
+      </div>
+
+      {/* Matchups */}
+      <div className="divide-y divide-white/5">
+        {matchups.map((m, idx) => {
+          const { home, away, winner } = m;
+          const homeWon = winner === 'home';
+          const awayWon = winner === 'away';
+          const ongoing = winner === null;
+          const homeLeading = ongoing && away !== null && home.score > away.score;
+          const awayLeading = ongoing && away !== null && away.score > home.score;
+
+          return (
+            <div key={m.id} className="px-5 py-4">
+              {/* Matchup label */}
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-[#475569] mb-3">
+                Matchup {idx + 1}
+              </p>
+
+              <div className="space-y-2.5">
+                {(
+                  [
+                    { team: home, won: homeWon, leading: homeLeading, lost: awayWon },
+                    away ? { team: away, won: awayWon, leading: awayLeading, lost: homeWon } : null,
+                  ].filter(Boolean) as { team: import('@/lib/types').BracketTeam; won: boolean; leading: boolean; lost: boolean }[]
+                ).map(({ team, won, leading, lost }) => (
+                  <div
+                    key={team.teamId}
+                    className={`flex items-center justify-between gap-3 rounded-lg px-3 py-2 transition-colors ${
+                      won ? 'bg-[#10B981]/10' : lost ? 'opacity-40' : leading ? 'bg-white/5' : ''
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span className="text-[10px] font-bold text-[#475569] shrink-0 w-5 text-center">
+                        #{team.seed}
+                      </span>
+                      <div className="min-w-0">
+                        <p className={`text-[14px] font-bold leading-tight truncate ${won ? 'text-[#10B981]' : 'text-white'}`}>
+                          {team.ownerName}
+                        </p>
+                        <p className="text-[10px] text-[#475569] truncate">{team.teamName}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      {won && (
+                        <span className="text-[9px] font-bold bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/30 rounded px-1.5 py-0.5">
+                          ADV
+                        </span>
+                      )}
+                      {leading && team.score > 0 && (
+                        <span className="text-[9px] font-bold bg-[#C8956C]/20 text-[#C8956C] border border-[#C8956C]/30 rounded px-1.5 py-0.5">
+                          LEAD
+                        </span>
+                      )}
+                      <span className={`text-[20px] font-bold tabular-nums ${
+                        won ? 'text-[#10B981]' : leading ? 'text-white' : 'text-[#64748B]'
+                      }`}>
+                        {team.score > 0 ? team.score.toFixed(1) : '—'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="px-5 py-3 border-t border-white/5">
+        <Link href="/league" className="text-[12px] font-medium text-[#C8956C] hover:text-[#D4A77C] transition-colors">
+          View full bracket →
+        </Link>
+      </div>
+    </div>
+  );
 }
 
 // ─── Closest Matchup Hero Card ────────────────────────────────────────────────
@@ -252,6 +352,81 @@ function HomeStandingsPanel({ standings }: { standings: StandingEntry[] }) {
   );
 }
 
+// ─── Top Player Card ──────────────────────────────────────────────────────────
+
+const POSITION_COLORS: Record<string, { bg: string; text: string }> = {
+  G: { bg: '#C8956C', text: '#fff' },
+  F: { bg: '#10B981', text: '#fff' },
+  C: { bg: '#3B82F6', text: '#fff' },
+};
+
+function TopPlayerCard({ player }: { player: Player }) {
+  const pos = POSITION_COLORS[player.position] ?? { bg: '#94A3B8', text: '#fff' };
+
+  return (
+    <div className="bg-white rounded-xl border border-[#E2E8F0] overflow-hidden">
+      {/* Header */}
+      <div className="px-4 py-3 border-b border-[#E2E8F0] flex items-center justify-between">
+        <div className="flex items-center gap-1.5">
+          <svg viewBox="0 0 14 14" fill="none" className="w-3.5 h-3.5 shrink-0">
+            <path d="M7 1.5l1.6 3.5 3.9.4-2.8 2.7.7 3.9L7 10l-3.4 2 .7-3.9L1.5 5.4l3.9-.4z" fill="#F59E0B"/>
+          </svg>
+          <span className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8]">
+            Season&apos;s Best Player
+          </span>
+        </div>
+        <Link href="/players" className="text-[12px] font-medium text-[#C8956C] hover:text-[#D4A77C] transition-colors">
+          All players →
+        </Link>
+      </div>
+
+      {/* Player info */}
+      <div className="px-4 py-4">
+        <div className="flex items-start justify-between gap-3 mb-4">
+          <div className="min-w-0">
+            <p className="text-[22px] font-bold text-[#0F172A] leading-tight truncate">
+              {player.name}
+            </p>
+            <div className="flex items-center gap-2 mt-1">
+              <span
+                className="text-[10px] font-bold px-1.5 py-0.5 rounded"
+                style={{ backgroundColor: pos.bg, color: pos.text }}
+              >
+                {player.position}
+              </span>
+              <span className="text-[12px] font-semibold text-[#475569]">{player.team}</span>
+            </div>
+          </div>
+          {/* FP bubble */}
+          <div className="shrink-0 flex flex-col items-center bg-[#F59E0B]/10 border border-[#F59E0B]/30 rounded-xl px-3 py-2 min-w-[64px]">
+            <span className="text-[22px] font-bold tabular-nums text-[#0F172A] leading-none">
+              {player.fp.toFixed(1)}
+            </span>
+            <span className="text-[9px] font-semibold uppercase tracking-wider text-[#94A3B8] mt-0.5">
+              FP/g
+            </span>
+          </div>
+        </div>
+
+        {/* Stat row */}
+        <div className="grid grid-cols-4 gap-2 pt-3 border-t border-[#F1F5F9]">
+          {[
+            { label: 'PTS', value: player.pts.toFixed(1) },
+            { label: 'REB', value: player.reb.toFixed(1) },
+            { label: 'AST', value: player.ast.toFixed(1) },
+            { label: '3PM', value: player.tpm.toFixed(1) },
+          ].map(({ label, value }) => (
+            <div key={label} className="text-center">
+              <p className="text-[14px] font-bold tabular-nums text-[#0F172A]">{value}</p>
+              <p className="text-[9px] font-semibold uppercase tracking-wider text-[#94A3B8] mt-0.5">{label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Quick Links ──────────────────────────────────────────────────────────────
 
 const QUICK_LINKS = [
@@ -293,18 +468,34 @@ export default async function HomePage() {
   // Fetch data
   let matchupsData: MatchupsData = matchupsJson as MatchupsData;
   let standings: StandingEntry[] = standingsJson as StandingEntry[];
+  let bracket: PlayoffBracketData | null = null;
+  let players: Player[] = playersJson as Player[];
 
   if (hasEspnCredentials()) {
-    const [matchupsResult, standingsResult] = await Promise.allSettled([
+    const [matchupsResult, standingsResult, bracketResult, playersResult] = await Promise.allSettled([
       getMatchups(),
       getStandings(),
+      getPlayoffBracket(),
+      getPlayers(),
     ]);
     if (matchupsResult.status === 'fulfilled') matchupsData = matchupsResult.value;
     if (standingsResult.status === 'fulfilled') standings = standingsResult.value;
+    if (bracketResult.status === 'fulfilled') bracket = bracketResult.value;
+    if (playersResult.status === 'fulfilled') players = playersResult.value;
   }
 
   const { matchups, week } = matchupsData;
   const closestMatchup = matchups.length > 0 ? findClosestMatchup(matchups) : null;
+
+  // Semi-final matchups: winners bracket, current round only
+  const semiFinals: BracketMatchup[] = bracket?.isPlayoffs
+    ? bracket.winners.filter((m) => m.isCurrentRound)
+    : [];
+
+  // Season's top player by fantasy points per game
+  const topPlayer = players.length > 0
+    ? players.reduce((best, p) => (p.fp > best.fp ? p : best))
+    : null;
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
@@ -341,6 +532,11 @@ export default async function HomePage() {
 
         {/* Left column */}
         <div className="space-y-6">
+          {/* Semi-finals (shown when playoffs are active) */}
+          {semiFinals.length > 0 && (
+            <SemiFinalsCard matchups={semiFinals} />
+          )}
+
           {closestMatchup ? (
             <ClosestMatchupCard matchup={closestMatchup} week={week} />
           ) : (
@@ -361,6 +557,7 @@ export default async function HomePage() {
         {/* Right column */}
         <div className="space-y-4">
           <HomeStandingsPanel standings={standings} />
+          {topPlayer && <TopPlayerCard player={topPlayer} />}
           <HomeQuickLinks />
         </div>
       </div>

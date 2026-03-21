@@ -6,6 +6,7 @@ import standingsJson from '@/data/standings.json';
 import playersJson from '@/data/players.json';
 import type { Matchup, MatchupsData, StandingEntry, PlayoffBracketData, BracketMatchup, Player } from '@/lib/types';
 import ScoreStrip from '@/components/ScoreStrip';
+import { teamLogoSrc } from '@/lib/team-logos';
 
 export const revalidate = 1800;
 
@@ -77,6 +78,9 @@ function SemiFinalsCard({ matchups }: { matchups: BracketMatchup[] }) {
                       <span className="text-[10px] font-bold text-[#475569] shrink-0 w-5 text-center">
                         #{team.seed}
                       </span>
+                      {teamLogoSrc(team.teamName) && (
+                        <Image src={teamLogoSrc(team.teamName)!} alt={team.teamName} width={28} height={28} className="rounded-full object-cover object-top w-7 h-7 shrink-0" />
+                      )}
                       <div className="min-w-0">
                         <p className={`text-[14px] font-bold leading-tight truncate ${won ? 'text-[#10B981]' : 'text-white'}`}>
                           {team.ownerName}
@@ -273,13 +277,18 @@ function WeekScoreCards({ matchups, closestId, week }: { matchups: Matchup[]; cl
                   const isLeading = hasScores && (ti === 0 ? homeLeading : !homeLeading);
                   return (
                     <div key={team.teamId} className="flex items-center justify-between">
-                      <div>
-                        <p className={`text-[13px] font-bold leading-tight ${isLeading ? 'text-white' : 'text-white/60'}`}>
-                          {team.ownerName}
-                        </p>
-                        <p className="text-[10px] text-white/30 mt-0.5 truncate max-w-[140px]">
-                          {team.teamName}
-                        </p>
+                      <div className="flex items-center gap-2">
+                        {teamLogoSrc(team.teamName) && (
+                          <Image src={teamLogoSrc(team.teamName)!} alt={team.teamName} width={32} height={32} className="rounded-full object-cover object-top w-8 h-8 shrink-0" />
+                        )}
+                        <div>
+                          <p className={`text-[13px] font-bold leading-tight ${isLeading ? 'text-white' : 'text-white/60'}`}>
+                            {team.ownerName}
+                          </p>
+                          <p className="text-[10px] text-white/30 mt-0.5 truncate max-w-[140px]">
+                            {team.teamName}
+                          </p>
+                        </div>
                       </div>
                       <p className={`text-[22px] font-bold tabular-nums leading-none ${isLeading ? 'text-white' : 'text-white/50'}`}>
                         {hasScores ? team.actualScore.toFixed(1) : '—'}
@@ -330,6 +339,9 @@ function HomeStandingsPanel({ standings }: { standings: StandingEntry[] }) {
               >
                 {entry.rank}
               </span>
+              {teamLogoSrc(entry.teamName) && (
+                <Image src={teamLogoSrc(entry.teamName)!} alt={entry.teamName} width={28} height={28} className="rounded-full object-cover object-top w-7 h-7 shrink-0" />
+              )}
               <div className="flex-1 min-w-0">
                 <p className={`text-[13px] font-semibold leading-tight truncate ${isTop3 ? 'text-[#0F172A]' : 'text-[#334155]'}`}>
                   {entry.ownerName}

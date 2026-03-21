@@ -4,6 +4,7 @@ import { DraftBoardData } from '@/lib/types';
 import DraftBoard from '@/components/DraftBoard';
 import DraftYearTabs from '@/components/DraftYearTabs';
 import PlayerHistoryTab from '@/components/PlayerHistoryTab';
+import DraftValueAnalysis from '@/components/DraftValueAnalysis';
 
 export const revalidate = 3600;
 
@@ -24,6 +25,7 @@ export default async function DraftPage({ searchParams }: PageProps) {
   }
 
   const isHistory = searchParams.view === 'history';
+  const isValueAnalysis = searchParams.view === 'value';
   const requestedYear = parseInt(searchParams.year || String(DEFAULT_YEAR));
   const year = DRAFT_YEARS.includes(requestedYear) ? requestedYear : DEFAULT_YEAR;
 
@@ -39,6 +41,7 @@ export default async function DraftPage({ searchParams }: PageProps) {
     }
   }
 
+
   return (
     <div className="py-5">
       {/* Header */}
@@ -47,6 +50,8 @@ export default async function DraftPage({ searchParams }: PageProps) {
         <p className="text-[15px] text-[#94A3B8] font-medium">
           {isHistory
             ? 'Search a player to see their full draft history'
+            : isValueAnalysis
+            ? 'How each pick compared to the round benchmark'
             : 'Pick grades based on season rank vs. draft position'}
         </p>
       </div>
@@ -59,7 +64,7 @@ export default async function DraftPage({ searchParams }: PageProps) {
       {/* Player History view */}
       {isHistory && <PlayerHistoryTab />}
 
-      {/* Draft Board view */}
+      {/* Draft Board / Value Analysis views */}
       {!isHistory && (
         <>
           {error && (
@@ -81,7 +86,12 @@ export default async function DraftPage({ searchParams }: PageProps) {
                   <span className="text-[#FB923C] font-medium">Season in progress — grades pending</span>
                 )}
               </div>
-              <DraftBoard data={data} />
+
+              {isValueAnalysis ? (
+                <DraftValueAnalysis data={data} />
+              ) : (
+                <DraftBoard data={data} />
+              )}
             </>
           )}
         </>

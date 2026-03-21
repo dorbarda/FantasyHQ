@@ -8,7 +8,7 @@ interface Props {
 
 // Split the top players (already sorted fp desc) into `rounds` equal groups
 // and return the average FP per group. These are the round benchmarks.
-function computeBenchmarks(topPlayers: AllPlayerFP[], rounds: number): number[] {
+function computeBenchmarks(topPlayers: { fp: number }[], rounds: number): number[] {
   if (topPlayers.length === 0) return Array(rounds).fill(0);
   const tierSize = Math.ceil(topPlayers.length / rounds);
   return Array.from({ length: rounds }, (_, t) => {

@@ -300,16 +300,31 @@ export async function getPlayers(): Promise<Player[]> {
       const p = entry.playerPoolEntry?.player;
       if (!p) continue;
       const stats = (p.stats || []) as any[];
+
+      // Prefer season per-game averages (statSplitTypeId=1), fall back to
+      // season totals (statSplitTypeId=0), then current week as last resort
+      const seasonAvg = stats.find(
+        (s: any) => s.statSourceId === 0 && s.statSplitTypeId === 1
+      );
+      const seasonTotals = stats.find(
+        (s: any) => s.statSourceId === 0 && s.statSplitTypeId === 0
+      );
       const weekStats = stats.find(
         (s: any) => s.statSourceId === 0 && s.scoringPeriodId === scoringPeriodId
       );
-      const s = weekStats?.stats || {};
+      const statEntry = seasonAvg || weekStats || seasonTotals;
+      const s = statEntry?.stats || {};
+
       const posId: number = p.defaultPositionId || 5;
       const pts = Math.round((s['0'] || 0) * 10) / 10;
       const reb = Math.round((s['6'] || 0) * 10) / 10;
       const ast = Math.round((s['3'] || 0) * 10) / 10;
       const tpm = Math.round((s['17'] || 0) * 10) / 10;
       const fp = Math.round((pts + reb * 1.2 + ast * 1.5 + tpm * 3) * 10) / 10;
+
+      // Skip players with no meaningful stats
+      if (pts === 0 && reb === 0 && ast === 0) continue;
+
       allPlayers.push({
         id: `p${p.id}`,
         name: p.fullName || 'Unknown',
@@ -321,7 +336,7 @@ export async function getPlayers(): Promise<Player[]> {
   }
   return allPlayers
     .sort((a, b) => b.fp - a.fp)
-    .slice(0, 15)
+    .slice(0, 30)
     .map((p, i) => ({ ...p, id: `p${i + 1}` }));
 }
 

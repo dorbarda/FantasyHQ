@@ -5,21 +5,21 @@ export default function RulesPage() {
   const rules = rulesData as RulesData;
 
   return (
-    <div className="min-h-screen bg-[#071120] px-4 sm:px-6 lg:px-8 py-6">
+    <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
       {/* Header */}
       <div className="mb-5">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#F0F4F8]">League Rules</h1>
-        <p className="text-[14px] text-[#64748B] mt-1">Last updated {rules.lastUpdated}</p>
+        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A]">League Rules</h1>
+        <p className="text-[14px] text-[#475569] mt-1">Last updated {rules.lastUpdated}</p>
       </div>
 
-      <div className="border border-[#1E3050] rounded-lg overflow-hidden">
+      <div className="border border-[#E2E8F0] rounded-lg overflow-hidden">
         {rules.sections.map((section, idx) => (
           <div
             key={section.title}
-            className={idx < rules.sections.length - 1 ? 'border-b border-[#1E3050]' : ''}
+            className={idx < rules.sections.length - 1 ? 'border-b border-[#E2E8F0]' : ''}
           >
             {/* Section title */}
-            <div className="px-4 py-3 bg-[#0B1628]">
+            <div className="px-4 py-3 bg-white">
               <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8]">
                 {section.title}
               </p>
@@ -31,7 +31,7 @@ export default function RulesPage() {
                 {section.rules.map((rule, ruleIdx) => (
                   <li key={ruleIdx} className="flex items-start gap-2.5">
                     <span className="text-[#C8956C] font-bold text-[14px] mt-[1px] shrink-0">·</span>
-                    <span className="text-[15px] text-[#F0F4F8] font-medium leading-snug">{rule}</span>
+                    <span className="text-[15px] text-[#0F172A] font-medium leading-snug">{rule}</span>
                   </li>
                 ))}
               </ul>

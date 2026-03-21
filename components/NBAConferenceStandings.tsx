@@ -30,14 +30,14 @@ function ConferenceTable({
         </span>
       </div>
 
-      <div className="rounded-2xl border border-[#1E3050] overflow-hidden">
+      <div className="rounded-2xl border border-[#E2E8F0] overflow-hidden">
         {/* Column headers */}
-        <div className="grid grid-cols-[20px_1fr_52px_44px_36px] gap-x-2 px-3 py-2 bg-[#0B1628] border-b border-[#1E3050]">
-          <span className="text-[11px] text-[#64748B] font-semibold">#</span>
-          <span className="text-[11px] text-[#64748B] font-semibold">Team</span>
-          <span className="text-[11px] text-[#64748B] font-semibold text-right">W-L</span>
-          <span className="text-[11px] text-[#64748B] font-semibold text-right">GB</span>
-          <span className="text-[11px] text-[#64748B] font-semibold text-right">L10</span>
+        <div className="grid grid-cols-[20px_1fr_52px_44px_36px] gap-x-2 px-3 py-2 bg-white border-b border-[#E2E8F0]">
+          <span className="text-[11px] text-[#475569] font-semibold">#</span>
+          <span className="text-[11px] text-[#475569] font-semibold">Team</span>
+          <span className="text-[11px] text-[#475569] font-semibold text-right">W-L</span>
+          <span className="text-[11px] text-[#475569] font-semibold text-right">GB</span>
+          <span className="text-[11px] text-[#475569] font-semibold text-right">L10</span>
         </div>
 
         {rows.map((row, i) => {
@@ -45,17 +45,17 @@ function ConferenceTable({
           return (
             <div
               key={row.teamTricode + row.rank}
-              className={`grid grid-cols-[20px_1fr_52px_44px_36px] gap-x-2 px-3 py-2.5 items-center transition-colors hover:bg-[#0B1628]
+              className={`grid grid-cols-[20px_1fr_52px_44px_36px] gap-x-2 px-3 py-2.5 items-center transition-colors hover:bg-white
                 ${i < rows.length - 1 ? 'border-b border-[#F3F4F6]' : ''}
                 ${isPlayInBorder ? 'border-b-2 border-dashed border-[#D1D5DB]' : ''}
               `}
             >
               {/* Rank */}
-              <span className="text-[12px] font-medium text-[#64748B] tabular-nums">{row.rank}</span>
+              <span className="text-[12px] font-medium text-[#475569] tabular-nums">{row.rank}</span>
 
               {/* Team */}
               <div className="flex items-center gap-2 min-w-0">
-                <span className="text-[12px] font-bold text-[#F0F4F8] tabular-nums shrink-0">
+                <span className="text-[12px] font-bold text-[#0F172A] tabular-nums shrink-0">
                   {row.teamTricode || row.teamName.slice(0, 3).toUpperCase()}
                 </span>
                 <span className="text-[12px] text-[#94A3B8] truncate hidden sm:block">
@@ -69,7 +69,7 @@ function ConferenceTable({
               </div>
 
               {/* W-L */}
-              <span className="text-[12px] font-medium text-[#F0F4F8] text-right tabular-nums">
+              <span className="text-[12px] font-medium text-[#0F172A] text-right tabular-nums">
                 {row.wins}-{row.losses}
               </span>
 
@@ -102,7 +102,7 @@ export default function NBAConferenceStandings({ east, west }: Props) {
         <ConferenceTable label="East" rows={east} />
         <ConferenceTable label="West" rows={west} />
       </div>
-      <p className="text-[11px] text-[#64748B] mt-2">
+      <p className="text-[11px] text-[#475569] mt-2">
         Dashed line separates play-in (7–10) from guaranteed playoff seeds (1–6)
       </p>
     </section>

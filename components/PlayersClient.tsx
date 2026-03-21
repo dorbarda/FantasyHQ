@@ -28,7 +28,7 @@ function PosBadge({ pos }: { pos: string }) {
 function StatBar({ value, max, color }: { value: number; max: number; color: string }) {
   const pct = max > 0 ? Math.min((value / max) * 100, 100) : 0;
   return (
-    <div className="h-1 rounded-full bg-[#1E3050] overflow-hidden w-full">
+    <div className="h-1 rounded-full bg-[#E2E8F0] overflow-hidden w-full">
       <div
         className="h-full rounded-full transition-all"
         style={{ width: `${pct}%`, backgroundColor: color }}
@@ -70,14 +70,14 @@ function getViewStats(player: Player, view: View) {
 }
 
 function PodiumCard({ player, rank, view }: { player: Player; rank: number; view: View }) {
-  const medal = MEDAL_COLORS[rank] ?? '#64748B';
+  const medal = MEDAL_COLORS[rank] ?? '#475569';
   const isFirst = rank === 0;
   const vs = getViewStats(player, view);
 
   return (
     <div
       className={`relative rounded-2xl border overflow-hidden flex flex-col gap-3 p-5 transition-transform hover:-translate-y-0.5 ${
-        isFirst ? 'border-[#F59E0B]/40 bg-gradient-to-b from-[#1a2a10] to-[#0B1628]' : 'border-[#1E3050] bg-[#0B1628]'
+        isFirst ? 'border-[#F59E0B]/40 bg-gradient-to-b from-[#FFFBEB] to-[#FEF3C7]/30' : 'border-[#E2E8F0] bg-white'
       }`}
     >
       {/* Rank */}
@@ -93,8 +93,8 @@ function PodiumCard({ player, rank, view }: { player: Player; rank: number; view
 
       {/* Name + team */}
       <div>
-        <p className="text-[17px] font-bold text-[#F0F4F8] leading-tight">{player.name}</p>
-        <p className="text-[12px] text-[#64748B] mt-0.5">{player.team}</p>
+        <p className="text-[17px] font-bold text-[#0F172A] leading-tight">{player.name}</p>
+        <p className="text-[12px] text-[#475569] mt-0.5">{player.team}</p>
       </div>
 
       {/* FP */}
@@ -105,11 +105,11 @@ function PodiumCard({ player, rank, view }: { player: Player; rank: number; view
         >
           {vs.fp.toFixed(1)}
         </span>
-        <span className="text-[11px] text-[#64748B] mb-1">FP/g</span>
+        <span className="text-[11px] text-[#475569] mb-1">FP/g</span>
       </div>
 
       {/* Stats row */}
-      <div className="grid grid-cols-4 gap-1 pt-3 border-t border-[#1E3050]">
+      <div className="grid grid-cols-4 gap-1 pt-3 border-t border-[#E2E8F0]">
         {[
           { label: 'PTS', v: vs.pts },
           { label: 'REB', v: vs.reb },
@@ -117,7 +117,7 @@ function PodiumCard({ player, rank, view }: { player: Player; rank: number; view
           { label: '3PM', v: vs.tpm },
         ].map(({ label, v }) => (
           <div key={label} className="text-center">
-            <p className="text-[14px] font-bold tabular-nums text-[#F0F4F8]">{v.toFixed(1)}</p>
+            <p className="text-[14px] font-bold tabular-nums text-[#0F172A]">{v.toFixed(1)}</p>
             <p className="text-[9px] uppercase tracking-wider text-[#475569] mt-0.5">{label}</p>
           </div>
         ))}
@@ -165,7 +165,7 @@ function TableRow({
   const vs = getViewStats(player, view);
 
   return (
-    <div className="grid grid-cols-[32px_1fr_56px_56px_56px_56px_68px] gap-x-2 items-center px-4 py-3 border-b border-[#1E3050] last:border-0 hover:bg-[#0E1929] transition-colors group">
+    <div className="grid grid-cols-[32px_1fr_56px_56px_56px_56px_68px] gap-x-2 items-center px-4 py-3 border-b border-[#E2E8F0] last:border-0 hover:bg-[#F1F5F9] transition-colors group">
       {/* Rank */}
       <span className="text-[12px] font-semibold text-[#475569] tabular-nums">{rank}</span>
 
@@ -173,7 +173,7 @@ function TableRow({
       <div className="min-w-0 flex items-center gap-2">
         <PosBadge pos={player.position} />
         <div className="min-w-0">
-          <p className="text-[13px] font-semibold text-[#F0F4F8] truncate leading-tight">{player.name}</p>
+          <p className="text-[13px] font-semibold text-[#0F172A] truncate leading-tight">{player.name}</p>
           <p className="text-[10px] text-[#475569]">{player.team}</p>
         </div>
       </div>
@@ -192,7 +192,7 @@ function TableRow({
 
       {/* FP */}
       <div className="text-right">
-        <p className={`text-[14px] font-bold tabular-nums ${sortKey === 'fp' ? 'text-[#C8956C]' : 'text-[#F0F4F8]'}`}>
+        <p className={`text-[14px] font-bold tabular-nums ${sortKey === 'fp' ? 'text-[#C8956C]' : 'text-[#0F172A]'}`}>
           {vs.fp.toFixed(1)}
         </p>
         <div className="mt-1">
@@ -242,7 +242,7 @@ export default function PlayersClient({ players }: { players: Player[] }) {
         {/* Left: position filter + season/L7 toggle */}
         <div className="flex items-center gap-2 flex-wrap">
           {/* Position filter */}
-          <div className="flex items-center gap-1 bg-[#0B1628] rounded-lg p-1 border border-[#1E3050]">
+          <div className="flex items-center gap-1 bg-white rounded-lg p-1 border border-[#E2E8F0]">
             {(['All', 'G', 'F', 'C'] as const).map((pos) => (
               <button
                 key={pos}
@@ -250,7 +250,7 @@ export default function PlayersClient({ players }: { players: Player[] }) {
                 className={`px-3 py-1.5 rounded text-[12px] font-semibold transition-colors ${
                   posFilter === pos
                     ? 'bg-[#C8956C] text-white'
-                    : 'text-[#94A3B8] hover:text-[#F0F4F8]'
+                    : 'text-[#94A3B8] hover:text-[#0F172A]'
                 }`}
               >
                 {pos}
@@ -259,11 +259,11 @@ export default function PlayersClient({ players }: { players: Player[] }) {
           </div>
 
           {/* Season / Last 7 toggle */}
-          <div className="flex items-center gap-1 bg-[#0B1628] rounded-lg p-1 border border-[#1E3050]">
+          <div className="flex items-center gap-1 bg-white rounded-lg p-1 border border-[#E2E8F0]">
             <button
               onClick={() => setView('season')}
               className={`px-3 py-1.5 rounded text-[12px] font-semibold transition-colors ${
-                view === 'season' ? 'bg-[#1E3050] text-[#C8956C]' : 'text-[#64748B] hover:text-[#94A3B8]'
+                view === 'season' ? 'bg-[#0F172A] text-[#C8956C]' : 'text-[#475569] hover:text-[#94A3B8]'
               }`}
             >
               Season
@@ -271,7 +271,7 @@ export default function PlayersClient({ players }: { players: Player[] }) {
             <button
               onClick={() => setView('l7')}
               className={`px-3 py-1.5 rounded text-[12px] font-semibold transition-colors ${
-                view === 'l7' ? 'bg-[#1E3050] text-[#C8956C]' : 'text-[#64748B] hover:text-[#94A3B8]'
+                view === 'l7' ? 'bg-[#0F172A] text-[#C8956C]' : 'text-[#475569] hover:text-[#94A3B8]'
               }`}
             >
               Last 7
@@ -281,16 +281,16 @@ export default function PlayersClient({ players }: { players: Player[] }) {
 
         {/* Sort selector */}
         <div className="flex items-center gap-2">
-          <span className="text-[11px] text-[#64748B] uppercase tracking-wider">Sort by</span>
-          <div className="flex items-center gap-1 bg-[#0B1628] rounded-lg p-1 border border-[#1E3050]">
+          <span className="text-[11px] text-[#475569] uppercase tracking-wider">Sort by</span>
+          <div className="flex items-center gap-1 bg-white rounded-lg p-1 border border-[#E2E8F0]">
             {SORT_OPTIONS.map(({ key, label }) => (
               <button
                 key={key}
                 onClick={() => setSortKey(key)}
                 className={`px-3 py-1.5 rounded text-[12px] font-semibold transition-colors ${
                   sortKey === key
-                    ? 'bg-[#1E3050] text-[#C8956C]'
-                    : 'text-[#64748B] hover:text-[#94A3B8]'
+                    ? 'bg-[#0F172A] text-[#C8956C]'
+                    : 'text-[#475569] hover:text-[#94A3B8]'
                 }`}
               >
                 {label}
@@ -313,9 +313,9 @@ export default function PlayersClient({ players }: { players: Player[] }) {
 
           {/* Table */}
           {rest.length > 0 && (
-            <div className="rounded-xl border border-[#1E3050] bg-[#0B1628] overflow-hidden">
+            <div className="rounded-xl border border-[#E2E8F0] bg-white overflow-hidden">
               {/* Table header */}
-              <div className="grid grid-cols-[32px_1fr_56px_56px_56px_56px_68px] gap-x-2 px-4 py-2.5 bg-[#0E1929] border-b border-[#1E3050]">
+              <div className="grid grid-cols-[32px_1fr_56px_56px_56px_56px_68px] gap-x-2 px-4 py-2.5 bg-[#F1F5F9] border-b border-[#E2E8F0]">
                 <span className="text-[10px] font-semibold uppercase tracking-widest text-[#475569]">#</span>
                 <span className="text-[10px] font-semibold uppercase tracking-widest text-[#475569]">Player</span>
                 {(['PTS', 'REB', 'AST', '3PM'] as const).map((lbl) => (

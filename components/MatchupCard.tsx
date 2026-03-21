@@ -14,8 +14,8 @@ function TeamSide({ team, isWinning, isLive, isFinal }: {
 }) {
   const scoreColor =
     isFinal
-      ? isWinning ? 'text-[#F0F4F8]' : 'text-[#64748B]'
-      : isLive && isWinning ? 'text-[#F0F4F8]' : 'text-[#94A3B8]';
+      ? isWinning ? 'text-[#0F172A]' : 'text-[#475569]'
+      : isLive && isWinning ? 'text-[#0F172A]' : 'text-[#94A3B8]';
 
   const logoSrc = teamLogoSrc(team.teamName);
 
@@ -25,10 +25,10 @@ function TeamSide({ team, isWinning, isLive, isFinal }: {
         <Image src={logoSrc} alt={team.teamName} width={48} height={48} className="rounded-full object-cover object-top w-12 h-12 mb-1" />
       )}
       <div className="text-center">
-        <p className="text-[13px] font-semibold tracking-tight truncate max-w-[120px] text-[#F0F4F8]">
+        <p className="text-[13px] font-semibold tracking-tight truncate max-w-[120px] text-[#0F172A]">
           {team.teamName}
         </p>
-        <p className="text-[11px] text-[#64748B]">
+        <p className="text-[11px] text-[#475569]">
           {team.ownerName}
           {(team.wins > 0 || team.losses > 0) && (
             <span className="text-[#475569] ml-1">· {team.wins}-{team.losses}</span>
@@ -40,10 +40,10 @@ function TeamSide({ team, isWinning, isLive, isFinal }: {
           {(isFinal || isLive) ? team.actualScore.toFixed(1) : team.projectedScore.toFixed(1)}
         </p>
         {isLive && (
-          <p className="text-[11px] text-[#64748B]">proj. {team.projectedScore.toFixed(1)}</p>
+          <p className="text-[11px] text-[#475569]">proj. {team.projectedScore.toFixed(1)}</p>
         )}
         {!isLive && !isFinal && (
-          <p className="text-[11px] text-[#64748B]">projected</p>
+          <p className="text-[11px] text-[#475569]">projected</p>
         )}
         {(isLive || (!isFinal && !isLive)) && team.playersRemainingToday > 0 && (
           <p className="text-[10px] text-[#34D399] mt-0.5">
@@ -61,17 +61,17 @@ export default function MatchupCard({ matchup }: MatchupCardProps) {
   const h2hTotal = matchup.h2h.homeWins + matchup.h2h.awayWins;
 
   return (
-    <div className="border border-[#1E3050] rounded-lg overflow-hidden bg-[#142035]">
+    <div className="border border-[#E2E8F0] rounded-lg overflow-hidden bg-white">
       {/* Battle of the Week banner */}
       {matchup.isBattleOfWeek && (
-        <div className="px-4 py-1.5 bg-[#1a2a40] border-b border-[#1E3050] flex items-center justify-center gap-1.5">
+        <div className="px-4 py-1.5 bg-[#1a2a40] border-b border-[#E2E8F0] flex items-center justify-center gap-1.5">
           <span className="text-[11px] font-semibold text-[#F59E0B]">⚔ Battle of the Week</span>
         </div>
       )}
 
       {/* Live indicator */}
       {matchup.isLive && (
-        <div className="px-4 py-1.5 border-b border-[#1E3050] flex items-center justify-center gap-1.5">
+        <div className="px-4 py-1.5 border-b border-[#E2E8F0] flex items-center justify-center gap-1.5">
           <span className="relative flex h-1.5 w-1.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#34D399] opacity-75"></span>
             <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#34D399]"></span>
@@ -82,8 +82,8 @@ export default function MatchupCard({ matchup }: MatchupCardProps) {
 
       {/* Final indicator */}
       {matchup.isFinal && (
-        <div className="px-4 py-1.5 border-b border-[#1E3050] flex items-center justify-center">
-          <span className="text-[11px] font-semibold text-[#64748B] uppercase tracking-widest">Final</span>
+        <div className="px-4 py-1.5 border-b border-[#E2E8F0] flex items-center justify-center">
+          <span className="text-[11px] font-semibold text-[#475569] uppercase tracking-widest">Final</span>
         </div>
       )}
 
@@ -97,8 +97,8 @@ export default function MatchupCard({ matchup }: MatchupCardProps) {
         />
 
         {/* VS divider */}
-        <div className="flex items-center justify-center px-3 border-x border-[#1E3050]">
-          <span className="text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">vs</span>
+        <div className="flex items-center justify-center px-3 border-x border-[#E2E8F0]">
+          <span className="text-[11px] font-semibold uppercase tracking-widest text-[#475569]">vs</span>
         </div>
 
         <TeamSide
@@ -111,10 +111,10 @@ export default function MatchupCard({ matchup }: MatchupCardProps) {
 
       {/* H2H footer */}
       {h2hTotal > 0 && (
-        <div className="px-4 py-2 border-t border-[#1E3050] flex items-center justify-center">
+        <div className="px-4 py-2 border-t border-[#E2E8F0] flex items-center justify-center">
           <span className="text-[10px] text-[#475569]">
             Season H2H:&nbsp;
-            <span className="text-[#64748B] font-medium">
+            <span className="text-[#475569] font-medium">
               {matchup.home.ownerName.split(' ')[0]} {matchup.h2h.homeWins}–{matchup.h2h.awayWins} {matchup.away.ownerName.split(' ')[0]}
             </span>
           </span>

@@ -40,10 +40,10 @@ export default function CategoryRadarChart({ standings, teamCount }: Props) {
   });
 
   return (
-    <div className="border border-[#1E3050] rounded-lg bg-[#142035] p-4">
+    <div className="border border-[#E2E8F0] rounded-lg bg-white p-4">
       <ResponsiveContainer width="100%" height={340}>
         <RadarChart data={data} margin={{ top: 12, right: 32, bottom: 4, left: 32 }}>
-          <PolarGrid stroke="#1E3050" />
+          <PolarGrid stroke="#E2E8F0" />
           <PolarAngleAxis
             dataKey="category"
             tick={{ fill: '#94A3B8', fontSize: 11, fontWeight: 600 }}
@@ -64,12 +64,12 @@ export default function CategoryRadarChart({ standings, teamCount }: Props) {
           ))}
           <Tooltip
             contentStyle={{
-              background: '#0E1929',
-              border: '1px solid #1E3050',
+              background: '#F1F5F9',
+              border: '1px solid #E2E8F0',
               borderRadius: 8,
               fontSize: 12,
             }}
-            itemStyle={{ color: '#F0F4F8' }}
+            itemStyle={{ color: '#0F172A' }}
             formatter={(value, name) => [`${value ?? ''}`, String(name)]}
           />
           <Legend
@@ -79,7 +79,7 @@ export default function CategoryRadarChart({ standings, teamCount }: Props) {
           />
         </RadarChart>
       </ResponsiveContainer>
-      <p className="text-[11px] text-[#64748B] text-center mt-1">
+      <p className="text-[11px] text-[#475569] text-center mt-1">
         Score = rank percentile · 100 = league leader in that category · TO: lower is better (inverted)
       </p>
     </div>

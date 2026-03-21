@@ -37,7 +37,7 @@ export default function SeasonStatsChart({ stats }: Props) {
   const maxVal = data[0]?.value ?? 1;
 
   return (
-    <div className="border border-[#1E3050] rounded-lg bg-[#142035] p-4">
+    <div className="border border-[#E2E8F0] rounded-lg bg-white p-4">
       {/* Stat selector */}
       <div className="flex flex-wrap gap-2 mb-4">
         {STAT_OPTIONS.map(opt => (
@@ -46,8 +46,8 @@ export default function SeasonStatsChart({ stats }: Props) {
             onClick={() => setActiveStat(opt.key)}
             className={`px-3 py-1 rounded-full text-[11px] font-semibold transition-colors ${
               activeStat === opt.key
-                ? 'text-[#0E1929]'
-                : 'bg-[#0E1929] text-[#94A3B8] hover:text-[#F0F4F8]'
+                ? 'text-[#0F172A]'
+                : 'bg-[#F1F5F9] text-[#94A3B8] hover:text-[#0F172A]'
             }`}
             style={activeStat === opt.key ? { backgroundColor: opt.color } : {}}
           >
@@ -66,7 +66,7 @@ export default function SeasonStatsChart({ stats }: Props) {
           <XAxis
             type="number"
             domain={[0, maxVal * 1.05]}
-            tick={{ fill: '#64748B', fontSize: 10 }}
+            tick={{ fill: '#475569', fontSize: 10 }}
             axisLine={false}
             tickLine={false}
             tickFormatter={v => v.toLocaleString()}
@@ -80,10 +80,10 @@ export default function SeasonStatsChart({ stats }: Props) {
             tickLine={false}
           />
           <Tooltip
-            cursor={{ fill: '#0B1628' }}
+            cursor={{ fill: '#FFFFFF' }}
             contentStyle={{
-              background: '#0E1929',
-              border: '1px solid #1E3050',
+              background: '#F1F5F9',
+              border: '1px solid #E2E8F0',
               borderRadius: 8,
               fontSize: 12,
             }}
@@ -92,7 +92,7 @@ export default function SeasonStatsChart({ stats }: Props) {
           />
           <Bar dataKey="value" radius={[0, 4, 4, 0]} isAnimationActive={false} label={{
             position: 'right',
-            fill: '#64748B',
+            fill: '#475569',
             fontSize: 10,
             formatter: (v: unknown) => v != null ? Number(v).toLocaleString() : '',
           }}>
@@ -107,7 +107,7 @@ export default function SeasonStatsChart({ stats }: Props) {
         </BarChart>
       </ResponsiveContainer>
 
-      <p className="text-[11px] text-[#64748B] text-center mt-3">
+      <p className="text-[11px] text-[#475569] text-center mt-3">
         Season cumulative totals · sorted by selected stat · TO in red (lower is better)
       </p>
     </div>

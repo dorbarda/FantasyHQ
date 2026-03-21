@@ -35,12 +35,12 @@ export default async function MatchupsPage({
   const projectedMatchups = data.matchups.filter((m) => !m.isLive && !m.isFinal);
 
   return (
-    <div className="min-h-screen bg-[#071120] px-4 sm:px-6 lg:px-8 py-6">
+    <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#F0F4F8]">Matchups</h1>
-          <p className="text-[14px] text-[#64748B] mt-1">
+          <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A]">Matchups</h1>
+          <p className="text-[14px] text-[#475569] mt-1">
             Week {data.week} · Head-to-Head{!isCurrentWeek ? ' · Final' : ''}
           </p>
         </div>
@@ -56,11 +56,11 @@ export default async function MatchupsPage({
       </div>
 
       {/* Week navigation */}
-      <div className="flex items-center justify-center gap-6 mb-6 bg-[#0B1628] border border-[#1E3050] rounded-xl px-4 py-3">
+      <div className="flex items-center justify-center gap-6 mb-6 bg-white border border-[#E2E8F0] rounded-xl px-4 py-3">
         {prevWeek ? (
           <Link
             href={`/matchups?week=${prevWeek}`}
-            className="text-[13px] text-[#64748B] hover:text-[#94A3B8] transition-colors"
+            className="text-[13px] text-[#475569] hover:text-[#94A3B8] transition-colors"
           >
             ← Wk {prevWeek}
           </Link>
@@ -73,7 +73,7 @@ export default async function MatchupsPage({
         {nextWeek ? (
           <Link
             href={`/matchups?week=${nextWeek}`}
-            className="text-[13px] text-[#64748B] hover:text-[#94A3B8] transition-colors"
+            className="text-[13px] text-[#475569] hover:text-[#94A3B8] transition-colors"
           >
             Wk {nextWeek} →
           </Link>
@@ -97,7 +97,7 @@ export default async function MatchupsPage({
       )}
 
       {liveMatchups.length > 0 && (projectedMatchups.length > 0 || finalMatchups.length > 0) && (
-        <div className="border-b border-[#1E3050] mb-5" />
+        <div className="border-b border-[#E2E8F0] mb-5" />
       )}
 
       {/* Final (past weeks) */}

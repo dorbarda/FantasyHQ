@@ -31,18 +31,18 @@ function PickCell({ pick, hasStats }: { pick: DraftPick; hasStats: boolean }) {
   const isINJ = pick.grade === 'INJ';
   return (
     <div className="h-full flex flex-col justify-between gap-1">
-      <p className="text-[9px] font-semibold text-[#64748B] tabular-nums">#{pick.overallPick}</p>
+      <p className="text-[9px] font-semibold text-[#475569] tabular-nums">#{pick.overallPick}</p>
 
       <div className="flex-1">
-        <p className={`text-[11px] font-semibold leading-tight truncate ${isINJ ? 'text-[#64748B] line-through' : 'text-[#F0F4F8]'}`}>
+        <p className={`text-[11px] font-semibold leading-tight truncate ${isINJ ? 'text-[#475569] line-through' : 'text-[#0F172A]'}`}>
           {pick.playerName}
         </p>
-        <p className="text-[10px] text-[#64748B] truncate">{pick.position} · {pick.proTeam}</p>
+        <p className="text-[10px] text-[#475569] truncate">{pick.position} · {pick.proTeam}</p>
       </div>
 
       <div className="flex items-center justify-between gap-1 mt-1">
         {hasStats && (
-          <p className={`text-[10px] tabular-nums ${isINJ ? 'text-[#64748B]' : 'text-[#F0F4F8]'}`}>
+          <p className={`text-[10px] tabular-nums ${isINJ ? 'text-[#475569]' : 'text-[#0F172A]'}`}>
             {isINJ ? 'DNP' : `${pick.fp.toFixed(0)} fp`}
           </p>
         )}
@@ -67,7 +67,7 @@ function Legend() {
     ['INJ','Did not play'],
   ];
   return (
-    <div className="flex flex-wrap gap-2 px-4 py-3 border-t border-[#1E3050] bg-[#0E1929]">
+    <div className="flex flex-wrap gap-2 px-4 py-3 border-t border-[#E2E8F0] bg-[#F1F5F9]">
       {items.map(([g, label]) => (
         <div key={g} className="flex items-center gap-1">
           <GradeBadge grade={g} />
@@ -92,22 +92,22 @@ export default function DraftBoard({ data }: DraftBoardProps) {
   const totalWidth = 64 + teams.length * CELL_W;
 
   return (
-    <div className="border border-[#1E3050] rounded-lg overflow-hidden bg-[#142035]">
+    <div className="border border-[#E2E8F0] rounded-lg overflow-hidden bg-white">
       <div className="overflow-x-auto">
         <table style={{ minWidth: totalWidth, width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr className="border-b border-[#1E3050] bg-[#0E1929]">
-              <th className="sticky left-0 bg-[#0E1929] w-[64px] px-2 py-2 text-left">
+            <tr className="border-b border-[#E2E8F0] bg-[#F1F5F9]">
+              <th className="sticky left-0 bg-[#F1F5F9] w-[64px] px-2 py-2 text-left">
                 <span className="text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8]">Rd</span>
               </th>
               {teams.map(t => (
                 <th
                   key={t.teamId}
                   style={{ width: CELL_W, minWidth: CELL_W }}
-                  className="px-2 py-2 border-l border-[#1E3050] text-left"
+                  className="px-2 py-2 border-l border-[#E2E8F0] text-left"
                 >
-                  <p className="text-[11px] font-semibold text-[#F0F4F8] truncate">{t.ownerName.split(' ')[0]}</p>
-                  <p className="text-[10px] text-[#64748B] truncate">{t.teamName}</p>
+                  <p className="text-[11px] font-semibold text-[#0F172A] truncate">{t.ownerName.split(' ')[0]}</p>
+                  <p className="text-[10px] text-[#475569] truncate">{t.teamName}</p>
                 </th>
               ))}
             </tr>
@@ -115,9 +115,9 @@ export default function DraftBoard({ data }: DraftBoardProps) {
 
           <tbody>
             {Array.from({ length: rounds }, (_, i) => i + 1).map(round => (
-              <tr key={round} className="border-b border-[#1E3050] last:border-0">
-                <td className="sticky left-0 bg-[#142035] px-2 py-1.5 border-r border-[#1E3050] align-middle">
-                  <span className="text-[11px] font-semibold text-[#64748B]">{round}</span>
+              <tr key={round} className="border-b border-[#E2E8F0] last:border-0">
+                <td className="sticky left-0 bg-white px-2 py-1.5 border-r border-[#E2E8F0] align-middle">
+                  <span className="text-[11px] font-semibold text-[#475569]">{round}</span>
                 </td>
 
                 {teams.map(t => {
@@ -126,7 +126,7 @@ export default function DraftBoard({ data }: DraftBoardProps) {
                     <td
                       key={t.teamId}
                       style={{ width: CELL_W, minWidth: CELL_W }}
-                      className="px-2 py-1.5 border-l border-[#1E3050] align-top h-[80px]"
+                      className="px-2 py-1.5 border-l border-[#E2E8F0] align-top h-[80px]"
                     >
                       {pick ? (
                         <PickCell pick={pick} hasStats={hasStats} />
@@ -144,7 +144,7 @@ export default function DraftBoard({ data }: DraftBoardProps) {
 
       {hasStats && <Legend />}
       {!hasStats && (
-        <div className="px-4 py-2 border-t border-[#1E3050] bg-[#0E1929]">
+        <div className="px-4 py-2 border-t border-[#E2E8F0] bg-[#F1F5F9]">
           <span className="text-[11px] text-[#94A3B8]">Player stats unavailable for this season — grades will appear once the season ends.</span>
         </div>
       )}

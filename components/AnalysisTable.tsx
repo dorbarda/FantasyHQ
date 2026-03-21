@@ -88,9 +88,9 @@ export default function AnalysisTable({ teams }: { teams: TeamAnalytics[] }) {
   );
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-[#1E3050]">
+    <div className="overflow-x-auto rounded-xl border border-[#E2E8F0]">
       <table className="w-full text-sm">
-        <thead className="border-b border-[#1E3050] bg-[#0d1117]/60">
+        <thead className="border-b border-[#E2E8F0] bg-[#F1F5F9]">
           <tr>
             <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8] w-[28px]">#</th>
             <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8]">Team</th>
@@ -109,10 +109,10 @@ export default function AnalysisTable({ teams }: { teams: TeamAnalytics[] }) {
             return (
               <tr
                 key={t.teamId}
-                className={`border-b border-[#1E3050]/50 last:border-0 transition-colors ${t.isYou ? 'bg-[#1a2744]/40' : 'hover:bg-[#161b22]/60'}`}
+                className={`border-b border-[#E2E8F0]/50 last:border-0 transition-colors ${t.isYou ? 'bg-[#EFF6FF]/40' : 'hover:bg-[#F1F5F9]/60'}`}
               >
                 {/* Rank */}
-                <td className="px-3 py-2.5 text-[13px] text-[#64748B] font-mono">{i + 1}</td>
+                <td className="px-3 py-2.5 text-[13px] text-[#475569] font-mono">{i + 1}</td>
 
                 {/* Team */}
                 <td className="px-3 py-2.5">
@@ -121,15 +121,15 @@ export default function AnalysisTable({ teams }: { teams: TeamAnalytics[] }) {
                       <span className="text-[9px] font-bold bg-[#C8956C]/20 text-[#C8956C] border border-[#C8956C]/30 rounded px-1 py-0.5">YOU</span>
                     )}
                     <div>
-                      <p className="text-[13px] font-semibold text-[#F0F4F8] leading-tight">{t.ownerName}</p>
-                      <p className="text-[11px] text-[#64748B]">{t.teamName}</p>
+                      <p className="text-[13px] font-semibold text-[#0F172A] leading-tight">{t.ownerName}</p>
+                      <p className="text-[11px] text-[#475569]">{t.teamName}</p>
                     </div>
                   </div>
                 </td>
 
                 {/* Record */}
-                <td className="px-3 py-2.5 text-[13px] font-mono text-[#F0F4F8]">
-                  {t.wins}<span className="text-[#64748B]">-</span>{t.losses}
+                <td className="px-3 py-2.5 text-[13px] font-mono text-[#0F172A]">
+                  {t.wins}<span className="text-[#475569]">-</span>{t.losses}
                 </td>
 
                 {/* Avg Score */}
@@ -142,7 +142,7 @@ export default function AnalysisTable({ teams }: { teams: TeamAnalytics[] }) {
                   <span className="text-[13px] font-mono" style={{ color: heatColor(t.bestWeekScore, minOf(bestScores), maxOf(bestScores)) }}>
                     {fmt(t.bestWeekScore)}
                   </span>
-                  <span className="ml-1.5 text-[10px] text-[#64748B]">Wk{t.bestWeekPeriod}</span>
+                  <span className="ml-1.5 text-[10px] text-[#475569]">Wk{t.bestWeekPeriod}</span>
                 </td>
 
                 {/* Worst Week */}
@@ -150,7 +150,7 @@ export default function AnalysisTable({ teams }: { teams: TeamAnalytics[] }) {
                   <span className="text-[13px] font-mono" style={{ color: heatColor(t.worstWeekScore, minOf(worstScores), maxOf(worstScores)) }}>
                     {fmt(t.worstWeekScore)}
                   </span>
-                  <span className="ml-1.5 text-[10px] text-[#64748B]">Wk{t.worstWeekPeriod}</span>
+                  <span className="ml-1.5 text-[10px] text-[#475569]">Wk{t.worstWeekPeriod}</span>
                 </td>
 
                 {/* Std Dev (lower = better) */}
@@ -177,7 +177,7 @@ export default function AnalysisTable({ teams }: { teams: TeamAnalytics[] }) {
                     >
                       {t.luckDelta > 0 ? '+' : ''}{fmt(t.luckDelta)}
                     </span>
-                    <span className="text-[10px] text-[#64748B]">
+                    <span className="text-[10px] text-[#475569]">
                       ({t.wins}W / {fmt(t.expectedWins)}E)
                     </span>
                   </div>

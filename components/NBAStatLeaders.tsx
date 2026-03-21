@@ -30,19 +30,19 @@ function StatCard({
   players: NBAStatLeader[];
 }) {
   return (
-    <div className="rounded-2xl border border-[#1E3050] overflow-hidden">
+    <div className="rounded-2xl border border-[#E2E8F0] overflow-hidden">
       {/* Card header */}
       <div
         className="px-4 py-2.5 flex items-center justify-between"
         style={{ borderLeft: `3px solid ${color}` }}
       >
-        <span className="text-[13px] font-bold text-[#F0F4F8]">{label}</span>
-        <span className="text-[11px] font-semibold text-[#64748B]">{unit}</span>
+        <span className="text-[13px] font-bold text-[#0F172A]">{label}</span>
+        <span className="text-[11px] font-semibold text-[#475569]">{unit}</span>
       </div>
 
       <div className="divide-y divide-[#F3F4F6]">
         {players.length === 0 ? (
-          <div className="px-4 py-3 text-[12px] text-[#64748B]">No data</div>
+          <div className="px-4 py-3 text-[12px] text-[#475569]">No data</div>
         ) : (
           players.map((p) => (
             <div key={p.playerId} className="px-4 py-2.5 flex items-center gap-3">
@@ -63,7 +63,7 @@ function StatCard({
 
               {/* Player info */}
               <div className="flex-1 min-w-0">
-                <p className="text-[13px] font-semibold text-[#F0F4F8] truncate leading-tight">
+                <p className="text-[13px] font-semibold text-[#0F172A] truncate leading-tight">
                   {p.playerName}
                 </p>
                 <p className="text-[11px] text-[#94A3B8]">

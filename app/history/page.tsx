@@ -47,10 +47,10 @@ export default async function HistoryPage() {
   merged.sort((a, b) => b.year - a.year);
 
   return (
-    <div className="min-h-screen bg-[#071120] px-4 sm:px-6 lg:px-8 py-6">
+    <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
       <div className="mb-5">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#F0F4F8]">History</h1>
-        <p className="text-[14px] text-[#64748B] mt-1">
+        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A]">History</h1>
+        <p className="text-[14px] text-[#475569] mt-1">
           {merged.length} seasons · Champions &amp; final standings
         </p>
       </div>

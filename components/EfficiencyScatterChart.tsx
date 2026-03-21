@@ -28,31 +28,31 @@ export default function EfficiencyScatterChart({ points }: Props) {
   return (
     <ResponsiveContainer width="100%" height={300}>
       <ScatterChart margin={{ top: 16, right: 24, bottom: 8, left: -8 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#1E3050" />
+        <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
         <XAxis
           type="number"
           dataKey="avgScore"
           name="Avg Score"
           domain={['auto', 'auto']}
-          tick={{ fill: '#64748B', fontSize: 11 }}
-          axisLine={{ stroke: '#1E3050' }}
+          tick={{ fill: '#475569', fontSize: 11 }}
+          axisLine={{ stroke: '#E2E8F0' }}
           tickLine={false}
-          label={{ value: 'Avg Score', position: 'insideBottomRight', offset: -4, fill: '#64748B', fontSize: 11 }}
+          label={{ value: 'Avg Score', position: 'insideBottomRight', offset: -4, fill: '#475569', fontSize: 11 }}
         />
         <YAxis
           type="number"
           dataKey="avgScorePP"
           name="Score/Player"
           domain={['auto', 'auto']}
-          tick={{ fill: '#64748B', fontSize: 11 }}
+          tick={{ fill: '#475569', fontSize: 11 }}
           axisLine={false}
           tickLine={false}
           tickFormatter={v => v.toFixed(1)}
-          label={{ value: 'Score/Player', angle: -90, position: 'insideLeft', offset: 12, fill: '#64748B', fontSize: 11 }}
+          label={{ value: 'Score/Player', angle: -90, position: 'insideLeft', offset: 12, fill: '#475569', fontSize: 11 }}
         />
         <Tooltip
-          cursor={{ strokeDasharray: '3 3', stroke: '#1E3050' }}
-          contentStyle={{ background: '#0d1117', border: '1px solid #1E3050', borderRadius: 8, fontSize: 12 }}
+          cursor={{ strokeDasharray: '3 3', stroke: '#E2E8F0' }}
+          contentStyle={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 8, fontSize: 12 }}
           formatter={(value, name) => [
             name === 'Avg Score' ? Number(value).toFixed(1) : Number(value).toFixed(2),
             name as string,
@@ -61,11 +61,11 @@ export default function EfficiencyScatterChart({ points }: Props) {
             if (!active || !payload?.length) return null;
             const d = payload[0].payload as ScatterPoint;
             return (
-              <div className="bg-[#0d1117] border border-[#1E3050] rounded-lg px-3 py-2 text-xs">
-                <p className="font-semibold text-[#F0F4F8] mb-1">{d.ownerName}</p>
-                <p className="text-[#94A3B8]">Avg Score: <span className="text-[#F0F4F8]">{d.avgScore.toFixed(1)}</span></p>
-                <p className="text-[#94A3B8]">Score/Player: <span className="text-[#F0F4F8]">{d.avgScorePP.toFixed(2)}</span></p>
-                <p className="text-[#94A3B8]">Wins: <span className="text-[#F0F4F8]">{d.wins}</span></p>
+              <div className="bg-white border border-[#E2E8F0] rounded-lg px-3 py-2 text-xs">
+                <p className="font-semibold text-[#0F172A] mb-1">{d.ownerName}</p>
+                <p className="text-[#94A3B8]">Avg Score: <span className="text-[#0F172A]">{d.avgScore.toFixed(1)}</span></p>
+                <p className="text-[#94A3B8]">Score/Player: <span className="text-[#0F172A]">{d.avgScorePP.toFixed(2)}</span></p>
+                <p className="text-[#94A3B8]">Wins: <span className="text-[#0F172A]">{d.wins}</span></p>
               </div>
             );
           }}

@@ -41,17 +41,17 @@ export default function StatCards({ standings, currentWeek, totalWeeks }: StatCa
   ];
 
   return (
-    <div className="border border-[#1E3050] rounded-lg overflow-hidden bg-[#142035]">
+    <div className="border border-[#E2E8F0] rounded-lg overflow-hidden bg-white">
       <div className="grid grid-cols-4">
         {cards.map((card, i) => (
           <div
             key={card.label}
-            className={`p-4 ${i < cards.length - 1 ? 'border-r border-[#1E3050]' : ''}`}
+            className={`p-4 ${i < cards.length - 1 ? 'border-r border-[#E2E8F0]' : ''}`}
           >
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-[#64748B] mb-1">
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-[#475569] mb-1">
               {card.label}
             </p>
-            <p className="text-[24px] font-bold tracking-tight text-[#F0F4F8] leading-none mb-1 tabular-nums">
+            <p className="text-[24px] font-bold tracking-tight text-[#0F172A] leading-none mb-1 tabular-nums">
               {card.value}
             </p>
             <p className={`text-[12px] font-medium ${card.deltaColor}`}>

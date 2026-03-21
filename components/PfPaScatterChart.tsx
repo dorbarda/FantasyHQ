@@ -29,7 +29,7 @@ export default function PfPaScatterChart({ entries }: Props) {
   const maxVal = Math.ceil(Math.max(...allVals) * 1.03);
 
   return (
-    <div className="border border-[#1E3050] rounded-lg bg-[#142035] p-4">
+    <div className="border border-[#E2E8F0] rounded-lg bg-white p-4">
       {/* Legend */}
       <div className="flex items-center gap-4 flex-wrap mb-4">
         <div className="flex items-center gap-1.5">
@@ -48,13 +48,13 @@ export default function PfPaScatterChart({ entries }: Props) {
 
       <ResponsiveContainer width="100%" height={320}>
         <ScatterChart margin={{ top: 20, right: 24, bottom: 28, left: 16 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#1E3050" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
           <XAxis
             type="number"
             dataKey="x"
             domain={[minVal, maxVal]}
-            tick={{ fill: '#64748B', fontSize: 10 }}
-            axisLine={{ stroke: '#1E3050' }}
+            tick={{ fill: '#475569', fontSize: 10 }}
+            axisLine={{ stroke: '#E2E8F0' }}
             tickLine={false}
             tickFormatter={v => v.toLocaleString()}
             label={{ value: 'Points For →', position: 'insideBottomRight', offset: -4, fill: '#94A3B8', fontSize: 11 }}
@@ -64,7 +64,7 @@ export default function PfPaScatterChart({ entries }: Props) {
             type="number"
             dataKey="y"
             domain={[minVal, maxVal]}
-            tick={{ fill: '#64748B', fontSize: 10 }}
+            tick={{ fill: '#475569', fontSize: 10 }}
             axisLine={false}
             tickLine={false}
             tickFormatter={v => v.toLocaleString()}
@@ -79,15 +79,15 @@ export default function PfPaScatterChart({ entries }: Props) {
             strokeWidth={1.5}
           />
           <Tooltip
-            cursor={{ strokeDasharray: '3 3', stroke: '#1E3050' }}
+            cursor={{ strokeDasharray: '3 3', stroke: '#E2E8F0' }}
             content={({ active, payload }) => {
               if (!active || !payload?.length) return null;
               const d = payload[0].payload;
               return (
-                <div className="bg-[#0E1929] border border-[#1E3050] rounded-lg px-3 py-2 text-[12px]">
-                  <p className="font-semibold text-[#F0F4F8] mb-1">{d.name}</p>
-                  <p className="text-[#94A3B8]">PF: <span className="text-[#F0F4F8] tabular-nums">{d.x.toLocaleString()}</span></p>
-                  <p className="text-[#94A3B8]">PA: <span className="text-[#F0F4F8] tabular-nums">{d.y.toLocaleString()}</span></p>
+                <div className="bg-[#F1F5F9] border border-[#E2E8F0] rounded-lg px-3 py-2 text-[12px]">
+                  <p className="font-semibold text-[#0F172A] mb-1">{d.name}</p>
+                  <p className="text-[#94A3B8]">PF: <span className="text-[#0F172A] tabular-nums">{d.x.toLocaleString()}</span></p>
+                  <p className="text-[#94A3B8]">PA: <span className="text-[#0F172A] tabular-nums">{d.y.toLocaleString()}</span></p>
                   <p className={`font-semibold ${d.diff >= 0 ? 'text-[#34D399]' : 'text-[#F87171]'}`}>
                     Diff: {d.diff > 0 ? '+' : ''}{d.diff.toLocaleString()}
                   </p>
@@ -129,7 +129,7 @@ export default function PfPaScatterChart({ entries }: Props) {
         </ScatterChart>
       </ResponsiveContainer>
 
-      <p className="text-[11px] text-[#64748B] text-center mt-1">
+      <p className="text-[11px] text-[#475569] text-center mt-1">
         Below the diagonal = PF &gt; PA · teams that scored more than they gave up all season
       </p>
     </div>

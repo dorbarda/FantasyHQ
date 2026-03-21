@@ -10,9 +10,9 @@ export const revalidate = 3600;
 export default async function RecordsPage() {
   if (!hasEspnCredentials()) {
     return (
-      <div className="min-h-screen bg-[#071120] px-4 sm:px-6 lg:px-8 py-6">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#F0F4F8] mb-2">Records</h1>
-        <p className="text-[14px] text-[#64748B] mt-1">
+      <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
+        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A] mb-2">Records</h1>
+        <p className="text-[14px] text-[#475569] mt-1">
           ESPN credentials required to compute all-time records.
         </p>
       </div>
@@ -31,19 +31,19 @@ export default async function RecordsPage() {
 
   if (error || !data) {
     return (
-      <div className="min-h-screen bg-[#071120] px-4 sm:px-6 lg:px-8 py-6">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#F0F4F8] mb-2">Records</h1>
-        <p className="text-[14px] text-[#64748B] mt-1">Could not load records — try again later.</p>
+      <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
+        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A] mb-2">Records</h1>
+        <p className="text-[14px] text-[#475569] mt-1">Could not load records — try again later.</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#071120] px-4 sm:px-6 lg:px-8 py-6">
+    <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
       {/* Header */}
       <div className="mb-5">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#F0F4F8]">Records</h1>
-        <p className="text-[14px] text-[#64748B] mt-1">
+        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A]">Records</h1>
+        <p className="text-[14px] text-[#475569] mt-1">
           All-time stats across every season
         </p>
       </div>
@@ -56,7 +56,7 @@ export default async function RecordsPage() {
         <HallOfFame careers={data.hallOfFame} />
       </section>
 
-      <div className="border-b border-[#1E3050] mb-5" />
+      <div className="border-b border-[#E2E8F0] mb-5" />
 
       {/* ── All-Time Records ──────────────────────────────────── */}
       <section className="mb-5">
@@ -66,7 +66,7 @@ export default async function RecordsPage() {
         <SuperlativesGrid superlatives={data.superlatives} />
       </section>
 
-      <div className="border-b border-[#1E3050] mb-5" />
+      <div className="border-b border-[#E2E8F0] mb-5" />
 
       {/* ── Head-to-Head Matrix ───────────────────────────────── */}
       <section>

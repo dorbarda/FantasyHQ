@@ -10,16 +10,16 @@ export default function SuperlativesGrid({ superlatives }: SuperlativesGridProps
       {superlatives.map((s) => (
         <div
           key={s.label}
-          className="border border-[#1E3050] rounded-lg px-4 py-3 bg-[#142035] hover:bg-[#0B1628] transition-colors"
+          className="border border-[#E2E8F0] rounded-lg px-4 py-3 bg-white hover:bg-white transition-colors"
         >
           <div className="flex-1 min-w-0">
             <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-0.5">
               {s.label}
             </p>
-            <p className="text-[20px] font-bold tracking-tight text-[#F0F4F8] leading-tight">
+            <p className="text-[20px] font-bold tracking-tight text-[#0F172A] leading-tight">
               {s.value}
             </p>
-            <p className="text-[13px] font-semibold text-[#F0F4F8] mt-0.5 truncate">
+            <p className="text-[13px] font-semibold text-[#0F172A] mt-0.5 truncate">
               {s.teamName}
             </p>
             <div className="flex items-center gap-1.5 mt-0.5">

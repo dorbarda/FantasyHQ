@@ -34,11 +34,11 @@ export default function LuckDeltaChart({ entries }: Props) {
         layout="vertical"
         margin={{ top: 4, right: 32, bottom: 4, left: 4 }}
       >
-        <CartesianGrid strokeDasharray="3 3" stroke="#1E3050" horizontal={false} />
+        <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" horizontal={false} />
         <XAxis
           type="number"
-          tick={{ fill: '#64748B', fontSize: 11 }}
-          axisLine={{ stroke: '#1E3050' }}
+          tick={{ fill: '#475569', fontSize: 11 }}
+          axisLine={{ stroke: '#E2E8F0' }}
           tickLine={false}
           tickFormatter={v => (v > 0 ? `+${v.toFixed(1)}` : v.toFixed(1))}
         />
@@ -52,21 +52,21 @@ export default function LuckDeltaChart({ entries }: Props) {
         />
         <ReferenceLine x={0} stroke="#334155" strokeWidth={1.5} />
         <Tooltip
-          cursor={{ fill: '#1E3050', fillOpacity: 0.4 }}
-          contentStyle={{ background: '#0d1117', border: '1px solid #1E3050', borderRadius: 8, fontSize: 12 }}
+          cursor={{ fill: '#E2E8F0', fillOpacity: 0.4 }}
+          contentStyle={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 8, fontSize: 12 }}
           content={({ active, payload }) => {
             if (!active || !payload?.length) return null;
             const d = payload[0].payload as LuckDeltaEntry;
             return (
-              <div className="bg-[#0d1117] border border-[#1E3050] rounded-lg px-3 py-2 text-xs">
-                <p className="font-semibold text-[#F0F4F8] mb-1">{d.ownerName}</p>
+              <div className="bg-white border border-[#E2E8F0] rounded-lg px-3 py-2 text-xs">
+                <p className="font-semibold text-[#0F172A] mb-1">{d.ownerName}</p>
                 <p className="text-[#94A3B8]">
                   Luck delta: <span style={{ color: d.luckDelta >= 0 ? '#34D399' : '#F87171' }}>
                     {d.luckDelta >= 0 ? '+' : ''}{d.luckDelta.toFixed(2)}
                   </span>
                 </p>
-                <p className="text-[#94A3B8]">Actual wins: <span className="text-[#F0F4F8]">{d.wins}</span></p>
-                <p className="text-[#94A3B8]">Expected wins: <span className="text-[#F0F4F8]">{d.expectedWins.toFixed(1)}</span></p>
+                <p className="text-[#94A3B8]">Actual wins: <span className="text-[#0F172A]">{d.wins}</span></p>
+                <p className="text-[#94A3B8]">Expected wins: <span className="text-[#0F172A]">{d.expectedWins.toFixed(1)}</span></p>
               </div>
             );
           }}

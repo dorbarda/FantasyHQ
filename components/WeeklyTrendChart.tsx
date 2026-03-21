@@ -51,23 +51,23 @@ export default function WeeklyTrendChart({ entries }: Props) {
   return (
     <ResponsiveContainer width="100%" height={300}>
       <LineChart data={data} margin={{ top: 8, right: 16, bottom: 0, left: -8 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#1E3050" />
+        <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
         <XAxis
           dataKey="week"
-          tick={{ fill: '#64748B', fontSize: 11 }}
-          axisLine={{ stroke: '#1E3050' }}
+          tick={{ fill: '#475569', fontSize: 11 }}
+          axisLine={{ stroke: '#E2E8F0' }}
           tickLine={false}
         />
         <YAxis
-          tick={{ fill: '#64748B', fontSize: 11 }}
+          tick={{ fill: '#475569', fontSize: 11 }}
           axisLine={false}
           tickLine={false}
           tickFormatter={v => v.toFixed(1)}
         />
         <Tooltip
-          contentStyle={{ background: '#0d1117', border: '1px solid #1E3050', borderRadius: 8, fontSize: 12 }}
+          contentStyle={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 8, fontSize: 12 }}
           labelStyle={{ color: '#94A3B8', marginBottom: 4 }}
-          itemStyle={{ color: '#F0F4F8' }}
+          itemStyle={{ color: '#0F172A' }}
           formatter={(value) => [`${Number(value).toFixed(2)} pts/player`]}
         />
         <Legend

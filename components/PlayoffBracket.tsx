@@ -18,17 +18,17 @@ function TeamRow({
       `}
     >
       <div className="flex items-center gap-2 min-w-0">
-        <span className="text-[10px] font-semibold text-[#64748B] w-4 shrink-0">
+        <span className="text-[10px] font-semibold text-[#475569] w-4 shrink-0">
           {team.seed > 0 ? `#${team.seed}` : ''}
         </span>
         <div className="min-w-0">
-          <p className={`text-[13px] font-semibold truncate ${isWinner ? 'text-[#34D399]' : 'text-[#F0F4F8]'}`}>
+          <p className={`text-[13px] font-semibold truncate ${isWinner ? 'text-[#34D399]' : 'text-[#0F172A]'}`}>
             {team.ownerName.split(' ')[0]}
           </p>
-          <p className="text-[10px] text-[#64748B] truncate">{team.teamName}</p>
+          <p className="text-[10px] text-[#475569] truncate">{team.teamName}</p>
         </div>
       </div>
-      <span className={`text-[14px] font-bold tabular-nums shrink-0 ${isWinner ? 'text-[#34D399]' : 'text-[#F0F4F8]'}`}>
+      <span className={`text-[14px] font-bold tabular-nums shrink-0 ${isWinner ? 'text-[#34D399]' : 'text-[#0F172A]'}`}>
         {team.score > 0 ? team.score.toFixed(1) : '—'}
       </span>
     </div>
@@ -47,27 +47,27 @@ function MatchupCard({ matchup, label }: { matchup: BracketMatchup; label?: stri
   return (
     <div
       className={`rounded-lg border overflow-hidden min-w-[200px]
-        ${isCurrentRound ? 'border-[#C8956C]/40 shadow-sm' : 'border-[#1E3050]'}
+        ${isCurrentRound ? 'border-[#C8956C]/40 shadow-sm' : 'border-[#E2E8F0]'}
       `}
     >
       {label && (
         <div className={`px-3 py-1 text-[10px] font-semibold uppercase tracking-widest
-          ${isCurrentRound ? 'bg-[#C8956C]/10 text-[#C8956C]' : 'bg-[#0E1929] text-[#94A3B8]'}
+          ${isCurrentRound ? 'bg-[#C8956C]/10 text-[#C8956C]' : 'bg-[#F1F5F9] text-[#94A3B8]'}
         `}>
           {label}
         </div>
       )}
-      <div className="p-1 bg-[#142035]">
+      <div className="p-1 bg-white">
         <TeamRow team={home} isWinner={homeWon} isLoser={!ongoing && awayWon} />
-        <div className="border-t border-[#1E3050] mx-2" />
+        <div className="border-t border-[#E2E8F0] mx-2" />
         {away ? (
           <TeamRow team={away} isWinner={awayWon} isLoser={!ongoing && homeWon} />
         ) : (
-          <div className="px-3 py-2 text-[12px] text-[#64748B] italic">BYE</div>
+          <div className="px-3 py-2 text-[12px] text-[#475569] italic">BYE</div>
         )}
       </div>
       {ongoing && isCurrentRound && (
-        <div className="flex items-center gap-1 px-3 pb-2 bg-[#142035]">
+        <div className="flex items-center gap-1 px-3 pb-2 bg-white">
           <span className="relative flex h-1.5 w-1.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C8956C] opacity-75" />
             <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#C8956C]" />
@@ -83,7 +83,7 @@ function MatchupCard({ matchup, label }: { matchup: BracketMatchup; label?: stri
 
 function Connector() {
   return (
-    <div className="flex items-center self-stretch px-1 text-[#1E3050] select-none">
+    <div className="flex items-center self-stretch px-1 text-[#E2E8F0] select-none">
       <svg width="20" height="100%" viewBox="0 0 20 60" fill="none" className="h-full min-h-[60px]">
         <path d="M2 30 L18 30" stroke="#2A4A7A" strokeWidth="1.5" />
         <path d="M14 26 L18 30 L14 34" stroke="#2A4A7A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -125,7 +125,7 @@ export default function PlayoffBracket({ data }: { data: PlayoffBracketData }) {
     <div>
       {/* Main bracket header */}
       <div className="flex items-center gap-3 mb-5">
-        <h2 className="text-[22px] font-bold tracking-tight text-[#F0F4F8]">Playoff Bracket</h2>
+        <h2 className="text-[22px] font-bold tracking-tight text-[#0F172A]">Playoff Bracket</h2>
         {data.isPlayoffs && (
           <span className="flex items-center gap-1.5 text-[12px] font-semibold text-[#C8956C]">
             <span className="relative flex h-2 w-2">
@@ -165,7 +165,7 @@ export default function PlayoffBracket({ data }: { data: PlayoffBracketData }) {
                   <div className="flex items-center gap-3 bg-[#34D399]/10 border border-[#059669]/30 rounded-lg px-4 py-3">
                     <div>
                       <p className="text-[11px] font-semibold uppercase tracking-widest text-[#34D399]">Champion</p>
-                      <p className="text-[15px] font-bold text-[#F0F4F8]">{champion.ownerName.split(' ')[0]}</p>
+                      <p className="text-[15px] font-bold text-[#0F172A]">{champion.ownerName.split(' ')[0]}</p>
                       <p className="text-[11px] text-[#94A3B8]">{champion.teamName}</p>
                     </div>
                   </div>
@@ -192,7 +192,7 @@ export default function PlayoffBracket({ data }: { data: PlayoffBracketData }) {
 
       {/* Playoff seeds */}
       {winners.length > 0 && (
-        <div className="mt-8 border-t border-[#1E3050] pt-6">
+        <div className="mt-8 border-t border-[#E2E8F0] pt-6">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
             Playoff Seeds
           </p>
@@ -206,11 +206,11 @@ export default function PlayoffBracket({ data }: { data: PlayoffBracketData }) {
                 <div
                   key={team.teamId}
                   className={`flex items-center gap-2 px-3 py-1.5 rounded border text-[12px]
-                    ${champion?.teamId === team.teamId ? 'border-[#059669] bg-[#34D399]/5' : 'border-[#1E3050] bg-[#142035]'}
+                    ${champion?.teamId === team.teamId ? 'border-[#059669] bg-[#34D399]/5' : 'border-[#E2E8F0] bg-white'}
                   `}
                 >
-                  <span className="text-[#64748B] font-semibold">#{team.seed}</span>
-                  <span className="text-[#F0F4F8]">{team.ownerName.split(' ')[0]}</span>
+                  <span className="text-[#475569] font-semibold">#{team.seed}</span>
+                  <span className="text-[#0F172A]">{team.ownerName.split(' ')[0]}</span>
                   {champion?.teamId === team.teamId && (
                     <span className="text-[10px] font-semibold text-[#34D399]">Champion</span>
                   )}

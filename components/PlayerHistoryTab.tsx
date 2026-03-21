@@ -74,7 +74,7 @@ function PickChart({ seasons }: { seasons: PlayerSeasonData[] }) {
           <g key={t}>
             <line
               x1={ML} y1={y} x2={W - MR} y2={y}
-              stroke="#1E3050" strokeWidth="1"
+              stroke="#E2E8F0" strokeWidth="1"
             />
             <text
               x={ML - 5} y={y}
@@ -127,30 +127,30 @@ function PickChart({ seasons }: { seasons: PlayerSeasonData[] }) {
 
 function PlayerCard({ result }: { result: PlayerHistoryResult }) {
   return (
-    <div className="border border-[#1E3050] rounded-lg overflow-hidden bg-[#142035]">
+    <div className="border border-[#E2E8F0] rounded-lg overflow-hidden bg-white">
       {/* Header */}
-      <div className="px-5 py-4 border-b border-[#1E3050] bg-[#0E1929] flex items-start justify-between gap-4">
+      <div className="px-5 py-4 border-b border-[#E2E8F0] bg-[#F1F5F9] flex items-start justify-between gap-4">
         <div>
-          <p className="text-[16px] font-semibold text-[#F0F4F8]">{result.playerName}</p>
-          <p className="text-[12px] text-[#64748B] mt-0.5">
+          <p className="text-[16px] font-semibold text-[#0F172A]">{result.playerName}</p>
+          <p className="text-[12px] text-[#475569] mt-0.5">
             {result.seasons[0].position} · {result.seasons[0].proTeam}
           </p>
         </div>
         <div className="flex gap-5 text-right shrink-0">
           <div>
-            <p className="text-[11px] text-[#64748B] uppercase tracking-wide">Seasons</p>
-            <p className="text-[20px] font-bold text-[#F0F4F8] leading-none mt-0.5">
+            <p className="text-[11px] text-[#475569] uppercase tracking-wide">Seasons</p>
+            <p className="text-[20px] font-bold text-[#0F172A] leading-none mt-0.5">
               {result.seasons.length}
             </p>
           </div>
           <div>
-            <p className="text-[11px] text-[#64748B] uppercase tracking-wide">Avg Pick</p>
-            <p className="text-[20px] font-bold text-[#F0F4F8] leading-none mt-0.5">
+            <p className="text-[11px] text-[#475569] uppercase tracking-wide">Avg Pick</p>
+            <p className="text-[20px] font-bold text-[#0F172A] leading-none mt-0.5">
               #{result.avgPick}
             </p>
           </div>
           <div>
-            <p className="text-[11px] text-[#64748B] uppercase tracking-wide">Avg Grade</p>
+            <p className="text-[11px] text-[#475569] uppercase tracking-wide">Avg Grade</p>
             <div className="mt-1.5">
               <GradeBadge grade={result.avgGrade as DraftGrade} />
             </div>
@@ -161,19 +161,19 @@ function PlayerCard({ result }: { result: PlayerHistoryResult }) {
       {/* Chart */}
       {result.seasons.length >= 2 && (
         <div className="px-5 pt-4 pb-2">
-          <p className="text-[11px] text-[#64748B] uppercase tracking-wide mb-2">Draft Position by Season</p>
+          <p className="text-[11px] text-[#475569] uppercase tracking-wide mb-2">Draft Position by Season</p>
           <PickChart seasons={result.seasons} />
         </div>
       )}
 
       {/* Season rows */}
-      <div className="divide-y divide-[#1E3050]">
+      <div className="divide-y divide-[#E2E8F0]">
         {result.seasons.map(s => (
           <div key={s.year} className="flex items-center gap-3 px-5 py-2.5 text-[13px]">
             <span className="text-[#94A3B8] w-14 shrink-0">{s.seasonLabel}</span>
-            <span className="text-[#F0F4F8] font-medium w-10 shrink-0">#{s.overallPick}</span>
+            <span className="text-[#0F172A] font-medium w-10 shrink-0">#{s.overallPick}</span>
             <GradeBadge grade={s.grade} />
-            <span className="text-[#64748B] ml-auto truncate">{s.ownerName}</span>
+            <span className="text-[#475569] ml-auto truncate">{s.ownerName}</span>
           </div>
         ))}
       </div>
@@ -205,7 +205,7 @@ export default function PlayerHistoryTab() {
       {/* Search input */}
       <div className="relative mb-6">
         <svg
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#64748B]"
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#475569]"
           fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
         >
           <path strokeLinecap="round" strokeLinejoin="round"
@@ -216,10 +216,10 @@ export default function PlayerHistoryTab() {
           value={query}
           onChange={e => handleChange(e.target.value)}
           placeholder="Search player name…"
-          className="w-full max-w-md pl-9 pr-4 py-2.5 rounded-lg bg-[#142035] border border-[#1E3050] text-[#F0F4F8] text-[14px] placeholder-[#64748B] focus:outline-none focus:border-[#2A4066] transition-colors"
+          className="w-full max-w-md pl-9 pr-4 py-2.5 rounded-lg bg-white border border-[#E2E8F0] text-[#0F172A] text-[14px] placeholder-[#64748B] focus:outline-none focus:border-[#2A4066] transition-colors"
         />
         {isPending && (
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[12px] text-[#64748B]">
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[12px] text-[#475569]">
             Loading…
           </span>
         )}
@@ -227,8 +227,8 @@ export default function PlayerHistoryTab() {
 
       {/* Empty state */}
       {!isPending && results !== null && results.length === 0 && (
-        <div className="border border-[#1E3050] rounded-lg px-6 py-10 text-center max-w-md">
-          <p className="text-[15px] font-bold text-[#F0F4F8]">No results</p>
+        <div className="border border-[#E2E8F0] rounded-lg px-6 py-10 text-center max-w-md">
+          <p className="text-[15px] font-bold text-[#0F172A]">No results</p>
           <p className="text-[13px] text-[#94A3B8] mt-1">
             No player matching &ldquo;{query}&rdquo; found in draft history.
           </p>
@@ -246,7 +246,7 @@ export default function PlayerHistoryTab() {
 
       {/* Idle hint */}
       {results === null && !isPending && (
-        <p className="text-[13px] text-[#64748B]">
+        <p className="text-[13px] text-[#475569]">
           Type at least 2 characters to search across all draft years.
         </p>
       )}

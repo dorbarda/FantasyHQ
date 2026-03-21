@@ -26,11 +26,11 @@ export default async function PlayersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#071120] px-4 sm:px-6 lg:px-8 py-6">
+    <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-1">
-          <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#F0F4F8]">Players</h1>
+          <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A]">Players</h1>
           <span className="flex items-center gap-1.5 text-[12px] font-semibold text-[#34D399]">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#34D399] opacity-75" />
@@ -39,13 +39,13 @@ export default async function PlayersPage() {
             Season Averages
           </span>
         </div>
-        <p className="text-[14px] text-[#64748B]">
+        <p className="text-[14px] text-[#475569]">
           All rostered players ranked by fantasy points per game
         </p>
 
         {/* Summary chips */}
         <div className="flex items-center gap-2 mt-3 flex-wrap">
-          <div className="flex items-center gap-1.5 bg-[#0B1628] border border-[#1E3050] rounded-full px-3 py-1">
+          <div className="flex items-center gap-1.5 bg-white border border-[#E2E8F0] rounded-full px-3 py-1">
             <span className="text-[11px] font-semibold text-[#94A3B8]">{totalPlayers} players</span>
           </div>
           {(Object.entries(positions) as [string, number][]).map(([pos, count]) => {
@@ -53,7 +53,7 @@ export default async function PlayersPage() {
             return (
               <div
                 key={pos}
-                className="flex items-center gap-1.5 bg-[#0B1628] border border-[#1E3050] rounded-full px-3 py-1"
+                className="flex items-center gap-1.5 bg-white border border-[#E2E8F0] rounded-full px-3 py-1"
               >
                 <span
                   className="inline-flex items-center justify-center text-[9px] font-bold w-4 h-4 rounded"
@@ -65,7 +65,7 @@ export default async function PlayersPage() {
               </div>
             );
           })}
-          <div className="flex items-center gap-1 text-[11px] text-[#475569] bg-[#0B1628] border border-[#1E3050] rounded-full px-3 py-1">
+          <div className="flex items-center gap-1 text-[11px] text-[#475569] bg-white border border-[#E2E8F0] rounded-full px-3 py-1">
             <span className="font-semibold text-[#C8956C]">FP/g</span>
             <span>=</span>
             <span>PTS+REB+AST+STL+BLK+3PM−TO (league rules)</span>

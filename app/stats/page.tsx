@@ -24,12 +24,12 @@ export default async function StatsPage() {
   const teamCount = data.categoryStandings.length;
 
   return (
-    <div className="min-h-screen bg-[#071120] px-4 sm:px-6 lg:px-8 py-6">
+    <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#F0F4F8]">Stats</h1>
-          <p className="text-[14px] text-[#64748B] mt-1">
+          <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A]">Stats</h1>
+          <p className="text-[14px] text-[#475569] mt-1">
             Season totals · {data.matchesPlayed} matchups played
           </p>
         </div>
@@ -43,7 +43,7 @@ export default async function StatsPage() {
       </div>
 
       {/* Category Radar */}
-      <section className="mb-6 bg-[#0B1628] border border-[#1E3050] rounded-xl px-4 sm:px-6 py-5">
+      <section className="mb-6 bg-white border border-[#E2E8F0] rounded-xl px-4 sm:px-6 py-5">
         <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-4">
           Category Standings
         </p>
@@ -51,7 +51,7 @@ export default async function StatsPage() {
       </section>
 
       {/* Season Totals Bar Chart */}
-      <section className="mb-6 bg-[#0B1628] border border-[#1E3050] rounded-xl px-4 sm:px-6 py-5">
+      <section className="mb-6 bg-white border border-[#E2E8F0] rounded-xl px-4 sm:px-6 py-5">
         <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-4">
           Season Totals
         </p>
@@ -59,7 +59,7 @@ export default async function StatsPage() {
       </section>
 
       {/* Points For / Against Scatter */}
-      <section className="mb-6 bg-[#0B1628] border border-[#1E3050] rounded-xl px-4 sm:px-6 py-5">
+      <section className="mb-6 bg-white border border-[#E2E8F0] rounded-xl px-4 sm:px-6 py-5">
         <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-4">
           Points For / Against
         </p>

@@ -13,14 +13,21 @@ export const LOGO_SLUGS = [
   'team-miller',
 ] as const;
 
+// Common words that appear in many team names and shouldn't count as meaningful matches
+const STOP_WORDS = new Set(['team', 'the', 'a', 'an', 'of', 'de', 'la', 'le']);
+
 export function teamLogoPath(teamName: string): string | null {
   const slug = teamName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   if ((LOGO_SLUGS as readonly string[]).includes(slug)) return `/teams/${slug}.png`;
-  const teamWords = new Set(slug.split('-').filter(Boolean));
+
+  // Fuzzy match: overlap of *significant* words only (stop words excluded)
+  const teamWords = new Set(slug.split('-').filter(w => w && !STOP_WORDS.has(w)));
+  if (teamWords.size === 0) return null;
+
   let bestSlug: string | null = null;
   let bestScore = 0;
   for (const logoSlug of LOGO_SLUGS) {
-    const score = logoSlug.split('-').filter(w => teamWords.has(w)).length;
+    const score = logoSlug.split('-').filter(w => !STOP_WORDS.has(w) && teamWords.has(w)).length;
     if (score > bestScore) { bestScore = score; bestSlug = logoSlug; }
   }
   return bestScore > 0 ? `/teams/${bestSlug}.png` : null;

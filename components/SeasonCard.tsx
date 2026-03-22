@@ -3,39 +3,11 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { HistoricalSeason, HistoricalTeam } from '@/lib/types';
+import { teamLogoPath } from '@/lib/team-utils';
 
 interface SeasonCardProps {
   season: HistoricalSeason;
   isBackToBack?: boolean;
-}
-
-// ── Logo helpers ──────────────────────────────────────────────────────────────
-
-const LOGO_SLUGS = [
-  'flint-tropics',
-  'inglourious-basterds',
-  'king-ozniyon',
-  'leagues-american-problem',
-  'libis-legacy',
-  'nordau-peaky-blinder',
-  'plottke',
-  'slotzki',
-  'team-mamba-forever',
-  'team-miller',
-];
-
-function teamLogoPath(teamName: string): string | null {
-  const slug = teamName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  if (LOGO_SLUGS.includes(slug)) return `/teams/${slug}.png`;
-  // Find best word-overlap match
-  const teamWords = new Set(slug.split('-').filter(Boolean));
-  let bestSlug: string | null = null;
-  let bestScore = 0;
-  for (const logoSlug of LOGO_SLUGS) {
-    const score = logoSlug.split('-').filter(w => teamWords.has(w)).length;
-    if (score > bestScore) { bestScore = score; bestSlug = logoSlug; }
-  }
-  return bestScore > 0 ? `/teams/${bestSlug}.png` : null;
 }
 
 // ── Avatar (logo or initials fallback) ───────────────────────────────────────

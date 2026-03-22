@@ -133,6 +133,17 @@ function PlayersIcon() {
   );
 }
 
+function TeamsIcon() {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4 shrink-0">
+      <path d="M10 2l2 3h3l-2.5 2 1 3L10 8.5 6.5 10l1-3L5 5h3z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/>
+      <path d="M5 13c-1 .5-2 1.5-2 3h14c0-1.5-1-2.5-2-3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+      <circle cx="7" cy="13" r="1.5" stroke="currentColor" strokeWidth="1.3"/>
+      <circle cx="13" cy="13" r="1.5" stroke="currentColor" strokeWidth="1.3"/>
+    </svg>
+  );
+}
+
 // ─── Nav config ───────────────────────────────────────────────────────────────
 
 const NAV_GROUPS = [
@@ -145,6 +156,7 @@ const NAV_GROUPS = [
       { href: '/matchup-depth', label: 'Depth',       Icon: DepthIcon    },
       { href: '/draft',         label: 'Draft',       Icon: DraftIcon    },
       { href: '/players',       label: 'Players',     Icon: PlayersIcon  },
+      { href: '/teams',         label: 'Teams',       Icon: TeamsIcon    },
     ],
   },
   {

@@ -324,3 +324,51 @@ export async function getDraftBoard(year: number): Promise<DraftBoardData> {
     hasStats,
   };
 }
+
+// ─── Favourite player aggregation ─────────────────────────────────────────────
+
+export interface FavouritePlayer {
+  playerName: string;
+  position: string;
+  proTeam: string;
+  draftCount: number;
+  years: number[];
+}
+
+/**
+ * Returns the most-drafted players per owner across all seasons.
+ * Sorted by draftCount desc for each owner.
+ */
+export async function getDraftCountsByOwner(): Promise<Record<string, FavouritePlayer[]>> {
+  const results = await Promise.allSettled(DRAFT_YEARS.map(getDraftBoard));
+
+  // ownerName → playerName → accumulated data
+  const raw: Record<string, Record<string, { playerName: string; position: string; proTeam: string; years: number[] }>> = {};
+
+  for (const r of results) {
+    if (r.status !== 'fulfilled') continue;
+    const { year, picks } = r.value;
+    for (const pick of picks) {
+      raw[pick.ownerName] ??= {};
+      const entry = raw[pick.ownerName][pick.playerName];
+      if (entry) {
+        entry.years.push(year);
+      } else {
+        raw[pick.ownerName][pick.playerName] = {
+          playerName: pick.playerName,
+          position:   pick.position,
+          proTeam:    pick.proTeam,
+          years:      [year],
+        };
+      }
+    }
+  }
+
+  const out: Record<string, FavouritePlayer[]> = {};
+  for (const [owner, players] of Object.entries(raw)) {
+    out[owner] = Object.values(players)
+      .map(p => ({ ...p, draftCount: p.years.length }))
+      .sort((a, b) => b.draftCount - a.draftCount || a.playerName.localeCompare(b.playerName));
+  }
+  return out;
+}

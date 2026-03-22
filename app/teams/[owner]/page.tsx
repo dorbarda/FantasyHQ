@@ -1,6 +1,7 @@
 import { hasEspnCredentials } from '@/lib/espn';
 import { getAllRecords } from '@/lib/espn-records';
 import { getAllHistoricalSeasons } from '@/lib/espn-history';
+import { getDraftCountsByOwner } from '@/lib/espn-draft';
 import { slugToOwner, bestLogoForOwner, ownerToSlug } from '@/lib/team-utils';
 import TeamCareerChart, { CareerPoint } from '@/components/TeamCareerChart';
 import Image from 'next/image';
@@ -110,9 +111,10 @@ export default async function TeamProfilePage({
     );
   }
 
-  const [records, seasons] = await Promise.all([
+  const [records, seasons, draftCounts] = await Promise.all([
     getAllRecords(),
     getAllHistoricalSeasons(),
+    getDraftCountsByOwner(),
   ]);
 
   const ownerName = slugToOwner(ownerSlug, records.hallOfFame.map(c => c.ownerName));
@@ -195,6 +197,9 @@ export default async function TeamProfilePage({
   const avgPosition = ownerSeasons.length > 0
     ? (ownerSeasons.reduce((sum, s) => sum + s.rank, 0) / ownerSeasons.length).toFixed(1)
     : '—';
+
+  // Favourite players (most-drafted across all seasons)
+  const favouritePlayers = (draftCounts[ownerName] ?? []).slice(0, 5);
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
@@ -471,6 +476,58 @@ export default async function TeamProfilePage({
             </div>
           );
         })()}
+
+        {/* ── FRANCHISE FAVOURITES ────────────────────────────────────────── */}
+        {favouritePlayers.length > 0 && (
+          <div className="bg-white border border-[#E2E8F0] rounded-2xl overflow-hidden">
+            <div className="px-5 py-4 border-b border-[#E2E8F0] flex items-center gap-2">
+              <span className="text-[16px]">❤️</span>
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8]">
+                Franchise Favourites
+              </p>
+              <span className="text-[11px] text-[#CBD5E1] ml-auto">Most-drafted players in league history</span>
+            </div>
+
+            <div className="divide-y divide-[#E2E8F0]">
+              {favouritePlayers.map((p, i) => (
+                <div key={p.playerName} className="flex items-center gap-4 px-5 py-3.5">
+                  {/* Rank */}
+                  <span className="text-[13px] font-black text-[#CBD5E1] w-4 shrink-0 tabular-nums">
+                    {i + 1}
+                  </span>
+
+                  {/* Player info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="text-[14px] font-bold text-[#0F172A]">{p.playerName}</p>
+                      <span className="text-[10px] font-bold bg-[#EFF6FF] text-[#3B82F6] border border-[#BFDBFE] rounded px-1.5 py-0.5">
+                        {p.position}
+                      </span>
+                      {p.proTeam !== '—' && (
+                        <span className="text-[10px] font-semibold text-[#64748B] bg-[#F8FAFC] border border-[#E2E8F0] rounded px-1.5 py-0.5">
+                          {p.proTeam}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1 mt-1 flex-wrap">
+                      {p.years.sort().map(y => (
+                        <span key={y} className="text-[10px] text-[#94A3B8] bg-[#F1F5F9] rounded px-1.5 py-0.5">
+                          {y - 1}–{String(y).slice(2)}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Draft count */}
+                  <div className="shrink-0 text-right">
+                    <p className="text-[20px] font-black text-[#C8956C] leading-none">{p.draftCount}×</p>
+                    <p className="text-[10px] text-[#94A3B8] mt-0.5">drafted</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
       </div>
     </div>

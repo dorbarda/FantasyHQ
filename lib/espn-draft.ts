@@ -57,33 +57,46 @@ interface PlayerData {
 function extractStats(player: any): { fp: number; pts: number; gp: number } {
   const stats: any[] = player.stats || [];
   // Full-season actual: statSplitTypeId=0 + statSourceId=0
+  // Pick the row with the highest appliedStatTotal so cross-season contamination
+  // (year=2026 player objects can carry both 2024-25 and 2025-26 rows) doesn't
+  // accidentally select last year's complete season over this year's YTD total.
+  const actualRows = stats.filter((s: any) => s.statSourceId === 0 && s.statSplitTypeId === 0);
   const seasonStat =
-    stats.find((s: any) => s.statSourceId === 0 && s.statSplitTypeId === 0) ||
-    stats.find((s: any) => s.statSourceId === 0 && s.scoringPeriodId === 0)  ||
-    // Fallback: highest-pts actual stat row = season cumulative
+    (actualRows.length > 1
+      ? actualRows.sort((a: any, b: any) =>
+          (b.appliedStatTotal ?? b.stats?.['0'] ?? 0) -
+          (a.appliedStatTotal ?? a.stats?.['0'] ?? 0)
+        )[0]
+      : actualRows[0]) ||
+    stats.find((s: any) => s.statSourceId === 0 && s.scoringPeriodId === 0) ||
+    // Fallback: highest-pts actual stat row
     stats
       .filter((s: any) => s.statSourceId === 0)
       .sort((a: any, b: any) => (b.stats?.['0'] || 0) - (a.stats?.['0'] || 0))[0];
 
   const s = seasonStat?.stats || {};
-  // FP using league scoring rules (total-points format):
-  // FGM×2, FGA×-1, FTM×1, FTA×-1, 3PM×1, REB×1, AST×2, STL×4, BLK×4, TO×-2, PTS×1, TD×5, TF×-2, EJ×-5
-  const fp  = Math.round((
-    (s['0']  || 0) * 1  +  // PTS
-    (s['1']  || 0) * 4  +  // BLK
-    (s['2']  || 0) * 4  +  // STL
-    (s['3']  || 0) * 2  +  // AST
-    (s['6']  || 0) * 1  +  // REB
-    (s['11'] || 0) * -2 +  // TO
-    (s['13'] || 0) * 2  +  // FGM
-    (s['14'] || 0) * -1 +  // FGA
-    (s['15'] || 0) * 1  +  // FTM
-    (s['16'] || 0) * -1 +  // FTA
-    (s['17'] || 0) * 1  +  // 3PM
-    (s['38'] || 0) * 5  +  // TD
-    (s['41'] || 0) * -2 +  // TF
-    (s['42'] || 0) * -5    // EJ
-  ) * 10) / 10;
+
+  // Prefer ESPN's pre-computed appliedStatTotal — it uses the league's exact scoring
+  // (including triple-double bonuses etc.) and matches the ESPN website's own numbers.
+  const fp = typeof seasonStat?.appliedStatTotal === 'number' && seasonStat.appliedStatTotal > 0
+    ? Math.round(seasonStat.appliedStatTotal * 10) / 10
+    : Math.round((
+        (s['0']  || 0) * 1  +  // PTS
+        (s['1']  || 0) * 4  +  // BLK
+        (s['2']  || 0) * 4  +  // STL
+        (s['3']  || 0) * 2  +  // AST
+        (s['6']  || 0) * 1  +  // REB
+        (s['11'] || 0) * -2 +  // TO
+        (s['13'] || 0) * 2  +  // FGM
+        (s['14'] || 0) * -1 +  // FGA
+        (s['15'] || 0) * 1  +  // FTM
+        (s['16'] || 0) * -1 +  // FTA
+        (s['17'] || 0) * 1  +  // 3PM
+        (s['38'] || 0) * 5  +  // TD
+        (s['41'] || 0) * -2 +  // TF
+        (s['42'] || 0) * -5    // EJ
+      ) * 10) / 10;
+
   const pts = Math.round((s['0'] || 0) * 10) / 10;
   const gp  = Math.round((s['40'] || 0) / 30);
   return { fp, pts, gp };
@@ -115,27 +128,35 @@ async function fetchPlayerData(year: number, draftedIds: number[]): Promise<Map<
     console.error(`[draft] mRoster failed year=${year}:`, e);
   }
 
-  // ── Strategy 2: broad kona fetch — top 300 by season stats, covers dropped players ──
-  const missingIds = draftedIds.filter(id => !map.has(id));
-  if (missingIds.length > 0) {
-    try {
-      const filter = JSON.stringify({
-        players: {
-          limit: 300,
-          sortAppliedStatTotal: { sortAsc: false, sortPriority: 1, value: `00${year}` },
-          filterStatsForTopScoringPeriodIds: { value: 17, additionalValue: [`00${year}`] },
-        },
-      });
-      const data = await espnGet(year, '?view=kona_player_info', { 'x-fantasy-filter': filter });
-      const missing = new Set(missingIds);
-      for (const entry of (data.players || []) as any[]) {
-        const player = entry.playerPoolEntry?.player;
-        if (!player || !missing.has(player.id as number)) continue;
+  // ── Strategy 2: kona full-season fetch — authoritative stats for ALL drafted players ──
+  // Runs unconditionally (not just for missing IDs) because mRoster for historical seasons
+  // often returns empty or partial stats arrays; kona with the year-scoped filter is the
+  // reliable source.  value:25 covers any NBA season length; additionalValue requests the
+  // full-season aggregate bucket so appliedStatTotal reflects the complete season.
+  try {
+    const filter = JSON.stringify({
+      players: {
+        limit: 300,
+        sortAppliedStatTotal: { sortAsc: false, sortPriority: 1, value: `00${year}` },
+        filterStatsForTopScoringPeriodIds: { value: 25, additionalValue: [`00${year}`] },
+      },
+    });
+    const data = await espnGet(year, '?view=kona_player_info', { 'x-fantasy-filter': filter });
+    const draftedSet = new Set(draftedIds);
+    for (const entry of (data.players || []) as any[]) {
+      const player = entry.playerPoolEntry?.player;
+      if (!player || !draftedSet.has(player.id as number)) continue;
+      const konaStats = extractStats(player);
+      const existing = map.get(player.id as number);
+      if (existing) {
+        // Override only the stat fields; keep name/position/proTeam from mRoster
+        map.set(player.id as number, { ...existing, fp: konaStats.fp, pts: konaStats.pts, gp: konaStats.gp });
+      } else {
         map.set(player.id as number, playerMeta(player));
       }
-    } catch (e) {
-      console.error(`[draft] kona fallback failed year=${year}:`, e);
     }
+  } catch (e) {
+    console.error(`[draft] kona full-season failed year=${year}:`, e);
   }
 
   // ── Strategy 3: ESPN public athlete API — no auth needed, resolves retired/cut players ──
@@ -188,7 +209,7 @@ export async function getTopPlayersFP(year: number, limit = 130): Promise<AllPla
       players: {
         limit: fetchLimit,
         sortAppliedStatTotal: { sortAsc: false, sortPriority: 1, value: `00${year}` },
-        filterStatsForTopScoringPeriodIds: { value: 17, additionalValue: [`00${year}`] },
+        filterStatsForTopScoringPeriodIds: { value: 25, additionalValue: [`00${year}`] },
       },
     });
     const data = await espnGet(year, '?view=kona_player_info', { 'x-fantasy-filter': filter });

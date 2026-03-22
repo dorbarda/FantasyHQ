@@ -45,7 +45,7 @@ export function slugToOwner(slug: string, owners: string[]): string | null {
 // (e.g. new teams or teams that changed name this season)
 const OWNER_LOGO_OVERRIDES: Record<string, string> = {
   'Omer Rosenberg': 'inglourious-basterds',
-  'Amir':           'libis-legacy',
+  'Amir Ben Izhak': 'libis-legacy',
   'Nir Zele':       'slotzki',
   'Yuval Halevy':   'leagues-american-problem',
 };

@@ -53,14 +53,6 @@ function buildMemberMap(members: any[]): Record<string, string> {
   return map;
 }
 
-function findMyTeamId(members: any[], teams: any[]): number | null {
-  const swid = (SWID || '').replace(/[{}]/g, '').toLowerCase();
-  const myMember = members.find(
-    (m: any) => m.id.replace(/[{}]/g, '').toLowerCase() === swid
-  );
-  if (!myMember) return null;
-  return teams.find((t: any) => t.owners?.includes(myMember.id))?.id ?? null;
-}
 
 function rankValues<T>(
   items: T[],
@@ -84,7 +76,6 @@ export async function getStandings(): Promise<StandingEntry[]> {
   const teams: any[] = data.teams;
   const members: any[] = data.members || [];
   const memberMap = buildMemberMap(members);
-  const myTeamId = findMyTeamId(members, teams);
 
   return teams
     .map((team: any) => {
@@ -118,7 +109,6 @@ export async function getStandings(): Promise<StandingEntry[]> {
           type: (streak.type === 'WIN' ? 'W' : 'L') as 'W' | 'L',
           count: streak.length || 0,
         },
-        isYou: team.id === myTeamId,
         moves,
       };
     })
@@ -144,7 +134,6 @@ export async function getMatchups(targetWeek?: number): Promise<MatchupsData> {
   const teams: any[] = data.teams || [];
   const members: any[] = data.members || [];
   const memberMap = buildMemberMap(members);
-  const myTeamId = findMyTeamId(members, teams);
 
   // NBA teams with games still to play today (pre or live)
   const todayRemainingTeams = new Set<string>();
@@ -169,7 +158,6 @@ export async function getMatchups(targetWeek?: number): Promise<MatchupsData> {
       teamId: `team${t.id}`,
       teamName: t.name || `Team ${t.id}`,
       ownerName,
-      isYou: t.id === myTeamId,
       wins: record.wins || 0,
       losses: record.losses || 0,
     };
@@ -225,7 +213,7 @@ export async function getMatchups(targetWeek?: number): Promise<MatchupsData> {
       (!m.playoffTierType || m.playoffTierType === 'NONE')
   );
 
-  const blankTeam = { teamId: 'unknown', teamName: 'TBD', ownerName: 'TBD', isYou: false, wins: 0, losses: 0 };
+  const blankTeam = { teamId: 'unknown', teamName: 'TBD', ownerName: 'TBD', wins: 0, losses: 0 };
 
   const matchups: Matchup[] = weekMatchups.map((m: any, idx: number) => {
     const home = m.home || {};
@@ -575,17 +563,15 @@ export async function getPlayoffBracket(): Promise<PlayoffBracketData> {
   const teams: any[] = data.teams || [];
   const members: any[] = data.members || [];
   const memberMap = buildMemberMap(members);
-  const myTeamId = findMyTeamId(members, teams);
 
   // Build team info (seed comes from playoffSeed or rank)
-  const teamMap: Record<number, { name: string; owner: string; seed: number; isYou: boolean }> = {};
+  const teamMap: Record<number, { name: string; owner: string; seed: number }> = {};
   for (const t of teams) {
     const owner = (t.owners || []).map((id: string) => memberMap[id] || 'Unknown').join(' & ');
     teamMap[t.id] = {
       name: t.name || `Team ${t.id}`,
       owner,
       seed: t.playoffSeed || t.rankCalculatedFinal || 0,
-      isYou: t.id === myTeamId,
     };
   }
 
@@ -605,14 +591,13 @@ export async function getPlayoffBracket(): Promise<PlayoffBracketData> {
   ).sort((a, b) => a - b);
 
   function makeTeam(side: any, id: number): BracketTeam {
-    const info = teamMap[id] || { name: '?', owner: '?', seed: 0, isYou: false };
+    const info = teamMap[id] || { name: '?', owner: '?', seed: 0 };
     return {
       teamId: `team${id}`,
       teamName: info.name,
       ownerName: info.owner,
       score: Math.round((side?.totalPoints || 0) * 10) / 10,
       seed: info.seed,
-      isYou: info.isYou,
     };
   }
 
@@ -679,12 +664,11 @@ export async function getMatchupDepth(): Promise<MatchupDepthData> {
   const teams: any[] = scheduleData.teams || [];
   const members: any[] = scheduleData.members || [];
   const memberMap = buildMemberMap(members);
-  const myTeamId = findMyTeamId(members, teams);
 
-  const teamMeta: Record<number, { name: string; owner: string; isYou: boolean }> = {};
+  const teamMeta: Record<number, { name: string; owner: string }> = {};
   for (const t of teams) {
     const owner = (t.owners || []).map((id: string) => memberMap[id] || 'Unknown').join(' & ');
-    teamMeta[t.id] = { name: t.name || `Team ${t.id}`, owner, isYou: t.id === myTeamId };
+    teamMeta[t.id] = { name: t.name || `Team ${t.id}`, owner };
   }
 
   const isDailyLeague = currentScoringPeriod > currentMatchupPeriod * 2;
@@ -789,8 +773,8 @@ export async function getMatchupDepth(): Promise<MatchupDepthData> {
       const oppSide = m[side === 'home' ? 'away' : 'home'];
       if (!mySide?.teamId) continue;
 
-      const meta = teamMeta[mySide.teamId] || { name: '?', owner: '?', isYou: false };
-      const oppMeta = teamMeta[oppSide?.teamId] || { name: '?', owner: '?', isYou: false };
+      const meta = teamMeta[mySide.teamId] || { name: '?', owner: '?' };
+      const oppMeta = teamMeta[oppSide?.teamId] || { name: '?', owner: '?' };
 
       // Count players for each day using that day's own roster fetch
       const dailyPlayers = scoringPeriods.map(sp => {
@@ -814,7 +798,6 @@ export async function getMatchupDepth(): Promise<MatchupDepthData> {
         teamId: `team${mySide.teamId}`,
         teamName: meta.name,
         ownerName: meta.owner,
-        isYou: meta.isYou,
         dailyPlayers: dailyPlayers.slice(0, scoringPeriods.length),
         totalPlayers,
         teamScore,
@@ -886,12 +869,11 @@ export async function getTransactions(): Promise<TransactionsData> {
   const teams: any[] = rosterData.teams || [];
   const members: any[] = rosterData.members || [];
   const memberMap = buildMemberMap(members);
-  const myTeamId = findMyTeamId(members, teams);
 
-  const teamMeta: Record<number, { name: string; owner: string; isYou: boolean }> = {};
+  const teamMeta: Record<number, { name: string; owner: string }> = {};
   for (const t of teams) {
     const owner = (t.owners || []).map((id: string) => memberMap[id] || 'Unknown').join(' & ');
-    teamMeta[t.id] = { name: t.name || `Team ${t.id}`, owner, isYou: t.id === myTeamId };
+    teamMeta[t.id] = { name: t.name || `Team ${t.id}`, owner };
   }
 
   // Build player info from current rosters first
@@ -1006,7 +988,7 @@ export async function getTransactions(): Promise<TransactionsData> {
   const byFantasyTeam: FantasyTeamActivity[] = Object.entries(fantasyTeamPlayerAdds)
     .map(([teamIdStr, playerCounts]) => {
       const teamId = Number(teamIdStr);
-      const meta = teamMeta[teamId] || { name: `Team ${teamId}`, owner: 'Unknown', isYou: false };
+      const meta = teamMeta[teamId] || { name: `Team ${teamId}`, owner: 'Unknown' };
       const totalAdds = Object.values(playerCounts).reduce((s, n) => s + n, 0);
       const [topIdStr, topCount] = Object.entries(playerCounts)
         .sort(([, a], [, b]) => b - a)[0] ?? ['0', 0];
@@ -1016,7 +998,6 @@ export async function getTransactions(): Promise<TransactionsData> {
         teamId: `team${teamId}`,
         teamName: meta.name,
         ownerName: meta.owner,
-        isYou: meta.isYou,
         topPlayer: topInfo.name,
         topPlayerProTeam: topInfo.proTeam,
         topPlayerCount: Number(topCount),
@@ -1056,8 +1037,8 @@ export async function getTransactions(): Promise<TransactionsData> {
       return { playerId: id, playerName: info.name, proTeam: info.proTeam, position: info.position };
     };
 
-    const metaA = teamMeta[teamAId] || { name: `Team ${teamAId}`, owner: 'Unknown', isYou: false };
-    const metaB = teamMeta[teamBId] || { name: `Team ${teamBId}`, owner: 'Unknown', isYou: false };
+    const metaA = teamMeta[teamAId] || { name: `Team ${teamAId}`, owner: 'Unknown' };
+    const metaB = teamMeta[teamBId] || { name: `Team ${teamBId}`, owner: 'Unknown' };
 
     trades.push({
       tradeId: tx.id,

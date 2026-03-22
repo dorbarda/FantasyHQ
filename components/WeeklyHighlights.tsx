@@ -1,7 +1,6 @@
 export interface WeeklyScoreEntry {
   ownerName: string;
   teamName: string;
-  isYou: boolean;
   week: number;
   score: number;
   opponentName: string;
@@ -20,15 +19,12 @@ function ScoreRow({
   showRank?: boolean;
 }) {
   return (
-    <div className={`flex items-center gap-3 py-2.5 border-b border-[#E2E8F0]/50 last:border-0 ${entry.isYou ? 'bg-[#1a2744]/30 -mx-4 px-4 rounded' : ''}`}>
+    <div className="flex items-center gap-3 py-2.5 border-b border-[#E2E8F0]/50 last:border-0">
       {showRank && (
         <span className="text-[13px] font-bold text-[#475569] font-mono w-5 shrink-0 text-right">{rank}</span>
       )}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          {entry.isYou && (
-            <span className="text-[9px] font-bold bg-[#C8956C]/20 text-[#C8956C] border border-[#C8956C]/30 rounded px-1 py-0.5">YOU</span>
-          )}
           <span className="text-[13px] font-semibold text-[#0F172A]">{entry.ownerName}</span>
           <span className="text-[11px] text-[#475569]">Wk {entry.week}</span>
         </div>
@@ -85,13 +81,10 @@ export default function WeeklyHighlights({
           Biggest Wins
         </p>
         {biggestBlowouts.map((e, i) => (
-          <div key={`${e.ownerName}-${e.week}`} className={`flex items-center gap-3 py-2.5 border-b border-[#E2E8F0]/50 last:border-0 ${e.isYou ? 'bg-[#1a2744]/30 -mx-4 px-4 rounded' : ''}`}>
+          <div key={`${e.ownerName}-${e.week}`} className="flex items-center gap-3 py-2.5 border-b border-[#E2E8F0]/50 last:border-0">
             <span className="text-[13px] font-bold text-[#475569] font-mono w-5 shrink-0 text-right">{i + 1}</span>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                {e.isYou && (
-                  <span className="text-[9px] font-bold bg-[#C8956C]/20 text-[#C8956C] border border-[#C8956C]/30 rounded px-1 py-0.5">YOU</span>
-                )}
                 <span className="text-[13px] font-semibold text-[#0F172A]">{e.ownerName}</span>
                 <span className="text-[11px] text-[#475569]">Wk {e.week}</span>
               </div>

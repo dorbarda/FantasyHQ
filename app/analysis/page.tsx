@@ -99,7 +99,6 @@ function computeAnalytics(rows: MatchupDepthRow[]): {
       teamId,
       teamName: tRows[0].teamName,
       ownerName: tRows[0].ownerName,
-      isYou: tRows[0].isYou,
       wins,
       losses,
       avgScore: avg(scores),
@@ -126,7 +125,6 @@ function computeAnalytics(rows: MatchupDepthRow[]): {
   const allEntries: WeeklyScoreEntry[] = completedRows.map(r => ({
     ownerName: r.ownerName,
     teamName: r.teamName,
-    isYou: r.isYou,
     week: r.matchupPeriod,
     score: r.teamScore,
     opponentName: r.opponentName,
@@ -149,14 +147,12 @@ function computeAnalytics(rows: MatchupDepthRow[]): {
     .filter(r => r.scorePP > 0 && isFinite(r.scorePP))
     .map(r => ({
       ownerName: r.ownerName,
-      isYou: r.isYou,
       week: r.matchupPeriod,
       scorePP: r.scorePP,
     }));
 
   const scatterPoints: ScatterPoint[] = teams.map(t => ({
     ownerName: t.ownerName,
-    isYou: t.isYou,
     avgScore: t.avgScore,
     avgScorePP: t.avgScorePP,
     wins: t.wins,
@@ -164,7 +160,6 @@ function computeAnalytics(rows: MatchupDepthRow[]): {
 
   const luckEntries: LuckDeltaEntry[] = teams.map(t => ({
     ownerName: t.ownerName,
-    isYou: t.isYou,
     luckDelta: t.luckDelta,
     wins: t.wins,
     expectedWins: t.expectedWins,
@@ -357,10 +352,9 @@ export default async function AnalysisPage() {
                 const disadvPct = t.depthDisadvTotal > 0 ? t.depthDisadvWins / t.depthDisadvTotal : null;
                 const delta = advPct !== null && disadvPct !== null ? advPct - disadvPct : null;
                 return (
-                  <tr key={t.teamId} className={`border-b border-[#E2E8F0]/50 last:border-0 ${t.isYou ? 'bg-[#EFF6FF]/40' : 'hover:bg-[#F1F5F9]/60'}`}>
+                  <tr key={t.teamId} className="border-b border-[#E2E8F0]/50 last:border-0 hover:bg-[#F1F5F9]/60">
                     <td className="px-3 py-2.5">
                       <div className="flex items-center gap-2">
-                        {t.isYou && <span className="text-[9px] font-bold bg-[#C8956C]/20 text-[#C8956C] border border-[#C8956C]/30 rounded px-1 py-0.5">YOU</span>}
                         <span className="text-[13px] font-semibold text-[#0F172A]">{t.ownerName}</span>
                       </div>
                     </td>

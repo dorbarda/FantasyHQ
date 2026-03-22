@@ -14,7 +14,6 @@ import {
 
 export interface ScatterPoint {
   ownerName: string;
-  isYou: boolean;
   avgScore: number;
   avgScorePP: number;
   wins: number;
@@ -74,9 +73,9 @@ export default function EfficiencyScatterChart({ points }: Props) {
           {points.map((p) => (
             <Cell
               key={p.ownerName}
-              fill={p.isYou ? '#C8956C' : '#60A5FA'}
+              fill="#60A5FA"
               fillOpacity={0.85}
-              stroke={p.isYou ? '#C8956C' : '#3B82F6'}
+              stroke="#3B82F6"
               strokeWidth={1.5}
               r={6 + p.wins * 1.2}
             />

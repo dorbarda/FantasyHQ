@@ -13,7 +13,6 @@ import {
 
 export interface WeeklyTrendEntry {
   ownerName: string;
-  isYou: boolean;
   week: number;
   scorePP: number;
 }
@@ -22,7 +21,6 @@ interface Props {
   entries: WeeklyTrendEntry[];
 }
 
-// Fixed palette — "you" always gets the gold accent
 const PALETTE = [
   '#60A5FA', '#34D399', '#F472B6', '#A78BFA',
   '#FB923C', '#38BDF8', '#4ADE80', '#E879F9',
@@ -34,16 +32,15 @@ export default function WeeklyTrendChart({ entries }: Props) {
   const weekSet = new Set(entries.map(e => e.week));
   const weeks = Array.from(weekSet).sort((a, b) => a - b);
 
-  // Get unique owners, "you" first
-  const ownerMap = new Map(entries.map(e => [e.ownerName, e.isYou]));
-  const owners = Array.from(ownerMap.entries())
-    .sort((a, b) => (b[1] ? 1 : 0) - (a[1] ? 1 : 0));
+  // Get unique owners
+  const ownerSet = new Set(entries.map(e => e.ownerName));
+  const owners = Array.from(ownerSet);
 
   // Build recharts data: [{week, Owner1: scorePP, Owner2: scorePP, ...}]
   const data = weeks.map(w => {
     const row: Record<string, number | string> = { week: `Wk ${w}` };
-    for (const entry of entries.filter(e => e.week === w)) {
-      if (entry.scorePP > 0) row[entry.ownerName] = parseFloat(entry.scorePP.toFixed(2));
+    for (const entry of entries) {
+      if (entry.week === w && entry.scorePP > 0) row[entry.ownerName] = parseFloat(entry.scorePP.toFixed(2));
     }
     return row;
   });
@@ -76,13 +73,13 @@ export default function WeeklyTrendChart({ entries }: Props) {
             <span style={{ color: (entry as { color?: string }).color }}>{value}</span>
           )}
         />
-        {owners.map(([owner, isYou], i) => (
+        {owners.map((owner, i) => (
           <Line
             key={owner}
             type="monotone"
             dataKey={owner}
-            stroke={isYou ? '#C8956C' : PALETTE[i % PALETTE.length]}
-            strokeWidth={isYou ? 2.5 : 1.5}
+            stroke={PALETTE[i % PALETTE.length]}
+            strokeWidth={1.5}
             dot={false}
             activeDot={{ r: 4 }}
             connectNulls

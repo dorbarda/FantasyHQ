@@ -6,7 +6,6 @@ export interface TeamAnalytics {
   teamId: string;
   teamName: string;
   ownerName: string;
-  isYou: boolean;
   wins: number;
   losses: number;
   avgScore: number;
@@ -109,7 +108,7 @@ export default function AnalysisTable({ teams }: { teams: TeamAnalytics[] }) {
             return (
               <tr
                 key={t.teamId}
-                className={`border-b border-[#E2E8F0]/50 last:border-0 transition-colors ${t.isYou ? 'bg-[#EFF6FF]/40' : 'hover:bg-[#F1F5F9]/60'}`}
+                className="border-b border-[#E2E8F0]/50 last:border-0 transition-colors hover:bg-[#F1F5F9]/60"
               >
                 {/* Rank */}
                 <td className="px-3 py-2.5 text-[13px] text-[#475569] font-mono">{i + 1}</td>
@@ -117,9 +116,6 @@ export default function AnalysisTable({ teams }: { teams: TeamAnalytics[] }) {
                 {/* Team */}
                 <td className="px-3 py-2.5">
                   <div className="flex items-center gap-2">
-                    {t.isYou && (
-                      <span className="text-[9px] font-bold bg-[#C8956C]/20 text-[#C8956C] border border-[#C8956C]/30 rounded px-1 py-0.5">YOU</span>
-                    )}
                     <div>
                       <p className="text-[13px] font-semibold text-[#0F172A] leading-tight">{t.ownerName}</p>
                       <p className="text-[11px] text-[#475569]">{t.teamName}</p>

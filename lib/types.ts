@@ -13,7 +13,6 @@ export interface StandingEntry {
   losses: number;
   points: number;
   streak: Streak;
-  isYou: boolean;
   moves: number;
 }
 
@@ -23,7 +22,6 @@ export interface MatchupTeam {
   ownerName: string;
   projectedScore: number;
   actualScore: number;
-  isYou: boolean;
   wins: number;
   losses: number;
   playersRemainingToday: number;
@@ -135,7 +133,6 @@ export interface MatchupDepthRow {
   teamId: string;
   teamName: string;
   ownerName: string;
-  isYou: boolean;
   dailyPlayers: number[];     // players who played each day of the matchup (length = days in week)
   totalPlayers: number;       // sum of dailyPlayers
   teamScore: number;
@@ -161,7 +158,6 @@ export interface BracketTeam {
   ownerName: string;
   score: number;
   seed: number;
-  isYou: boolean;
 }
 
 export interface BracketMatchup {
@@ -357,7 +353,6 @@ export interface FantasyTeamActivity {
   teamId: string;
   teamName: string;
   ownerName: string;
-  isYou: boolean;
   topPlayer: string;
   topPlayerProTeam: string;
   topPlayerCount: number;

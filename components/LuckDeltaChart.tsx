@@ -14,7 +14,6 @@ import {
 
 export interface LuckDeltaEntry {
   ownerName: string;
-  isYou: boolean;
   luckDelta: number;
   wins: number;
   expectedWins: number;
@@ -75,8 +74,8 @@ export default function LuckDeltaChart({ entries }: Props) {
           {sorted.map((entry) => (
             <Cell
               key={entry.ownerName}
-              fill={entry.isYou ? '#C8956C' : entry.luckDelta >= 0 ? '#34D399' : '#F87171'}
-              fillOpacity={entry.isYou ? 1 : 0.75}
+              fill={entry.luckDelta >= 0 ? '#34D399' : '#F87171'}
+              fillOpacity={0.85}
             />
           ))}
         </Bar>

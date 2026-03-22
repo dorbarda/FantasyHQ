@@ -41,9 +41,22 @@ export function slugToOwner(slug: string, owners: string[]): string | null {
   return owners.find(o => ownerToSlug(o) === slug) ?? null;
 }
 
+// Manual owner → logo overrides for owners whose current team name doesn't match their logo file
+// (e.g. new teams or teams that changed name this season)
+const OWNER_LOGO_OVERRIDES: Record<string, string> = {
+  'Omer Rosenberg': 'inglourious-basterds',
+  'Amir':           'libis-legacy',
+  'Nir Zele':       'slotzki',
+  'Yuval Halevy':   'leagues-american-problem',
+};
+
 /** Returns the logo path for an owner by scanning all their historical team names (newest first). */
 export function bestLogoForOwner(ownerName: string, allSeasons: HistoricalSeason[]): string | null {
-  // allSeasons sorted newest-first
+  // Check manual override first
+  const override = OWNER_LOGO_OVERRIDES[ownerName];
+  if (override) return `/teams/${override}.png`;
+
+  // Fall back to scanning historical team names (newest-first)
   for (const season of allSeasons) {
     const team = season.finalStandings.find(t => t.ownerName === ownerName);
     if (team) {

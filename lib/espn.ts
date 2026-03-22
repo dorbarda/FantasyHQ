@@ -9,7 +9,7 @@ import type {
   TradeEvent, TradedPlayer,
 } from './types';
 import { getNBAScoreboard } from './nba';
-import { computeFP, getGP, extractSeasonStats, extractPerGameStats } from './scoring';
+import { computeFP, extractSeasonStats, extractPerGameStats } from './scoring';
 
 const ESPN_S2 = process.env.ESPN_S2;
 const SWID = process.env.SWID;

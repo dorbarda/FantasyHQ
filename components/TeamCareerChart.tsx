@@ -2,7 +2,7 @@
 
 import {
   ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid,
-  Tooltip, Cell, ResponsiveContainer, LabelList, ReferenceLine,
+  Tooltip, Cell, ResponsiveContainer, LabelList,
 } from 'recharts';
 
 export interface CareerPoint {

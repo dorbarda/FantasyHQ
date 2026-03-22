@@ -53,7 +53,18 @@ function summariseStats(stats: any[], label: string) {
       FTA: s.stats?.['16'],
       '3PM': s.stats?.['17'],
       GP_raw: s.stats?.['40'],  // divide by 30 to get GP
-      TD:  s.stats?.['38'],
+      // Special stats — verifying IDs
+      stat38_TD_assumed:  s.stats?.['38'],
+      stat39_QD_assumed:  s.stats?.['39'],  // ← need to confirm this is QD
+      stat41_TF_assumed:  s.stats?.['41'],
+      stat42_EJ_assumed:  s.stats?.['42'],
+      // Dump any stat IDs with non-zero values we haven't mapped yet
+      unknownNonZero: Object.entries(s.stats || {})
+        .filter(([id, v]) =>
+          !['0','1','2','3','6','11','13','14','15','16','17','38','39','40','41','42'].includes(id) &&
+          (v as number) !== 0
+        )
+        .map(([id, v]) => ({ id, value: v })),
     })),
   };
 }

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { DraftBoardData, DraftPick, DraftTeamSlot, DraftGrade } from './types';
+import { computeFP, getGP, extractSeasonStats } from './scoring';
 
 const ESPN_S2   = process.env.ESPN_S2;
 const SWID      = process.env.SWID;
@@ -55,51 +56,12 @@ interface PlayerData {
 }
 
 function extractStats(player: any): { fp: number; pts: number; gp: number } {
-  const stats: any[] = player.stats || [];
-  // Full-season actual: statSplitTypeId=0 + statSourceId=0
-  // Pick the row with the highest appliedStatTotal so cross-season contamination
-  // (year=2026 player objects can carry both 2024-25 and 2025-26 rows) doesn't
-  // accidentally select last year's complete season over this year's YTD total.
-  const actualRows = stats.filter((s: any) => s.statSourceId === 0 && s.statSplitTypeId === 0);
-  const seasonStat =
-    (actualRows.length > 1
-      ? actualRows.sort((a: any, b: any) =>
-          (b.appliedStatTotal ?? b.stats?.['0'] ?? 0) -
-          (a.appliedStatTotal ?? a.stats?.['0'] ?? 0)
-        )[0]
-      : actualRows[0]) ||
-    stats.find((s: any) => s.statSourceId === 0 && s.scoringPeriodId === 0) ||
-    // Fallback: highest-pts actual stat row
-    stats
-      .filter((s: any) => s.statSourceId === 0)
-      .sort((a: any, b: any) => (b.stats?.['0'] || 0) - (a.stats?.['0'] || 0))[0];
-
-  const s = seasonStat?.stats || {};
-
-  // Prefer ESPN's pre-computed appliedStatTotal — it uses the league's exact scoring
-  // (including triple-double bonuses etc.) and matches the ESPN website's own numbers.
-  const fp = typeof seasonStat?.appliedStatTotal === 'number' && seasonStat.appliedStatTotal > 0
-    ? Math.round(seasonStat.appliedStatTotal * 10) / 10
-    : Math.round((
-        (s['0']  || 0) * 1  +  // PTS
-        (s['1']  || 0) * 4  +  // BLK
-        (s['2']  || 0) * 4  +  // STL
-        (s['3']  || 0) * 2  +  // AST
-        (s['6']  || 0) * 1  +  // REB
-        (s['11'] || 0) * -2 +  // TO
-        (s['13'] || 0) * 2  +  // FGM
-        (s['14'] || 0) * -1 +  // FGA
-        (s['15'] || 0) * 1  +  // FTM
-        (s['16'] || 0) * -1 +  // FTA
-        (s['17'] || 0) * 1  +  // 3PM
-        (s['38'] || 0) * 5  +  // TD
-        (s['41'] || 0) * -2 +  // TF
-        (s['42'] || 0) * -5    // EJ
-      ) * 10) / 10;
-
-  const pts = Math.round((s['0'] || 0) * 10) / 10;
-  const gp  = Math.round((s['40'] || 0) / 30);
-  return { fp, pts, gp };
+  const s = extractSeasonStats(player.stats || []);
+  return {
+    fp:  computeFP(s),
+    pts: Math.round((s['0'] || 0) * 10) / 10,
+    gp:  getGP(s),
+  };
 }
 
 function playerMeta(p: any): PlayerData {

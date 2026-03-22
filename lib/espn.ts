@@ -9,6 +9,7 @@ import type {
   TradeEvent, TradedPlayer,
 } from './types';
 import { getNBAScoreboard } from './nba';
+import { computeFP, getGP, extractSeasonStats, extractPerGameStats } from './scoring';
 
 const ESPN_S2 = process.env.ESPN_S2;
 const SWID = process.env.SWID;
@@ -275,66 +276,15 @@ export async function getMatchups(targetWeek?: number): Promise<MatchupsData> {
 
 // ─── PLAYERS ──────────────────────────────────────────────────────────────────
 
-interface ScoringItem {
-  statId: string;
-  pointValue: number;
-  isReverseItem: boolean;
-}
-
-function buildFPCalc(items: ScoringItem[]) {
-  return function calcFP(stats: Record<string, number>): number {
-    let fp = 0;
-    for (const item of items) {
-      const val = stats[item.statId] || 0;
-      fp += item.isReverseItem ? -val * item.pointValue : val * item.pointValue;
-    }
-    return Math.round(fp * 10) / 10;
-  };
-}
-
-// Fallback scoring items matching league rules (total-points format)
-// ESPN stat IDs: 0=PTS,1=BLK,2=STL,3=AST,6=REB,11=TO,13=FGM,14=FGA,15=FTM,16=FTA,17=3PM,38=TD,41=TF,42=EJ
-const FALLBACK_SCORING_ITEMS: ScoringItem[] = [
-  { statId: '0',  pointValue: 1,  isReverseItem: false }, // PTS  ×1
-  { statId: '1',  pointValue: 4,  isReverseItem: false }, // BLK  ×4
-  { statId: '2',  pointValue: 4,  isReverseItem: false }, // STL  ×4
-  { statId: '3',  pointValue: 2,  isReverseItem: false }, // AST  ×2
-  { statId: '6',  pointValue: 1,  isReverseItem: false }, // REB  ×1
-  { statId: '11', pointValue: 2,  isReverseItem: true  }, // TO   ×-2
-  { statId: '13', pointValue: 2,  isReverseItem: false }, // FGM  ×2
-  { statId: '14', pointValue: 1,  isReverseItem: true  }, // FGA  ×-1
-  { statId: '15', pointValue: 1,  isReverseItem: false }, // FTM  ×1
-  { statId: '16', pointValue: 1,  isReverseItem: true  }, // FTA  ×-1
-  { statId: '17', pointValue: 1,  isReverseItem: false }, // 3PM  ×1
-  { statId: '38', pointValue: 5,  isReverseItem: false }, // TD   ×5
-  { statId: '41', pointValue: 2,  isReverseItem: true  }, // TF   ×-2
-  { statId: '42', pointValue: 5,  isReverseItem: true  }, // EJ   ×-5
-];
-
 function r1(n: number) { return Math.round(n * 10) / 10; }
-
-// Extract per-game averages from ESPN stats array.
-// Prefers statSplitTypeId=1 (per-game); falls back to totals ÷ estimated GP.
-function extractPerGame(stats: any[]): Record<string, number> {
-  const pg = stats.find((s: any) => s.statSourceId === 0 && s.statSplitTypeId === 1);
-  if (pg?.stats) return pg.stats;
-  const tot = stats.find((s: any) => s.statSourceId === 0 && s.statSplitTypeId === 0);
-  if (!tot?.stats) return {};
-  const s = tot.stats as Record<string, number>;
-  const gp = Math.max(1, Math.round((s['40'] || 0) / 30));
-  const out: Record<string, number> = {};
-  for (const [k, v] of Object.entries(s)) out[k] = v / gp;
-  return out;
-}
 
 export async function getPlayers(): Promise<Player[]> {
   const posGroupMap: Record<number, 'G' | 'F' | 'C'> = {
     1: 'G', 2: 'G', 3: 'F', 4: 'F', 5: 'C', 6: 'G', 7: 'F', 8: 'F',
   };
 
-  // Fetch scoring settings, roster, and last-7-days stats in parallel
-  const [settingsResult, rosterData, l7Result] = await Promise.all([
-    espnFetch('?view=mSettings').catch(() => null),
+  // Fetch roster and last-7-days stats in parallel
+  const [rosterData, l7Result] = await Promise.all([
     espnFetch('?view=mRoster&view=mTeam'),
     espnFetch('?view=kona_player_info', {
       'x-fantasy-filter': JSON.stringify({
@@ -343,23 +293,12 @@ export async function getPlayers(): Promise<Player[]> {
     }).catch(() => null),
   ]);
 
-  // Build scoring function from league settings (falls back to 9-cat defaults)
-  const rawItems: any[] = settingsResult?.settings?.scoringSettings?.scoringItems || [];
-  const scoringItems: ScoringItem[] = rawItems.length > 0
-    ? rawItems.map((item: any) => ({
-        statId: String(item.statId),
-        pointValue: item.pointValue ?? 1,
-        isReverseItem: item.isReverseItem ?? false,
-      }))
-    : FALLBACK_SCORING_ITEMS;
-  const calcFP = buildFPCalc(scoringItems);
-
   // Build L7 per-game map: playerId → per-game stats
   const l7Map = new Map<number, Record<string, number>>();
   for (const entry of ((l7Result?.players || []) as any[])) {
     const player = entry.playerPoolEntry?.player;
     if (!player) continue;
-    const pg = extractPerGame(player.stats || []);
+    const pg = extractPerGameStats(player.stats || []);
     if (Object.keys(pg).length > 0) l7Map.set(player.id as number, pg);
   }
 
@@ -370,7 +309,7 @@ export async function getPlayers(): Promise<Player[]> {
       if (!p) continue;
 
       // Season per-game averages
-      const s = extractPerGame(p.stats || []);
+      const s = extractPerGameStats(p.stats || []);
       const pts = r1(s['0']  || 0);
       const reb = r1(s['6']  || 0);
       const ast = r1(s['3']  || 0);
@@ -378,7 +317,7 @@ export async function getPlayers(): Promise<Player[]> {
       const blk = r1(s['1']  || 0);
       const tpm = r1(s['17'] || 0);
       const to  = r1(s['11'] || 0);
-      const fp  = calcFP(s);
+      const fp  = computeFP(s);
 
       if (pts === 0 && reb === 0 && ast === 0) continue;
 
@@ -391,7 +330,7 @@ export async function getPlayers(): Promise<Player[]> {
       const blk7 = r1(l7['1']  || 0);
       const tpm7 = r1(l7['17'] || 0);
       const to7  = r1(l7['11'] || 0);
-      const fp7  = calcFP(l7);
+      const fp7  = computeFP(l7);
 
       allPlayers.push({
         id: `p${p.id}`,
@@ -430,7 +369,7 @@ export async function getStatsData(): Promise<StatsData> {
   // ESPN stat IDs
   // 0=PTS, 1=BLK, 2=STL, 3=AST, 6=REB, 11=TO, 13=FGM, 14=FGA, 15=FTM, 16=FTA, 17=3PM, 40=MIN, 41=TD
   const statIds = { pts: '0', blk: '1', stl: '2', ast: '3', reb: '6', to: '11',
-    fgm: '13', fga: '14', ftm: '15', fta: '16', tpm: '17', td: '41' };
+    fgm: '13', fga: '14', ftm: '15', fta: '16', tpm: '17', td: '38' }; // 38=TD, not 41 (41=TF)
 
   // ── Season stats per team (sum current roster season stats) ──
   const seasonStats: SeasonStats[] = teams.map((team: any) => {
@@ -444,11 +383,7 @@ export async function getStatsData(): Promise<StatsData> {
     for (const entry of (team.roster?.entries || []) as any[]) {
       const p = entry.playerPoolEntry?.player;
       if (!p) continue;
-      // Get season total stats (statSplitTypeId=0 = full season, statSourceId=0 = actual)
-      const seasonStat = (p.stats || []).find(
-        (s: any) => s.statSourceId === 0 && s.statSplitTypeId === 0
-      );
-      const s = seasonStat?.stats || {};
+      const s = extractSeasonStats(p.stats || []);
       Object.entries(statIds).forEach(([, id]) => {
         totals[id] += s[id] || 0;
       });

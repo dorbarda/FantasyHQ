@@ -105,7 +105,7 @@ function SemiFinalsCard({ matchups }: { matchups: BracketMatchup[] }) {
                       )}
                       {!won && team.playersRemainingToday > 0 && (
                         <span className="text-[9px] font-medium text-[#64748B]">
-                          {team.playersRemainingToday} starter{team.playersRemainingToday !== 1 ? 's' : ''} left
+                          {team.playersRemainingToday} starter game{team.playersRemainingToday !== 1 ? 's' : ''} left
                         </span>
                       )}
                       {!won && team.playersRemainingToday === 0 && team.score > 0 && (
@@ -176,7 +176,7 @@ function ClosestMatchupCard({ matchup, week }: { matchup: Matchup; week: number 
               </p>
               <p className="text-[12px] text-[#475569] mt-1 truncate">{leader.teamName}</p>
               {!isFinal && leader.playersRemainingToday > 0 && (
-                <p className="text-[11px] text-[#64748B] mt-1">{leader.playersRemainingToday} starter{leader.playersRemainingToday !== 1 ? 's' : ''} left</p>
+                <p className="text-[11px] text-[#64748B] mt-1">{leader.playersRemainingToday} starter game{leader.playersRemainingToday !== 1 ? 's' : ''} left</p>
               )}
               {!isFinal && leader.playersRemainingToday === 0 && leader.actualScore > 0 && (
                 <p className="text-[11px] text-[#334155] mt-1">all done</p>
@@ -201,7 +201,7 @@ function ClosestMatchupCard({ matchup, week }: { matchup: Matchup; week: number 
               </p>
               <p className="text-[12px] text-[#475569] mt-1 truncate">{trailer.teamName}</p>
               {!isFinal && trailer.playersRemainingToday > 0 && (
-                <p className="text-[11px] text-[#64748B] mt-1">{trailer.playersRemainingToday} starter{trailer.playersRemainingToday !== 1 ? 's' : ''} left</p>
+                <p className="text-[11px] text-[#64748B] mt-1">{trailer.playersRemainingToday} starter game{trailer.playersRemainingToday !== 1 ? 's' : ''} left</p>
               )}
               {!isFinal && trailer.playersRemainingToday === 0 && trailer.actualScore > 0 && (
                 <p className="text-[11px] text-[#334155] mt-1">all done</p>

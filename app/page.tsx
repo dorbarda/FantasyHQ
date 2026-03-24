@@ -108,9 +108,6 @@ function SemiFinalsCard({ matchups }: { matchups: BracketMatchup[] }) {
                           {team.playersRemainingToday} starter game{team.playersRemainingToday !== 1 ? 's' : ''} left
                         </span>
                       )}
-                      {!won && team.playersRemainingToday === 0 && team.score > 0 && (
-                        <span className="text-[9px] font-medium text-[#334155]">all done</span>
-                      )}
                     </div>
                   </>
                 ))}
@@ -178,9 +175,6 @@ function ClosestMatchupCard({ matchup, week }: { matchup: Matchup; week: number 
               {!isFinal && leader.playersRemainingToday > 0 && (
                 <p className="text-[11px] text-[#64748B] mt-1">{leader.playersRemainingToday} starter game{leader.playersRemainingToday !== 1 ? 's' : ''} left</p>
               )}
-              {!isFinal && leader.playersRemainingToday === 0 && leader.actualScore > 0 && (
-                <p className="text-[11px] text-[#334155] mt-1">all done</p>
-              )}
             </div>
 
             {/* Divider */}
@@ -202,9 +196,6 @@ function ClosestMatchupCard({ matchup, week }: { matchup: Matchup; week: number 
               <p className="text-[12px] text-[#475569] mt-1 truncate">{trailer.teamName}</p>
               {!isFinal && trailer.playersRemainingToday > 0 && (
                 <p className="text-[11px] text-[#64748B] mt-1">{trailer.playersRemainingToday} starter game{trailer.playersRemainingToday !== 1 ? 's' : ''} left</p>
-              )}
-              {!isFinal && trailer.playersRemainingToday === 0 && trailer.actualScore > 0 && (
-                <p className="text-[11px] text-[#334155] mt-1">all done</p>
               )}
             </div>
           </div>
@@ -318,9 +309,6 @@ function WeekScoreCards({ matchups, closestId, week }: { matchups: Matchup[]; cl
                           <p className="text-[9px] text-white/40">
                             {team.playersRemainingToday} left
                           </p>
-                        )}
-                        {!m.isFinal && team.playersRemainingToday === 0 && team.actualScore > 0 && (
-                          <p className="text-[9px] text-white/25">done</p>
                         )}
                       </div>
                     </>

@@ -70,6 +70,36 @@ function rankValues<T>(
   return rankMap;
 }
 
+// ─── SHARED HELPERS ──────────────────────────────────────────────────────────
+
+function buildRosterMap(teams: any[]): Record<number, any[]> {
+  const map: Record<number, any[]> = {};
+  for (const t of teams) map[t.id] = t.roster?.entries || [];
+  return map;
+}
+
+function countPlayersRemaining(
+  teamId: number,
+  rosterMap: Record<number, any[]>,
+  todayRemainingTeams: Set<string>,
+  currentScoringPeriod: number,
+): number {
+  let count = 0;
+  for (const entry of rosterMap[teamId] || []) {
+    if ((entry.lineupSlotId ?? 9) >= 9) continue; // bench / IR
+    const p = entry.playerPoolEntry?.player;
+    if (!p?.proTeamId) continue;
+    const proTeam = PRO_TEAMS[p.proTeamId];
+    if (!proTeam || !todayRemainingTeams.has(proTeam)) continue;
+    const todayStat = (p.stats || []).find(
+      (s: any) => s.statSourceId === 0 && s.scoringPeriodId === currentScoringPeriod
+    );
+    if (todayStat && todayStat.appliedTotal > 0) continue;
+    count++;
+  }
+  return count;
+}
+
 // ─── STANDINGS ───────────────────────────────────────────────────────────────
 
 export async function getStandings(): Promise<StandingEntry[]> {
@@ -149,7 +179,6 @@ export async function getMatchups(targetWeek?: number): Promise<MatchupsData> {
 
   // Build team map (W-L record, roster)
   const teamMap: Record<number, any> = {};
-  const rosterMap: Record<number, any[]> = {};
   for (const t of teams) {
     const ownerName = (t.owners || [])
       .map((id: string) => memberMap[id] || 'Unknown')
@@ -162,27 +191,8 @@ export async function getMatchups(targetWeek?: number): Promise<MatchupsData> {
       wins: record.wins || 0,
       losses: record.losses || 0,
     };
-    rosterMap[t.id] = t.roster?.entries || [];
   }
-
-  // Count active-slot players who have a game today but haven't scored yet
-  function countPlayersRemaining(teamId: number): number {
-    let count = 0;
-    for (const entry of rosterMap[teamId] || []) {
-      if ((entry.lineupSlotId ?? 9) >= 9) continue; // bench / IR
-      const p = entry.playerPoolEntry?.player;
-      if (!p?.proTeamId) continue;
-      const proTeam = PRO_TEAMS[p.proTeamId];
-      if (!proTeam || !todayRemainingTeams.has(proTeam)) continue;
-      // Already played today?
-      const todayStat = (p.stats || []).find(
-        (s: any) => s.statSourceId === 0 && s.scoringPeriodId === currentScoringPeriod
-      );
-      if (todayStat && todayStat.appliedTotal > 0) continue;
-      count++;
-    }
-    return count;
-  }
+  const rosterMap = buildRosterMap(teams);
 
   // H2H records from all completed regular-season matchups
   const h2hWins: Record<number, Record<number, number>> = {};
@@ -240,13 +250,13 @@ export async function getMatchups(targetWeek?: number): Promise<MatchupsData> {
         ...homeInfo,
         projectedScore: homeProjected,
         actualScore: homeActual,
-        playersRemainingToday: isCurrentWeek && !isFinal ? countPlayersRemaining(home.teamId) : 0,
+        playersRemainingToday: isCurrentWeek && !isFinal ? countPlayersRemaining(home.teamId, rosterMap, todayRemainingTeams, currentScoringPeriod) : 0,
       },
       away: {
         ...awayInfo,
         projectedScore: awayProjected,
         actualScore: awayActual,
-        playersRemainingToday: isCurrentWeek && !isFinal ? countPlayersRemaining(away.teamId) : 0,
+        playersRemainingToday: isCurrentWeek && !isFinal ? countPlayersRemaining(away.teamId, rosterMap, todayRemainingTeams, currentScoringPeriod) : 0,
       },
       isLive,
       isFinal,
@@ -490,14 +500,26 @@ export async function getStatsData(): Promise<StatsData> {
 // ─── PLAYOFF BRACKET ──────────────────────────────────────────────────────────
 
 export async function getPlayoffBracket(): Promise<PlayoffBracketData> {
-  const data = await espnFetch(
-    '?view=mTeam&view=mMatchup&view=mMatchupScore&view=mStandings'
-  );
+  const [data, nbaResult] = await Promise.all([
+    espnFetch('?view=mTeam&view=mMatchup&view=mMatchupScore&view=mStandings&view=mRoster'),
+    getNBAScoreboard().catch(() => []),
+  ]);
 
   const currentMatchupPeriod: number = data.status?.currentMatchupPeriod || 1;
+  const currentScoringPeriod: number =
+    data.scoringPeriodId || data.status?.latestScoringPeriod || currentMatchupPeriod;
   const teams: any[] = data.teams || [];
   const members: any[] = data.members || [];
   const memberMap = buildMemberMap(members);
+
+  const todayRemainingTeams = new Set<string>();
+  for (const game of (Array.isArray(nbaResult) ? nbaResult : [])) {
+    if (game.status !== 'final') {
+      todayRemainingTeams.add(game.homeTeam.tricode);
+      todayRemainingTeams.add(game.awayTeam.tricode);
+    }
+  }
+  const rosterMap = buildRosterMap(teams);
 
   // Build team info (seed comes from playoffSeed or rank)
   const teamMap: Record<number, { name: string; owner: string; seed: number }> = {};
@@ -525,7 +547,7 @@ export async function getPlayoffBracket(): Promise<PlayoffBracketData> {
     new Set(playoffMatchups.map((m: any) => m.matchupPeriodId as number))
   ).sort((a, b) => a - b);
 
-  function makeTeam(side: any, id: number): BracketTeam {
+  function makeTeam(side: any, id: number, isCurrentAndLive: boolean): BracketTeam {
     const info = teamMap[id] || { name: '?', owner: '?', seed: 0 };
     return {
       teamId: `team${id}`,
@@ -533,13 +555,19 @@ export async function getPlayoffBracket(): Promise<PlayoffBracketData> {
       ownerName: info.owner,
       score: Math.round((side?.totalPoints || 0) * 10) / 10,
       seed: info.seed,
+      playersRemainingToday: isCurrentAndLive
+        ? countPlayersRemaining(id, rosterMap, todayRemainingTeams, currentScoringPeriod)
+        : 0,
     };
   }
 
   const brackets: BracketMatchup[] = playoffMatchups.map((m: any, idx: number) => {
     const round = playoffPeriods.indexOf(m.matchupPeriodId) + 1;
-    const home = makeTeam(m.home, m.home?.teamId);
-    const away = m.away?.teamId != null ? makeTeam(m.away, m.away.teamId) : null;
+    const isCurrent = m.matchupPeriodId === currentMatchupPeriod;
+    const isFinal = m.winner === 'HOME' || m.winner === 'AWAY';
+    const isCurrentAndLive = isCurrent && !isFinal;
+    const home = makeTeam(m.home, m.home?.teamId, isCurrentAndLive);
+    const away = m.away?.teamId != null ? makeTeam(m.away, m.away.teamId, isCurrentAndLive) : null;
 
     let winner: 'home' | 'away' | null = null;
     if (m.winner === 'HOME') winner = 'home';

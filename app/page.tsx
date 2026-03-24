@@ -103,6 +103,14 @@ function SemiFinalsCard({ matchups }: { matchups: BracketMatchup[] }) {
                       {leading && team.score > 0 && (
                         <span className="text-[9px] font-bold bg-[#C8956C]/20 text-[#C8956C] border border-[#C8956C]/30 rounded px-2 py-0.5">LEAD</span>
                       )}
+                      {!won && team.playersRemainingToday > 0 && (
+                        <span className="text-[9px] font-medium text-[#64748B]">
+                          {team.playersRemainingToday} starter{team.playersRemainingToday !== 1 ? 's' : ''} left
+                        </span>
+                      )}
+                      {!won && team.playersRemainingToday === 0 && team.score > 0 && (
+                        <span className="text-[9px] font-medium text-[#334155]">all done</span>
+                      )}
                     </div>
                   </>
                 ))}
@@ -167,6 +175,12 @@ function ClosestMatchupCard({ matchup, week }: { matchup: Matchup; week: number 
                 {leader.actualScore.toFixed(1)}
               </p>
               <p className="text-[12px] text-[#475569] mt-1 truncate">{leader.teamName}</p>
+              {!isFinal && leader.playersRemainingToday > 0 && (
+                <p className="text-[11px] text-[#64748B] mt-1">{leader.playersRemainingToday} starter{leader.playersRemainingToday !== 1 ? 's' : ''} left</p>
+              )}
+              {!isFinal && leader.playersRemainingToday === 0 && leader.actualScore > 0 && (
+                <p className="text-[11px] text-[#334155] mt-1">all done</p>
+              )}
             </div>
 
             {/* Divider */}
@@ -186,6 +200,12 @@ function ClosestMatchupCard({ matchup, week }: { matchup: Matchup; week: number 
                 {trailer.actualScore.toFixed(1)}
               </p>
               <p className="text-[12px] text-[#475569] mt-1 truncate">{trailer.teamName}</p>
+              {!isFinal && trailer.playersRemainingToday > 0 && (
+                <p className="text-[11px] text-[#64748B] mt-1">{trailer.playersRemainingToday} starter{trailer.playersRemainingToday !== 1 ? 's' : ''} left</p>
+              )}
+              {!isFinal && trailer.playersRemainingToday === 0 && trailer.actualScore > 0 && (
+                <p className="text-[11px] text-[#334155] mt-1">all done</p>
+              )}
             </div>
           </div>
         ) : (
@@ -294,6 +314,14 @@ function WeekScoreCards({ matchups, closestId, week }: { matchups: Matchup[]; cl
                         <p className={`text-[24px] font-bold tabular-nums leading-none ${isLeading ? 'text-white' : 'text-white/40'}`}>
                           {hasScores ? team.actualScore.toFixed(1) : '—'}
                         </p>
+                        {!m.isFinal && team.playersRemainingToday > 0 && (
+                          <p className="text-[9px] text-white/40">
+                            {team.playersRemainingToday} left
+                          </p>
+                        )}
+                        {!m.isFinal && team.playersRemainingToday === 0 && team.actualScore > 0 && (
+                          <p className="text-[9px] text-white/25">done</p>
+                        )}
                       </div>
                     </>
                   );

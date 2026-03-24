@@ -158,6 +158,7 @@ export interface BracketTeam {
   ownerName: string;
   score: number;
   seed: number;
+  playersRemainingToday: number;
 }
 
 export interface BracketMatchup {

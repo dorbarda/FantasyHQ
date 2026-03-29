@@ -219,7 +219,7 @@ export default function PlayersClient({ players }: { players: Player[] }) {
       const bVal = view === 'l7' ? getViewStats(b, 'l7')[sortKey] : getViewStats(b, 'season')[sortKey];
       return bVal - aVal;
     });
-  }, [players, posFilter, sortKey, view, fpKey]);
+  }, [players, posFilter, sortKey, view]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const maxes = useMemo<Record<MaxesKey, number>>(() => {
     const vs = filtered.map(p => getViewStats(p, view));

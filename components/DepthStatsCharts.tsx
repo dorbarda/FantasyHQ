@@ -7,7 +7,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   Cell, ReferenceLine, LabelList,
 } from 'recharts';
-import type { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
+import type { ValueType } from 'recharts/types/component/DefaultTooltipContent';
 
 // ─── Palette ──────────────────────────────────────────────────────────────────
 

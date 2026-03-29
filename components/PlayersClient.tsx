@@ -210,8 +210,6 @@ export default function PlayersClient({ players }: { players: Player[] }) {
   const [sortKey, setSortKey] = useState<SortKey>('fp');
   const [view, setView] = useState<View>('season');
 
-  const fpKey: keyof Player = view === 'l7' ? 'fp7' : 'fp';
-
   const filtered = useMemo(() => {
     const base = posFilter === 'All' ? players : players.filter(p => p.position === posFilter);
     return [...base].sort((a, b) => {
@@ -219,7 +217,7 @@ export default function PlayersClient({ players }: { players: Player[] }) {
       const bVal = view === 'l7' ? getViewStats(b, 'l7')[sortKey] : getViewStats(b, 'season')[sortKey];
       return bVal - aVal;
     });
-  }, [players, posFilter, sortKey, view]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [players, posFilter, sortKey, view]);
 
   const maxes = useMemo<Record<MaxesKey, number>>(() => {
     const vs = filtered.map(p => getViewStats(p, view));

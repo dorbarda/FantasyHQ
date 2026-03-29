@@ -84,7 +84,7 @@ export default async function MatchupDepthPage({
         <>
           {data.completedPeriods.length === 0 ? (
             <div className="border border-[#E2E8F0] rounded-lg px-6 py-10 text-center bg-white">
-              <p className="text-[15px] font-semibold text-[#0F172A]">Playoffs haven't started yet</p>
+              <p className="text-[15px] font-semibold text-[#0F172A]">Playoffs haven&apos;t started yet</p>
               <p className="text-[13px] text-[#94A3B8] mt-1">Data will appear once week 19 completes.</p>
             </div>
           ) : (

@@ -6,6 +6,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   Cell, ReferenceLine,
 } from 'recharts';
+import type { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
 
 // ─── Palette ──────────────────────────────────────────────────────────────────
 
@@ -67,7 +68,7 @@ function ScorePPLineChart({ rows, periods }: { rows: MatchupDepthRow[]; periods:
   const owners = Array.from(new Set(rows.map(r => ownerFirst(r.ownerName))));
 
   const data = periods.map(p => {
-    const entry: Record<string, any> = { week: `Wk ${p}` };
+    const entry: Record<string, string | number> = { week: `Wk ${p}` };
     for (const owner of owners) {
       const row = rows.find(r => r.matchupPeriod === p && ownerFirst(r.ownerName) === owner);
       if (row && row.scorePP > 0) entry[owner] = row.scorePP;
@@ -86,7 +87,7 @@ function ScorePPLineChart({ rows, periods }: { rows: MatchupDepthRow[]; periods:
           <YAxis tick={{ fontSize: 10, fill: '#94A3B8' }} width={36} />
           <Tooltip
             contentStyle={{ fontSize: 11, borderRadius: 8, border: '1px solid #E2E8F0' }}
-            formatter={(v: any) => [`${Number(v).toFixed(1)}`, '']}
+            formatter={(v: ValueType | undefined) => [`${Number(v ?? 0).toFixed(1)}`, '']}
           />
           <Legend wrapperStyle={{ fontSize: 10 }} />
           {owners.map((owner, i) => (
@@ -112,7 +113,7 @@ function PlayersBarChart({ rows, periods }: { rows: MatchupDepthRow[]; periods: 
   const owners = Array.from(new Set(rows.map(r => ownerFirst(r.ownerName))));
 
   const data = periods.map(p => {
-    const entry: Record<string, any> = { week: `Wk ${p}` };
+    const entry: Record<string, string | number> = { week: `Wk ${p}` };
     for (const owner of owners) {
       const row = rows.find(r => r.matchupPeriod === p && ownerFirst(r.ownerName) === owner);
       if (row && row.totalPlayers > 0) entry[owner] = row.totalPlayers;
@@ -217,9 +218,9 @@ function EfficiencyScatter({ rows }: { rows: MatchupDepthRow[] }) {
           <Tooltip
             cursor={{ strokeDasharray: '3 3' }}
             contentStyle={{ fontSize: 11, borderRadius: 8, border: '1px solid #E2E8F0' }}
-            formatter={(v: any, name: any) => [
-              name === 'Players' ? v : Number(v).toFixed(1),
-              name,
+            formatter={(v: ValueType | undefined, name: NameType | undefined) => [
+              name === 'Players' ? (v ?? '') : Number(v ?? 0).toFixed(1),
+              name ?? '',
             ]}
             content={({ payload }) => {
               if (!payload?.length) return null;

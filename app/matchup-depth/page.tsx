@@ -5,7 +5,9 @@ import DepthTabNav from '@/components/DepthTabNav';
 import DepthStatsCharts from '@/components/DepthStatsCharts';
 import { Suspense } from 'react';
 
-export const revalidate = 86400; // 24 h — completed weeks are historical, no need to re-fetch often
+// Full Season and Playoff tabs: ISR cached for 24 h (completed weeks never change).
+// Stats tab: page shell renders immediately; charts load client-side via /api/depth-stats.
+export const revalidate = 86400;
 
 type Tab = 'full' | 'playoff' | 'stats';
 
@@ -35,30 +37,27 @@ export default async function MatchupDepthPage({
 
   const meta = TAB_META[tab];
 
-  // Fetch data — stats tab reuses full season data
+  // Stats tab: don't block on server data — charts fetch via API client-side.
+  // Full/Playoff: fetch here (ISR cached per URL variant).
   let data: MatchupDepthData | null = null;
   let error = false;
 
-  try {
-    if (tab === 'playoff') {
-      data = await getPlayoffDepth();
-    } else {
-      data = await getMatchupDepth();
+  if (tab !== 'stats') {
+    try {
+      data = tab === 'playoff' ? await getPlayoffDepth() : await getMatchupDepth();
+    } catch (err) {
+      console.error('Matchup depth fetch failed:', err);
+      error = true;
     }
-  } catch (err) {
-    console.error('Matchup depth fetch failed:', err);
-    error = true;
   }
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
-      {/* Header */}
       <div className="mb-5">
         <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A]">{meta.title}</h1>
         <p className="text-[14px] text-[#475569] mt-1">{meta.subtitle}</p>
       </div>
 
-      {/* Tab nav */}
       <Suspense fallback={null}>
         <DepthTabNav active={tab} />
       </Suspense>
@@ -67,7 +66,6 @@ export default async function MatchupDepthPage({
         <p className="text-[14px] text-[#475569]">Could not load data — try again later.</p>
       )}
 
-      {/* Full Season tab */}
       {tab === 'full' && data && (
         <>
           {data.completedPeriods.length > 0 && (
@@ -79,7 +77,6 @@ export default async function MatchupDepthPage({
         </>
       )}
 
-      {/* Playoff tab */}
       {tab === 'playoff' && data && (
         <>
           {data.completedPeriods.length === 0 ? (
@@ -99,10 +96,8 @@ export default async function MatchupDepthPage({
         </>
       )}
 
-      {/* Stats tab */}
-      {tab === 'stats' && data && (
-        <DepthStatsCharts rows={data.rows} periods={data.completedPeriods} />
-      )}
+      {/* Stats tab: shell renders instantly, charts load client-side */}
+      {tab === 'stats' && <DepthStatsCharts />}
     </div>
   );
 }

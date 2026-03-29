@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import type { MatchupDepthData } from '@/lib/types';
 import type { MatchupDepthRow } from '@/lib/types';
 import {
   LineChart, Line, ScatterChart, Scatter,
@@ -370,19 +371,50 @@ function PlayersScorePPScatter({ rows }: { rows: MatchupDepthRow[] }) {
   );
 }
 
-// ─── Main export ──────────────────────────────────────────────────────────────
+// ─── Loading skeleton ─────────────────────────────────────────────────────────
 
-export default function DepthStatsCharts({ rows, periods }: { rows: MatchupDepthRow[]; periods: number[] }) {
+function ChartSkeleton() {
+  return (
+    <div className="space-y-5">
+      <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 animate-pulse">
+        <div className="h-3 w-32 bg-[#F1F5F9] rounded mb-3" />
+        <div className="flex gap-2 mb-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="h-6 w-14 bg-[#F1F5F9] rounded-full" />
+          ))}
+        </div>
+        <div className="h-2 w-40 bg-[#F1F5F9] rounded" />
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="bg-white border border-[#E2E8F0] rounded-xl p-5 animate-pulse">
+            <div className="h-3 w-40 bg-[#F1F5F9] rounded mb-2" />
+            <div className="h-2 w-56 bg-[#F1F5F9] rounded mb-4" />
+            <div className="h-64 bg-[#F8FAFC] rounded-lg" />
+          </div>
+        ))}
+        <div className="lg:col-span-2 bg-white border border-[#E2E8F0] rounded-xl p-5 animate-pulse">
+          <div className="h-3 w-40 bg-[#F1F5F9] rounded mb-2" />
+          <div className="h-2 w-56 bg-[#F1F5F9] rounded mb-4" />
+          <div className="h-72 bg-[#F8FAFC] rounded-lg" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Inner charts component (all hooks at top level) ─────────────────────────
+
+function DepthStatsChartsInner({ rows, periods }: { rows: MatchupDepthRow[]; periods: number[] }) {
   const owners = Array.from(new Set(rows.map(r => ownerFirst(r.ownerName))));
   const colorMap: Record<string, string> = Object.fromEntries(owners.map((o, i) => [o, COLORS[i % COLORS.length]]));
-
   const [selected, setSelected] = useState<Set<string>>(new Set(owners));
 
   function toggle(owner: string) {
     setSelected(prev => {
       const next = new Set(prev);
       if (next.has(owner)) {
-        if (next.size === 1) return prev; // keep at least one
+        if (next.size === 1) return prev;
         next.delete(owner);
       } else {
         next.add(owner);
@@ -391,24 +423,10 @@ export default function DepthStatsCharts({ rows, periods }: { rows: MatchupDepth
     });
   }
 
-  function selectAll() {
-    setSelected(new Set(owners));
-  }
-
-  if (rows.length === 0) {
-    return (
-      <div className="border border-[#E2E8F0] rounded-lg px-6 py-10 text-center bg-white">
-        <p className="text-[15px] font-semibold text-[#0F172A]">No data yet</p>
-        <p className="text-[13px] text-[#94A3B8] mt-1">Stats will appear once matchups are completed.</p>
-      </div>
-    );
-  }
-
   const summaries = buildTeamSummaries(rows);
 
   return (
     <div className="space-y-5">
-      {/* Shared team selector for the two line charts */}
       <div className="bg-white border border-[#E2E8F0] rounded-xl px-5 py-4">
         <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">Filter teams</p>
         <TeamSelector
@@ -416,11 +434,10 @@ export default function DepthStatsCharts({ rows, periods }: { rows: MatchupDepth
           selected={selected}
           colorMap={colorMap}
           onToggle={toggle}
-          onAll={selectAll}
+          onAll={() => setSelected(new Set(owners))}
         />
         <p className="text-[10px] text-[#CBD5E1]">Applies to the two charts below</p>
       </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <ScorePPLineChart rows={rows} periods={periods} owners={owners} selected={selected} colorMap={colorMap} />
         <PlayersLineChart rows={rows} periods={periods} owners={owners} selected={selected} colorMap={colorMap} />
@@ -432,4 +449,30 @@ export default function DepthStatsCharts({ rows, periods }: { rows: MatchupDepth
       </div>
     </div>
   );
+}
+
+// ─── Main export (fetches data client-side) ───────────────────────────────────
+
+export default function DepthStatsCharts() {
+  const [depthData, setDepthData] = useState<MatchupDepthData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/depth-stats')
+      .then(r => r.json())
+      .then((d: MatchupDepthData) => { setDepthData(d); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, []);
+
+  if (loading) return <ChartSkeleton />;
+  if (!depthData || depthData.rows.length === 0) {
+    return (
+      <div className="border border-[#E2E8F0] rounded-lg px-6 py-10 text-center bg-white">
+        <p className="text-[15px] font-semibold text-[#0F172A]">No data yet</p>
+        <p className="text-[13px] text-[#94A3B8] mt-1">Stats will appear once matchups are completed.</p>
+      </div>
+    );
+  }
+
+  return <DepthStatsChartsInner rows={depthData.rows} periods={depthData.completedPeriods} />;
 }

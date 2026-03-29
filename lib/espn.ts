@@ -55,8 +55,8 @@ function buildMemberMap(members: any[]): Record<string, string> {
 
 // Override the display label for specific teams (e.g. two owners share a first name)
 const TEAM_DISPLAY_LABEL: Record<string, string> = {
-  'Nordau Peaky Blinders': 'Barda',
-  'Flint Tropics':         'Gelless',
+  'Nordau Peaky Blinder':   'Barda',
+  "Flint Tropics 70's Show": 'Gelless',
 };
 
 function resolveOwnerName(teamName: string, ownerIds: string[], memberMap: Record<string, string>): string {

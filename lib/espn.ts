@@ -625,7 +625,9 @@ export async function getPlayoffBracket(): Promise<PlayoffBracketData> {
 
 // ─── MATCHUP DEPTH ────────────────────────────────────────────────────────────
 
-export async function getMatchupDepth(): Promise<MatchupDepthData> {
+async function buildDepthData(
+  matchupFilter: (m: any) => boolean
+): Promise<MatchupDepthData> {
   const scheduleData = await espnFetch('?view=mMatchup&view=mMatchupScore&view=mTeam&view=mSettings');
 
   const currentMatchupPeriod: number = scheduleData.status?.currentMatchupPeriod || 1;
@@ -682,7 +684,7 @@ export async function getMatchupDepth(): Promise<MatchupDepthData> {
   }
 
   const completed = schedule.filter(
-    (m: any) => m.playoffTierType === 'NONE' && m.matchupPeriodId < currentMatchupPeriod
+    (m: any) => matchupFilter(m) && m.matchupPeriodId < currentMatchupPeriod
   );
 
   const completedPeriods = Array.from(
@@ -793,6 +795,14 @@ export async function getMatchupDepth(): Promise<MatchupDepthData> {
     : 7;
 
   return { rows, daysPerMatchup, currentMatchupPeriod, completedPeriods };
+}
+
+export async function getMatchupDepth(): Promise<MatchupDepthData> {
+  return buildDepthData((m: any) => m.playoffTierType === 'NONE');
+}
+
+export async function getPlayoffDepth(): Promise<MatchupDepthData> {
+  return buildDepthData((m: any) => m.playoffTierType && m.playoffTierType !== 'NONE');
 }
 
 // ─── TRANSACTIONS ─────────────────────────────────────────────────────────────

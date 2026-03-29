@@ -1,9 +1,10 @@
 import { hasEspnCredentials } from '@/lib/espn';
 import { getAllRecords } from '@/lib/espn-records';
-import { getAllHistoricalSeasons } from '@/lib/espn-history';
+import { getAllHistoricalSeasons, getOwnerCategoryPercentiles } from '@/lib/espn-history';
 import { getDraftCountsByOwner } from '@/lib/espn-draft';
 import { slugToOwner, bestLogoForOwner, ownerToSlug } from '@/lib/team-utils';
 import TeamCareerChart, { CareerPoint } from '@/components/TeamCareerChart';
+import TeamCategoryRadar from '@/components/TeamCategoryRadar';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -119,6 +120,8 @@ export default async function TeamProfilePage({
 
   const ownerName = slugToOwner(ownerSlug, records.hallOfFame.map(c => c.ownerName));
   if (!ownerName) notFound();
+
+  const categoryPercs = await getOwnerCategoryPercentiles(ownerName).catch(() => null);
 
   const career = records.hallOfFame.find(c => c.ownerName === ownerName)!;
   const logo = bestLogoForOwner(ownerName, seasons);
@@ -347,6 +350,19 @@ export default async function TeamProfilePage({
             </div>
           </div>
         </div>
+
+        {/* ── CATEGORY PROFILE ───────────────────────────────────────────────── */}
+        {categoryPercs && (
+          <div className="bg-white border border-[#E2E8F0] rounded-2xl p-5">
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-1">
+              Category Profile
+            </p>
+            <p className="text-[11px] text-[#475569] mb-4">
+              Average rank percentile across all seasons — 100 = best in league
+            </p>
+            <TeamCategoryRadar percs={categoryPercs} />
+          </div>
+        )}
 
         {/* ── HEAD-TO-HEAD ──────────────────────────────────────────────────────── */}
         <div className="bg-white border border-[#E2E8F0] rounded-2xl overflow-hidden">

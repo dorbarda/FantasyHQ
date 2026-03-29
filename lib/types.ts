@@ -238,6 +238,20 @@ export interface NBAStatLeadersData {
   tpm: NBAStatLeader[];
 }
 
+export interface CategoryPercentiles {
+  ownerName: string;
+  fgPct: number;
+  ftPct: number;
+  tpm: number;
+  reb: number;
+  ast: number;
+  stl: number;
+  blk: number;
+  to: number;
+  pts: number;
+  seasonsCount: number;
+}
+
 // ─── History ─────────────────────────────────────────────────────────────────
 
 export interface HistoricalTeam {

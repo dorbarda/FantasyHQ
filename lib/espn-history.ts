@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { HistoricalSeason, HistoricalTeam } from './types';
+import type { HistoricalSeason, HistoricalTeam, CategoryPercentiles } from './types';
+import { extractSeasonStats } from './scoring';
 
 const ESPN_S2 = process.env.ESPN_S2;
 const SWID = process.env.SWID;
@@ -150,3 +151,130 @@ export async function getAllHistoricalSeasons(): Promise<HistoricalSeason[]> {
 }
 
 export { HISTORY_YEARS };
+
+// ─── Category percentile history ─────────────────────────────────────────────
+
+const CURRENT_YEAR = parseInt(process.env.SEASON || '2026');
+const ALL_CAT_YEARS = [...HISTORY_YEARS, CURRENT_YEAR].filter(
+  (y, i, arr) => arr.indexOf(y) === i
+);
+
+const STAT_IDS = {
+  pts: '0', blk: '1', stl: '2', ast: '3', reb: '6',
+  to: '11', fgm: '13', fga: '14', ftm: '15', fta: '16', tpm: '17',
+} as const;
+
+const CAT_KEYS = ['fgPct', 'ftPct', 'tpm', 'reb', 'ast', 'stl', 'blk', 'to', 'pts'] as const;
+type CatKey = typeof CAT_KEYS[number];
+
+function rankArray(values: number[], lowerIsBetter: boolean): number[] {
+  const indexed = values.map((v, i) => ({ v, i }));
+  indexed.sort((a, b) => lowerIsBetter ? a.v - b.v : b.v - a.v);
+  const ranks = new Array(values.length).fill(0);
+  indexed.forEach((item, rank) => { ranks[item.i] = rank + 1; });
+  return ranks;
+}
+
+async function fetchYearCategoryPercentiles(
+  year: number
+): Promise<Array<{ ownerName: string; percs: Record<CatKey, number> }>> {
+  const revalidate = year < CURRENT_YEAR ? 86400 : 1800;
+  const base = `https://lm-api-reads.fantasy.espn.com/apis/v3/games/fba/seasons/${year}/segments/0/leagues/${LEAGUE_ID}`;
+  const res = await fetch(`${base}?view=mTeam&view=mRoster`, {
+    headers: { Cookie: `espn_s2=${ESPN_S2}; SWID=${SWID}`, Accept: 'application/json' },
+    next: { revalidate },
+  });
+  if (!res.ok) throw new Error(`ESPN ${res.status} for year=${year} category`);
+  const data = await res.json();
+
+  const memberMap: Record<string, string> = {};
+  for (const m of (data.members || []) as any[]) {
+    memberMap[m.id] = `${m.firstName} ${m.lastName}`.trim();
+  }
+
+  const teamRows = (data.teams || []) as any[];
+  const teamStats = teamRows.map(team => {
+    const ownerName = (team.owners || [])
+      .map((id: string) => memberMap[id] || 'Unknown')
+      .join(' & ');
+    const totals: Record<string, number> = {};
+    for (const id of Object.values(STAT_IDS)) totals[id] = 0;
+    for (const entry of (team.roster?.entries || []) as any[]) {
+      const p = entry.playerPoolEntry?.player;
+      if (!p) continue;
+      const s = extractSeasonStats(p.stats || []);
+      for (const id of Object.values(STAT_IDS)) totals[id] += s[id] || 0;
+    }
+    return {
+      ownerName,
+      fgPctVal: totals[STAT_IDS.fga] > 0 ? totals[STAT_IDS.fgm] / totals[STAT_IDS.fga] : 0,
+      ftPctVal: totals[STAT_IDS.fta] > 0 ? totals[STAT_IDS.ftm] / totals[STAT_IDS.fta] : 0,
+      tpmVal: totals[STAT_IDS.tpm],
+      rebVal: totals[STAT_IDS.reb],
+      astVal: totals[STAT_IDS.ast],
+      stlVal: totals[STAT_IDS.stl],
+      blkVal: totals[STAT_IDS.blk],
+      toVal:  totals[STAT_IDS.to],
+      ptsVal: totals[STAT_IDS.pts],
+    };
+  });
+
+  const n = teamStats.length;
+  if (n === 0) return [];
+
+  type ValKey = 'fgPctVal' | 'ftPctVal' | 'tpmVal' | 'rebVal' | 'astVal' | 'stlVal' | 'blkVal' | 'toVal' | 'ptsVal';
+  const valKeys: ValKey[] = ['fgPctVal', 'ftPctVal', 'tpmVal', 'rebVal', 'astVal', 'stlVal', 'blkVal', 'toVal', 'ptsVal'];
+  const lowerIsBetter =                [false,     false,     false,    false,    false,    false,    false,    true,     false];
+
+  const allRanks = valKeys.map((key, i) =>
+    rankArray(teamStats.map(t => t[key]), lowerIsBetter[i])
+  );
+
+  return teamStats.map((t, ti) => {
+    const percs = {} as Record<CatKey, number>;
+    CAT_KEYS.forEach((cat, ci) => {
+      percs[cat] = Math.round(((n + 1 - allRanks[ci][ti]) / n) * 100);
+    });
+    return { ownerName: t.ownerName, percs };
+  });
+}
+
+export async function getOwnerCategoryPercentiles(
+  ownerName: string
+): Promise<CategoryPercentiles | null> {
+  const settled = await Promise.allSettled(
+    ALL_CAT_YEARS.map(year => fetchYearCategoryPercentiles(year))
+  );
+
+  const sums = {} as Record<CatKey, number>;
+  for (const cat of CAT_KEYS) sums[cat] = 0;
+  let count = 0;
+
+  for (const result of settled) {
+    if (result.status !== 'fulfilled') continue;
+    const match =
+      result.value.find(d => d.ownerName === ownerName) ??
+      result.value.find(d =>
+        d.ownerName.includes(ownerName) || ownerName.includes(d.ownerName)
+      );
+    if (!match) continue;
+    count++;
+    for (const cat of CAT_KEYS) sums[cat] += match.percs[cat];
+  }
+
+  if (count === 0) return null;
+
+  return {
+    ownerName,
+    fgPct: Math.round(sums.fgPct / count),
+    ftPct: Math.round(sums.ftPct / count),
+    tpm:   Math.round(sums.tpm   / count),
+    reb:   Math.round(sums.reb   / count),
+    ast:   Math.round(sums.ast   / count),
+    stl:   Math.round(sums.stl   / count),
+    blk:   Math.round(sums.blk   / count),
+    to:    Math.round(sums.to    / count),
+    pts:   Math.round(sums.pts   / count),
+    seasonsCount: count,
+  };
+}

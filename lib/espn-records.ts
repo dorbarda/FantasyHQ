@@ -8,6 +8,12 @@ const SWID      = process.env.SWID;
 const LEAGUE_ID = process.env.LEAGUE_ID;
 const CURRENT_YEAR = parseInt(process.env.SEASON || '2026');
 
+// Automated/placeholder teams that should be excluded from H2H records.
+// Matched case-insensitively against team name OR owner name.
+function isGhostTeam(name: string): boolean {
+  return /fake/i.test(name);
+}
+
 // All years to pull — historical + current season
 const ALL_YEARS = [2021, 2022, 2023, 2024, 2025, CURRENT_YEAR].filter(
   (y, i, arr) => arr.indexOf(y) === i   // deduplicate if CURRENT_YEAR already in list
@@ -252,6 +258,9 @@ function computeH2H(matchups: SeasonMatchup[]): {
     const A = m.home.ownerName;
     const B = m.away.ownerName;
     if (A === B) continue;
+    // Exclude ghost/automated teams from H2H records
+    if (isGhostTeam(m.home.teamName) || isGhostTeam(m.away.teamName)) continue;
+    if (isGhostTeam(A) || isGhostTeam(B)) continue;
 
     ensure(A, B);
     ensure(B, A);

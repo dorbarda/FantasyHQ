@@ -195,7 +195,9 @@ export async function getMatchups(targetWeek?: number): Promise<MatchupsData> {
   }
   const rosterMap = buildRosterMap(teams);
 
-  // H2H records from all completed regular-season matchups
+  // H2H records from all completed regular-season matchups.
+  // Ghost/automated teams (name contains "fake") are excluded.
+  const isGhost = (id: number) => /fake/i.test(teamMap[id]?.teamName ?? '');
   const h2hWins: Record<number, Record<number, number>> = {};
   const allSchedule: any[] = data.schedule || [];
   for (const m of allSchedule) {
@@ -204,6 +206,7 @@ export async function getMatchups(targetWeek?: number): Promise<MatchupsData> {
     const hId: number = m.home?.teamId;
     const aId: number = m.away?.teamId;
     if (!hId || !aId) continue;
+    if (isGhost(hId) || isGhost(aId)) continue;
     if (!h2hWins[hId]) h2hWins[hId] = {};
     if (!h2hWins[aId]) h2hWins[aId] = {};
     if (m.winner === 'HOME') h2hWins[hId][aId] = (h2hWins[hId][aId] || 0) + 1;

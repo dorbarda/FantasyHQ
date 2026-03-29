@@ -692,12 +692,11 @@ async function buildDepthData(
   ).sort((a, b) => a - b);
 
   // Fetch roster for EACH scoring period (day) individually so ESPN returns
-  // accurate stats for that specific day. Fetching with a single mid-week period
-  // only returns stats for ~2 adjacent days, leaving the rest as zero.
+  // accurate stats for that specific day. All fetches run in parallel — completed
+  // weeks are historical and ESPN handles concurrent reads fine.
   // periodDayMap[matchupPeriod][scoringPeriodId][teamId] = entries[]
   const periodDayMap: Record<number, Record<number, Record<number, any[]>>> = {};
 
-  // Build the full list of (period, sp) tasks across all completed weeks
   const tasks: Array<{ period: number; sp: number }> = [];
   for (const period of completedPeriods) {
     for (const sp of getScoringPeriods(period)) {
@@ -705,22 +704,18 @@ async function buildDepthData(
     }
   }
 
-  const BATCH = 10;
-  for (let i = 0; i < tasks.length; i += BATCH) {
-    const batch = tasks.slice(i, i + BATCH);
-    const results = await Promise.allSettled(
-      batch.map(({ sp }) => espnFetch(`?view=mRoster&view=mTeam&scoringPeriodId=${sp}`))
-    );
-    batch.forEach(({ period, sp }, j) => {
-      if (!periodDayMap[period]) periodDayMap[period] = {};
-      periodDayMap[period][sp] = {};
-      const r = results[j];
-      if (r.status !== 'fulfilled') return;
-      for (const team of (r.value.teams || []) as any[]) {
-        periodDayMap[period][sp][team.id] = team.roster?.entries || [];
-      }
-    });
-  }
+  const results = await Promise.allSettled(
+    tasks.map(({ sp }) => espnFetch(`?view=mRoster&view=mTeam&scoringPeriodId=${sp}`))
+  );
+  tasks.forEach(({ period, sp }, j) => {
+    if (!periodDayMap[period]) periodDayMap[period] = {};
+    periodDayMap[period][sp] = {};
+    const r = results[j];
+    if (r.status !== 'fulfilled') return;
+    for (const team of (r.value.teams || []) as any[]) {
+      periodDayMap[period][sp][team.id] = team.roster?.entries || [];
+    }
+  });
 
   const MAX_PLAYERS_PER_DAY = 10; // a fantasy team can only start 10 players/day
 

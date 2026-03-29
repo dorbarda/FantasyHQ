@@ -1,10 +1,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { hasEspnCredentials, getMatchups, getStandings, getPlayoffBracket, getPlayers } from '@/lib/espn';
+import { hasEspnCredentials, getMatchups, getStandings, getPlayoffBracket } from '@/lib/espn';
 import matchupsJson from '@/data/matchups.json';
 import standingsJson from '@/data/standings.json';
-import playersJson from '@/data/players.json';
-import type { Matchup, MatchupsData, StandingEntry, PlayoffBracketData, BracketMatchup, Player } from '@/lib/types';
+import type { Matchup, MatchupsData, StandingEntry, PlayoffBracketData, BracketMatchup } from '@/lib/types';
 import ScoreStrip from '@/components/ScoreStrip';
 import { teamLogoSrc } from '@/lib/team-logos';
 
@@ -382,81 +381,6 @@ function HomeStandingsPanel({ standings }: { standings: StandingEntry[] }) {
   );
 }
 
-// ─── Top Player Card ──────────────────────────────────────────────────────────
-
-const POSITION_COLORS: Record<string, { bg: string; text: string }> = {
-  G: { bg: '#C8956C', text: '#fff' },
-  F: { bg: '#10B981', text: '#fff' },
-  C: { bg: '#3B82F6', text: '#fff' },
-};
-
-function TopPlayerCard({ player }: { player: Player }) {
-  const pos = POSITION_COLORS[player.position] ?? { bg: '#94A3B8', text: '#fff' };
-
-  return (
-    <div className="bg-white rounded-xl border border-[#E2E8F0] overflow-hidden">
-      {/* Header */}
-      <div className="px-4 py-3 border-b border-[#E2E8F0] flex items-center justify-between">
-        <div className="flex items-center gap-1.5">
-          <svg viewBox="0 0 14 14" fill="none" className="w-3.5 h-3.5 shrink-0">
-            <path d="M7 1.5l1.6 3.5 3.9.4-2.8 2.7.7 3.9L7 10l-3.4 2 .7-3.9L1.5 5.4l3.9-.4z" fill="#F59E0B"/>
-          </svg>
-          <span className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8]">
-            Season&apos;s Best Player
-          </span>
-        </div>
-        <Link href="/players" className="text-[12px] font-medium text-[#C8956C] hover:text-[#D4A77C] transition-colors">
-          All players →
-        </Link>
-      </div>
-
-      {/* Player info */}
-      <div className="px-4 py-4">
-        <div className="flex items-start justify-between gap-3 mb-4">
-          <div className="min-w-0">
-            <p className="text-[22px] font-bold text-[#0F172A] leading-tight truncate">
-              {player.name}
-            </p>
-            <div className="flex items-center gap-2 mt-1">
-              <span
-                className="text-[10px] font-bold px-1.5 py-0.5 rounded"
-                style={{ backgroundColor: pos.bg, color: pos.text }}
-              >
-                {player.position}
-              </span>
-              <span className="text-[12px] font-semibold text-[#475569]">{player.team}</span>
-            </div>
-          </div>
-          {/* FP bubble */}
-          <div className="shrink-0 flex flex-col items-center bg-[#F59E0B]/10 border border-[#F59E0B]/30 rounded-xl px-3 py-2 min-w-[64px]">
-            <span className="text-[22px] font-bold tabular-nums text-[#0F172A] leading-none">
-              {player.fp.toFixed(1)}
-            </span>
-            <span className="text-[9px] font-semibold uppercase tracking-wider text-[#94A3B8] mt-0.5">
-              FP/g
-            </span>
-          </div>
-        </div>
-
-        {/* Stat row */}
-        <div className="grid grid-cols-4 gap-2 pt-3 border-t border-[#F1F5F9]">
-          {[
-            { label: 'PTS', value: player.pts.toFixed(1) },
-            { label: 'REB', value: player.reb.toFixed(1) },
-            { label: 'AST', value: player.ast.toFixed(1) },
-            { label: '3PM', value: player.tpm.toFixed(1) },
-          ].map(({ label, value }) => (
-            <div key={label} className="text-center">
-              <p className="text-[14px] font-bold tabular-nums text-[#0F172A]">{value}</p>
-              <p className="text-[9px] font-semibold uppercase tracking-wider text-[#94A3B8] mt-0.5">{label}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // ─── Quick Links ──────────────────────────────────────────────────────────────
 
 const QUICK_LINKS = [
@@ -499,19 +423,16 @@ export default async function HomePage() {
   let matchupsData: MatchupsData = matchupsJson as MatchupsData;
   let standings: StandingEntry[] = standingsJson as StandingEntry[];
   let bracket: PlayoffBracketData | null = null;
-  let players: Player[] = playersJson as Player[];
 
   if (hasEspnCredentials()) {
-    const [matchupsResult, standingsResult, bracketResult, playersResult] = await Promise.allSettled([
+    const [matchupsResult, standingsResult, bracketResult] = await Promise.allSettled([
       getMatchups(),
       getStandings(),
       getPlayoffBracket(),
-      getPlayers(),
     ]);
     if (matchupsResult.status === 'fulfilled') matchupsData = matchupsResult.value;
     if (standingsResult.status === 'fulfilled') standings = standingsResult.value;
     if (bracketResult.status === 'fulfilled') bracket = bracketResult.value;
-    if (playersResult.status === 'fulfilled') players = playersResult.value;
   }
 
   const { matchups, week } = matchupsData;
@@ -521,11 +442,6 @@ export default async function HomePage() {
   const semiFinals: BracketMatchup[] = bracket?.isPlayoffs
     ? bracket.winners.filter((m) => m.isCurrentRound)
     : [];
-
-  // Season's top player by fantasy points per game
-  const topPlayer = players.length > 0
-    ? players.reduce((best, p) => (p.fp > best.fp ? p : best))
-    : null;
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
@@ -587,7 +503,6 @@ export default async function HomePage() {
         {/* Right column */}
         <div className="space-y-4">
           <HomeStandingsPanel standings={standings} />
-          {topPlayer && <TopPlayerCard player={topPlayer} />}
           <HomeQuickLinks />
         </div>
       </div>

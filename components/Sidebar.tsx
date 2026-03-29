@@ -155,7 +155,6 @@ const NAV_GROUPS = [
       { href: '/matchups',      label: 'Matchups',    Icon: MatchupsIcon },
       { href: '/matchup-depth', label: 'Depth',       Icon: DepthIcon    },
       { href: '/draft',         label: 'Draft',       Icon: DraftIcon    },
-      { href: '/players',       label: 'Players',     Icon: PlayersIcon  },
       { href: '/teams',         label: 'Teams',       Icon: TeamsIcon    },
     ],
   },
@@ -188,7 +187,7 @@ const BOTTOM_NAV = [
   { href: '/',         label: 'Home',     Icon: HomeIcon     },
   { href: '/league',   label: 'League',   Icon: LeagueIcon   },
   { href: '/matchups', label: 'Matchups', Icon: MatchupsIcon },
-  { href: '/players',  label: 'Players',  Icon: PlayersIcon  },
+  { href: '/matchup-depth', label: 'Depth', Icon: DepthIcon },
   { href: '/stats',    label: 'Stats',    Icon: StatsIcon    },
 ];
 

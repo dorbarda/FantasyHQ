@@ -5,7 +5,7 @@ import DepthTabNav from '@/components/DepthTabNav';
 import DepthStatsCharts from '@/components/DepthStatsCharts';
 import { Suspense } from 'react';
 
-export const revalidate = 1800;
+export const revalidate = 86400; // 24 h — completed weeks are historical, no need to re-fetch often
 
 type Tab = 'full' | 'playoff' | 'stats';
 

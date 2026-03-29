@@ -1,10 +1,13 @@
-import { hasEspnCredentials, getMatchupDepth } from '@/lib/espn';
+import { hasEspnCredentials, getMatchupDepth, getStatsData } from '@/lib/espn';
 import type { MatchupDepthRow } from '@/lib/types';
+import { StatsData } from '@/lib/types';
+import statsJson from '@/data/stats.json';
 import AnalysisTable, { type TeamAnalytics } from '@/components/AnalysisTable';
 import WeeklyHighlights, { type WeeklyScoreEntry } from '@/components/WeeklyHighlights';
 import WeeklyTrendChart, { type WeeklyTrendEntry } from '@/components/WeeklyTrendChart';
 import EfficiencyScatterChart, { type ScatterPoint } from '@/components/EfficiencyScatterChart';
 import LuckDeltaChart, { type LuckDeltaEntry } from '@/components/LuckDeltaChart';
+import CategoryRadarChartClient from '@/components/CategoryRadarChartClient';
 
 export const revalidate = 1800;
 
@@ -196,10 +199,19 @@ export default async function AnalysisPage() {
 
   let error = false;
   let result: ReturnType<typeof computeAnalytics> | null = null;
+  let statsData: StatsData = statsJson as StatsData;
 
   try {
-    const data = await getMatchupDepth();
-    if (data.rows.length > 0) result = computeAnalytics(data.rows);
+    const [depthData, fetchedStats] = await Promise.allSettled([
+      getMatchupDepth(),
+      getStatsData(),
+    ]);
+    if (depthData.status === 'fulfilled' && depthData.value.rows.length > 0) {
+      result = computeAnalytics(depthData.value.rows);
+    }
+    if (fetchedStats.status === 'fulfilled') {
+      statsData = fetchedStats.value;
+    }
   } catch (err) {
     console.error('Analysis fetch failed:', err);
     error = true;
@@ -209,7 +221,19 @@ export default async function AnalysisPage() {
     return (
       <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
         <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A] mb-2">Analysis</h1>
-        <p className="text-[14px] text-[#475569] mt-1">Could not load data — try again later.</p>
+        {statsData.categoryStandings.length > 0 ? (
+          <section className="bg-[#F1F5F9] border border-[#E2E8F0] rounded-xl px-4 py-4 mt-4">
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-1">
+              Category Standings
+            </p>
+            <p className="text-[11px] text-[#475569] mb-4">
+              Rank percentile per category — 100 = league leader
+            </p>
+            <CategoryRadarChartClient standings={statsData.categoryStandings} />
+          </section>
+        ) : (
+          <p className="text-[14px] text-[#475569] mt-1">Could not load data — try again later.</p>
+        )}
       </div>
     );
   }
@@ -231,6 +255,19 @@ export default async function AnalysisPage() {
           {leagueSummary.totalWeeks} week{leagueSummary.totalWeeks !== 1 ? 's' : ''} · avg {leagueSummary.avgLeagueScore.toFixed(1)} pts/team · season high {leagueSummary.highScore.toFixed(1)}
         </p>
       </div>
+
+      {/* Category Standings Radar */}
+      {statsData.categoryStandings.length > 0 && (
+        <section className="bg-[#F1F5F9] border border-[#E2E8F0] rounded-xl px-4 py-4 mb-6">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-1">
+            Category Standings
+          </p>
+          <p className="text-[11px] text-[#475569] mb-4">
+            Rank percentile per category — 100 = league leader
+          </p>
+          <CategoryRadarChartClient standings={statsData.categoryStandings} />
+        </section>
+      )}
 
       {/* Insight cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">

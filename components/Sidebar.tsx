@@ -56,15 +56,6 @@ function DraftIcon() {
   );
 }
 
-function StatsIcon() {
-  return (
-    <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4 shrink-0">
-      <path d="M3 15l4.5-5 3.5 2.5 5.5-7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      <circle cx="16" cy="5" r="2.5" stroke="currentColor" strokeWidth="1.5"/>
-    </svg>
-  );
-}
-
 function AnalysisIcon() {
   return (
     <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4 shrink-0">
@@ -152,7 +143,6 @@ const NAV_GROUPS = [
   {
     label: 'ANALYTICS',
     items: [
-      { href: '/stats',        label: 'Stats',    Icon: StatsIcon    },
       { href: '/analysis',     label: 'Analysis', Icon: AnalysisIcon },
       { href: '/transactions', label: 'Moves',    Icon: MovesIcon    },
       { href: '/records',      label: 'Records',  Icon: RecordsIcon  },
@@ -179,7 +169,7 @@ const BOTTOM_NAV = [
   { href: '/league',   label: 'League',   Icon: LeagueIcon   },
   { href: '/matchups', label: 'Matchups', Icon: MatchupsIcon },
   { href: '/matchup-depth', label: 'Depth', Icon: DepthIcon },
-  { href: '/stats',    label: 'Stats',    Icon: StatsIcon    },
+  { href: '/analysis', label: 'Analysis', Icon: AnalysisIcon },
 ];
 
 // ─── Sidebar (desktop) ────────────────────────────────────────────────────────

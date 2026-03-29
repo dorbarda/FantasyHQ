@@ -52,12 +52,14 @@ async function fetchOneSeason(year: number): Promise<HistoricalSeason> {
     teamMap[t.id] = { name: t.name || `Team ${t.id}`, owner: ownerName };
   }
 
-  // ── Final regular-season standings ─────────────────────────────────────────
+  // ── Final standings ────────────────────────────────────────────────────────
+  // rankCalculatedFinal = ESPN's post-playoff final position (1=champion, 2=runner-up, …)
+  // playoffSeed         = regular-season seeding — used only as fallback for older seasons
   const finalStandings: HistoricalTeam[] = (standingsData.teams as any[])
     .map((t: any) => {
       const record = t.record?.overall || {};
       return {
-        rank: t.playoffSeed || 99,
+        rank: t.rankCalculatedFinal || t.playoffSeed || 99,
         teamName: teamMap[t.id]?.name ?? `Team ${t.id}`,
         ownerName: teamMap[t.id]?.owner ?? 'Unknown',
         wins: record.wins || 0,

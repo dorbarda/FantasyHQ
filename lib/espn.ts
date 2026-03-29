@@ -53,6 +53,17 @@ function buildMemberMap(members: any[]): Record<string, string> {
   return map;
 }
 
+// Override the display label for specific teams (e.g. two owners share a first name)
+const TEAM_DISPLAY_LABEL: Record<string, string> = {
+  'Nordau Peaky Blinders': 'Barda',
+  'Flint Tropics':         'Gelless',
+};
+
+function resolveOwnerName(teamName: string, ownerIds: string[], memberMap: Record<string, string>): string {
+  if (TEAM_DISPLAY_LABEL[teamName]) return TEAM_DISPLAY_LABEL[teamName];
+  return ownerIds.map(id => memberMap[id] || 'Unknown').join(' & ');
+}
+
 
 function rankValues<T>(
   items: T[],
@@ -120,9 +131,7 @@ export async function getStandings(): Promise<StandingEntry[]> {
     .map((team: any) => {
       const record = team.record?.overall || {};
       const streak = record.streak || {};
-      const ownerName = (team.owners || [])
-        .map((id: string) => memberMap[id] || 'Unknown')
-        .join(' & ');
+      const ownerName = resolveOwnerName(team.name || '', team.owners || [], memberMap);
       const moves =
         team.transactionCounter?.acquisitionTotal ??
         team.transactionCounter?.acquisitions ??
@@ -174,9 +183,7 @@ export async function getMatchups(targetWeek?: number): Promise<MatchupsData> {
   // Build team map (W-L record, roster)
   const teamMap: Record<number, any> = {};
   for (const t of teams) {
-    const ownerName = (t.owners || [])
-      .map((id: string) => memberMap[id] || 'Unknown')
-      .join(' & ');
+    const ownerName = resolveOwnerName(t.name || '', t.owners || [], memberMap);
     const record = t.record?.overall || {};
     teamMap[t.id] = {
       teamId: `team${t.id}`,
@@ -393,9 +400,7 @@ export async function getStatsData(): Promise<StatsData> {
 
   // ── Season stats per team (sum current roster season stats) ──
   const seasonStats: SeasonStats[] = teams.map((team: any) => {
-    const ownerName = (team.owners || [])
-      .map((id: string) => memberMap[id] || 'Unknown')
-      .join(' & ');
+    const ownerName = resolveOwnerName(team.name || '', team.owners || [], memberMap);
 
     const totals: Record<string, number> = {};
     Object.values(statIds).forEach(id => { totals[id] = 0; });
@@ -482,9 +487,7 @@ export async function getStatsData(): Promise<StatsData> {
   // ── Luck table ──
   const schedTeams: any[] = scheduleData.teams;
   const luckTable: LuckTableEntry[] = schedTeams.map((team: any) => {
-    const ownerName = (team.owners || [])
-      .map((id: string) => memberMap[id] || 'Unknown')
-      .join(' & ');
+    const ownerName = resolveOwnerName(team.name || '', team.owners || [], memberMap);
     const record = team.record?.overall || {};
     const pf = Math.round((record.pointsFor || 0) * 10) / 10;
     const pa = Math.round((record.pointsAgainst || 0) * 10) / 10;
@@ -525,7 +528,7 @@ export async function getPlayoffBracket(): Promise<PlayoffBracketData> {
   // Build team info (seed comes from playoffSeed or rank)
   const teamMap: Record<number, { name: string; owner: string; seed: number }> = {};
   for (const t of teams) {
-    const owner = (t.owners || []).map((id: string) => memberMap[id] || 'Unknown').join(' & ');
+    const owner = resolveOwnerName(t.name || '', t.owners || [], memberMap);
     teamMap[t.id] = {
       name: t.name || `Team ${t.id}`,
       owner,
@@ -644,7 +647,7 @@ async function buildDepthData(
 
   const teamMeta: Record<number, { name: string; owner: string }> = {};
   for (const t of teams) {
-    const owner = (t.owners || []).map((id: string) => memberMap[id] || 'Unknown').join(' & ');
+    const owner = resolveOwnerName(t.name || '', t.owners || [], memberMap);
     teamMeta[t.id] = { name: t.name || `Team ${t.id}`, owner };
   }
 
@@ -852,7 +855,7 @@ export async function getTransactions(): Promise<TransactionsData> {
 
   const teamMeta: Record<number, { name: string; owner: string }> = {};
   for (const t of teams) {
-    const owner = (t.owners || []).map((id: string) => memberMap[id] || 'Unknown').join(' & ');
+    const owner = resolveOwnerName(t.name || '', t.owners || [], memberMap);
     teamMeta[t.id] = { name: t.name || `Team ${t.id}`, owner };
   }
 

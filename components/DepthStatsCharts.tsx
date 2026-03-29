@@ -262,6 +262,7 @@ function EfficiencyWinRateScatter({ summaries, colorMap }: { summaries: TeamSumm
           <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
           <XAxis
             type="number" dataKey="x" name="Efficiency"
+            domain={[0.5, 'auto']}
             tick={{ fontSize: 10, fill: '#94A3B8' }}
             label={{ value: 'Avg Efficiency', position: 'insideBottom', offset: -12, fontSize: 10, fill: '#94A3B8' }}
             tickFormatter={v => Number(v).toFixed(3)}

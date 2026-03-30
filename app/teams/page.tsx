@@ -53,11 +53,24 @@ export default async function TeamsPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A]">Teams</h1>
-        <p className="text-[14px] text-[#475569] mt-1">
-          {teams.length} franchises · select a team to view their profile
-        </p>
+      <div className="flex items-start justify-between mb-6">
+        <div>
+          <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A]">Teams</h1>
+          <p className="text-[14px] text-[#475569] mt-1">
+            {teams.length} franchises · select a team to view their profile
+          </p>
+        </div>
+        <Link
+          href="/teams/export"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1.5 text-[12px] font-semibold text-[#475569] hover:text-[#C8956C] border border-[#E2E8F0] hover:border-[#C8956C]/50 bg-white rounded-lg px-3 py-2 transition-colors shrink-0"
+        >
+          <svg viewBox="0 0 16 16" fill="none" className="w-3.5 h-3.5">
+            <path d="M8 2v8m0 0L5 7m3 3 3-3M2 12h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          Export PDF
+        </Link>
       </div>
 
       {/* Team grid */}

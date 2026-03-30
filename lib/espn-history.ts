@@ -6,7 +6,7 @@ const ESPN_S2 = process.env.ESPN_S2;
 const SWID = process.env.SWID;
 const LEAGUE_ID = process.env.LEAGUE_ID;
 
-const HISTORY_YEARS = [2025, 2024, 2023, 2022, 2021] as const;
+const HISTORY_YEARS = [2026, 2025, 2024, 2023, 2022, 2021] as const;
 
 function seasonLabel(year: number): string {
   return `${year - 1}-${String(year).slice(2)}`;

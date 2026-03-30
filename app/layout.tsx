@@ -15,10 +15,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-[#F8FAFC] text-[#0F172A] flex min-h-screen">
-        <Sidebar />
+        <div className="print:hidden">
+          <Sidebar />
+        </div>
         {/* pt-14 on mobile = space for fixed top bar; md:pt-0 on desktop = no top bar */}
         {/* pb-16 on mobile = space for bottom nav; md:pb-0 on desktop */}
-        <main className="flex-1 md:ml-[220px] min-h-screen pt-14 pb-16 md:pt-0 md:pb-0">
+        <main className="flex-1 md:ml-[220px] print:ml-0 min-h-screen pt-14 pb-16 md:pt-0 md:pb-0 print:pt-0 print:pb-0">
           {children}
         </main>
       </body>

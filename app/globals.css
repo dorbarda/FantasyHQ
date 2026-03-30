@@ -45,6 +45,11 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+@media print {
+  body { background: white !important; }
+  @page { margin: 0.4in; size: A4; }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

@@ -404,6 +404,36 @@ export interface TransactionsData {
   trades: TradeEvent[];
 }
 
+// ─── NBA Playoff Betting ──────────────────────────────────────────────────────
+
+export interface PlayoffPlayInBet { gameId: string; pick: string; }
+export interface PlayoffSeriesBet { seriesId: string; pick: string; score: '4-0' | '4-1' | '4-2' | '4-3'; }
+export interface PlayoffBonusBets { westChampion: string; eastChampion: string; nbaChampion: string; }
+export interface OwnerPlayoffBets {
+  ownerName: string;
+  bonusBets: PlayoffBonusBets;
+  playIn: PlayoffPlayInBet[];
+  series: PlayoffSeriesBet[];
+}
+
+export interface PlayInResult  { gameId: string; conference: 'east' | 'west'; label: string; teams: [string, string]; winner: string | null; }
+export interface SeriesResult  { seriesId: string; round: 1 | 2 | 3 | 4; conference: 'east' | 'west' | 'finals'; label: string; teams: [string, string]; winner: string | null; score: string | null; }
+export interface PlayoffResults { playIn: PlayInResult[]; series: SeriesResult[]; }
+
+export type SeriesScoreStatus = 'pending' | 'correct' | 'exact' | 'wrong43' | 'wrong';
+
+export interface SeriesScoreDetail {
+  seriesId: string;
+  earned: number;
+  status: SeriesScoreStatus;
+}
+
+export interface OwnerScoreResult {
+  total: number;
+  bySection: { playIn: number; rounds: [number, number, number, number]; bonus: number };
+  detail: SeriesScoreDetail[];
+}
+
 // ─── Rules ────────────────────────────────────────────────────────────────────
 
 export interface RulesSection {

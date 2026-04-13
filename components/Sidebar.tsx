@@ -106,6 +106,16 @@ function NBAIcon() {
   );
 }
 
+function TrophyIcon() {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4 shrink-0">
+      <path d="M6 3h8v6a4 4 0 01-8 0V3z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+      <path d="M6 5H4a2 2 0 000 4h2M14 5h2a2 2 0 010 4h-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M10 13v3M7 16h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
 function RulesIcon() {
   return (
     <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4 shrink-0">
@@ -152,7 +162,8 @@ const NAV_GROUPS = [
   {
     label: 'NBA',
     items: [
-      { href: '/nba', label: 'NBA Live', Icon: NBAIcon },
+      { href: '/nba',          label: 'NBA Live', Icon: NBAIcon    },
+      { href: '/nba-playoffs', label: 'Playoffs', Icon: TrophyIcon },
     ],
   },
   {

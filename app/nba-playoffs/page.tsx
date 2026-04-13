@@ -28,6 +28,113 @@ function statusStyle(status: SeriesScoreStatus | 'none'): string {
   }
 }
 
+// ─── Pre-Bets section (shared) ───────────────────────────────────────────────
+
+const PRE_BET_ROWS = [
+  { key: 'westChampion'  as const, label: 'West Champion', pts: '+7', resultSeriesId: 'r3-w' },
+  { key: 'eastChampion'  as const, label: 'East Champion', pts: '+7', resultSeriesId: 'r3-e' },
+  { key: 'nbaChampion'   as const, label: 'NBA Champion',  pts: '+15', resultSeriesId: 'r4'  },
+];
+
+function preBetStatus(pick: string, seriesId: string): SeriesScoreStatus | 'none' {
+  const actual = results.series.find(s => s.seriesId === seriesId)?.winner ?? null;
+  if (!pick || actual === null) return 'none';
+  return pick.trim().toLowerCase() === actual.trim().toLowerCase() ? 'correct' : 'wrong';
+}
+
+function PreBetsSection({ compact = false }: { compact?: boolean }) {
+  if (allBets.length === 0) return null;
+
+  if (compact) {
+    // Compact version for leaderboard: owner cards with 3 picks
+    return (
+      <div className="mb-8">
+        <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#94A3B8] mb-3">
+          Pre-Season Bets
+        </p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          {allBets.map(owner => (
+            <div key={owner.ownerName} className="bg-white border border-[#E2E8F0] rounded-xl p-3">
+              <p className="text-[12px] font-bold text-[#0F172A] mb-2 truncate">{owner.ownerName.split(' ')[0]}</p>
+              <div className="space-y-1.5">
+                {PRE_BET_ROWS.map(row => {
+                  const pick   = owner.bonusBets[row.key] ?? '';
+                  const status = preBetStatus(pick, row.resultSeriesId);
+                  return (
+                    <div key={row.key}>
+                      <p className="text-[9px] font-semibold uppercase tracking-wide text-[#94A3B8] mb-0.5">{row.label}</p>
+                      <span className={`inline-block text-[11px] font-medium rounded px-1.5 py-0.5 leading-tight ${statusStyle(status)}`}>
+                        {pick || '—'}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Full table version for Bets tab
+  const owners = allBets.map(o => o.ownerName);
+  return (
+    <div className="mb-8 bg-[#FAFBFF] border-2 border-[#C8956C]/30 rounded-xl p-5">
+      <div className="flex items-center gap-2 mb-4">
+        <span className="text-[18px]">🏆</span>
+        <p className="text-[13px] font-bold text-[#0F172A]">Pre-Season Bets</p>
+        <span className="text-[11px] text-[#94A3B8] ml-1">· Conference &amp; NBA Champions</span>
+      </div>
+      <div className="overflow-x-auto rounded-lg border border-[#E2E8F0]">
+        <table className="text-[12px] border-collapse w-full">
+          <thead>
+            <tr className="bg-white border-b border-[#E2E8F0]">
+              <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-wider text-[#94A3B8] sticky left-0 bg-white z-10 min-w-[130px]">Bet</th>
+              {owners.map(o => (
+                <th key={o} className="px-2 py-2.5 text-center text-[10px] font-semibold text-[#94A3B8] min-w-[90px]">
+                  {o.split(' ')[0]}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {PRE_BET_ROWS.map((row, ri) => {
+              const actual = results.series.find(s => s.seriesId === row.resultSeriesId)?.winner ?? null;
+              return (
+                <tr key={row.key} className={`border-b border-[#F1F5F9] last:border-0 ${ri % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'}`}>
+                  <td className="px-3 py-2.5 sticky left-0 bg-inherit z-10 whitespace-nowrap">
+                    <p className="text-[12px] font-semibold text-[#0F172A]">{row.label}</p>
+                    <p className="text-[10px] text-[#C8956C] font-semibold">{row.pts}</p>
+                    {actual && (
+                      <p className="text-[10px] text-[#10B981] mt-0.5">✓ {actual}</p>
+                    )}
+                  </td>
+                  {owners.map(ownerName => {
+                    const pick   = allBets.find(o => o.ownerName === ownerName)?.bonusBets[row.key] ?? '';
+                    const status = preBetStatus(pick, row.resultSeriesId);
+                    return (
+                      <td key={ownerName} className="px-2 py-2.5 text-center">
+                        {pick ? (
+                          <span className={`inline-block rounded px-1.5 py-0.5 text-[11px] font-medium ${statusStyle(status)}`}>
+                            {pick}
+                          </span>
+                        ) : (
+                          <span className="text-[#CBD5E1]">—</span>
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 // ─── Leaderboard tab ──────────────────────────────────────────────────────────
 
 function LeaderboardTab() {
@@ -44,6 +151,7 @@ function LeaderboardTab() {
 
   return (
     <div>
+      <PreBetsSection compact />
       <div className="overflow-x-auto rounded-xl border border-[#E2E8F0]">
         <table className="w-full text-[13px]">
           <thead>
@@ -177,70 +285,6 @@ function BetsSection({
   );
 }
 
-function BonusBetsSection() {
-  if (allBets.length === 0) return null;
-  const owners = allBets.map(o => o.ownerName);
-
-  const westFinal  = results.series.find(s => s.seriesId === 'r3-w');
-  const eastFinal  = results.series.find(s => s.seriesId === 'r3-e');
-  const nbaFinal   = results.series.find(s => s.seriesId === 'r4');
-
-  const bonusRows = [
-    { label: 'West Champion',  key: 'westChampion'  as const, actual: westFinal?.winner ?? null, pts: '+7' },
-    { label: 'East Champion',  key: 'eastChampion'  as const, actual: eastFinal?.winner ?? null, pts: '+7' },
-    { label: 'NBA Champion',   key: 'nbaChampion'   as const, actual: nbaFinal?.winner  ?? null, pts: '+15' },
-  ];
-
-  return (
-    <div className="mb-8">
-      <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#94A3B8] mb-3">Bonus Bets</p>
-      <div className="overflow-x-auto rounded-xl border border-[#E2E8F0]">
-        <table className="text-[12px] border-collapse w-full">
-          <thead>
-            <tr className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
-              <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-[#94A3B8] sticky left-0 bg-[#F8FAFC] z-10 min-w-[120px]">Bet</th>
-              {owners.map(o => (
-                <th key={o} className="px-2 py-2 text-center text-[10px] font-semibold text-[#94A3B8] min-w-[90px]">{o.split(' ')[0]}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {bonusRows.map((row, ri) => (
-              <tr key={row.key} className={`border-b border-[#F1F5F9] last:border-0 ${ri % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'}`}>
-                <td className="px-3 py-2 font-semibold text-[#0F172A] sticky left-0 bg-inherit z-10 whitespace-nowrap">
-                  <span className="block">{row.label}</span>
-                  <span className="text-[10px] text-[#94A3B8]">{row.pts}</span>
-                  {row.actual && (
-                    <span className="block text-[10px] text-[#10B981] mt-0.5">✓ {row.actual}</span>
-                  )}
-                </td>
-                {owners.map(ownerName => {
-                  const pick = allBets.find(o => o.ownerName === ownerName)?.bonusBets[row.key] ?? '';
-                  let status: SeriesScoreStatus | 'none' = 'none';
-                  if (pick && row.actual !== null) {
-                    status = pick.trim().toLowerCase() === row.actual.trim().toLowerCase() ? 'correct' : 'wrong';
-                  }
-                  return (
-                    <td key={ownerName} className="px-2 py-2 text-center">
-                      {pick ? (
-                        <span className={`inline-block rounded px-1.5 py-0.5 text-[11px] font-medium ${statusStyle(status)}`}>
-                          {pick}
-                        </span>
-                      ) : (
-                        <span className="text-[#CBD5E1]">—</span>
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
 function BetsTab() {
   if (allBets.length === 0) {
     return (
@@ -258,12 +302,12 @@ function BetsTab() {
 
   return (
     <div>
-      <BetsSection title="Play-In"          seriesIds={playInIds} isPlayIn />
-      <BetsSection title="Round 1"          seriesIds={r1Ids} />
-      <BetsSection title="Semifinals"       seriesIds={r2Ids} />
+      <PreBetsSection />
+      <BetsSection title="Play-In"           seriesIds={playInIds} isPlayIn />
+      <BetsSection title="Round 1"           seriesIds={r1Ids} />
+      <BetsSection title="Semifinals"        seriesIds={r2Ids} />
       <BetsSection title="Conference Finals" seriesIds={r3Ids} />
-      <BetsSection title="NBA Finals"       seriesIds={r4Ids} />
-      <BonusBetsSection />
+      <BetsSection title="NBA Finals"        seriesIds={r4Ids} />
     </div>
   );
 }

@@ -394,7 +394,7 @@ function ResultsSection({ title, items, isPlayIn }: {
               <p className="text-[13px] font-semibold text-[#0F172A]">{item.label}</p>
               {item.teams[0] || item.teams[1] ? (
                 <p className="text-[12px] text-[#64748B] mt-0.5">
-                  {item.teams[0] || '?'} vs {item.teams[1] || '?'}
+                  {item.teams[0] || 'TBD'} vs {item.teams[1] || 'TBD'}
                 </p>
               ) : null}
             </div>
@@ -422,13 +422,23 @@ function ResultsSection({ title, items, isPlayIn }: {
 }
 
 function ResultsTab() {
+  // Filter out items where both team slots are still empty (e.g. loser-bracket
+  // games whose participants aren't determined yet, or later rounds with no teams).
+  const hasTeams = (t: [string, string]) => t[0] || t[1];
+
+  const playInGames = results.playIn.filter(g => hasTeams(g.teams));
+  const r1Games     = results.series.filter(s => s.round === 1 && hasTeams(s.teams));
+  const r2Games     = results.series.filter(s => s.round === 2 && hasTeams(s.teams));
+  const r3Games     = results.series.filter(s => s.round === 3 && hasTeams(s.teams));
+  const r4Games     = results.series.filter(s => s.round === 4 && hasTeams(s.teams));
+
   return (
     <div>
-      <ResultsSection title="Play-In" items={results.playIn} isPlayIn />
-      {playInComplete && <ResultsSection title="Round 1"           items={results.series.filter(s => s.round === 1)} />}
-      {playInComplete && <ResultsSection title="Semifinals"        items={results.series.filter(s => s.round === 2)} />}
-      {playInComplete && <ResultsSection title="Conference Finals" items={results.series.filter(s => s.round === 3)} />}
-      {playInComplete && <ResultsSection title="NBA Finals"        items={results.series.filter(s => s.round === 4)} />}
+      {playInGames.length > 0 && <ResultsSection title="Play-In"           items={playInGames} isPlayIn />}
+      {r1Games.length > 0     && <ResultsSection title="Round 1"           items={r1Games} />}
+      {r2Games.length > 0     && <ResultsSection title="Semifinals"        items={r2Games} />}
+      {r3Games.length > 0     && <ResultsSection title="Conference Finals" items={r3Games} />}
+      {r4Games.length > 0     && <ResultsSection title="NBA Finals"        items={r4Games} />}
     </div>
   );
 }

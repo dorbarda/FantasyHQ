@@ -17,6 +17,10 @@ export const revalidate = 300;
 const allBets: OwnerPlayoffBets[]   = betsJson.owners as OwnerPlayoffBets[];
 const results: PlayoffResults       = resultsJson as PlayoffResults;
 
+// ─── Stage detection ─────────────────────────────────────────────────────────
+// Only advance past play-in once all play-in games have a winner
+const playInComplete = results.playIn.every(g => g.winner !== null);
+
 // ─── Cell colour helper ───────────────────────────────────────────────────────
 
 function statusStyle(status: SeriesScoreStatus | 'none'): string {
@@ -295,20 +299,20 @@ function BetsTab() {
     );
   }
 
-  const playInIds  = results.playIn.map(p => p.gameId);
-  const r1Ids  = results.series.filter(s => s.round === 1).map(s => s.seriesId);
-  const r2Ids  = results.series.filter(s => s.round === 2).map(s => s.seriesId);
-  const r3Ids  = results.series.filter(s => s.round === 3).map(s => s.seriesId);
-  const r4Ids  = results.series.filter(s => s.round === 4).map(s => s.seriesId);
+  const playInIds = results.playIn.map(p => p.gameId);
+  const r1Ids     = results.series.filter(s => s.round === 1).map(s => s.seriesId);
+  const r2Ids     = results.series.filter(s => s.round === 2).map(s => s.seriesId);
+  const r3Ids     = results.series.filter(s => s.round === 3).map(s => s.seriesId);
+  const r4Ids     = results.series.filter(s => s.round === 4).map(s => s.seriesId);
 
   return (
     <div>
       <PreBetsSection />
-      <BetsSection title="Play-In"           seriesIds={playInIds} isPlayIn />
-      <BetsSection title="Round 1"           seriesIds={r1Ids} />
-      <BetsSection title="Semifinals"        seriesIds={r2Ids} />
-      <BetsSection title="Conference Finals" seriesIds={r3Ids} />
-      <BetsSection title="NBA Finals"        seriesIds={r4Ids} />
+      <BetsSection title="Play-In" seriesIds={playInIds} isPlayIn />
+      {playInComplete && <BetsSection title="Round 1"           seriesIds={r1Ids} />}
+      {playInComplete && <BetsSection title="Semifinals"        seriesIds={r2Ids} />}
+      {playInComplete && <BetsSection title="Conference Finals" seriesIds={r3Ids} />}
+      {playInComplete && <BetsSection title="NBA Finals"        seriesIds={r4Ids} />}
     </div>
   );
 }
@@ -364,11 +368,11 @@ function AnalyticsTab() {
 
   return (
     <div>
-      <AnalyticsRound title="Play-In"           items={playInItems} isPlayIn />
-      <AnalyticsRound title="Round 1"           items={r1Items} />
-      <AnalyticsRound title="Semifinals"        items={r2Items} />
-      <AnalyticsRound title="Conference Finals" items={r3Items} />
-      <AnalyticsRound title="NBA Finals"        items={r4Items} />
+      <AnalyticsRound title="Play-In" items={playInItems} isPlayIn />
+      {playInComplete && <AnalyticsRound title="Round 1"           items={r1Items} />}
+      {playInComplete && <AnalyticsRound title="Semifinals"        items={r2Items} />}
+      {playInComplete && <AnalyticsRound title="Conference Finals" items={r3Items} />}
+      {playInComplete && <AnalyticsRound title="NBA Finals"        items={r4Items} />}
     </div>
   );
 }
@@ -420,11 +424,11 @@ function ResultsSection({ title, items, isPlayIn }: {
 function ResultsTab() {
   return (
     <div>
-      <ResultsSection title="Play-In"           items={results.playIn}                              isPlayIn />
-      <ResultsSection title="Round 1"           items={results.series.filter(s => s.round === 1)} />
-      <ResultsSection title="Semifinals"        items={results.series.filter(s => s.round === 2)} />
-      <ResultsSection title="Conference Finals" items={results.series.filter(s => s.round === 3)} />
-      <ResultsSection title="NBA Finals"        items={results.series.filter(s => s.round === 4)} />
+      <ResultsSection title="Play-In" items={results.playIn} isPlayIn />
+      {playInComplete && <ResultsSection title="Round 1"           items={results.series.filter(s => s.round === 1)} />}
+      {playInComplete && <ResultsSection title="Semifinals"        items={results.series.filter(s => s.round === 2)} />}
+      {playInComplete && <ResultsSection title="Conference Finals" items={results.series.filter(s => s.round === 3)} />}
+      {playInComplete && <ResultsSection title="NBA Finals"        items={results.series.filter(s => s.round === 4)} />}
     </div>
   );
 }
@@ -539,9 +543,15 @@ export default async function NBAPlayoffsPage({
     ? (tabParam as 'leaderboard' | 'bets' | 'analytics' | 'results' | 'rules')
     : 'leaderboard';
 
-  const ownerCount = allBets.length;
+  const ownerCount     = allBets.length;
+  const playInDone     = results.playIn.filter(g => g.winner !== null).length;
+  const playInTotal    = results.playIn.length;
   const seriesComplete = results.series.filter(s => s.winner !== null).length;
   const seriesTotal    = results.series.length;
+
+  const stageLabel = !playInComplete
+    ? `Play-In · ${playInDone}/${playInTotal} games complete`
+    : `Playoffs · ${seriesComplete}/${seriesTotal} series complete`;
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
@@ -552,8 +562,8 @@ export default async function NBAPlayoffsPage({
         </h1>
         <p className="text-[14px] text-[#475569] mt-1">
           {ownerCount > 0
-            ? `${ownerCount} participants · ${seriesComplete}/${seriesTotal} series complete`
-            : 'Bracket betting tracker · add bets to data/playoff-bets.json'}
+            ? `${ownerCount} participants · ${stageLabel}`
+            : `Play-In Tournament · April 14–17 · Playoffs begin April 18`}
         </p>
       </div>
 

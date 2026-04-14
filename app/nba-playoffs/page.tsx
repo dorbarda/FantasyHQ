@@ -8,6 +8,7 @@ import type {
   SeriesScoreStatus,
 } from '@/lib/types';
 import PlayoffTabNav from '@/components/PlayoffTabNav';
+import PlayoffSeriesAnalyticsCard from '@/components/PlayoffSeriesAnalyticsCard';
 
 export const revalidate = 300;
 
@@ -314,45 +315,7 @@ function BetsTab() {
 
 // ─── Analytics tab ────────────────────────────────────────────────────────────
 
-function PickBar({ teams, picks }: { teams: [string, string]; picks: string[] }) {
-  const total = picks.length;
-  if (total === 0) return <p className="text-[12px] text-[#94A3B8]">No bets</p>;
-
-  const counts: Record<string, number> = {};
-  for (const p of picks) {
-    const key = p.trim();
-    if (key) counts[key] = (counts[key] ?? 0) + 1;
-  }
-
-  const allTeams = Array.from(
-    new Set([...teams.filter(Boolean), ...Object.keys(counts)])
-  );
-
-  return (
-    <div className="space-y-1.5">
-      {allTeams.map(team => {
-        const count = counts[team] ?? 0;
-        const pct   = total > 0 ? Math.round((count / total) * 100) : 0;
-        return (
-          <div key={team} className="flex items-center gap-2">
-            <span className="text-[12px] text-[#0F172A] w-40 truncate shrink-0">{team}</span>
-            <div className="flex-1 bg-[#F1F5F9] rounded-full h-3 overflow-hidden">
-              <div
-                className="h-full bg-[#C8956C] rounded-full transition-all"
-                style={{ width: `${pct}%` }}
-              />
-            </div>
-            <span className="text-[11px] font-semibold text-[#475569] w-14 text-right shrink-0">
-              {count}/{total} · {pct}%
-            </span>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function AnalyticsSection({ title, items, isPlayIn }: {
+function AnalyticsRound({ title, items, isPlayIn }: {
   title: string;
   items: { id: string; label: string; teams: [string, string] }[];
   isPlayIn?: boolean;
@@ -360,16 +323,23 @@ function AnalyticsSection({ title, items, isPlayIn }: {
   return (
     <div className="mb-8">
       <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#94A3B8] mb-4">{title}</p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {items.map(item => {
-          const picks = isPlayIn
+          const winPicks = isPlayIn
             ? allBets.map(o => o.playIn.find(p => p.gameId === item.id)?.pick ?? '')
             : allBets.map(o => o.series.find(s => s.seriesId === item.id)?.pick ?? '');
+          const scorePicks = isPlayIn
+            ? []
+            : allBets.map(o => o.series.find(s => s.seriesId === item.id)?.score ?? '');
           return (
-            <div key={item.id} className="bg-white border border-[#E2E8F0] rounded-xl p-4">
-              <p className="text-[12px] font-semibold text-[#0F172A] mb-3">{item.label}</p>
-              <PickBar teams={item.teams} picks={picks} />
-            </div>
+            <PlayoffSeriesAnalyticsCard
+              key={item.id}
+              label={item.label}
+              teams={item.teams}
+              winPicks={winPicks}
+              scorePicks={scorePicks}
+              isPlayIn={isPlayIn}
+            />
           );
         })}
       </div>
@@ -386,19 +356,19 @@ function AnalyticsTab() {
     );
   }
 
-  const playInItems  = results.playIn.map(p  => ({ id: p.gameId,    label: p.label,  teams: p.teams }));
-  const r1Items  = results.series.filter(s => s.round === 1).map(s => ({ id: s.seriesId, label: s.label, teams: s.teams }));
-  const r2Items  = results.series.filter(s => s.round === 2).map(s => ({ id: s.seriesId, label: s.label, teams: s.teams }));
-  const r3Items  = results.series.filter(s => s.round === 3).map(s => ({ id: s.seriesId, label: s.label, teams: s.teams }));
-  const r4Items  = results.series.filter(s => s.round === 4).map(s => ({ id: s.seriesId, label: s.label, teams: s.teams }));
+  const playInItems = results.playIn.map(p => ({ id: p.gameId,    label: p.label, teams: p.teams }));
+  const r1Items     = results.series.filter(s => s.round === 1).map(s => ({ id: s.seriesId, label: s.label, teams: s.teams }));
+  const r2Items     = results.series.filter(s => s.round === 2).map(s => ({ id: s.seriesId, label: s.label, teams: s.teams }));
+  const r3Items     = results.series.filter(s => s.round === 3).map(s => ({ id: s.seriesId, label: s.label, teams: s.teams }));
+  const r4Items     = results.series.filter(s => s.round === 4).map(s => ({ id: s.seriesId, label: s.label, teams: s.teams }));
 
   return (
     <div>
-      <AnalyticsSection title="Play-In"           items={playInItems}  isPlayIn />
-      <AnalyticsSection title="Round 1"           items={r1Items} />
-      <AnalyticsSection title="Semifinals"        items={r2Items} />
-      <AnalyticsSection title="Conference Finals" items={r3Items} />
-      <AnalyticsSection title="NBA Finals"        items={r4Items} />
+      <AnalyticsRound title="Play-In"           items={playInItems} isPlayIn />
+      <AnalyticsRound title="Round 1"           items={r1Items} />
+      <AnalyticsRound title="Semifinals"        items={r2Items} />
+      <AnalyticsRound title="Conference Finals" items={r3Items} />
+      <AnalyticsRound title="NBA Finals"        items={r4Items} />
     </div>
   );
 }

@@ -3,9 +3,9 @@
     { "gameId": "east-7v8",   "conference": "east", "label": "#7 vs #8",  "teams": ["Philadelphia 76ers", "Orlando Magic"],           "winner": null },
     { "gameId": "east-9v10",  "conference": "east", "label": "#9 vs #10", "teams": ["Charlotte Hornets", "Miami Heat"],               "winner": "Charlotte Hornets" },
     { "gameId": "east-loser", "conference": "east", "label": "Survivor",  "teams": ["", "Charlotte Hornets"],                         "winner": null },
-    { "gameId": "west-7v8",   "conference": "west", "label": "#7 vs #8",  "teams": ["Phoenix Suns", "Portland Trail Blazers"],        "winner": null },
+    { "gameId": "west-7v8",   "conference": "west", "label": "#7 vs #8",  "teams": ["Phoenix Suns", "Portland Trail Blazers"],        "winner": "Portland Trail Blazers" },
     { "gameId": "west-9v10",  "conference": "west", "label": "#9 vs #10", "teams": ["Los Angeles Clippers", "Golden State Warriors"], "winner": null },
-    { "gameId": "west-loser", "conference": "west", "label": "Survivor",  "teams": ["", ""],                                          "winner": null }
+    { "gameId": "west-loser", "conference": "west", "label": "Survivor",  "teams": ["Phoenix Suns", ""],                              "winner": null }
   ],
   "series": [
     { "seriesId": "r1-e1", "round": 1, "conference": "east", "label": "East #1 vs #8", "teams": ["Detroit Pistons", ""],                    "winner": null, "score": null },

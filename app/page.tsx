@@ -3,7 +3,10 @@ import Image from 'next/image';
 import { hasEspnCredentials, getMatchups, getStandings, getPlayoffBracket } from '@/lib/espn';
 import matchupsJson from '@/data/matchups.json';
 import standingsJson from '@/data/standings.json';
-import type { Matchup, MatchupsData, StandingEntry, PlayoffBracketData, BracketMatchup } from '@/lib/types';
+import betsJson    from '@/data/playoff-bets.json';
+import resultsJson from '@/data/playoff-results.json';
+import { computeAllScores } from '@/lib/playoff-scoring';
+import type { Matchup, MatchupsData, StandingEntry, PlayoffBracketData, BracketMatchup, OwnerPlayoffBets, PlayoffResults } from '@/lib/types';
 import ScoreStrip from '@/components/ScoreStrip';
 import { teamLogoSrc } from '@/lib/team-logos';
 
@@ -381,6 +384,47 @@ function HomeStandingsPanel({ standings }: { standings: StandingEntry[] }) {
   );
 }
 
+// ─── Playoff Leaderboard Preview ─────────────────────────────────────────────
+
+function PlayoffLeaderboardPreview() {
+  const allBets = betsJson.owners as OwnerPlayoffBets[];
+  const results = resultsJson as PlayoffResults;
+  if (allBets.length === 0) return null;
+
+  const scores = computeAllScores(allBets, results);
+  const rankColors = ['#F59E0B', '#94A3B8', '#C8956C'];
+
+  return (
+    <div className="bg-white rounded-xl border border-[#E2E8F0] overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-[#E2E8F0]">
+        <div>
+          <p className="text-[13px] font-bold text-[#0F172A]">Playoffs Picks</p>
+          <p className="text-[10px] text-[#94A3B8]">NBA 2026 · Play-In</p>
+        </div>
+        <Link href="/nba-playoffs" className="text-[12px] font-medium text-[#C8956C] hover:text-[#D4A77C] transition-colors">
+          Full table →
+        </Link>
+      </div>
+      <div className="divide-y divide-[#F1F5F9]">
+        {scores.map((s, i) => (
+          <div key={s.ownerName} className="flex items-center gap-3 px-4 py-2 hover:bg-[#F8FAFC] transition-colors">
+            <span
+              className="text-[12px] font-bold w-5 text-center shrink-0 tabular-nums"
+              style={{ color: rankColors[i] ?? '#CBD5E1' }}
+            >
+              {i + 1}
+            </span>
+            <p className="flex-1 text-[13px] font-semibold text-[#0F172A] truncate">
+              {s.ownerName.split(' ')[0]}
+            </p>
+            <span className="text-[14px] font-bold tabular-nums text-[#0F172A]">{s.total}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── Quick Links ──────────────────────────────────────────────────────────────
 
 const QUICK_LINKS = [
@@ -503,6 +547,7 @@ export default async function HomePage() {
         {/* Right column */}
         <div className="space-y-4">
           <HomeStandingsPanel standings={standings} />
+          <PlayoffLeaderboardPreview />
           <HomeQuickLinks />
         </div>
       </div>

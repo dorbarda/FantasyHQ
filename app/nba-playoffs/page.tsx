@@ -156,8 +156,7 @@ function LeaderboardTab() {
 
   return (
     <div>
-      <PreBetsSection compact />
-      <div className="overflow-x-auto rounded-xl border border-[#E2E8F0]">
+      <div className="overflow-x-auto rounded-xl border border-[#E2E8F0] mb-8">
         <table className="w-full text-[13px]">
           <thead>
             <tr className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
@@ -185,6 +184,7 @@ function LeaderboardTab() {
           </tbody>
         </table>
       </div>
+      <PreBetsSection compact />
     </div>
   );
 }

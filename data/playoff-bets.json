@@ -65,6 +65,37 @@
         { "gameId": "east-7v8",  "pick": "Philadelphia 76ers" }
       ],
       "series": []
+    },
+    {
+      "ownerName": "Omer Rosenberg",
+      "bonusBets": { "westChampion": "", "eastChampion": "", "nbaChampion": "" },
+      "playIn": [
+        { "gameId": "west-9v10", "pick": "Los Angeles Clippers" },
+        { "gameId": "west-7v8",  "pick": "Portland Trail Blazers" },
+        { "gameId": "east-9v10", "pick": "Charlotte Hornets" },
+        { "gameId": "east-7v8",  "pick": "Philadelphia 76ers" }
+      ],
+      "series": []
+    },
+    {
+      "ownerName": "Yotam Goldin",
+      "bonusBets": { "westChampion": "", "eastChampion": "", "nbaChampion": "" },
+      "playIn": [
+        { "gameId": "east-9v10", "pick": "Charlotte Hornets" },
+        { "gameId": "west-7v8",  "pick": "Portland Trail Blazers" }
+      ],
+      "series": []
+    },
+    {
+      "ownerName": "Amir Ben Izhak",
+      "bonusBets": { "westChampion": "", "eastChampion": "", "nbaChampion": "" },
+      "playIn": [
+        { "gameId": "west-9v10", "pick": "Los Angeles Clippers" },
+        { "gameId": "west-7v8",  "pick": "Portland Trail Blazers" },
+        { "gameId": "east-9v10", "pick": "Charlotte Hornets" },
+        { "gameId": "east-7v8",  "pick": "Philadelphia 76ers" }
+      ],
+      "series": []
     }
   ]
 }

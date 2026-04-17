@@ -4,10 +4,12 @@
       "ownerName": "Yuval Halevy",
       "bonusBets": { "westChampion": "", "eastChampion": "", "nbaChampion": "" },
       "playIn": [
-        { "gameId": "west-9v10", "pick": "Los Angeles Clippers" },
-        { "gameId": "west-7v8",  "pick": "Phoenix Suns" },
-        { "gameId": "east-9v10", "pick": "Charlotte Hornets" },
-        { "gameId": "east-7v8",  "pick": "Philadelphia 76ers" }
+        { "gameId": "west-9v10",  "pick": "Los Angeles Clippers" },
+        { "gameId": "west-7v8",   "pick": "Phoenix Suns" },
+        { "gameId": "west-loser", "pick": "Phoenix Suns" },
+        { "gameId": "east-9v10",  "pick": "Charlotte Hornets" },
+        { "gameId": "east-7v8",   "pick": "Philadelphia 76ers" },
+        { "gameId": "east-loser", "pick": "Charlotte Hornets" }
       ],
       "series": []
     },
@@ -15,10 +17,12 @@
       "ownerName": "Barak Miller",
       "bonusBets": { "westChampion": "", "eastChampion": "", "nbaChampion": "" },
       "playIn": [
-        { "gameId": "west-9v10", "pick": "Golden State Warriors" },
-        { "gameId": "west-7v8",  "pick": "Portland Trail Blazers" },
-        { "gameId": "east-9v10", "pick": "Miami Heat" },
-        { "gameId": "east-7v8",  "pick": "Orlando Magic" }
+        { "gameId": "west-9v10",  "pick": "Golden State Warriors" },
+        { "gameId": "west-7v8",   "pick": "Portland Trail Blazers" },
+        { "gameId": "west-loser", "pick": "Golden State Warriors" },
+        { "gameId": "east-9v10",  "pick": "Miami Heat" },
+        { "gameId": "east-7v8",   "pick": "Orlando Magic" },
+        { "gameId": "east-loser", "pick": "Charlotte Hornets" }
       ],
       "series": []
     },
@@ -26,10 +30,12 @@
       "ownerName": "Dor Gelless",
       "bonusBets": { "westChampion": "", "eastChampion": "", "nbaChampion": "" },
       "playIn": [
-        { "gameId": "west-9v10", "pick": "Los Angeles Clippers" },
-        { "gameId": "west-7v8",  "pick": "Portland Trail Blazers" },
-        { "gameId": "east-9v10", "pick": "Charlotte Hornets" },
-        { "gameId": "east-7v8",  "pick": "Philadelphia 76ers" }
+        { "gameId": "west-9v10",  "pick": "Los Angeles Clippers" },
+        { "gameId": "west-7v8",   "pick": "Portland Trail Blazers" },
+        { "gameId": "west-loser", "pick": "Golden State Warriors" },
+        { "gameId": "east-9v10",  "pick": "Charlotte Hornets" },
+        { "gameId": "east-7v8",   "pick": "Philadelphia 76ers" },
+        { "gameId": "east-loser", "pick": "Charlotte Hornets" }
       ],
       "series": []
     },
@@ -37,10 +43,12 @@
       "ownerName": "Ilay Mendel",
       "bonusBets": { "westChampion": "", "eastChampion": "", "nbaChampion": "" },
       "playIn": [
-        { "gameId": "west-9v10", "pick": "Los Angeles Clippers" },
-        { "gameId": "west-7v8",  "pick": "Portland Trail Blazers" },
-        { "gameId": "east-9v10", "pick": "Charlotte Hornets" },
-        { "gameId": "east-7v8",  "pick": "Philadelphia 76ers" }
+        { "gameId": "west-9v10",  "pick": "Los Angeles Clippers" },
+        { "gameId": "west-7v8",   "pick": "Portland Trail Blazers" },
+        { "gameId": "west-loser", "pick": "Phoenix Suns" },
+        { "gameId": "east-9v10",  "pick": "Charlotte Hornets" },
+        { "gameId": "east-7v8",   "pick": "Philadelphia 76ers" },
+        { "gameId": "east-loser", "pick": "Charlotte Hornets" }
       ],
       "series": []
     },
@@ -48,10 +56,12 @@
       "ownerName": "Yoav Coracos",
       "bonusBets": { "westChampion": "", "eastChampion": "", "nbaChampion": "" },
       "playIn": [
-        { "gameId": "west-9v10", "pick": "Los Angeles Clippers" },
-        { "gameId": "west-7v8",  "pick": "Portland Trail Blazers" },
-        { "gameId": "east-9v10", "pick": "Charlotte Hornets" },
-        { "gameId": "east-7v8",  "pick": "Philadelphia 76ers" }
+        { "gameId": "west-9v10",  "pick": "Los Angeles Clippers" },
+        { "gameId": "west-7v8",   "pick": "Portland Trail Blazers" },
+        { "gameId": "west-loser", "pick": "Golden State Warriors" },
+        { "gameId": "east-9v10",  "pick": "Charlotte Hornets" },
+        { "gameId": "east-7v8",   "pick": "Philadelphia 76ers" },
+        { "gameId": "east-loser", "pick": "Charlotte Hornets" }
       ],
       "series": []
     },
@@ -59,10 +69,12 @@
       "ownerName": "Dor Barda",
       "bonusBets": { "westChampion": "", "eastChampion": "", "nbaChampion": "" },
       "playIn": [
-        { "gameId": "west-9v10", "pick": "Los Angeles Clippers" },
-        { "gameId": "west-7v8",  "pick": "Phoenix Suns" },
-        { "gameId": "east-9v10", "pick": "Charlotte Hornets" },
-        { "gameId": "east-7v8",  "pick": "Philadelphia 76ers" }
+        { "gameId": "west-9v10",  "pick": "Los Angeles Clippers" },
+        { "gameId": "west-7v8",   "pick": "Phoenix Suns" },
+        { "gameId": "west-loser", "pick": "Phoenix Suns" },
+        { "gameId": "east-9v10",  "pick": "Charlotte Hornets" },
+        { "gameId": "east-7v8",   "pick": "Philadelphia 76ers" },
+        { "gameId": "east-loser", "pick": "Charlotte Hornets" }
       ],
       "series": []
     },
@@ -70,10 +82,12 @@
       "ownerName": "Omer Rosenberg",
       "bonusBets": { "westChampion": "", "eastChampion": "", "nbaChampion": "" },
       "playIn": [
-        { "gameId": "west-9v10", "pick": "Los Angeles Clippers" },
-        { "gameId": "west-7v8",  "pick": "Portland Trail Blazers" },
-        { "gameId": "east-9v10", "pick": "Charlotte Hornets" },
-        { "gameId": "east-7v8",  "pick": "Philadelphia 76ers" }
+        { "gameId": "west-9v10",  "pick": "Los Angeles Clippers" },
+        { "gameId": "west-7v8",   "pick": "Portland Trail Blazers" },
+        { "gameId": "west-loser", "pick": "Phoenix Suns" },
+        { "gameId": "east-9v10",  "pick": "Charlotte Hornets" },
+        { "gameId": "east-7v8",   "pick": "Philadelphia 76ers" },
+        { "gameId": "east-loser", "pick": "Charlotte Hornets" }
       ],
       "series": []
     },
@@ -90,10 +104,12 @@
       "ownerName": "Amir Ben Izhak",
       "bonusBets": { "westChampion": "", "eastChampion": "", "nbaChampion": "" },
       "playIn": [
-        { "gameId": "west-9v10", "pick": "Los Angeles Clippers" },
-        { "gameId": "west-7v8",  "pick": "Portland Trail Blazers" },
-        { "gameId": "east-9v10", "pick": "Charlotte Hornets" },
-        { "gameId": "east-7v8",  "pick": "Philadelphia 76ers" }
+        { "gameId": "west-9v10",  "pick": "Los Angeles Clippers" },
+        { "gameId": "west-7v8",   "pick": "Portland Trail Blazers" },
+        { "gameId": "west-loser", "pick": "Golden State Warriors" },
+        { "gameId": "east-9v10",  "pick": "Charlotte Hornets" },
+        { "gameId": "east-7v8",   "pick": "Philadelphia 76ers" },
+        { "gameId": "east-loser", "pick": "Charlotte Hornets" }
       ],
       "series": []
     }

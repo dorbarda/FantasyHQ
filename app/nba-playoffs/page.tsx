@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import betsJson    from '@/data/playoff-bets.json';
 import resultsJson from '@/data/playoff-results.json';
-import { computeAllScores } from '@/lib/playoff-scoring';
+import { computeAllScores, FINALS_WINNER_POINTS } from '@/lib/playoff-scoring';
 import type {
   OwnerPlayoffBets,
   PlayoffResults,
@@ -38,7 +38,7 @@ function statusStyle(status: SeriesScoreStatus | 'none'): string {
 const PRE_BET_ROWS = [
   { key: 'westChampion'  as const, label: 'West Champion', pts: '+7', resultSeriesId: 'r3-w' },
   { key: 'eastChampion'  as const, label: 'East Champion', pts: '+7', resultSeriesId: 'r3-e' },
-  { key: 'nbaChampion'   as const, label: 'NBA Champion',  pts: '+15', resultSeriesId: 'r4'  },
+  { key: 'nbaChampion'   as const, label: 'NBA Champion',  pts: '+15–30', resultSeriesId: 'r4'  },
 ];
 
 function preBetStatus(pick: string, seriesId: string): SeriesScoreStatus | 'none' {
@@ -118,12 +118,18 @@ function PreBetsSection({ compact = false }: { compact?: boolean }) {
                   {owners.map(ownerName => {
                     const pick   = allBets.find(o => o.ownerName === ownerName)?.bonusBets[row.key] ?? '';
                     const status = preBetStatus(pick, row.resultSeriesId);
+                    const teamPts = row.key === 'nbaChampion' && pick ? (FINALS_WINNER_POINTS[pick] ?? 15) : null;
                     return (
                       <td key={ownerName} className="px-2 py-2.5 text-center">
                         {pick ? (
-                          <span className={`inline-block rounded px-1.5 py-0.5 text-[11px] font-medium ${statusStyle(status)}`}>
-                            {pick}
-                          </span>
+                          <div className="inline-flex flex-col items-center gap-0.5">
+                            <span className={`inline-block rounded px-1.5 py-0.5 text-[11px] font-medium ${statusStyle(status)}`}>
+                              {pick}
+                            </span>
+                            {teamPts !== null && (
+                              <span className="text-[9px] font-semibold text-[#C8956C]">+{teamPts}</span>
+                            )}
+                          </div>
                         ) : (
                           <span className="text-[#CBD5E1]">—</span>
                         )}

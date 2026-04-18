@@ -14,17 +14,18 @@ const TEAM_COLORS = ['#C8956C', '#475569'];
 interface Props {
   label: string;
   teams: [string, string];
-  winPicks: string[];    // which team each owner picked to win
-  scorePicks: string[];  // score each owner picked (empty for play-in)
+  winPicks: string[];
+  scorePicks: string[];
+  ownerNames: string[];
   isPlayIn?: boolean;
 }
 
 function shortName(team: string) {
   const parts = team.trim().split(' ');
-  return parts[parts.length - 1]; // last word, e.g. "Thunder", "Celtics"
+  return parts[parts.length - 1];
 }
 
-export default function PlayoffSeriesAnalyticsCard({ label, teams, winPicks, scorePicks, isPlayIn }: Props) {
+export default function PlayoffSeriesAnalyticsCard({ label, teams, winPicks, scorePicks, ownerNames, isPlayIn }: Props) {
   const total = winPicks.filter(Boolean).length;
 
   // ── Win split ──────────────────────────────────────────────────────────────
@@ -37,13 +38,11 @@ export default function PlayoffSeriesAnalyticsCard({ label, teams, winPicks, sco
   let pieData: { name: string; value: number; color: string }[];
 
   if (isPlayIn || scorePicks.filter(Boolean).length === 0) {
-    // Play-in: pie = team win distribution
     pieData = [
-      { name: shortName(teams[0]) || 'Team A', value: teamACt,        color: TEAM_COLORS[0] },
-      { name: shortName(teams[1]) || 'Team B', value: teamBCt,        color: TEAM_COLORS[1] },
+      { name: shortName(teams[0]) || 'Team A', value: teamACt, color: TEAM_COLORS[0] },
+      { name: shortName(teams[1]) || 'Team B', value: teamBCt, color: TEAM_COLORS[1] },
     ].filter(d => d.value > 0);
   } else {
-    // Series: pie = score distribution
     const counts: Record<string, number> = {};
     for (const s of scorePicks) {
       if (s) counts[s] = (counts[s] ?? 0) + 1;
@@ -59,15 +58,38 @@ export default function PlayoffSeriesAnalyticsCard({ label, teams, winPicks, sco
 
   const hasPie = pieData.length > 0 && total > 0;
 
+  // ── Contrarian bet ─────────────────────────────────────────────────────────
+  const ownerBets = ownerNames
+    .map((name, i) => ({
+      owner: name.split(' ')[0],
+      team: winPicks[i] ?? '',
+      score: scorePicks[i] ?? '',
+    }))
+    .filter(b => b.team);
+
+  const comboCounts: Record<string, number> = {};
+  for (const b of ownerBets) {
+    const key = isPlayIn ? b.team : `${b.team}|${b.score}`;
+    comboCounts[key] = (comboCounts[key] ?? 0) + 1;
+  }
+
+  const contrarian = ownerBets.find(b => {
+    const key = isPlayIn ? b.team : `${b.team}|${b.score}`;
+    return comboCounts[key] === 1;
+  }) ?? null;
+
   return (
     <div className="bg-white border border-[#E2E8F0] rounded-xl p-4 flex flex-col gap-3">
-      <p className="text-[12px] font-semibold text-[#0F172A]">{label}</p>
-
-      {/* Teams */}
-      {(teams[0] || teams[1]) && (
-        <p className="text-[11px] text-[#64748B] -mt-1">
-          {teams[0] || '?'} <span className="text-[#94A3B8] mx-1">vs</span> {teams[1] || '?'}
-        </p>
+      {/* Header: team names as primary, seed label as secondary */}
+      {(teams[0] && teams[1]) ? (
+        <div>
+          <p className="text-[12px] font-semibold text-[#0F172A] leading-tight">
+            {shortName(teams[0])} <span className="text-[#94A3B8] font-normal">vs</span> {shortName(teams[1])}
+          </p>
+          <p className="text-[10px] text-[#94A3B8] mt-0.5">{label}</p>
+        </div>
+      ) : (
+        <p className="text-[12px] font-semibold text-[#0F172A]">{label}</p>
       )}
 
       {total === 0 ? (
@@ -107,16 +129,29 @@ export default function PlayoffSeriesAnalyticsCard({ label, teams, winPicks, sco
                 { team: teams[1], count: teamBCt, pct: teamBPct, color: TEAM_COLORS[1] },
               ].map(({ team, count, pct, color }) => team ? (
                 <div key={team} className="flex items-center gap-2">
-                  <span
-                    className="shrink-0 w-2 h-2 rounded-full"
-                    style={{ backgroundColor: color }}
-                  />
+                  <span className="shrink-0 w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
                   <span className="text-[11px] text-[#0F172A] flex-1 truncate">{team}</span>
                   <span className="text-[11px] font-semibold text-[#475569] shrink-0">
                     {count}/{total} · {pct}%
                   </span>
                 </div>
               ) : null)}
+            </div>
+          )}
+
+          {/* Contrarian bet */}
+          {contrarian && (
+            <div className="border-t border-[#F1F5F9] pt-2">
+              <p className="text-[9px] font-bold uppercase tracking-wide text-[#94A3B8] mb-1">Contrarian</p>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-[11px]">🎯</span>
+                <span className="text-[11px] font-semibold text-[#475569]">{contrarian.owner}</span>
+                <span className="text-[10px] text-[#94A3B8]">·</span>
+                <span className="text-[11px] font-medium text-[#0F172A]">{shortName(contrarian.team)}</span>
+                {!isPlayIn && contrarian.score && (
+                  <span className="text-[10px] text-[#64748B]">({contrarian.score})</span>
+                )}
+              </div>
             </div>
           )}
         </>

@@ -9,6 +9,7 @@ import type {
 } from '@/lib/types';
 import PlayoffTabNav from '@/components/PlayoffTabNav';
 import PlayoffSeriesAnalyticsCard from '@/components/PlayoffSeriesAnalyticsCard';
+import AnalyticsAccordionSection from '@/components/AnalyticsAccordionSection';
 
 export const revalidate = 300;
 
@@ -190,7 +191,6 @@ function LeaderboardTab() {
           </tbody>
         </table>
       </div>
-      <PreBetsSection compact />
     </div>
   );
 }
@@ -313,27 +313,28 @@ function BetsTab() {
 
   return (
     <div>
-      <PreBetsSection />
-      <BetsSection title="Play-In" seriesIds={playInIds} isPlayIn />
       {playInComplete && <BetsSection title="Round 1"           seriesIds={r1Ids} />}
+      <PreBetsSection />
       {playInComplete && <BetsSection title="Semifinals"        seriesIds={r2Ids} />}
       {playInComplete && <BetsSection title="Conference Finals" seriesIds={r3Ids} />}
       {playInComplete && <BetsSection title="NBA Finals"        seriesIds={r4Ids} />}
+      <BetsSection title="Play-In" seriesIds={playInIds} isPlayIn />
     </div>
   );
 }
 
 // ─── Analytics tab ────────────────────────────────────────────────────────────
 
-function AnalyticsRound({ title, items, isPlayIn }: {
+function AnalyticsRound({ title, items, isPlayIn, defaultOpen }: {
   title: string;
   items: { id: string; label: string; teams: [string, string] }[];
   isPlayIn?: boolean;
+  defaultOpen?: boolean;
 }) {
+  const ownerNames = allBets.map(o => o.ownerName);
   return (
-    <div className="mb-8">
-      <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#94A3B8] mb-4">{title}</p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    <AnalyticsAccordionSection title={title} defaultOpen={defaultOpen}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {items.map(item => {
           const winPicks = isPlayIn
             ? allBets.map(o => o.playIn.find(p => p.gameId === item.id)?.pick ?? '')
@@ -348,12 +349,13 @@ function AnalyticsRound({ title, items, isPlayIn }: {
               teams={item.teams}
               winPicks={winPicks}
               scorePicks={scorePicks}
+              ownerNames={ownerNames}
               isPlayIn={isPlayIn}
             />
           );
         })}
       </div>
-    </div>
+    </AnalyticsAccordionSection>
   );
 }
 
@@ -374,11 +376,11 @@ function AnalyticsTab() {
 
   return (
     <div>
-      <AnalyticsRound title="Play-In" items={playInItems} isPlayIn />
-      {playInComplete && <AnalyticsRound title="Round 1"           items={r1Items} />}
+      {playInComplete && <AnalyticsRound title="Round 1"           items={r1Items} defaultOpen />}
       {playInComplete && <AnalyticsRound title="Semifinals"        items={r2Items} />}
       {playInComplete && <AnalyticsRound title="Conference Finals" items={r3Items} />}
       {playInComplete && <AnalyticsRound title="NBA Finals"        items={r4Items} />}
+      <AnalyticsRound title="Play-In" items={playInItems} isPlayIn />
     </div>
   );
 }

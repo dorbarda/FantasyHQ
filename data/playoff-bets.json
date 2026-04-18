@@ -71,7 +71,7 @@
       "playIn": [
         { "gameId": "west-9v10",  "pick": "Los Angeles Clippers" },
         { "gameId": "west-7v8",   "pick": "Phoenix Suns" },
-        { "gameId": "west-loser", "pick": "Phoenix Suns" },
+        { "gameId": "west-loser", "pick": "Golden State Warriors" },
         { "gameId": "east-9v10",  "pick": "Charlotte Hornets" },
         { "gameId": "east-7v8",   "pick": "Philadelphia 76ers" },
         { "gameId": "east-loser", "pick": "Charlotte Hornets" }

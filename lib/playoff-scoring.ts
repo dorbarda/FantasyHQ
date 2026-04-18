@@ -8,6 +8,25 @@ import type {
 
 // ─── Scoring constants ────────────────────────────────────────────────────────
 
+export const FINALS_WINNER_POINTS: Record<string, number> = {
+  'Oklahoma City Thunder':    15,
+  'San Antonio Spurs':        17,
+  'Boston Celtics':           17,
+  'Denver Nuggets':           19,
+  'Cleveland Cavaliers':      20,
+  'Detroit Pistons':          21,
+  'New York Knicks':          22,
+  'Houston Rockets':          23,
+  'Minnesota Timberwolves':   24,
+  'Atlanta Hawks':            26,
+  'Orlando Magic':            26,
+  'Los Angeles Lakers':       27,
+  'Philadelphia 76ers':       27,
+  'Toronto Raptors':          28,
+  'Phoenix Suns':             29,
+  'Portland Trail Blazers':   30,
+};
+
 const ROUND_POINTS = {
   playIn: { winner: 1, exact: 0,  wrong43: 0 },
   1:      { winner: 2, exact: 4,  wrong43: 1 },
@@ -102,7 +121,7 @@ export function computeOwnerScore(
 
   if (westCorrect)  bonusPts += 7;
   if (eastCorrect)  bonusPts += 7;
-  if (champCorrect) bonusPts += 15;
+  if (champCorrect) bonusPts += FINALS_WINNER_POINTS[bonus.nbaChampion] ?? 15;
 
   // Combo bonuses
   if (westCorrect && eastCorrect)               bonusPts += 5;

@@ -2,9 +2,26 @@ import type { Metadata } from 'next';
 import './globals.css';
 import Sidebar from '@/components/Sidebar';
 
+const BASE_URL = 'https://fantasy-hq-ten.vercel.app';
+
 export const metadata: Metadata = {
   title: 'Fantasy HQ',
   description: 'Private NBA fantasy basketball league dashboard',
+  metadataBase: new URL(BASE_URL),
+  openGraph: {
+    title: 'Fantasy HQ',
+    description: 'Private NBA fantasy basketball league dashboard',
+    url: BASE_URL,
+    siteName: 'Fantasy HQ',
+    images: [{ url: '/logo.png' }],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Fantasy HQ',
+    description: 'Private NBA fantasy basketball league dashboard',
+    images: ['/logo.png'],
+  },
 };
 
 export default function RootLayout({

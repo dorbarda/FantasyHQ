@@ -28,7 +28,7 @@
     },
     {
       "ownerName": "Dor Gelless",
-      "bonusBets": { "westChampion": "", "eastChampion": "", "nbaChampion": "" },
+      "bonusBets": { "westChampion": "Oklahoma City Thunder", "eastChampion": "Boston Celtics", "nbaChampion": "Oklahoma City Thunder" },
       "playIn": [
         { "gameId": "west-9v10",  "pick": "Los Angeles Clippers" },
         { "gameId": "west-7v8",   "pick": "Portland Trail Blazers" },
@@ -37,11 +37,20 @@
         { "gameId": "east-7v8",   "pick": "Philadelphia 76ers" },
         { "gameId": "east-loser", "pick": "Charlotte Hornets" }
       ],
-      "series": []
+      "series": [
+        { "seriesId": "r1-w1", "pick": "Oklahoma City Thunder", "score": "4-0" },
+        { "seriesId": "r1-w2", "pick": "San Antonio Spurs",     "score": "4-0" },
+        { "seriesId": "r1-w3", "pick": "Denver Nuggets",        "score": "4-3" },
+        { "seriesId": "r1-w4", "pick": "Houston Rockets",       "score": "4-1" },
+        { "seriesId": "r1-e1", "pick": "Detroit Pistons",       "score": "4-1" },
+        { "seriesId": "r1-e2", "pick": "Boston Celtics",        "score": "4-0" },
+        { "seriesId": "r1-e3", "pick": "New York Knicks",       "score": "4-2" },
+        { "seriesId": "r1-e4", "pick": "Cleveland Cavaliers",   "score": "4-2" }
+      ]
     },
     {
       "ownerName": "Ilay Mendel",
-      "bonusBets": { "westChampion": "", "eastChampion": "", "nbaChampion": "" },
+      "bonusBets": { "westChampion": "Denver Nuggets", "eastChampion": "Boston Celtics", "nbaChampion": "Oklahoma City Thunder" },
       "playIn": [
         { "gameId": "west-9v10",  "pick": "Los Angeles Clippers" },
         { "gameId": "west-7v8",   "pick": "Portland Trail Blazers" },
@@ -50,7 +59,16 @@
         { "gameId": "east-7v8",   "pick": "Philadelphia 76ers" },
         { "gameId": "east-loser", "pick": "Charlotte Hornets" }
       ],
-      "series": []
+      "series": [
+        { "seriesId": "r1-w1", "pick": "Oklahoma City Thunder", "score": "4-0" },
+        { "seriesId": "r1-w2", "pick": "San Antonio Spurs",     "score": "4-2" },
+        { "seriesId": "r1-w3", "pick": "Denver Nuggets",        "score": "4-2" },
+        { "seriesId": "r1-w4", "pick": "Houston Rockets",       "score": "4-1" },
+        { "seriesId": "r1-e1", "pick": "Detroit Pistons",       "score": "4-1" },
+        { "seriesId": "r1-e2", "pick": "Boston Celtics",        "score": "4-1" },
+        { "seriesId": "r1-e3", "pick": "New York Knicks",       "score": "4-3" },
+        { "seriesId": "r1-e4", "pick": "Cleveland Cavaliers",   "score": "4-0" }
+      ]
     },
     {
       "ownerName": "Yoav Coracos",
@@ -102,7 +120,7 @@
     },
     {
       "ownerName": "Amir Ben Izhak",
-      "bonusBets": { "westChampion": "", "eastChampion": "", "nbaChampion": "" },
+      "bonusBets": { "westChampion": "Oklahoma City Thunder", "eastChampion": "Detroit Pistons", "nbaChampion": "Oklahoma City Thunder" },
       "playIn": [
         { "gameId": "west-9v10",  "pick": "Los Angeles Clippers" },
         { "gameId": "west-7v8",   "pick": "Portland Trail Blazers" },
@@ -111,7 +129,16 @@
         { "gameId": "east-7v8",   "pick": "Philadelphia 76ers" },
         { "gameId": "east-loser", "pick": "Charlotte Hornets" }
       ],
-      "series": []
+      "series": [
+        { "seriesId": "r1-w1", "pick": "Oklahoma City Thunder", "score": "4-1" },
+        { "seriesId": "r1-w2", "pick": "San Antonio Spurs",     "score": "4-1" },
+        { "seriesId": "r1-w3", "pick": "Denver Nuggets",        "score": "4-3" },
+        { "seriesId": "r1-w4", "pick": "Houston Rockets",       "score": "4-2" },
+        { "seriesId": "r1-e1", "pick": "Detroit Pistons",       "score": "4-1" },
+        { "seriesId": "r1-e2", "pick": "Boston Celtics",        "score": "4-2" },
+        { "seriesId": "r1-e3", "pick": "New York Knicks",       "score": "4-2" },
+        { "seriesId": "r1-e4", "pick": "Cleveland Cavaliers",   "score": "4-3" }
+      ]
     }
   ]
 }

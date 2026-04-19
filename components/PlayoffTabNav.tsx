@@ -2,13 +2,14 @@
 
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
-type Tab = 'leaderboard' | 'bets' | 'analytics' | 'results' | 'rules';
+type Tab = 'leaderboard' | 'bets' | 'analytics' | 'bracket' | 'results' | 'rules';
 
 const TABS: { id: Tab; label: string }[] = [
-  { id: 'leaderboard', label: 'Leaderboard' },
-  { id: 'bets',        label: 'Teams Bets'  },
-  { id: 'analytics',   label: 'Analytics'   },
-  { id: 'results',     label: 'Results'     },
+  { id: 'leaderboard', label: 'Leaderboard'   },
+  { id: 'bets',        label: 'Teams Bets'    },
+  { id: 'analytics',   label: 'Analytics'     },
+  { id: 'bracket',     label: 'My Bracket'    },
+  { id: 'results',     label: 'Results'       },
   { id: 'rules',       label: 'Scoring Rules' },
 ];
 

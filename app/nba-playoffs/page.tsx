@@ -10,6 +10,7 @@ import type {
 import PlayoffTabNav from '@/components/PlayoffTabNav';
 import PlayoffSeriesAnalyticsCard from '@/components/PlayoffSeriesAnalyticsCard';
 import AnalyticsAccordionSection from '@/components/AnalyticsAccordionSection';
+import OwnerBracketView from '@/components/OwnerBracketView';
 
 export const revalidate = 300;
 
@@ -549,6 +550,33 @@ function RulesTab() {
   );
 }
 
+// ─── Bracket tab ─────────────────────────────────────────────────────────────
+
+function BracketTab() {
+  if (allBets.length === 0) {
+    return (
+      <div className="text-center py-16 text-[#94A3B8] text-[14px]">
+        No bets entered yet — data/playoff-bets.json is empty.
+      </div>
+    );
+  }
+
+  const r1Series = results.series.filter(s => s.round === 1);
+  const championResults = {
+    west: results.series.find(s => s.seriesId === 'r3-w')?.winner ?? null,
+    east: results.series.find(s => s.seriesId === 'r3-e')?.winner ?? null,
+    nba:  results.series.find(s => s.seriesId === 'r4')?.winner   ?? null,
+  };
+
+  return (
+    <OwnerBracketView
+      owners={allBets}
+      r1Series={r1Series}
+      championResults={championResults}
+    />
+  );
+}
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function NBAPlayoffsPage({
@@ -557,8 +585,8 @@ export default async function NBAPlayoffsPage({
   searchParams: { tab?: string };
 }) {
   const tabParam = searchParams.tab ?? 'leaderboard';
-  const tab = ['leaderboard', 'bets', 'analytics', 'results', 'rules'].includes(tabParam)
-    ? (tabParam as 'leaderboard' | 'bets' | 'analytics' | 'results' | 'rules')
+  const tab = ['leaderboard', 'bets', 'analytics', 'bracket', 'results', 'rules'].includes(tabParam)
+    ? (tabParam as 'leaderboard' | 'bets' | 'analytics' | 'bracket' | 'results' | 'rules')
     : 'leaderboard';
 
   const ownerCount     = allBets.length;
@@ -594,6 +622,7 @@ export default async function NBAPlayoffsPage({
       {tab === 'leaderboard' && <LeaderboardTab />}
       {tab === 'bets'        && <BetsTab />}
       {tab === 'analytics'   && <AnalyticsTab />}
+      {tab === 'bracket'     && <BracketTab />}
       {tab === 'results'     && <ResultsTab />}
       {tab === 'rules'       && <RulesTab />}
     </div>

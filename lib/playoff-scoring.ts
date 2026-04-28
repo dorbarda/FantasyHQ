@@ -28,11 +28,11 @@ export const FINALS_WINNER_POINTS: Record<string, number> = {
 };
 
 const ROUND_POINTS = {
-  playIn: { winner: 1, exact: 0,  wrong43: 0 },
-  1:      { winner: 2, exact: 4,  wrong43: 1 },
-  2:      { winner: 3, exact: 6,  wrong43: 2 },
-  3:      { winner: 4, exact: 8,  wrong43: 3 },
-  4:      { winner: 5, exact: 10, wrong43: 4 },
+  playIn: { winner: 1, exact: 0, wrong43: 0 },
+  1:      { winner: 2, exact: 2, wrong43: 1 },
+  2:      { winner: 3, exact: 3, wrong43: 2 },
+  3:      { winner: 4, exact: 4, wrong43: 3 },
+  4:      { winner: 5, exact: 5, wrong43: 4 },
 } as const;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

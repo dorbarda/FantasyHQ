@@ -465,10 +465,10 @@ function RulesTab() {
 
   const seriesRows = [
     { round: 'Play-In',           correct: '1',    exact: '—', wrong43: '—' },
-    { round: 'Round 1',           correct: '2',    exact: '+4 bonus', wrong43: '+1' },
-    { round: 'Semifinals',        correct: '3',    exact: '+6 bonus', wrong43: '+2' },
-    { round: 'Conference Finals', correct: '4',    exact: '+8 bonus', wrong43: '+3' },
-    { round: 'NBA Finals',        correct: '5',    exact: '+10 bonus', wrong43: '+4' },
+    { round: 'Round 1',           correct: '2',    exact: '+2 bonus', wrong43: '+1' },
+    { round: 'Semifinals',        correct: '3',    exact: '+3 bonus', wrong43: '+2' },
+    { round: 'Conference Finals', correct: '4',    exact: '+4 bonus', wrong43: '+3' },
+    { round: 'NBA Finals',        correct: '5',    exact: '+5 bonus', wrong43: '+4' },
   ];
 
   return (

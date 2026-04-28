@@ -12,7 +12,7 @@
     { "seriesId": "r1-e2", "round": 1, "conference": "east", "label": "East #2 vs #7", "teams": ["Boston Celtics", "Philadelphia 76ers"],        "winner": null, "score": null },
     { "seriesId": "r1-e3", "round": 1, "conference": "east", "label": "East #3 vs #6", "teams": ["New York Knicks", "Atlanta Hawks"],             "winner": null, "score": null },
     { "seriesId": "r1-e4", "round": 1, "conference": "east", "label": "East #4 vs #5", "teams": ["Cleveland Cavaliers", "Toronto Raptors"],      "winner": null, "score": null },
-    { "seriesId": "r1-w1", "round": 1, "conference": "west", "label": "West #1 vs #8", "teams": ["Oklahoma City Thunder", "Phoenix Suns"],        "winner": null, "score": null },
+    { "seriesId": "r1-w1", "round": 1, "conference": "west", "label": "West #1 vs #8", "teams": ["Oklahoma City Thunder", "Phoenix Suns"],        "winner": "Oklahoma City Thunder", "score": "4-0" },
     { "seriesId": "r1-w2", "round": 1, "conference": "west", "label": "West #2 vs #7", "teams": ["San Antonio Spurs", "Portland Trail Blazers"],  "winner": null, "score": null },
     { "seriesId": "r1-w3", "round": 1, "conference": "west", "label": "West #3 vs #6", "teams": ["Denver Nuggets", "Minnesota Timberwolves"],     "winner": null, "score": null },
     { "seriesId": "r1-w4", "round": 1, "conference": "west", "label": "West #4 vs #5", "teams": ["Los Angeles Lakers", "Houston Rockets"],        "winner": null, "score": null },

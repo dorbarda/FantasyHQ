@@ -21,15 +21,18 @@ export function hasEspnCredentials() {
 
 const BASE = `https://lm-api-reads.fantasy.espn.com/apis/v3/games/fba/seasons/${SEASON}/segments/0/leagues/${LEAGUE_ID}`;
 
-async function espnFetch(params: string, extraHeaders?: Record<string, string>): Promise<any> {
+async function espnFetch(params: string, extraHeaders?: Record<string, string>, noCache = false): Promise<any> {
   const url = `${BASE}${params}`;
+  const cacheOpt: RequestInit = noCache
+    ? { cache: 'no-store' }
+    : { next: { revalidate: 1800 } } as RequestInit;
   const res = await fetch(url, {
     headers: {
       Cookie: `espn_s2=${ESPN_S2}; SWID=${SWID}`,
       Accept: 'application/json',
       ...extraHeaders,
     },
-    next: { revalidate: 1800 },
+    ...cacheOpt,
   });
   if (!res.ok) throw new Error(`ESPN API ${res.status} for ${url}`);
   return res.json();
@@ -167,7 +170,8 @@ export async function getStandings(): Promise<StandingEntry[]> {
 
 export async function getMatchups(targetWeek?: number): Promise<MatchupsData> {
   const data = await espnFetch(
-    '?view=mTeam&view=mMatchup&view=mMatchupScore&view=mScoreboard&view=mRoster'
+    '?view=mTeam&view=mMatchup&view=mMatchupScore&view=mScoreboard&view=mRoster',
+    undefined, true
   );
 
   const currentMatchupPeriod: number = data.status?.currentMatchupPeriod || 1;
@@ -385,7 +389,7 @@ export async function getStatsData(): Promise<StatsData> {
   // Fetch roster stats (season totals) + matchup history for categories
   const [rosterData, scheduleData] = await Promise.all([
     espnFetch('?view=mTeam&view=mRoster'),
-    espnFetch('?view=mTeam&view=mMatchup&view=mMatchupScore&view=mStandings'),
+    espnFetch('?view=mTeam&view=mMatchup&view=mMatchupScore&view=mStandings', undefined, true),
   ]);
 
   const teams: any[] = rosterData.teams;
@@ -517,7 +521,8 @@ export async function getStatsData(): Promise<StatsData> {
 
 export async function getPlayoffBracket(): Promise<PlayoffBracketData> {
   const data = await espnFetch(
-    '?view=mTeam&view=mMatchup&view=mMatchupScore&view=mStandings&view=mRoster'
+    '?view=mTeam&view=mMatchup&view=mMatchupScore&view=mStandings&view=mRoster',
+    undefined, true
   );
 
   const currentMatchupPeriod: number = data.status?.currentMatchupPeriod || 1;
@@ -634,7 +639,7 @@ export async function getPlayoffBracket(): Promise<PlayoffBracketData> {
 async function buildDepthData(
   matchupFilter: (m: any) => boolean
 ): Promise<MatchupDepthData> {
-  const scheduleData = await espnFetch('?view=mMatchup&view=mMatchupScore&view=mTeam&view=mSettings');
+  const scheduleData = await espnFetch('?view=mMatchup&view=mMatchupScore&view=mTeam&view=mSettings', undefined, true);
 
   const currentMatchupPeriod: number = scheduleData.status?.currentMatchupPeriod || 1;
   // Daily scoring period ID — in daily-scoring leagues this is >> currentMatchupPeriod

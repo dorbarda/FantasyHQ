@@ -23,11 +23,14 @@ function seasonLabel(year: number) {
   return `${year - 1}-${String(year).slice(2)}`;
 }
 
-async function espnFetch(year: number, params: string): Promise<any> {
+async function espnFetch(year: number, params: string, noCache = false): Promise<any> {
   const base = `https://lm-api-reads.fantasy.espn.com/apis/v3/games/fba/seasons/${year}/segments/0/leagues/${LEAGUE_ID}`;
+  const cacheOpt: RequestInit = noCache
+    ? { cache: 'no-store' }
+    : { next: { revalidate: year < CURRENT_YEAR ? 86400 : 1800 } } as RequestInit;
   const res = await fetch(`${base}${params}`, {
     headers: { Cookie: `espn_s2=${ESPN_S2}; SWID=${SWID}`, Accept: 'application/json' },
-    next: { revalidate: year < CURRENT_YEAR ? 86400 : 1800 },
+    ...cacheOpt,
   });
   if (!res.ok) throw new Error(`ESPN ${res.status} · year=${year}`);
   return res.json();
@@ -58,7 +61,7 @@ interface SeasonSummary {
 async function fetchSeason(year: number): Promise<{ matchups: SeasonMatchup[]; summary: SeasonSummary }> {
   const [teamsData, scheduleData] = await Promise.all([
     espnFetch(year, '?view=mTeam&view=mStandings'),
-    espnFetch(year, '?view=mMatchup&view=mMatchupScore'),
+    espnFetch(year, '?view=mMatchup&view=mMatchupScore', true),
   ]);
 
   // Member → name

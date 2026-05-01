@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 
-const ADMIN_KEY = process.env.ADMIN_KEY;
 const GH_TOKEN  = process.env.GITHUB_TOKEN;
 const REPO      = 'dorbarda/FantasyHQ';
 const FILE      = 'data/playoff-results.json';
@@ -34,19 +33,12 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  if (!ADMIN_KEY || !GH_TOKEN) {
+  if (!GH_TOKEN) {
     return NextResponse.json({ error: 'Server not configured' }, { status: 503 });
   }
 
   const body = await req.json();
-  const { password, ping, type, id, winner, score, teams } = body;
-
-  if (password !== ADMIN_KEY) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  // Password-check ping — no file update needed
-  if (ping) return NextResponse.json({ ok: true });
+  const { type, id, winner, score, teams } = body;
 
   try {
     const file = await ghGet();

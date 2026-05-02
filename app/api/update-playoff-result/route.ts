@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 const GH_TOKEN  = process.env.GITHUB_TOKEN;
 const REPO      = 'dorbarda/FantasyHQ';
 const FILE      = 'data/playoff-results.json';
-const BRANCH    = 'main';
+const BRANCH    = 'claude/fantasy-hq-mvp-ScUru';
 const GH_URL    = `https://api.github.com/repos/${REPO}/contents/${FILE}`;
 
 async function ghGet() {

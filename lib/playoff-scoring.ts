@@ -91,8 +91,8 @@ export function computeOwnerScore(
         earned = pts.winner;
       }
     } else {
-      // Wrong winner — check for 4-3 wrong (participant bet on a 7-game series regardless of actual score)
-      const was43 = bet.score === '4-3';
+      // Wrong winner — check for 4-3 wrong (picked the loser and the score was 4-3)
+      const was43 = result.score === '4-3' && bet.score === '4-3';
       if (was43) {
         status = 'wrong43';
         earned = pts.wrong43;

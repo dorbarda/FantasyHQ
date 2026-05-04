@@ -107,8 +107,8 @@
         "Cleveland Cavaliers",
         "Toronto Raptors"
       ],
-      "winner": null,
-      "score": null
+      "winner": "Cleveland Cavaliers",
+      "score": "4-3"
     },
     {
       "seriesId": "r1-w1",

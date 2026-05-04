@@ -19,7 +19,10 @@
         { "seriesId": "r1-e1", "pick": "Detroit Pistons",       "score": "4-1" },
         { "seriesId": "r1-e2", "pick": "Boston Celtics",        "score": "4-1" },
         { "seriesId": "r1-e3", "pick": "New York Knicks",       "score": "4-2" },
-        { "seriesId": "r1-e4", "pick": "Cleveland Cavaliers",   "score": "4-2" }
+        { "seriesId": "r1-e4", "pick": "Cleveland Cavaliers",   "score": "4-2" },
+        { "seriesId": "r2-e2", "pick": "New York Knicks",       "score": "4-3" },
+        { "seriesId": "r2-w1", "pick": "Oklahoma City Thunder", "score": "4-0" },
+        { "seriesId": "r2-w2", "pick": "San Antonio Spurs",     "score": "4-1" }
       ]
     },
     {
@@ -41,7 +44,10 @@
         { "seriesId": "r1-e1", "pick": "Orlando Magic",         "score": "4-3" },
         { "seriesId": "r1-e2", "pick": "Boston Celtics",        "score": "4-1" },
         { "seriesId": "r1-e3", "pick": "New York Knicks",       "score": "4-0" },
-        { "seriesId": "r1-e4", "pick": "Cleveland Cavaliers",   "score": "4-1" }
+        { "seriesId": "r1-e4", "pick": "Cleveland Cavaliers",   "score": "4-1" },
+        { "seriesId": "r2-e2", "pick": "Philadelphia 76ers",    "score": "4-2" },
+        { "seriesId": "r2-w1", "pick": "Oklahoma City Thunder", "score": "4-1" },
+        { "seriesId": "r2-w2", "pick": "San Antonio Spurs",     "score": "4-3" }
       ]
     },
     {
@@ -85,7 +91,11 @@
         { "seriesId": "r1-e1", "pick": "Detroit Pistons",       "score": "4-1" },
         { "seriesId": "r1-e2", "pick": "Boston Celtics",        "score": "4-1" },
         { "seriesId": "r1-e3", "pick": "New York Knicks",       "score": "4-3" },
-        { "seriesId": "r1-e4", "pick": "Cleveland Cavaliers",   "score": "4-0" }
+        { "seriesId": "r1-e4", "pick": "Cleveland Cavaliers",   "score": "4-0" },
+        { "seriesId": "r2-e2", "pick": "Philadelphia 76ers",    "score": "4-2" },
+        { "seriesId": "r2-e1", "pick": "Cleveland Cavaliers",   "score": "4-2" },
+        { "seriesId": "r2-w1", "pick": "Oklahoma City Thunder", "score": "4-2" },
+        { "seriesId": "r2-w2", "pick": "San Antonio Spurs",     "score": "4-0" }
       ]
     },
     {
@@ -107,7 +117,10 @@
         { "seriesId": "r1-e1", "pick": "Detroit Pistons",       "score": "4-1" },
         { "seriesId": "r1-e2", "pick": "Boston Celtics",        "score": "4-1" },
         { "seriesId": "r1-e3", "pick": "New York Knicks",       "score": "4-3" },
-        { "seriesId": "r1-e4", "pick": "Cleveland Cavaliers",   "score": "4-1" }
+        { "seriesId": "r1-e4", "pick": "Cleveland Cavaliers",   "score": "4-1" },
+        { "seriesId": "r2-e2", "pick": "Philadelphia 76ers",    "score": "4-2" },
+        { "seriesId": "r2-w1", "pick": "Oklahoma City Thunder", "score": "4-0" },
+        { "seriesId": "r2-w2", "pick": "Minnesota Timberwolves","score": "4-3" }
       ]
     },
     {
@@ -129,7 +142,10 @@
         { "seriesId": "r1-e1", "pick": "Detroit Pistons",       "score": "4-0" },
         { "seriesId": "r1-e2", "pick": "Boston Celtics",        "score": "4-1" },
         { "seriesId": "r1-e3", "pick": "New York Knicks",       "score": "4-3" },
-        { "seriesId": "r1-e4", "pick": "Cleveland Cavaliers",   "score": "4-3" }
+        { "seriesId": "r1-e4", "pick": "Cleveland Cavaliers",   "score": "4-3" },
+        { "seriesId": "r2-e2", "pick": "New York Knicks",       "score": "4-3" },
+        { "seriesId": "r2-w1", "pick": "Oklahoma City Thunder", "score": "4-1" },
+        { "seriesId": "r2-w2", "pick": "Minnesota Timberwolves","score": "4-3" }
       ]
     },
     {
@@ -169,7 +185,10 @@
         { "seriesId": "r1-e1", "pick": "Detroit Pistons",       "score": "4-1" },
         { "seriesId": "r1-e2", "pick": "Boston Celtics",        "score": "4-0" },
         { "seriesId": "r1-e3", "pick": "New York Knicks",       "score": "4-2" },
-        { "seriesId": "r1-e4", "pick": "Cleveland Cavaliers",   "score": "4-2" }
+        { "seriesId": "r1-e4", "pick": "Cleveland Cavaliers",   "score": "4-2" },
+        { "seriesId": "r2-e2", "pick": "New York Knicks",       "score": "4-2" },
+        { "seriesId": "r2-w1", "pick": "Oklahoma City Thunder", "score": "4-1" },
+        { "seriesId": "r2-w2", "pick": "San Antonio Spurs",     "score": "4-2" }
       ]
     },
     {
@@ -191,7 +210,10 @@
         { "seriesId": "r1-e1", "pick": "Detroit Pistons",       "score": "4-1" },
         { "seriesId": "r1-e2", "pick": "Boston Celtics",        "score": "4-2" },
         { "seriesId": "r1-e3", "pick": "New York Knicks",       "score": "4-2" },
-        { "seriesId": "r1-e4", "pick": "Cleveland Cavaliers",   "score": "4-3" }
+        { "seriesId": "r1-e4", "pick": "Cleveland Cavaliers",   "score": "4-3" },
+        { "seriesId": "r2-e2", "pick": "Philadelphia 76ers",    "score": "4-2" },
+        { "seriesId": "r2-w1", "pick": "Oklahoma City Thunder", "score": "4-1" },
+        { "seriesId": "r2-w2", "pick": "Minnesota Timberwolves","score": "4-1" }
       ]
     }
   ]

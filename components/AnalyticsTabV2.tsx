@@ -1,5 +1,7 @@
-import type { OwnerPlayoffBets, PlayoffResults } from '@/lib/types';
+import type { OwnerPlayoffBets, PlayoffResults, PlayoffFine } from '@/lib/types';
 import { getTeamMeta } from '@/lib/team-meta';
+import { getOwnerColor } from '@/lib/owner-meta';
+import { computeAllScores } from '@/lib/playoff-scoring';
 import {
   computeAnalyticsStandings,
   pickDistribution,
@@ -53,13 +55,23 @@ function BigStat({
   );
 }
 
-function EditorialHeader({ standings }: { standings: OwnerAnalytics[] }) {
-  const leader  = standings[0];
-  const second  = standings[1];
+interface FullScoreEntry { ownerName: string; total: number; }
+
+function EditorialHeader({
+  standings,
+  fullScores,
+}: {
+  standings: OwnerAnalytics[];
+  fullScores: FullScoreEntry[];
+}) {
   const totalPicks   = standings.reduce((a, s) => a + s.picks, 0);
   const totalCorrect = standings.reduce((a, s) => a + s.correct, 0);
   const groupAcc     = totalPicks ? Math.round((totalCorrect / totalPicks) * 100) : 0;
   const totalExact   = standings.reduce((a, s) => a + s.exact, 0);
+
+  const leader       = fullScores[0];
+  const second       = fullScores[1];
+  const leaderColor  = leader ? getOwnerColor(leader.ownerName) : '#94A3B8';
 
   return (
     <div
@@ -90,32 +102,36 @@ function EditorialHeader({ standings }: { standings: OwnerAnalytics[] }) {
         >
           Pool Leader
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 6 }}>
-          <Avatar name={leader.ownerName} size={56} color={leader.color} />
-          <div>
-            <div
-              style={{
-                fontSize: 32,
-                fontWeight: 900,
-                letterSpacing: '-0.03em',
-                color: '#0F172A',
-                lineHeight: 1,
-              }}
-            >
-              {leader.ownerName.split(' ')[0]}
-            </div>
-            <div style={{ fontSize: 13, color: '#64748B', marginTop: 4 }}>
-              +{leader.total - second.total} pts ahead of {second.ownerName.split(' ')[0]}
+        {leader && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 6 }}>
+            <Avatar name={leader.ownerName} size={56} color={leaderColor} />
+            <div>
+              <div
+                style={{
+                  fontSize: 32,
+                  fontWeight: 900,
+                  letterSpacing: '-0.03em',
+                  color: '#0F172A',
+                  lineHeight: 1,
+                }}
+              >
+                {leader.ownerName.split(' ')[0]}
+              </div>
+              {second && (
+                <div style={{ fontSize: 13, color: '#64748B', marginTop: 4 }}>
+                  +{leader.total - second.total} pts ahead of {second.ownerName.split(' ')[0]}
+                </div>
+              )}
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       <BigStat
         label="Points"
-        value={leader.total}
+        value={leader?.total ?? 0}
         sub="Total accumulated"
-        color={leader.color}
+        color={leaderColor}
       />
       <BigStat
         label="Accuracy"
@@ -778,9 +794,11 @@ function PicksHeatmap({
 export default function AnalyticsTabV2({
   allBets,
   results,
+  fines = [],
 }: {
   allBets: OwnerPlayoffBets[];
   results: PlayoffResults;
+  fines?: PlayoffFine[];
 }) {
   if (allBets.length === 0) {
     return (
@@ -792,10 +810,18 @@ export default function AnalyticsTabV2({
 
   const standings = computeAnalyticsStandings(allBets, results);
 
+  const rawFull = computeAllScores(allBets, results);
+  const fullScores = rawFull
+    .map(s => {
+      const fine = fines.find(f => f.ownerName === s.ownerName);
+      return { ownerName: s.ownerName, total: s.total + (fine?.points ?? 0) };
+    })
+    .sort((a, b) => b.total - a.total);
+
   return (
     <div style={{ padding: 24, background: '#F8FAFC', minHeight: 600 }}>
       {/* Panel 1: Editorial header */}
-      <EditorialHeader standings={standings} />
+      <EditorialHeader standings={standings} fullScores={fullScores} />
 
       {/* Panel 2+3: Trajectory + Form strip */}
       <div

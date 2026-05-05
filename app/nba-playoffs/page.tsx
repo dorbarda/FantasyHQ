@@ -1,10 +1,12 @@
 import { Suspense } from 'react';
 import betsJson    from '@/data/playoff-bets.json';
 import resultsJson from '@/data/playoff-results.json';
+import finesJson   from '@/data/playoff-fines.json';
 import { computeAllScores } from '@/lib/playoff-scoring';
 import type {
   OwnerPlayoffBets,
   PlayoffResults,
+  PlayoffFine,
 } from '@/lib/types';
 import PlayoffTabNav from '@/components/PlayoffTabNav';
 import OwnerBracketView from '@/components/OwnerBracketView';
@@ -15,13 +17,13 @@ export const revalidate = 300;
 
 // ─── Cast JSON to typed shapes ────────────────────────────────────────────────
 
-const allBets: OwnerPlayoffBets[]   = betsJson.owners as OwnerPlayoffBets[];
-const results: PlayoffResults       = resultsJson as PlayoffResults;
+const allBets: OwnerPlayoffBets[] = betsJson.owners as OwnerPlayoffBets[];
+const results: PlayoffResults     = resultsJson as PlayoffResults;
+const fines: PlayoffFine[]        = finesJson as PlayoffFine[];
 
 // ─── Stage detection ─────────────────────────────────────────────────────────
 // Only advance past play-in once all play-in games have a winner
 const playInComplete = results.playIn.every(g => g.winner !== null);
-
 
 // ─── Leaderboard tab ──────────────────────────────────────────────────────────
 
@@ -34,7 +36,16 @@ function LeaderboardTab() {
     );
   }
 
-  const scores = computeAllScores(allBets, results);
+  const rawScores = computeAllScores(allBets, results);
+
+  // Apply fines and re-sort
+  const scores = rawScores
+    .map(s => {
+      const fine = fines.find(f => f.ownerName === s.ownerName);
+      return fine ? { ...s, total: s.total + fine.points, fine } : { ...s, fine: undefined };
+    })
+    .sort((a, b) => b.total - a.total);
+
   const rankColors = ['bg-[#FEF9C3] border border-[#EAB308]', 'bg-[#F1F5F9] border border-[#CBD5E1]', 'bg-[#FDF6F0] border border-[#FDBA74]'];
 
   return (
@@ -54,8 +65,33 @@ function LeaderboardTab() {
                 <td className="px-4 py-3 font-bold text-[#0F172A]">
                   {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`}
                 </td>
-                <td className="px-4 py-3 font-semibold text-[#0F172A]">{s.ownerName}</td>
-                <td className="px-4 py-3 font-black text-[18px] text-[#0F172A]">{s.total}</td>
+                <td className="px-4 py-3 font-semibold text-[#0F172A]">
+                  <span className="inline-flex items-center gap-1.5">
+                    {s.ownerName}
+                    {s.fine && (
+                      <span
+                        title={`Fine: ${s.fine.reason} (${s.fine.points} pts)`}
+                        style={{
+                          display: 'inline-block',
+                          width: 8,
+                          height: 8,
+                          borderRadius: '50%',
+                          background: '#EF4444',
+                          flexShrink: 0,
+                          cursor: 'help',
+                        }}
+                      />
+                    )}
+                  </span>
+                </td>
+                <td className="px-4 py-3 font-black text-[18px] text-[#0F172A]">
+                  <span>{s.total}</span>
+                  {s.fine && (
+                    <span className="ml-1.5 text-[11px] font-semibold text-[#EF4444]">
+                      ({s.fine.points})
+                    </span>
+                  )}
+                </td>
                 <td className="px-4 py-3 text-[#475569]">{s.bySection.playIn}</td>
                 <td className="px-4 py-3 text-[#475569]">{s.bySection.rounds[0]}</td>
                 <td className="px-4 py-3 text-[#475569]">{s.bySection.rounds[1]}</td>
@@ -80,7 +116,7 @@ function BetsTab() {
 // ─── Analytics tab ────────────────────────────────────────────────────────────
 
 function AnalyticsTab() {
-  return <AnalyticsTabV2 allBets={allBets} results={results} />;
+  return <AnalyticsTabV2 allBets={allBets} results={results} fines={fines} />;
 }
 
 // ─── Results tab ─────────────────────────────────────────────────────────────

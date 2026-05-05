@@ -195,12 +195,12 @@ function H2HCard({
       </div>
 
       {/* Matchup head */}
-      <div style={{ padding: '16px 16px 12px' }}>
+      <div className="px-3 sm:px-4 pt-3 sm:pt-4 pb-3">
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 12,
+            gap: 8,
             marginBottom: 12,
           }}
         >
@@ -209,16 +209,16 @@ function H2HCard({
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: 8,
+              gap: 6,
               flex: 1,
               minWidth: 0,
             }}
           >
-            <TeamMark team={teamA} size={36} />
+            <TeamMark team={teamA} size={30} />
             <div style={{ minWidth: 0 }}>
               <div
                 style={{
-                  fontSize: 13,
+                  fontSize: 12,
                   fontWeight: 800,
                   color: '#0F172A',
                   whiteSpace: 'nowrap',
@@ -234,14 +234,14 @@ function H2HCard({
             </div>
           </div>
 
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8' }}>vs</div>
+          <div style={{ fontSize: 10, fontWeight: 700, color: '#94A3B8', flexShrink: 0 }}>vs</div>
 
           {/* Team B (reversed) */}
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: 8,
+              gap: 6,
               flex: 1,
               minWidth: 0,
               justifyContent: 'flex-end',
@@ -250,7 +250,7 @@ function H2HCard({
             <div style={{ minWidth: 0, textAlign: 'right' }}>
               <div
                 style={{
-                  fontSize: 13,
+                  fontSize: 12,
                   fontWeight: 800,
                   color: '#0F172A',
                   whiteSpace: 'nowrap',
@@ -264,18 +264,18 @@ function H2HCard({
                 {backersB.length} backer{backersB.length !== 1 ? 's' : ''}
               </div>
             </div>
-            <TeamMark team={teamB} size={36} />
+            <TeamMark team={teamB} size={30} />
           </div>
         </div>
 
         {/* Vote bar */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <div
             style={{
-              fontSize: 12,
+              fontSize: 11,
               fontWeight: 800,
               color: metaA.primary,
-              width: 36,
+              width: 32,
               textAlign: 'right',
               fontVariantNumeric: 'tabular-nums',
             }}
@@ -309,10 +309,10 @@ function H2HCard({
           </div>
           <div
             style={{
-              fontSize: 12,
+              fontSize: 11,
               fontWeight: 800,
               color: metaB.primary,
-              width: 36,
+              width: 32,
               fontVariantNumeric: 'tabular-nums',
             }}
           >
@@ -432,7 +432,7 @@ export default function BetsTabV2({
   const sortedRounds = Array.from(byRound.keys()).sort((a, b) => b - a);
 
   return (
-    <div style={{ padding: 24, background: '#F8FAFC', minHeight: 600 }}>
+    <div className="px-3 sm:px-6" style={{ paddingTop: 20, paddingBottom: 20, background: '#F8FAFC', minHeight: 600 }}>
       {sortedRounds.map(round => {
         const seriesList = byRound.get(round)!;
         const settled    = seriesList.filter(s => s.winner !== null).length;

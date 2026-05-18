@@ -406,6 +406,8 @@ export interface TransactionsData {
 
 // ─── NBA Playoff Betting ──────────────────────────────────────────────────────
 
+export interface PlayoffFine { ownerName: string; points: number; reason: string; }
+
 export interface PlayoffPlayInBet { gameId: string; pick: string; }
 export interface PlayoffSeriesBet { seriesId: string; pick: string; score: '4-0' | '4-1' | '4-2' | '4-3'; }
 export interface PlayoffBonusBets { westChampion: string; eastChampion: string; nbaChampion: string; }

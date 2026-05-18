@@ -295,6 +295,8 @@ function BracketTab() {
   }
 
   const r1Series = results.series.filter(s => s.round === 1);
+  const r2Series = results.series.filter(s => s.round === 2);
+  const r3Series = results.series.filter(s => s.round === 3);
   const championResults = {
     west: results.series.find(s => s.seriesId === 'r3-w')?.winner ?? null,
     east: results.series.find(s => s.seriesId === 'r3-e')?.winner ?? null,
@@ -305,6 +307,8 @@ function BracketTab() {
     <OwnerBracketView
       owners={allBets}
       r1Series={r1Series}
+      r2Series={r2Series}
+      r3Series={r3Series}
       championResults={championResults}
     />
   );

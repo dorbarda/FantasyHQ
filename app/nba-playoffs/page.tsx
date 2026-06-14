@@ -17,9 +17,11 @@ import AnalyticsTabV2 from '@/components/AnalyticsTabV2';
 interface PlayoffHistoryEntry {
   year: number;
   label: string;
-  champion: string;
-  runnerUp: string;
-  score: string;
+  nbaChampion: string;
+  nbaRunnerUp: string;
+  nbaScore: string;
+  fantasyWinner:   { ownerName: string; points: number; exactScores: number };
+  fantasyRunnerUp: { ownerName: string; points: number; exactScores: number };
 }
 
 export const revalidate = 300;
@@ -344,31 +346,38 @@ function HistoryTab() {
           key={entry.year}
           className="bg-white border border-[#E2E8F0] rounded-2xl overflow-hidden shadow-sm"
         >
+          {/* Season header */}
           <div className="px-5 pt-4 pb-3 border-b border-[#E2E8F0] bg-gradient-to-r from-[#F8FAFC] to-[#F1F5F9] flex items-center justify-between">
             <h2 className="text-[20px] font-black tracking-tight text-[#0F172A]">
               {entry.label} Season
             </h2>
-            <span className="text-[10px] font-semibold text-[#94A3B8] uppercase tracking-widest">
-              {entry.year}
+            <span className="text-[11px] font-semibold text-[#94A3B8]">
+              🏀 {entry.nbaChampion} won {entry.nbaScore} over {entry.nbaRunnerUp}
             </span>
           </div>
-          <div className="px-5 py-4 flex flex-col sm:flex-row gap-4">
-            {/* Champion */}
+
+          {/* Fantasy winner + runner-up */}
+          <div className="px-5 py-4 flex flex-col sm:flex-row gap-3">
+            {/* Winner */}
             <div className="flex-1 flex items-center gap-3 bg-[#FFFBEB] border border-[#F59E0B]/30 rounded-xl px-4 py-3">
               <span className="text-[28px] shrink-0">🏆</span>
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-[#D97706] mb-0.5">NBA Champion</p>
-                <p className="text-[16px] font-black text-[#0F172A]">{entry.champion}</p>
-                <p className="text-[12px] font-semibold text-[#D97706]">Won {entry.score}</p>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-black uppercase tracking-widest text-[#D97706] mb-0.5">Fantasy Champion</p>
+                <p className="text-[16px] font-black text-[#0F172A] truncate">{entry.fantasyWinner.ownerName}</p>
+                <p className="text-[12px] font-semibold text-[#D97706]">
+                  {entry.fantasyWinner.points} pts · {entry.fantasyWinner.exactScores} exact
+                </p>
               </div>
             </div>
             {/* Runner-up */}
             <div className="flex-1 flex items-center gap-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3">
               <span className="text-[28px] shrink-0">🥈</span>
-              <div>
+              <div className="flex-1 min-w-0">
                 <p className="text-[10px] font-black uppercase tracking-widest text-[#94A3B8] mb-0.5">Runner-Up</p>
-                <p className="text-[16px] font-black text-[#0F172A]">{entry.runnerUp}</p>
-                <p className="text-[12px] text-[#94A3B8]">NBA Finals</p>
+                <p className="text-[16px] font-black text-[#0F172A] truncate">{entry.fantasyRunnerUp.ownerName}</p>
+                <p className="text-[12px] text-[#94A3B8]">
+                  {entry.fantasyRunnerUp.points} pts · {entry.fantasyRunnerUp.exactScores} exact
+                </p>
               </div>
             </div>
           </div>

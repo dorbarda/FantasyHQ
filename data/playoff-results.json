@@ -239,8 +239,8 @@
         "New York Knicks",
         "San Antonio Spurs"
       ],
-      "winner": null,
-      "score": null
+      "winner": "New York Knicks",
+      "score": "4-1"
     }
   ]
 }

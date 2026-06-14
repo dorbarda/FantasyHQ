@@ -1,7 +1,8 @@
 import { Suspense } from 'react';
-import betsJson    from '@/data/playoff-bets.json';
-import resultsJson from '@/data/playoff-results.json';
-import finesJson   from '@/data/playoff-fines.json';
+import betsJson          from '@/data/playoff-bets.json';
+import resultsJson       from '@/data/playoff-results.json';
+import finesJson         from '@/data/playoff-fines.json';
+import playoffHistoryJson from '@/data/playoff-history.json';
 import { computeAllScores } from '@/lib/playoff-scoring';
 import type {
   OwnerPlayoffBets,
@@ -12,6 +13,14 @@ import PlayoffTabNav from '@/components/PlayoffTabNav';
 import OwnerBracketView from '@/components/OwnerBracketView';
 import BetsTabV2 from '@/components/BetsTabV2';
 import AnalyticsTabV2 from '@/components/AnalyticsTabV2';
+
+interface PlayoffHistoryEntry {
+  year: number;
+  label: string;
+  champion: string;
+  runnerUp: string;
+  score: string;
+}
 
 export const revalidate = 300;
 
@@ -314,6 +323,61 @@ function BracketTab() {
   );
 }
 
+// ─── History tab ─────────────────────────────────────────────────────────────
+
+function HistoryTab() {
+  const history = playoffHistoryJson as PlayoffHistoryEntry[];
+  const sorted  = [...history].sort((a, b) => b.year - a.year);
+
+  if (sorted.length === 0) {
+    return (
+      <div className="text-center py-16 text-[#94A3B8] text-[14px]">
+        No past seasons logged yet.
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+      {sorted.map(entry => (
+        <div
+          key={entry.year}
+          className="bg-white border border-[#E2E8F0] rounded-2xl overflow-hidden shadow-sm"
+        >
+          <div className="px-5 pt-4 pb-3 border-b border-[#E2E8F0] bg-gradient-to-r from-[#F8FAFC] to-[#F1F5F9] flex items-center justify-between">
+            <h2 className="text-[20px] font-black tracking-tight text-[#0F172A]">
+              {entry.label} Season
+            </h2>
+            <span className="text-[10px] font-semibold text-[#94A3B8] uppercase tracking-widest">
+              {entry.year}
+            </span>
+          </div>
+          <div className="px-5 py-4 flex flex-col sm:flex-row gap-4">
+            {/* Champion */}
+            <div className="flex-1 flex items-center gap-3 bg-[#FFFBEB] border border-[#F59E0B]/30 rounded-xl px-4 py-3">
+              <span className="text-[28px] shrink-0">🏆</span>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-[#D97706] mb-0.5">NBA Champion</p>
+                <p className="text-[16px] font-black text-[#0F172A]">{entry.champion}</p>
+                <p className="text-[12px] font-semibold text-[#D97706]">Won {entry.score}</p>
+              </div>
+            </div>
+            {/* Runner-up */}
+            <div className="flex-1 flex items-center gap-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3">
+              <span className="text-[28px] shrink-0">🥈</span>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-[#94A3B8] mb-0.5">Runner-Up</p>
+                <p className="text-[16px] font-black text-[#0F172A]">{entry.runnerUp}</p>
+                <p className="text-[12px] text-[#94A3B8]">NBA Finals</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function NBAPlayoffsPage({
@@ -322,8 +386,8 @@ export default async function NBAPlayoffsPage({
   searchParams: { tab?: string };
 }) {
   const tabParam = searchParams.tab ?? 'leaderboard';
-  const tab = ['leaderboard', 'bets', 'analytics', 'bracket', 'results', 'rules'].includes(tabParam)
-    ? (tabParam as 'leaderboard' | 'bets' | 'analytics' | 'bracket' | 'results' | 'rules')
+  const tab = ['leaderboard', 'bets', 'analytics', 'bracket', 'results', 'rules', 'history'].includes(tabParam)
+    ? (tabParam as 'leaderboard' | 'bets' | 'analytics' | 'bracket' | 'results' | 'rules' | 'history')
     : 'leaderboard';
 
   const ownerCount     = allBets.length;
@@ -362,6 +426,7 @@ export default async function NBAPlayoffsPage({
       {tab === 'bracket'     && <BracketTab />}
       {tab === 'results'     && <ResultsTab />}
       {tab === 'rules'       && <RulesTab />}
+      {tab === 'history'     && <HistoryTab />}
     </div>
   );
 }

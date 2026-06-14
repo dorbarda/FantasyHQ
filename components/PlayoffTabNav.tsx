@@ -2,7 +2,7 @@
 
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
-type Tab = 'leaderboard' | 'bets' | 'analytics' | 'bracket' | 'results' | 'rules';
+type Tab = 'leaderboard' | 'bets' | 'analytics' | 'bracket' | 'results' | 'rules' | 'history';
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'leaderboard', label: 'Leaderboard'   },
@@ -11,6 +11,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: 'bracket',     label: 'My Bracket'    },
   { id: 'results',     label: 'Results'       },
   { id: 'rules',       label: 'Scoring Rules' },
+  { id: 'history',     label: 'History'       },
 ];
 
 export default function PlayoffTabNav({ active }: { active: Tab }) {

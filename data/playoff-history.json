@@ -2,8 +2,10 @@
   {
     "year": 2026,
     "label": "2025-26",
-    "champion": "New York Knicks",
-    "runnerUp": "San Antonio Spurs",
-    "score": "4-1"
+    "nbaChampion": "New York Knicks",
+    "nbaRunnerUp": "San Antonio Spurs",
+    "nbaScore": "4-1",
+    "fantasyWinner": { "ownerName": "Dor Barda", "points": 44, "exactScores": 4 },
+    "fantasyRunnerUp": { "ownerName": "Amir Ben Izhak", "points": 41, "exactScores": 4 }
   }
 ]

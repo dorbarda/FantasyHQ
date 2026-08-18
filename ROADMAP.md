@@ -8,10 +8,9 @@ Bets Pool 2.0 is planned but deferred until the season work is done.
 - [x] Upgrade Next.js 14 → 15, React 18 → 19, ESLint 8 → 9
       (clears the 5 open Next 14 security advisories)
 - [x] Unit tests for `lib/scoring.ts` and `lib/playoff-scoring.ts`, wired into CI
-- [ ] Rename default branch `claude/fantasy-hq-mvp-ScUru` → `main`
-      (checklist: GitHub rename → Vercel production-branch setting →
-      `GITHUB_BRANCH` env var for the admin API — changed together; needs
-      the owner at the GitHub/Vercel settings)
+- [x] Rename default branch `claude/fantasy-hq-mvp-ScUru` → `main`
+      (GitHub rename + Vercel branch tracking done 2026-08-18; admin API
+      default branch updated to `main` in code)
 - [x] Repo cleanup: remove `design_handoff_playoff_tabs/` and duplicate
       root `logo.png`
 

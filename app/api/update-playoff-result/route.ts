@@ -4,7 +4,7 @@ const GH_TOKEN  = process.env.GITHUB_TOKEN;
 const ADMIN_KEY = process.env.ADMIN_KEY;
 const REPO      = 'dorbarda/FantasyHQ';
 const FILE      = 'data/playoff-results.json';
-const BRANCH    = process.env.GITHUB_BRANCH || 'claude/fantasy-hq-mvp-ScUru';
+const BRANCH    = process.env.GITHUB_BRANCH || 'main';
 const GH_URL    = `https://api.github.com/repos/${REPO}/contents/${FILE}`;
 
 // Both GET and POST require the shared admin passcode; without ADMIN_KEY set

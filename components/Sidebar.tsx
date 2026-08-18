@@ -147,6 +147,7 @@ const NAV_GROUPS = [
       { href: '/matchups',      label: 'Matchups',    Icon: MatchupsIcon },
       { href: '/matchup-depth', label: 'Depth',       Icon: DepthIcon    },
       { href: '/draft',         label: 'Draft',       Icon: DraftIcon    },
+      { href: '/draft-prep',    label: 'Draft Prep',  Icon: DraftIcon    },
       { href: '/teams',         label: 'Teams',       Icon: TeamsIcon    },
     ],
   },
@@ -202,7 +203,7 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
             </p>
             <ul className="space-y-0.5">
               {group.items.map(({ href, label, Icon }) => {
-                const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href);
+                const isActive = href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(href + '/');
                 return (
                   <li key={href}>
                     <Link
@@ -298,7 +299,7 @@ function MobileNav({ pathname }: { pathname: string }) {
               </p>
               <ul className="space-y-0.5">
                 {group.items.map(({ href, label, Icon }) => {
-                  const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href);
+                  const isActive = href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(href + '/');
                   return (
                     <li key={href}>
                       <Link
@@ -330,7 +331,7 @@ function MobileNav({ pathname }: { pathname: string }) {
       {/* Bottom navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0B1628] border-t border-[#1E3050] z-50 flex">
         {BOTTOM_NAV.map(({ href, label, Icon }) => {
-          const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href);
+          const isActive = href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(href + '/');
           return (
             <Link
               key={href}

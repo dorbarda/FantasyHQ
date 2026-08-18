@@ -1,5 +1,6 @@
 import { hasEspnCredentials } from '@/lib/espn';
 import { getAllHistoricalSeasons } from '@/lib/espn-history';
+import { readSnapshot } from '@/lib/snapshots';
 import overridesJson from '@/data/history.json';
 import { HistoricalSeason, SeasonOverride } from '@/lib/types';
 import SeasonCard from '@/components/SeasonCard';
@@ -11,7 +12,10 @@ export default async function HistoryPage() {
 
   let seasons: HistoricalSeason[] = [];
 
-  if (hasEspnCredentials()) {
+  const snap = readSnapshot<HistoricalSeason[]>('history');
+  if (snap) {
+    seasons = snap.data;
+  } else if (hasEspnCredentials()) {
     try {
       seasons = await getAllHistoricalSeasons();
     } catch (err) {

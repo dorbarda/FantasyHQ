@@ -87,19 +87,55 @@ export default function AdminPage() {
   const [dataLoading, setDataLoading] = useState(false);
   const [results, setResults]         = useState<Results | null>(null);
   const [statuses, setStatuses]       = useState<Record<string, SaveStatus>>({});
+  const [adminKey, setAdminKey]       = useState<string | null>(null);
+  const [keyInput, setKeyInput]       = useState('');
+  const [authError, setAuthError]     = useState<string | null>(null);
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => {
+    const stored = sessionStorage.getItem('fhq-admin-key');
+    if (stored) setAdminKey(stored);
+  }, []);
 
-  async function fetchData() {
+  useEffect(() => {
+    if (adminKey) fetchData(adminKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [adminKey]);
+
+  function authHeaders(key: string): Record<string, string> {
+    return { 'x-admin-key': key };
+  }
+
+  async function fetchData(key: string) {
     setDataLoading(true);
+    setAuthError(null);
     try {
-      const res = await fetch('/api/update-playoff-result', { cache: 'no-store' });
+      const res = await fetch('/api/update-playoff-result', {
+        cache: 'no-store',
+        headers: authHeaders(key),
+      });
+      if (res.status === 401) {
+        sessionStorage.removeItem('fhq-admin-key');
+        setAdminKey(null);
+        setAuthError('Wrong passcode.');
+        return;
+      }
       if (!res.ok) throw new Error();
       setResults(await res.json());
       setStatuses({});
+    } catch {
+      setAuthError('Failed to load results — check the server logs.');
     } finally {
       setDataLoading(false);
     }
+  }
+
+  function submitKey(e: React.FormEvent) {
+    e.preventDefault();
+    const key = keyInput.trim();
+    if (!key) return;
+    sessionStorage.setItem('fhq-admin-key', key);
+    setKeyInput('');
+    setAdminKey(key);
   }
 
   function patchPlayIn(gameId: string, winner: string) {
@@ -130,12 +166,12 @@ export default function AdminPage() {
 
   async function savePlayIn(gameId: string) {
     const g = results?.playIn.find(x => x.gameId === gameId);
-    if (!g) return;
+    if (!g || !adminKey) return;
     setStatus(gameId, 'saving');
     try {
       const res = await fetch('/api/update-playoff-result', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeaders(adminKey) },
         body: JSON.stringify({ type: 'playIn', id: gameId, winner: g.winner }),
       });
       const next: SaveStatus = res.ok ? 'saved' : 'error';
@@ -148,12 +184,12 @@ export default function AdminPage() {
 
   async function saveSeries(seriesId: string) {
     const s = results?.series.find(x => x.seriesId === seriesId);
-    if (!s) return;
+    if (!s || !adminKey) return;
     setStatus(seriesId, 'saving');
     try {
       const res = await fetch('/api/update-playoff-result', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeaders(adminKey) },
         body: JSON.stringify({ type: 'series', id: seriesId, teams: s.teams, winner: s.winner, score: s.score }),
       });
       const next: SaveStatus = res.ok ? 'saved' : 'error';
@@ -164,10 +200,36 @@ export default function AdminPage() {
     }
   }
 
+  if (!adminKey) {
+    return (
+      <div className="flex items-center justify-center min-h-[300px]">
+        <form onSubmit={submitKey} className="bg-white rounded-2xl shadow-sm border border-[#E2E8F0] p-6 w-full max-w-xs">
+          <h1 className="text-sm font-bold text-[#0F172A] mb-1">Playoffs Admin</h1>
+          <p className="text-xs text-[#94A3B8] mb-4">Enter the admin passcode to continue.</p>
+          <input
+            type="password"
+            value={keyInput}
+            onChange={e => setKeyInput(e.target.value)}
+            placeholder="Passcode"
+            autoFocus
+            className="border border-[#E2E8F0] rounded-lg px-3 py-2 text-sm text-[#0F172A] bg-white outline-none focus:border-[#94A3B8] transition-colors w-full mb-3"
+          />
+          {authError && <p className="text-xs text-[#DC2626] mb-3">{authError}</p>}
+          <button
+            type="submit"
+            className="w-full px-3 py-2 rounded-lg text-xs font-semibold bg-[#1E293B] text-white hover:bg-[#334155] transition-colors"
+          >
+            Unlock
+          </button>
+        </form>
+      </div>
+    );
+  }
+
   if (dataLoading || !results) {
     return (
-      <div className="flex items-center justify-center min-h-[300px] text-sm text-[#94A3B8]">
-        Loading…
+      <div className="flex flex-col items-center justify-center gap-2 min-h-[300px] text-sm text-[#94A3B8]">
+        {authError ? <span className="text-[#DC2626]">{authError}</span> : 'Loading…'}
       </div>
     );
   }
@@ -186,7 +248,7 @@ export default function AdminPage() {
           </p>
         </div>
         <button
-          onClick={fetchData}
+          onClick={() => fetchData(adminKey)}
           disabled={dataLoading}
           className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-white border border-[#E2E8F0] rounded-lg text-[#475569] hover:bg-[#F1F5F9] disabled:opacity-50 transition-colors"
         >

@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Fantasy HQ 🏀
 
-## Getting Started
+Private website for our friends' NBA fantasy league — live standings, matchups,
+analytics, all-time records, and the NBA playoffs bracket-betting pool.
 
-First, run the development server:
+Built with [Next.js 14](https://nextjs.org) (App Router), TypeScript, Tailwind CSS,
+and [Recharts](https://recharts.org). Deployed on Vercel.
+
+## How data flows
+
+The site has two data sources:
+
+1. **ESPN Fantasy API (live)** — standings, matchups, rosters, stats, transactions,
+   and draft data are fetched server-side at request time from our private ESPN
+   league (`lib/espn*.ts`). Most fetches are cached for 30 minutes; live views
+   (current matchups, playoff bracket) skip the cache.
+2. **Committed JSON (`data/*.json`)** — everything ESPN doesn't own: playoff
+   bets/results/fines for the betting pool, league history, rules. Some files
+   (`standings.json`, `matchups.json`, …) also act as fallbacks rendered when ESPN
+   credentials are missing. `scripts/fetch-espn-data.mjs` can snapshot live ESPN
+   data into these files.
+
+The playoffs admin page (`/nba-playoffs/admin`) saves series results by committing
+`data/playoff-results.json` to GitHub through the API, which triggers a Vercel
+redeploy (~1 min).
+
+### Nightly snapshots
+
+The `espn-snapshot` GitHub Action runs `scripts/build-snapshots.mts` every
+night (09:00 UTC), calls the heavy ESPN loaders, and commits the results to
+`data/snapshots/*.json` — which triggers a Vercel redeploy on fresh data.
+The analytical pages (records, history, transactions, matchup depth,
+analysis) prefer these snapshots over live ESPN calls, so they stay fast and
+keep working even when the ESPN cookies expire. A red Action run is the
+expired-cookie alarm: GitHub emails the repo owner, and stale-but-valid
+snapshots keep serving until the cookies are refreshed. Empty results are
+never written, so a dead cookie can't wipe good data.
+
+The Action needs repository **secrets** `ESPN_S2`, `SWID`, `LEAGUE_ID` and
+optionally the **variable** `SEASON` (Settings → Secrets and variables →
+Actions). Run it manually any time from the Actions tab (workflow_dispatch),
+or locally with `npm run snapshots`.
+
+Live pages (home, matchups, standings, playoff bracket, teams) still fetch
+ESPN directly and need the same env vars on Vercel.
+
+## Environment variables
+
+Create `.env.local` (never committed) with:
+
+| Variable | Purpose |
+| --- | --- |
+| `LEAGUE_ID` | ESPN fantasy league ID |
+| `ESPN_S2` | ESPN auth cookie (grab from browser dev tools while logged in; expires periodically) |
+| `SWID` | ESPN auth cookie, including the `{}` braces |
+| `SEASON` | ESPN season year, e.g. `2026` for the 2025-26 season (defaults to `2026`) |
+| `GITHUB_TOKEN` | Token with `contents:write` on this repo — used by the playoffs admin API |
+| `GITHUB_BRANCH` | Branch the admin API commits to (defaults to the production branch) |
+| `ADMIN_KEY` | Shared passcode for `/nba-playoffs/admin`; the admin API is disabled if unset |
+
+Without ESPN credentials the site still runs: ESPN-backed pages show a
+"credentials required" notice or fall back to the committed JSON.
+
+## Development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
+npm run lint       # ESLint
+npx tsc --noEmit   # typecheck
+npm run build      # production build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Refreshing ESPN cookies
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+When live pages stop loading on production, the `espn_s2`/`SWID` cookies have
+probably expired. Log in to ESPN Fantasy in a browser, copy the fresh cookie
+values from dev tools (Application → Cookies), and update the env vars in the
+Vercel project settings.

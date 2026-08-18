@@ -392,9 +392,9 @@ function HistoryTab() {
 export default async function NBAPlayoffsPage({
   searchParams,
 }: {
-  searchParams: { tab?: string };
+  searchParams: Promise<{ tab?: string }>;
 }) {
-  const tabParam = searchParams.tab ?? 'leaderboard';
+  const tabParam = (await searchParams).tab ?? 'leaderboard';
   const tab = ['leaderboard', 'bets', 'analytics', 'bracket', 'results', 'rules', 'history'].includes(tabParam)
     ? (tabParam as 'leaderboard' | 'bets' | 'analytics' | 'bracket' | 'results' | 'rules' | 'history')
     : 'leaderboard';

@@ -1,4 +1,5 @@
 import { hasEspnCredentials, getMatchupDepth, getPlayoffDepth } from '@/lib/espn';
+import { readSnapshot } from '@/lib/snapshots';
 import type { MatchupDepthData } from '@/lib/types';
 import MatchupDepthTable from '@/components/MatchupDepthTable';
 import DepthTabNav from '@/components/DepthTabNav';
@@ -20,9 +21,18 @@ const TAB_META: Record<Tab, { title: string; subtitle: string }> = {
 export default async function MatchupDepthPage({
   searchParams,
 }: {
-  searchParams: { tab?: string };
+  searchParams: Promise<{ tab?: string }>;
 }) {
-  if (!hasEspnCredentials()) {
+  const { tab: tabQuery } = await searchParams;
+  const tab: Tab = (tabQuery as Tab) === 'playoff' || (tabQuery as Tab) === 'stats'
+    ? (tabQuery as Tab)
+    : 'full';
+
+  const snap = tab !== 'stats'
+    ? readSnapshot<MatchupDepthData>(tab === 'playoff' ? 'playoff-depth' : 'matchup-depth')
+    : null;
+
+  if (!snap && !hasEspnCredentials()) {
     return (
       <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
         <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A] mb-2">Matchup Depth</h1>
@@ -30,10 +40,6 @@ export default async function MatchupDepthPage({
       </div>
     );
   }
-
-  const tab: Tab = (searchParams.tab as Tab) === 'playoff' || (searchParams.tab as Tab) === 'stats'
-    ? (searchParams.tab as Tab)
-    : 'full';
 
   const meta = TAB_META[tab];
 
@@ -43,11 +49,15 @@ export default async function MatchupDepthPage({
   let error = false;
 
   if (tab !== 'stats') {
-    try {
-      data = tab === 'playoff' ? await getPlayoffDepth() : await getMatchupDepth();
-    } catch (err) {
-      console.error('Matchup depth fetch failed:', err);
-      error = true;
+    if (snap) {
+      data = snap.data;
+    } else {
+      try {
+        data = tab === 'playoff' ? await getPlayoffDepth() : await getMatchupDepth();
+      } catch (err) {
+        console.error('Matchup depth fetch failed:', err);
+        error = true;
+      }
     }
   }
 

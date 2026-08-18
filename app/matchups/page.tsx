@@ -9,9 +9,10 @@ export const revalidate = 1800;
 export default async function MatchupsPage({
   searchParams,
 }: {
-  searchParams: { week?: string };
+  searchParams: Promise<{ week?: string }>;
 }) {
-  const targetWeek = searchParams.week ? parseInt(searchParams.week) : undefined;
+  const { week } = await searchParams;
+  const targetWeek = week ? parseInt(week) : undefined;
 
   let data: MatchupsData;
 

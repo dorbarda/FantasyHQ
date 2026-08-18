@@ -108,7 +108,6 @@ async function fetchMatchups(teams, memberMap, myTeamId) {
   console.log('🏀 Fetching matchups...');
   const data = await espnFetch('?view=mMatchup&view=mMatchupScore&view=mScoreboard');
 
-  const currentPeriod = data.scoringPeriodId || 1;
   const currentMatchupPeriod = data.status?.currentMatchupPeriod || 1;
 
   const teamMap = {};
@@ -157,16 +156,11 @@ async function fetchMatchups(teams, memberMap, myTeamId) {
 
 async function fetchPlayers() {
   console.log('⭐ Fetching top players...');
-  const data = await espnFetch(
-    `?view=kona_player_info&scoringPeriodId=1&limit=30`
-  );
-
   // ESPN player stats endpoint is complex; use the free agents + rostered players view
   const playersData = await espnFetch(
     `?view=mRoster&view=mTeam`
   );
 
-  const posMap = { 1: 'PG', 2: 'SG', 3: 'SF', 4: 'PF', 5: 'C', 6: 'G', 7: 'F', 8: 'UTIL' };
   const posGroupMap = { 1: 'G', 2: 'G', 3: 'F', 4: 'F', 5: 'C', 6: 'G', 7: 'F', 8: 'F' };
 
   const allPlayers = [];

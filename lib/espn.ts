@@ -10,10 +10,12 @@ import type {
 } from './types';
 import { computeFP, extractSeasonStats, extractPerGameStats } from './scoring';
 
+import { CURRENT_SEASON } from './season';
+
 const ESPN_S2 = process.env.ESPN_S2;
 const SWID = process.env.SWID;
 const LEAGUE_ID = process.env.LEAGUE_ID;
-const SEASON = process.env.SEASON || '2026';
+const SEASON = CURRENT_SEASON;
 
 export function hasEspnCredentials() {
   return !!(ESPN_S2 && SWID && LEAGUE_ID);

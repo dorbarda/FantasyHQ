@@ -1,16 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { HistoricalSeason, HistoricalTeam, CategoryPercentiles } from './types';
 import { extractSeasonStats } from './scoring';
+import { ALL_SEASONS, CURRENT_SEASON, seasonLabel } from './season';
 
 const ESPN_S2 = process.env.ESPN_S2;
 const SWID = process.env.SWID;
 const LEAGUE_ID = process.env.LEAGUE_ID;
 
-const HISTORY_YEARS = [2026, 2025, 2024, 2023, 2022, 2021] as const;
-
-function seasonLabel(year: number): string {
-  return `${year - 1}-${String(year).slice(2)}`;
-}
+const HISTORY_YEARS = [...ALL_SEASONS].reverse(); // newest first
 
 async function espnFetchYear(year: number, params: string, noCache = false): Promise<any> {
   const base = `https://lm-api-reads.fantasy.espn.com/apis/v3/games/fba/seasons/${year}/segments/0/leagues/${LEAGUE_ID}`;
@@ -156,8 +153,8 @@ export { HISTORY_YEARS };
 
 // ─── Category percentile history ─────────────────────────────────────────────
 
-const CURRENT_YEAR = parseInt(process.env.SEASON || '2026');
-const ALL_CAT_YEARS = [...HISTORY_YEARS, CURRENT_YEAR].filter(
+
+const ALL_CAT_YEARS = [...HISTORY_YEARS, CURRENT_SEASON].filter(
   (y, i, arr) => arr.indexOf(y) === i
 );
 
@@ -180,7 +177,7 @@ function rankArray(values: number[], lowerIsBetter: boolean): number[] {
 async function fetchYearCategoryPercentiles(
   year: number
 ): Promise<Array<{ ownerName: string; percs: Record<CatKey, number> }>> {
-  const revalidate = year < CURRENT_YEAR ? 86400 : 1800;
+  const revalidate = year < CURRENT_SEASON ? 86400 : 1800;
   const base = `https://lm-api-reads.fantasy.espn.com/apis/v3/games/fba/seasons/${year}/segments/0/leagues/${LEAGUE_ID}`;
   const res = await fetch(`${base}?view=mTeam&view=mRoster`, {
     headers: { Cookie: `espn_s2=${ESPN_S2}; SWID=${SWID}`, Accept: 'application/json' },

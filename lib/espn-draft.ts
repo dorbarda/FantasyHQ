@@ -1,15 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { DraftBoardData, DraftPick, DraftTeamSlot, DraftGrade } from './types';
 import { computeFP, getGP, extractSeasonStats } from './scoring';
+import { ALL_SEASONS, CURRENT_SEASON } from './season';
 
 const ESPN_S2   = process.env.ESPN_S2;
 const SWID      = process.env.SWID;
 const LEAGUE_ID = process.env.LEAGUE_ID;
-const CURRENT_YEAR = parseInt(process.env.SEASON || '2026');
-
-export const DRAFT_YEARS = [2021, 2022, 2023, 2024, 2025, CURRENT_YEAR].filter(
-  (y, i, arr) => arr.indexOf(y) === i
-);
+export const DRAFT_YEARS = ALL_SEASONS;
 
 const PRO_TEAMS: Record<number, string> = {
   1:'ATL', 2:'BOS', 3:'NOP', 4:'CHI', 5:'CLE', 6:'DAL', 7:'DEN', 8:'DET',
@@ -38,7 +35,7 @@ async function espnGet(year: number, params: string, extraHeaders?: Record<strin
       Accept: 'application/json',
       ...extraHeaders,
     },
-    next: { revalidate: year < CURRENT_YEAR ? 86400 : 1800 },
+    next: { revalidate: year < CURRENT_SEASON ? 86400 : 1800 },
   });
   if (!res.ok) throw new Error(`ESPN ${res.status} year=${year} ${params}`);
   return res.json();

@@ -21,8 +21,16 @@ The site has two data sources:
    data into these files.
 
 The playoffs admin page (`/nba-playoffs/admin`) saves series results by committing
-`data/playoff-results.json` to GitHub through the API, which triggers a Vercel
-redeploy (~1 min).
+`data/playoffs/<season>/results.json` to GitHub through the API, which triggers
+a Vercel redeploy (~1 min). Each season's pool lives in `data/playoffs/<year>/`
+(bets, results, fines) and past years render at `/nba-playoffs/<year>`.
+
+### Starting a new season
+
+Set the `SEASON` env var (ending year — `2027` for the 2026-27 season) in the
+Vercel project and as the GitHub Actions `SEASON` variable. Everything derives
+from it via `lib/season.ts`: ESPN fetches, records/history/draft year lists,
+and the playoffs page. Create `data/playoffs/<year>/` when the pool opens.
 
 ### Nightly snapshots
 

@@ -3,10 +3,9 @@ import Image from 'next/image';
 import { hasEspnCredentials, getMatchups, getStandings, getPlayoffBracket } from '@/lib/espn';
 import matchupsJson from '@/data/matchups.json';
 import standingsJson from '@/data/standings.json';
-import betsJson    from '@/data/playoff-bets.json';
-import resultsJson from '@/data/playoff-results.json';
+import { loadCurrentPlayoffs } from '@/lib/playoffs';
 import { computeAllScores } from '@/lib/playoff-scoring';
-import type { Matchup, MatchupsData, StandingEntry, PlayoffBracketData, BracketMatchup, OwnerPlayoffBets, PlayoffResults } from '@/lib/types';
+import type { Matchup, MatchupsData, StandingEntry, PlayoffBracketData, BracketMatchup } from '@/lib/types';
 import ScoreStrip from '@/components/ScoreStrip';
 import { teamLogoSrc } from '@/lib/team-logos';
 
@@ -387,8 +386,7 @@ function HomeStandingsPanel({ standings }: { standings: StandingEntry[] }) {
 // ─── Playoff Leaderboard Preview ─────────────────────────────────────────────
 
 function PlayoffLeaderboardPreview() {
-  const allBets = betsJson.owners as OwnerPlayoffBets[];
-  const results = resultsJson as PlayoffResults;
+  const { bets: allBets, results } = loadCurrentPlayoffs();
   if (allBets.length === 0) return null;
 
   const scores = computeAllScores(allBets, results);

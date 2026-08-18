@@ -1,10 +1,23 @@
 import { NextResponse } from 'next/server';
 
 const GH_TOKEN  = process.env.GITHUB_TOKEN;
+const ADMIN_KEY = process.env.ADMIN_KEY;
 const REPO      = 'dorbarda/FantasyHQ';
 const FILE      = 'data/playoff-results.json';
-const BRANCH    = 'claude/fantasy-hq-mvp-ScUru';
+const BRANCH    = process.env.GITHUB_BRANCH || 'claude/fantasy-hq-mvp-ScUru';
 const GH_URL    = `https://api.github.com/repos/${REPO}/contents/${FILE}`;
+
+// Both GET and POST require the shared admin passcode; without ADMIN_KEY set
+// the endpoint is disabled entirely so it can never run unprotected.
+function unauthorized(req: Request): NextResponse | null {
+  if (!ADMIN_KEY) {
+    return NextResponse.json({ error: 'ADMIN_KEY not configured' }, { status: 503 });
+  }
+  if (req.headers.get('x-admin-key') !== ADMIN_KEY) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  return null;
+}
 
 async function ghGet() {
   const res = await fetch(`${GH_URL}?ref=${BRANCH}`, {
@@ -18,7 +31,9 @@ async function ghGet() {
   return res.json();
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+  const denied = unauthorized(req);
+  if (denied) return denied;
   if (!GH_TOKEN) {
     return NextResponse.json({ error: 'GITHUB_TOKEN not configured' }, { status: 503 });
   }
@@ -33,6 +48,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const denied = unauthorized(req);
+  if (denied) return denied;
   if (!GH_TOKEN) {
     return NextResponse.json({ error: 'Server not configured' }, { status: 503 });
   }

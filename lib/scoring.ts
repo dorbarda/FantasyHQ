@@ -17,7 +17,7 @@
  *   16 = FTA  (Free Throws Attempted)
  *   17 = 3PM  (Three Pointers Made)
  *   38 = TD   (Triple Doubles)
- *   39 = QD   (Quadruple Doubles) — ESPN stat ID assumed; verify via /api/debug-stats
+ *   39 = QD   (Quadruple Doubles) — ESPN stat ID assumed, not verified against a live payload
  *   40 = GP×30 (Games Played encoded as GP×30 — NOT a scoring stat, used for GP calc only)
  *   41 = TF   (Technical Fouls)
  *   42 = EJ   (Ejections)

@@ -429,7 +429,7 @@ function PlayoffLeaderboardPreview() {
 
 const QUICK_LINKS = [
   { href: '/draft',     label: 'Draft',    emoji: '📋' },
-  { href: '/stats',     label: 'Stats',    emoji: '📊' },
+  { href: '/league',    label: 'Standings', emoji: '📊' },
   { href: '/records',   label: 'Records',  emoji: '🏆' },
   { href: '/nba',       label: 'NBA Live', emoji: '🏀' },
   { href: '/analysis',  label: 'Analysis', emoji: '🔬' },

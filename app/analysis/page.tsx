@@ -1,5 +1,6 @@
 import { hasEspnCredentials, getMatchupDepth, getStatsData } from '@/lib/espn';
-import type { MatchupDepthRow } from '@/lib/types';
+import { readSnapshot } from '@/lib/snapshots';
+import type { MatchupDepthRow, MatchupDepthData } from '@/lib/types';
 import { StatsData } from '@/lib/types';
 import statsJson from '@/data/stats.json';
 import AnalysisTable, { type TeamAnalytics } from '@/components/AnalysisTable';
@@ -188,7 +189,10 @@ function computeAnalytics(rows: MatchupDepthRow[]): {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function AnalysisPage() {
-  if (!hasEspnCredentials()) {
+  const depthSnap = readSnapshot<MatchupDepthData>('matchup-depth');
+  const statsSnap = readSnapshot<StatsData>('stats');
+
+  if (!depthSnap && !statsSnap && !hasEspnCredentials()) {
     return (
       <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
         <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A] mb-2">Analysis</h1>
@@ -199,22 +203,27 @@ export default async function AnalysisPage() {
 
   let error = false;
   let result: ReturnType<typeof computeAnalytics> | null = null;
-  let statsData: StatsData = statsJson as StatsData;
+  let statsData: StatsData = statsSnap ? statsSnap.data : (statsJson as StatsData);
 
-  try {
+  if (depthSnap && depthSnap.data.rows.length > 0) {
+    result = computeAnalytics(depthSnap.data.rows);
+  }
+
+  if ((!result || !statsSnap) && hasEspnCredentials()) {
     const [depthData, fetchedStats] = await Promise.allSettled([
-      getMatchupDepth(),
-      getStatsData(),
+      result ? null : getMatchupDepth(),
+      statsSnap ? null : getStatsData(),
     ]);
-    if (depthData.status === 'fulfilled' && depthData.value.rows.length > 0) {
+    if (depthData.status === 'fulfilled' && depthData.value && depthData.value.rows.length > 0) {
       result = computeAnalytics(depthData.value.rows);
     }
-    if (fetchedStats.status === 'fulfilled') {
+    if (fetchedStats.status === 'fulfilled' && fetchedStats.value) {
       statsData = fetchedStats.value;
     }
-  } catch (err) {
-    console.error('Analysis fetch failed:', err);
-    error = true;
+    if (depthData.status === 'rejected') {
+      console.error('Analysis depth fetch failed:', depthData.reason);
+      error = true;
+    }
   }
 
   if (error || !result) {

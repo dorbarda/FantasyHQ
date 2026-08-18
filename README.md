@@ -24,6 +24,26 @@ The playoffs admin page (`/nba-playoffs/admin`) saves series results by committi
 `data/playoff-results.json` to GitHub through the API, which triggers a Vercel
 redeploy (~1 min).
 
+### Nightly snapshots
+
+The `espn-snapshot` GitHub Action runs `scripts/build-snapshots.mts` every
+night (09:00 UTC), calls the heavy ESPN loaders, and commits the results to
+`data/snapshots/*.json` — which triggers a Vercel redeploy on fresh data.
+The analytical pages (records, history, transactions, matchup depth,
+analysis) prefer these snapshots over live ESPN calls, so they stay fast and
+keep working even when the ESPN cookies expire. A red Action run is the
+expired-cookie alarm: GitHub emails the repo owner, and stale-but-valid
+snapshots keep serving until the cookies are refreshed. Empty results are
+never written, so a dead cookie can't wipe good data.
+
+The Action needs repository **secrets** `ESPN_S2`, `SWID`, `LEAGUE_ID` and
+optionally the **variable** `SEASON` (Settings → Secrets and variables →
+Actions). Run it manually any time from the Actions tab (workflow_dispatch),
+or locally with `npm run snapshots`.
+
+Live pages (home, matchups, standings, playoff bracket, teams) still fetch
+ESPN directly and need the same env vars on Vercel.
+
 ## Environment variables
 
 Create `.env.local` (never committed) with:

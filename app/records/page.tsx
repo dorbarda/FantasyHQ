@@ -1,5 +1,6 @@
 import { hasEspnCredentials } from '@/lib/espn';
 import { getAllRecords } from '@/lib/espn-records';
+import { readSnapshot, formatSnapshotDate } from '@/lib/snapshots';
 import { RecordsData } from '@/lib/types';
 import SuperlativesGrid from '@/components/SuperlativesGrid';
 import H2HMatrix from '@/components/H2HMatrix';
@@ -8,7 +9,20 @@ import HallOfFame from '@/components/HallOfFame';
 export const revalidate = 3600;
 
 export default async function RecordsPage() {
-  if (!hasEspnCredentials()) {
+  let data: RecordsData | null = null;
+  let asOf: string | null = null;
+
+  const snap = readSnapshot<RecordsData>('records');
+  if (snap) {
+    data = snap.data;
+    asOf = snap.generatedAt;
+  } else if (hasEspnCredentials()) {
+    try {
+      data = await getAllRecords();
+    } catch (err) {
+      console.error('Records fetch failed:', err);
+    }
+  } else {
     return (
       <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
         <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A] mb-2">Records</h1>
@@ -19,17 +33,7 @@ export default async function RecordsPage() {
     );
   }
 
-  let data: RecordsData | null = null;
-  let error = false;
-
-  try {
-    data = await getAllRecords();
-  } catch (err) {
-    console.error('Records fetch failed:', err);
-    error = true;
-  }
-
-  if (error || !data) {
+  if (!data) {
     return (
       <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
         <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A] mb-2">Records</h1>
@@ -45,6 +49,7 @@ export default async function RecordsPage() {
         <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A]">Records</h1>
         <p className="text-[14px] text-[#475569] mt-1">
           All-time stats across every season
+          {asOf && <span className="text-[#94A3B8]"> · updated {formatSnapshotDate(asOf)}</span>}
         </p>
       </div>
 

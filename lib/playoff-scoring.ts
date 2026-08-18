@@ -115,9 +115,9 @@ export function computeOwnerScore(
   const eastFinalResult  = results.series.find(s => s.seriesId === 'r3-e');
   const nbaFinalResult   = results.series.find(s => s.seriesId === 'r4');
 
-  const westCorrect  = westFinalResult?.winner !== null && teamMatches(bonus.westChampion,  westFinalResult!.winner!);
-  const eastCorrect  = eastFinalResult?.winner !== null && teamMatches(bonus.eastChampion,  eastFinalResult!.winner!);
-  const champCorrect = nbaFinalResult?.winner  !== null && teamMatches(bonus.nbaChampion,   nbaFinalResult!.winner!);
+  const westCorrect  = !!westFinalResult?.winner && teamMatches(bonus.westChampion, westFinalResult.winner);
+  const eastCorrect  = !!eastFinalResult?.winner && teamMatches(bonus.eastChampion, eastFinalResult.winner);
+  const champCorrect = !!nbaFinalResult?.winner  && teamMatches(bonus.nbaChampion,  nbaFinalResult.winner);
 
   if (westCorrect)  bonusPts += 7;
   if (eastCorrect)  bonusPts += 7;

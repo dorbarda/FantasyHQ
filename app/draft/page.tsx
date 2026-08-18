@@ -11,10 +11,11 @@ export const revalidate = 3600;
 const DEFAULT_YEAR = Math.max(...DRAFT_YEARS.filter(y => y <= new Date().getFullYear()));
 
 interface PageProps {
-  searchParams: { year?: string; view?: string };
+  searchParams: Promise<{ year?: string; view?: string }>;
 }
 
-export default async function DraftPage({ searchParams }: PageProps) {
+export default async function DraftPage({ searchParams: searchParamsPromise }: PageProps) {
+  const searchParams = await searchParamsPromise;
   if (!hasEspnCredentials()) {
     return (
       <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">

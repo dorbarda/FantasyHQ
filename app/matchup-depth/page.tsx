@@ -20,8 +20,9 @@ const TAB_META: Record<Tab, { title: string; subtitle: string }> = {
 export default async function MatchupDepthPage({
   searchParams,
 }: {
-  searchParams: { tab?: string };
+  searchParams: Promise<{ tab?: string }>;
 }) {
+  const { tab: tabQuery } = await searchParams;
   if (!hasEspnCredentials()) {
     return (
       <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
@@ -31,8 +32,8 @@ export default async function MatchupDepthPage({
     );
   }
 
-  const tab: Tab = (searchParams.tab as Tab) === 'playoff' || (searchParams.tab as Tab) === 'stats'
-    ? (searchParams.tab as Tab)
+  const tab: Tab = (tabQuery as Tab) === 'playoff' || (tabQuery as Tab) === 'stats'
+    ? (tabQuery as Tab)
     : 'full';
 
   const meta = TAB_META[tab];

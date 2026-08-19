@@ -197,11 +197,12 @@ page, above the matchup grid, so it is seen without hunting.
 
 ## 6. Build order
 
-1. `lib/recap.ts` + tests for the seven awards that need no pipeline change.
-2. `/recap` and `/recap/[week]` pages, Hot Pickup gracefully absent.
-3. Home teaser card.
-4. The §4 transactions change; Hot Pickup lights up after the next snapshot.
-5. Optional Riser/Faller if the page still feels thin.
+1. [x] `lib/recap.ts` + tests for the seven awards that need no pipeline change.
+2. [x] `/recap` and `/recap/[week]` pages, Hot Pickup gracefully absent.
+3. [x] Home teaser card, sidebar entry, Heebo for the Hebrew names.
+4. [ ] **Remaining:** the §4 transactions change; Hot Pickup lights up on the
+       next nightly snapshot afterwards.
+5. ~~Optional Riser/Faller~~ — out of scope, see §2.
 
 ## 7. Settled
 

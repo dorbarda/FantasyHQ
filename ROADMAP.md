@@ -50,7 +50,8 @@ gotchas.
 
 ## Next up — features (agreed 2026-08-19, see NEXT-SESSION.md)
 
-- [ ] Weekly recap at `/recap` — **defined, ready to build**; spec in
+- [~] Weekly recap at `/recap` — **built**, except Hot Pickup which waits on
+      the per-week adds change (spec §4). Spec in
       `docs/RECAP-SPEC.md`. Eight awards, names final (עשה לו גלס, Heart
       Attack, Ceiling, לאילי אין מזל, פרס הסלוצקי, עשה ברדה, Sniper, Hot
       Pickup), own page plus a home teaser, screenshot-first layout. No

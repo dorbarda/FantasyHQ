@@ -95,12 +95,31 @@ export interface ScheduleWeek {
 }
 
 /** Everything the page needs, cached whole so a week switch costs nothing. */
+/**
+ * What the nightly job stores.
+ *
+ * Deliberately only what ESPN told us: the schedules and how many fantasy
+ * weeks the league has. The week → days map and the current week are DERIVED,
+ * and deriving them on read rather than freezing them here means a fix to that
+ * logic takes effect on the next deploy instead of waiting for the next
+ * snapshot. The first version of this file stored the computed map, and a
+ * corrected mapping went on serving the old broken weeks until the job re-ran.
+ */
 export interface ScheduleSeason {
-  currentWeek: number;
-  maxWeek: number;
-  /** week → scoring period ids (days) it covers */
-  weeks: Record<number, number[]>;
+  /** How many matchup periods the league has. */
+  weekCount: number;
   schedules: ProTeamSchedule[];
+
+  /**
+   * Older snapshots stored the derived map. Read only as a fallback source of
+   * weekCount so a stale file still renders; never used as the map itself.
+   * @deprecated
+   */
+  weeks?: Record<number, number[]>;
+  /** @deprecated superseded by currentWeekFor() */
+  currentWeek?: number;
+  /** @deprecated derived from weekCount */
+  maxWeek?: number;
 }
 
 // ─── Parsing (pure) ──────────────────────────────────────────────────────────
@@ -371,13 +390,50 @@ export function buildWeekMatrix(
   };
 }
 
+/** How many fantasy weeks the season has, tolerating older snapshots. */
+export function weekCountOf(season: ScheduleSeason): number {
+  if (season.weekCount > 0) return season.weekCount;
+  const stored = season.weeks ? Object.keys(season.weeks).length : 0;
+  return stored;
+}
+
+/** The week → days map, computed fresh from the stored schedules. */
+export function weeksOf(season: ScheduleSeason): Record<number, number[]> {
+  return buildWeekMap(season.schedules, weekCountOf(season));
+}
+
+/**
+ * Which week we're in, decided by today's date rather than by ESPN's
+ * currentMatchupPeriod — that field reported 21 for a season which had not
+ * started, so the page opened on the final week of a season nobody had played.
+ *
+ * Before the season opens this is week 1; after it ends, the last week.
+ */
+export function currentWeekFor(season: ScheduleSeason, today = new Date()): number {
+  const weeks = weeksOf(season);
+  const numbers = Object.keys(weeks).map(Number).sort((a, b) => a - b);
+  if (numbers.length === 0) return 1;
+
+  const index = buildDateIndex(season.schedules);
+  if (!index.anchor) return numbers[0];
+
+  const todayStr = nbaDate(today.getTime());
+
+  for (const week of numbers) {
+    const days = weeks[week];
+    const last = index.dateFor(days[days.length - 1]);
+    if (last && todayStr <= last) return week;
+  }
+  return numbers[numbers.length - 1];
+}
+
 /**
  * The calendar dates (UTC, YYYY-MM-DD) on which NBA games are played during a
  * fantasy week. Used to ask a date-based API — Highlightly — for exactly the
  * days that week covers, instead of guessing a range.
  */
 export function datesForWeek(season: ScheduleSeason, week: number): string[] {
-  const scoringPeriods = new Set(season.weeks[week] ?? []);
+  const scoringPeriods = new Set(weeksOf(season)[week] ?? []);
   if (scoringPeriods.size === 0) return [];
 
   const dates = new Set<string>();
@@ -392,12 +448,15 @@ export function datesForWeek(season: ScheduleSeason, week: number): string[] {
 
 /** Slice one week out of an already-loaded season. */
 export function weekFromSeason(season: ScheduleSeason, week: number): ScheduleWeek | null {
-  const scoringPeriods = season.weeks[week];
+  const weeks = weeksOf(season);
+  const scoringPeriods = weeks[week];
   if (!scoringPeriods || scoringPeriods.length === 0) return null;
+
+  const numbers = Object.keys(weeks).map(Number).sort((a, b) => a - b);
   return buildWeekMatrix(season.schedules, scoringPeriods, {
     week,
-    currentWeek: season.currentWeek,
-    maxWeek: season.maxWeek,
+    currentWeek: currentWeekFor(season),
+    maxWeek: numbers[numbers.length - 1],
   });
 }
 
@@ -430,20 +489,8 @@ export async function getScheduleSeason(): Promise<ScheduleSeason> {
     espnGet(`${LEAGUE_BASE}?view=mSettings`, 86400),
   ]);
 
-  const schedules = parseProTeamSchedules(scheduleRaw);
-  const weeks = buildWeekMap(schedules, countMatchupPeriods(settingsRaw));
-  const weekNumbers = Object.keys(weeks).map(Number).sort((a, b) => a - b);
-
-  const currentWeek: number =
-    settingsRaw?.status?.currentMatchupPeriod ||
-    settingsRaw?.scoringPeriodId ||
-    weekNumbers[0] ||
-    1;
-
   return {
-    currentWeek,
-    maxWeek: weekNumbers.length ? weekNumbers[weekNumbers.length - 1] : currentWeek,
-    weeks,
-    schedules,
+    weekCount: countMatchupPeriods(settingsRaw),
+    schedules: parseProTeamSchedules(scheduleRaw),
   };
 }

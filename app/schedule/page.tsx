@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import ScheduleMatrix from '@/components/ScheduleMatrix';
 import { loadScheduleSeason } from '@/lib/schedule-data';
-import { weekFromSeason } from '@/lib/espn-schedule';
+import { weekFromSeason, currentWeekFor, weekCountOf } from '@/lib/espn-schedule';
 import { CURRENT_SEASON_LABEL } from '@/lib/season';
 
 export const revalidate = 3600;
@@ -33,18 +33,22 @@ export default async function SchedulePage({
     );
   }
 
+  // Default to the week we're actually in, worked out from today's date. ESPN's
+  // own currentMatchupPeriod reported the last week of a season that hadn't
+  // started, which opened the page on week 21 of an empty season.
+  const currentWeek = currentWeekFor(season);
   const { week: weekParam } = await searchParams;
   const requested = weekParam ? parseInt(weekParam, 10) : NaN;
-  const week = Number.isNaN(requested) ? season.currentWeek : requested;
+  const week = Number.isNaN(requested) ? currentWeek : requested;
 
-  const data = weekFromSeason(season, week) ?? weekFromSeason(season, season.currentWeek);
+  const data = weekFromSeason(season, week) ?? weekFromSeason(season, currentWeek);
 
   if (!data) {
     return (
       <Shell>
         <h1 className="type-page-title text-foreground mb-2">NBA Schedule</h1>
         <p className="type-page-subtitle">
-          No schedule for week {week} — the season runs weeks 1–{season.maxWeek}.
+          No schedule for week {week} — the season runs weeks 1–{weekCountOf(season)}.
         </p>
       </Shell>
     );

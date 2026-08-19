@@ -169,7 +169,7 @@ function ClosestMatchupCard({ matchup, week }: { matchup: Matchup; week: number 
             {/* Leader */}
             <div className="flex-1 text-right">
               <p className="text-[13px] font-medium text-[#94A3B8] mb-1">{leader.ownerName}</p>
-              <p className="text-[48px] font-bold tabular-nums leading-none text-white">
+              <p className="text-[34px] sm:text-[48px] font-bold tabular-nums leading-none text-white">
                 {leader.actualScore.toFixed(1)}
               </p>
               <p className="text-[12px] text-[#475569] mt-1 truncate">{leader.teamName}</p>
@@ -191,7 +191,7 @@ function ClosestMatchupCard({ matchup, week }: { matchup: Matchup; week: number 
             {/* Trailer */}
             <div className="flex-1 text-left">
               <p className="text-[13px] font-medium text-[#94A3B8] mb-1">{trailer.ownerName}</p>
-              <p className="text-[48px] font-bold tabular-nums leading-none text-[#64748B]">
+              <p className="text-[34px] sm:text-[48px] font-bold tabular-nums leading-none text-[#64748B]">
                 {trailer.actualScore.toFixed(1)}
               </p>
               <p className="text-[12px] text-[#475569] mt-1 truncate">{trailer.teamName}</p>

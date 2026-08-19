@@ -277,6 +277,57 @@ async function probeNba() {
   );
 }
 
+// ─── §4 Highlightly (needs HIGHLIGHTLY_API_KEY) ──────────────────────────────
+
+async function probeHighlightly() {
+  const key = process.env.HIGHLIGHTLY_API_KEY;
+  if (!key) {
+    console.log('⏭  Skipping Highlightly — set HIGHLIGHTLY_API_KEY to include it.\n');
+    return;
+  }
+  const host = process.env.HIGHLIGHTLY_API_HOST || 'basketball.highlightly.net';
+  const isRapid = host.includes('rapidapi.com');
+  const authHeaders = isRapid
+    ? { 'x-rapidapi-key': key, 'x-rapidapi-host': host }
+    : { 'x-api-key': key };
+
+  // Yesterday — most likely to have finished games with clips
+  const d = new Date();
+  d.setUTCDate(d.getUTCDate() - 1);
+  const date = d.toISOString().slice(0, 10);
+
+  const raw = await probe(
+    '§4 Highlightly highlights',
+    `https://${host}/highlights?date=${date}&leagueName=NBA&limit=10`,
+    { headers: authHeaders, note: `host ${host}, ${isRapid ? 'rapidapi' : 'x-api-key'} auth` }
+  );
+  if (!raw) {
+    console.log('   ↳ if this is 401/403, the header name or host is wrong — see lib/highlightly.ts');
+    return;
+  }
+
+  // lib/highlightly.ts reads exactly these — report what's actually present.
+  const items = Array.isArray(raw) ? raw
+    : raw.data ?? raw.highlights ?? raw.results ?? raw.response ?? [];
+  console.log(`   ↳ envelope: ${Array.isArray(raw) ? 'bare array' : Object.keys(raw).join(', ')}`);
+  console.log(`   ↳ ${Array.isArray(items) ? items.length : 0} items for ${date}`);
+
+  const sample = Array.isArray(items) ? items[0] : null;
+  if (sample) {
+    console.log(`   ↳ item keys: ${Object.keys(sample).join(', ')}`);
+    const embeddable = sample.embeddable;
+    const verified = sample.verified ?? sample.verificationStatus ?? sample.state;
+    console.log(`   ↳ embeddable=${embeddable} verified=${verified} embedUrl=${sample.embedUrl ? 'present' : 'ABSENT'}`);
+    if (embeddable === undefined || verified === undefined) {
+      console.log('   ↳ ⚠ the rights fields are not where lib/highlightly.ts looks — update it before shipping clips');
+    } else {
+      console.log('   ↳ rights fields present — usableHighlights() can filter on them');
+    }
+  } else {
+    console.log('   ↳ no items — try another date, or NBA may be out of season');
+  }
+}
+
 // ─── report ──────────────────────────────────────────────────────────────────
 
 console.log(`\nFantasy HQ data source probe — season ${SEASON}`);
@@ -285,6 +336,7 @@ console.log(`Private league probes: ${HAS_CREDS ? 'enabled' : 'SKIPPED (no crede
 await probeFantasy();
 await probePublicEspn();
 await probeNba();
+await probeHighlightly();
 
 console.log('\n─── summary ───');
 for (const r of results) {

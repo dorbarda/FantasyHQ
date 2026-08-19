@@ -67,8 +67,12 @@ gotchas.
       Full source catalogue in `docs/DATA-SOURCES.md`.
 - [ ] Rivalry pages (`/rivalries/[a]-vs-[b]`, linked from the existing H2H
       matrix) and power rankings with week-over-week movement.
-- [ ] Highlightly spike — embeddable, VERIFIED highlight clips on the weekly
-      recap (free tier, 100 req/day). See `docs/DATA-SOURCES.md` §4.1.
+- [x] Highlightly spike — embeddable, VERIFIED highlight clips on the weekly
+      recap (free tier, ~10 of 100 daily requests). Rights filter in
+      `lib/highlightly.ts`; the nightly job is **optional** so a video-API
+      failure can't turn the cookie alarm red. Needs `HIGHLIGHTLY_API_KEY` and
+      one `npm run probe-sources` run to confirm the response shape.
+      See `docs/DATA-SOURCES.md` §4.1.
 
 ### Data-source decisions (2026-08-19)
 

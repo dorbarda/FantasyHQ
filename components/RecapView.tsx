@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import OwnerAvatar from './OwnerAvatar';
 import RecapCard from './RecapCard';
+import RecapHighlights from './RecapHighlights';
 import type { WeeklyRecap } from '@/lib/recap';
+import type { Highlight } from '@/lib/highlightly';
 
 /**
  * The whole recap for one week. Laid out to be screenshotted on a phone: the
@@ -13,11 +15,14 @@ export default function RecapView({
   seasonLabel,
   prevWeek,
   nextWeek,
+  highlights = [],
 }: {
   recap: WeeklyRecap;
   seasonLabel: string;
   prevWeek: number | null;
   nextWeek: number | null;
+  /** Embeddable, verified clips for this week — empty renders nothing. */
+  highlights?: Highlight[];
 }) {
   // The week's headline: whichever was more extreme, the blowout or the squeaker.
   const beatdown = recap.awards.find(a => a.id === 'beatdown')?.winners[0];
@@ -63,6 +68,9 @@ export default function RecapView({
             <RecapCard key={a.id} award={a} />
           ))}
         </div>
+
+        {/* Highlights — renders nothing when there are no usable clips */}
+        <RecapHighlights clips={highlights} />
 
         {/* All results */}
         <section className="mb-6">

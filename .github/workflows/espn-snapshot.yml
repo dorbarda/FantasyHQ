@@ -29,6 +29,10 @@ jobs:
           SWID: ${{ secrets.SWID }}
           LEAGUE_ID: ${{ secrets.LEAGUE_ID }}
           SEASON: ${{ vars.SEASON }}
+          # Optional: highlight clips for the recap. Missing or failing, the
+          # highlights snapshot is skipped and the run still passes — a red run
+          # must keep meaning "the ESPN cookies expired".
+          HIGHLIGHTLY_API_KEY: ${{ secrets.HIGHLIGHTLY_API_KEY }}
       - name: Commit snapshots
         run: |
           git config user.name "espn-snapshot-bot"

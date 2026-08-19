@@ -4,6 +4,7 @@ import {
   parseMatchupPeriods,
   buildWeekMatrix,
   weekFromSeason,
+  datesForWeek,
   type ProTeamSchedule,
 } from '../espn-schedule';
 
@@ -208,5 +209,34 @@ describe('weekFromSeason', () => {
 
   it('returns null for a week the league does not have', () => {
     expect(weekFromSeason(season, 99)).toBeNull();
+  });
+});
+
+describe('datesForWeek', () => {
+  const season = {
+    currentWeek: 3,
+    maxWeek: 3,
+    weeks: parseMatchupPeriods(RAW_SETTINGS),
+    schedules: parseProTeamSchedules(RAW_SCHEDULE) as ProTeamSchedule[],
+  };
+
+  it('lists the calendar days the week actually has games on', () => {
+    // fixture plays on scoring periods 10, 12, 13, 14, 15, 16 → Dec 1, 3, 4, 5, 6, 7
+    expect(datesForWeek(season, 3)).toEqual([
+      '2025-12-01', '2025-12-03', '2025-12-04', '2025-12-05', '2025-12-06', '2025-12-07',
+    ]);
+  });
+
+  it('deduplicates days shared by several games', () => {
+    const dates = datesForWeek(season, 3);
+    expect(new Set(dates).size).toBe(dates.length);
+  });
+
+  it('returns nothing for a week with no NBA games', () => {
+    expect(datesForWeek(season, 1)).toEqual([]);
+  });
+
+  it('returns nothing for a week the league does not have', () => {
+    expect(datesForWeek(season, 99)).toEqual([]);
   });
 });

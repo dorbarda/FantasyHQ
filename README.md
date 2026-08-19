@@ -49,6 +49,11 @@ optionally the **variable** `SEASON` (Settings → Secrets and variables →
 Actions). Run it manually any time from the Actions tab (workflow_dispatch),
 or locally with `npm run snapshots`.
 
+`HIGHLIGHTLY_API_KEY` is an optional extra secret for recap highlight clips.
+That snapshot is marked optional in `scripts/build-snapshots.mts`: if the key
+is missing or the API fails, the job is skipped with a warning and the run
+still passes — so a red run keeps meaning "the ESPN cookies expired".
+
 Live pages (home, matchups, standings, playoff bracket, teams) still fetch
 ESPN directly and need the same env vars on Vercel.
 
@@ -65,6 +70,8 @@ Create `.env.local` (never committed) with:
 | `GITHUB_TOKEN` | Token with `contents:write` on this repo — used by the playoffs admin API |
 | `GITHUB_BRANCH` | Branch the admin API commits to (defaults to the production branch) |
 | `ADMIN_KEY` | Shared passcode for `/nba-playoffs/admin`; the admin API is disabled if unset |
+| `HIGHLIGHTLY_API_KEY` | Optional. Highlight clips on the weekly recap ([highlightly.net](https://highlightly.net), free tier). Unset = no highlights, nothing else changes |
+| `HIGHLIGHTLY_API_HOST` | Optional. Only needed if the key came from RapidAPI rather than Highlightly directly — set it to the RapidAPI host |
 
 Without ESPN credentials the site still runs: ESPN-backed pages show a
 "credentials required" notice or fall back to the committed JSON.

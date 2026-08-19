@@ -317,11 +317,24 @@ What matters for putting clips on the site — each highlight carries:
 
 *Confidence: reported* — from Highlightly's own documentation; not called live.
 
-**Suggested spike:** pull highlights for the games in one completed fantasy
-week, filter to `embeddable === true` and VERIFIED sources only, and put them on
-the weekly recap page — that's where the league already looks back at the week.
-100 requests/day is ample for a nightly job. If people watch them, expand;
-if not, it's one file to delete.
+**Status: built.** `lib/highlightly.ts` holds the client and the rights filter;
+`usableHighlights()` is the only route clips take to the UI and it drops
+anything that isn't **both** `embeddable` and VERIFIED. Clips render on the
+weekly recap between the awards and the results (`components/RecapHighlights.tsx`),
+and the section disappears entirely on weeks with no usable video.
+
+The nightly job fetches the last 10 days once (≈10 of the 100 daily requests)
+and commits `data/snapshots/highlights.json`; pages read only that file, so no
+render ever waits on the video API. The recap picks its own days out of the
+schedule snapshot via `datesForWeek()`.
+
+**The highlights job is marked optional in `scripts/build-snapshots.mts`** — if
+the key is missing or Highlightly fails, it logs a warning and the run still
+passes. That protects the thing the Action exists for: a red run has to keep
+meaning "the ESPN cookies expired", not "a video API had a bad night".
+
+Set `HIGHLIGHTLY_API_KEY` as a repo secret; add `HIGHLIGHTLY_API_HOST` only if
+the key came from RapidAPI instead of Highlightly directly.
 
 **Watch out for:** rights. Filtering on `embeddable` and VERIFIED is what keeps
 this clean — an unverified clip is someone's re-upload, and embedding it on a
@@ -353,7 +366,7 @@ deferred, Highlightly is in.
 | --- | --- | --- | --- |
 | 1 | **Games-per-week / back-to-backs grid** at `/schedule` | §1.1 | ✅ **Built** |
 | 2 | **Verify the schedule endpoint shape** — one `npm run probe-sources` run | §1.1 | ⏳ Needs a real network |
-| 3 | **Highlightly spike** — embeddable, VERIFIED clips on the weekly recap | §4.1 | Next |
+| 3 | **Highlightly spike** — embeddable, VERIFIED clips on the weekly recap | §4.1 | ✅ **Built** — needs one probe run to confirm the shape |
 | 4 | **Fix the two hardcoded seasons** in `lib/nba.ts` | §3.3 | Open (~30m) |
 | 5 | **Verify `/nba` stat leaders render in production** | §3.2 | Open (~15m) |
 | 6 | **Hot Pickup unblock** — spike `kona_league_communication` for per-week adds | §1.6 | Open (~half day) |

@@ -280,6 +280,25 @@ export function buildWeekMatrix(
   };
 }
 
+/**
+ * The calendar dates (UTC, YYYY-MM-DD) on which NBA games are played during a
+ * fantasy week. Used to ask a date-based API — Highlightly — for exactly the
+ * days that week covers, instead of guessing a range.
+ */
+export function datesForWeek(season: ScheduleSeason, week: number): string[] {
+  const scoringPeriods = new Set(season.weeks[week] ?? []);
+  if (scoringPeriods.size === 0) return [];
+
+  const dates = new Set<string>();
+  for (const team of season.schedules) {
+    for (const g of team.games) {
+      if (!scoringPeriods.has(g.scoringPeriodId) || g.dateMs === null) continue;
+      dates.add(new Date(g.dateMs).toISOString().slice(0, 10));
+    }
+  }
+  return [...dates].sort();
+}
+
 /** Slice one week out of an already-loaded season. */
 export function weekFromSeason(season: ScheduleSeason, week: number): ScheduleWeek | null {
   const scoringPeriods = season.weeks[week];

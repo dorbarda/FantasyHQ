@@ -1,6 +1,7 @@
 import RecapView from '@/components/RecapView';
 import { computeWeeklyRecap, listRecapWeeks, latestRecapWeek } from '@/lib/recap';
 import { loadRecapRows, loadAddsForWeek } from '@/lib/recap-data';
+import { loadHighlightsForWeek } from '@/lib/highlights-data';
 import { CURRENT_SEASON_LABEL } from '@/lib/season';
 
 export const revalidate = 3600;
@@ -30,6 +31,7 @@ export default async function LatestRecapPage() {
       seasonLabel={CURRENT_SEASON_LABEL}
       prevWeek={weeks[idx + 1] ?? null}
       nextWeek={idx > 0 ? weeks[idx - 1] : null}
+      highlights={loadHighlightsForWeek(week)}
     />
   );
 }

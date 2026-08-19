@@ -3,6 +3,7 @@ import type { NBAGame, NBAConferenceStanding, NBAStatLeadersData } from '@/lib/t
 import NBAScoreboard from '@/components/NBAScoreboard';
 import NBAConferenceStandings from '@/components/NBAConferenceStandings';
 import NBAStatLeaders from '@/components/NBAStatLeaders';
+import { CURRENT_SEASON_DISPLAY } from '@/lib/season';
 
 export const dynamic = 'force-dynamic';
 
@@ -34,7 +35,7 @@ export default async function NBALivePage() {
         <div>
           <h1 className="type-page-title text-foreground">NBA Live</h1>
           <p className="type-page-subtitle mt-1">
-            2025–26 Season
+            {CURRENT_SEASON_DISPLAY} Season
           </p>
         </div>
         {liveCount > 0 && (

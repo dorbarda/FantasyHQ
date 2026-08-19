@@ -27,10 +27,30 @@ a Vercel redeploy (~1 min). Each season's pool lives in `data/playoffs/<year>/`
 
 ### Starting a new season
 
-Set the `SEASON` env var (ending year — `2027` for the 2026-27 season) in the
-Vercel project and as the GitHub Actions `SEASON` variable. Everything derives
-from it via `lib/season.ts`: ESPN fetches, records/history/draft year lists,
-and the playoffs page. Create `data/playoffs/<year>/` when the pool opens.
+Everything derives from one env var. `SEASON` is the **ending** year — `2027`
+for the 2026-27 season — and `lib/season.ts` is the only place it's read.
+
+> ⚠️ **Roll the ESPN league over first.** Switching `SEASON` points every ESPN
+> call at that season's league. If the league doesn't exist on ESPN yet, those
+> calls 404: live pages fall back to their "credentials required" notice, and
+> the nightly snapshot Action goes **red** and emails you — which is the same
+> alarm as expired cookies, so you'd be chasing the wrong problem. Confirm the
+> league opens in the ESPN app for the new season, then switch.
+
+Steps:
+
+1. ESPN: confirm the league exists for the new season.
+2. Vercel → Settings → Environment Variables → set `SEASON=2027` → redeploy.
+3. GitHub → Settings → Secrets and variables → Actions → **Variables** tab →
+   set `SEASON=2027`. (Variable, not secret — it isn't sensitive.)
+4. Run the `ESPN snapshot` Action manually to refill `data/snapshots/` for the
+   new season.
+5. Create `data/playoffs/<year>/` when that season's pool opens.
+
+Nothing else is year-aware: ESPN fetches, the NBA standings and stat-leaders
+calls, records/history/draft year lists, the schedule grid, the playoffs page
+and every on-screen season label all read `lib/season.ts`. Verified by building
+and rendering the whole site under `SEASON=2027`.
 
 ### Nightly snapshots
 
@@ -39,10 +59,22 @@ night (09:00 UTC), calls the heavy ESPN loaders, and commits the results to
 `data/snapshots/*.json` — which triggers a Vercel redeploy on fresh data.
 The analytical pages (records, history, transactions, matchup depth,
 analysis) prefer these snapshots over live ESPN calls, so they stay fast and
-keep working even when the ESPN cookies expire. A red Action run is the
-expired-cookie alarm: GitHub emails the repo owner, and stale-but-valid
-snapshots keep serving until the cookies are refreshed. Empty results are
-never written, so a dead cookie can't wipe good data.
+keep working even when the ESPN cookies expire.
+
+The run starts with an **auth probe** — one cheap authenticated call. It's what
+gives an empty result its meaning, because "no data" means two opposite things:
+
+| Probe | Empty snapshot means | Run |
+| --- | --- | --- |
+| ESPN rejects us | The cookies expired | ❌ **Red** — exits immediately, writes nothing. This is the alarm |
+| ESPN answers | The season hasn't started yet | ⏳ Logged as pending, old file kept, run still passes |
+
+That split matters most right after a season rollover: between switching
+`SEASON` and opening night there is legitimately no matchup data, and without
+the probe every nightly run would be red for weeks — which teaches you to
+ignore the one email that actually matters.
+
+Empty results are never written either way, so nothing can wipe good data.
 
 The Action needs repository **secrets** `ESPN_S2`, `SWID`, `LEAGUE_ID` and
 optionally the **variable** `SEASON` (Settings → Secrets and variables →

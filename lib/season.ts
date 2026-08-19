@@ -20,6 +20,17 @@ export function seasonLabel(year: number): string {
 
 export const CURRENT_SEASON_LABEL = seasonLabel(CURRENT_SEASON);
 
+/**
+ * "2026" → "2025–26" with an en dash, for prose in page headers.
+ * seasonLabel() keeps the plain hyphen because stats.nba.com requires that
+ * exact format in its Season query parameter.
+ */
+export function seasonLabelDisplay(year: number): string {
+  return `${year - 1}\u2013${String(year).slice(2)}`;
+}
+
+export const CURRENT_SEASON_DISPLAY = seasonLabelDisplay(CURRENT_SEASON);
+
 /** Every season from the league's first to the current one, ascending. */
 export const ALL_SEASONS: number[] = Array.from(
   { length: Math.max(1, CURRENT_SEASON - FIRST_SEASON + 1) },

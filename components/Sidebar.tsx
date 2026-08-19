@@ -57,6 +57,15 @@ function DraftIcon() {
   );
 }
 
+function RecapIcon() {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4 shrink-0">
+      <path d="M5 3h10a1 1 0 011 1v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.5"/>
+      <path d="M7 7h6M7 10h6M7 13h3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
 function AnalysisIcon() {
   return (
     <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4 shrink-0">
@@ -147,6 +156,7 @@ const NAV_GROUPS = [
       { href: '/league',        label: 'League',      Icon: LeagueIcon   },
       { href: '/matchups',      label: 'Matchups',    Icon: MatchupsIcon },
       { href: '/matchup-depth', label: 'Depth',       Icon: DepthIcon    },
+      { href: '/recap',         label: 'Recap',       Icon: RecapIcon    },
       { href: '/draft',         label: 'Draft',       Icon: DraftIcon    },
       { href: '/draft-prep',    label: 'Draft Prep',  Icon: DraftIcon    },
       { href: '/teams',         label: 'Teams',       Icon: TeamsIcon    },

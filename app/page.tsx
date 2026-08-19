@@ -8,6 +8,9 @@ import { computeAllScores } from '@/lib/playoff-scoring';
 import type { Matchup, MatchupsData, StandingEntry, PlayoffBracketData, BracketMatchup } from '@/lib/types';
 import ScoreStrip from '@/components/ScoreStrip';
 import OwnerAvatar from '@/components/OwnerAvatar';
+import RecapTeaser from '@/components/RecapTeaser';
+import { computeWeeklyRecap, latestRecapWeek } from '@/lib/recap';
+import { loadRecapRows, loadAddsForWeek } from '@/lib/recap-data';
 
 export const revalidate = 1800;
 
@@ -467,6 +470,13 @@ export default async function HomePage() {
     if (bracketResult.status === 'fulfilled') bracket = bracketResult.value;
   }
 
+  // Last completed week's recap for the teaser; absent before week 1 finishes.
+  const recapRows = await loadRecapRows();
+  const recapWeek = latestRecapWeek(recapRows);
+  const recap = recapWeek === null
+    ? null
+    : computeWeeklyRecap(recapRows, recapWeek, { addsThisWeek: loadAddsForWeek(recapWeek) });
+
   const { matchups, week } = matchupsData;
   const closestMatchup = matchups.length > 0 ? findClosestMatchup(matchups) : null;
 
@@ -534,6 +544,7 @@ export default async function HomePage() {
 
         {/* Right column */}
         <div className="space-y-4">
+          {recap && <RecapTeaser recap={recap} />}
           <HomeStandingsPanel standings={standings} />
           <PlayoffLeaderboardPreview />
           <HomeQuickLinks />

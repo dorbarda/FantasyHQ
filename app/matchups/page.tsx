@@ -61,7 +61,7 @@ export default async function MatchupsPage({
         {prevWeek ? (
           <Link
             href={`/matchups?week=${prevWeek}`}
-            className="text-[13px] text-secondary hover:text-muted transition-colors"
+            className="text-[13px] text-secondary hover:text-muted transition-colors inline-flex items-center min-h-[32px] px-2"
           >
             ← Wk {prevWeek}
           </Link>
@@ -74,7 +74,7 @@ export default async function MatchupsPage({
         {nextWeek ? (
           <Link
             href={`/matchups?week=${nextWeek}`}
-            className="text-[13px] text-secondary hover:text-muted transition-colors"
+            className="text-[13px] text-secondary hover:text-muted transition-colors inline-flex items-center min-h-[32px] px-2"
           >
             Wk {nextWeek} →
           </Link>

@@ -79,14 +79,9 @@ function EditorialHeader({
         background: 'var(--surface)',
         border: '1px solid var(--border)',
         borderRadius: 16,
-        padding: 28,
         marginBottom: 18,
-        display: 'grid',
-        gridTemplateColumns: '1.4fr 1fr 1fr 1fr',
-        gap: 32,
-        alignItems: 'end',
       }}
-      className="max-[720px]:grid-cols-2"
+      className="grid grid-cols-2 md:grid-cols-[1.4fr_1fr_1fr_1fr] gap-6 md:gap-8 items-end p-5 sm:p-7"
     >
       {/* Pool leader */}
       <div>
@@ -738,11 +733,10 @@ function PicksHeatmap({
     >
       <div
         style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
+
           gap: 24,
         }}
-        className="max-[500px]:grid-cols-1"
+        className="grid grid-cols-1 min-[500px]:grid-cols-2"
       >
         <div>
           <div
@@ -826,12 +820,11 @@ export default function AnalyticsTabV2({
       {/* Panel 2+3: Trajectory + Form strip */}
       <div
         style={{
-          display: 'grid',
-          gridTemplateColumns: '1.4fr 1fr',
+
           gap: 16,
           marginBottom: 18,
         }}
-        className="max-[720px]:grid-cols-1"
+        className="grid grid-cols-1 min-[720px]:grid-cols-[1.4fr_1fr]"
       >
         <TrajectoryChart standings={standings} />
         <FormStrip standings={standings} />
@@ -840,12 +833,11 @@ export default function AnalyticsTabV2({
       {/* Panel 4+5: Upset + Consensus */}
       <div
         style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
+
           gap: 16,
           marginBottom: 18,
         }}
-        className="max-[720px]:grid-cols-1"
+        className="grid grid-cols-1 min-[720px]:grid-cols-2"
       >
         <UpsetPanel allBets={allBets} results={results} />
         <ConsensusFever allBets={allBets} results={results} />

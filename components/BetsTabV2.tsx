@@ -375,12 +375,7 @@ function RoundSection({
 
       {/* 2-col grid */}
       <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: 16,
-        }}
-        className="max-[720px]:grid-cols-1"
+        className="grid grid-cols-1 min-[720px]:grid-cols-2 gap-4"
       >
         {seriesList.map(s => (
           <H2HCard key={s.seriesId} series={s} allBets={allBets} />

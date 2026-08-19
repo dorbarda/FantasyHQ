@@ -199,7 +199,7 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
       <nav className="flex-1 px-2 py-3 space-y-5">
         {NAV_GROUPS.map((group) => (
           <div key={group.label}>
-            <p className="px-2 mb-1 text-[10px] font-semibold tracking-[0.15em] text-panel-text-muted uppercase">
+            <p className="px-2 mb-1 text-[11px] font-semibold tracking-[0.14em] text-panel-text-muted uppercase">
               {group.label}
             </p>
             <ul className="space-y-0.5">
@@ -230,7 +230,7 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
 
       <div className="px-4 py-3 border-t border-panel-border shrink-0">
         <ThemeToggle />
-        <p className="text-[10px] text-panel-text-muted mt-2">© {new Date().getFullYear()} Fantasy HQ</p>
+        <p className="text-[11px] text-panel-text-muted mt-2">© {new Date().getFullYear()} Fantasy HQ</p>
       </div>
     </aside>
   );
@@ -299,7 +299,7 @@ function MobileNav({ pathname }: { pathname: string }) {
         <nav className="flex-1 px-3 py-4 space-y-5 overflow-y-auto">
           {NAV_GROUPS.map((group) => (
             <div key={group.label}>
-              <p className="px-2 mb-1 text-[10px] font-semibold tracking-[0.15em] text-panel-text-muted uppercase">
+              <p className="px-2 mb-1 text-[11px] font-semibold tracking-[0.14em] text-panel-text-muted uppercase">
                 {group.label}
               </p>
               <ul className="space-y-0.5">
@@ -329,7 +329,7 @@ function MobileNav({ pathname }: { pathname: string }) {
         </nav>
 
         <div className="px-4 py-3 border-t border-panel-border">
-          <p className="text-[10px] text-panel-text-muted">© {new Date().getFullYear()} Fantasy HQ</p>
+          <p className="text-[11px] text-panel-text-muted">© {new Date().getFullYear()} Fantasy HQ</p>
         </div>
       </div>
 
@@ -346,7 +346,7 @@ function MobileNav({ pathname }: { pathname: string }) {
               }`}
             >
               <Icon />
-              <span className="text-[9px] font-semibold">{label}</span>
+              <span className="text-[10px] font-semibold">{label}</span>
             </Link>
           );
         })}

@@ -140,7 +140,7 @@ export default async function PlayoffArchivePage({
       <div className="mb-6">
         <Link
           href="/nba-playoffs"
-          className="text-[12px] font-semibold text-muted hover:text-secondary transition-colors mb-2 inline-flex items-center gap-1"
+          className="text-[12px] font-semibold text-muted hover:text-secondary transition-colors mb-2 inline-flex items-center gap-1 min-h-[32px] py-1"
         >
           ← Back to Playoffs
         </Link>

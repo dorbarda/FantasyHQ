@@ -119,7 +119,7 @@ function SemiFinalsCard({ matchups }: { matchups: BracketMatchup[] }) {
       </div>
 
       <div className="px-5 py-3 border-t border-white/5">
-        <Link href="/league" className="text-[12px] font-medium text-accent hover:text-accent-hover transition-colors">
+        <Link href="/league" className="text-[12px] font-medium text-accent hover:text-accent-hover transition-colors inline-flex items-center min-h-[24px]">
           View full bracket →
         </Link>
       </div>
@@ -250,7 +250,7 @@ function WeekScoreCards({ matchups, closestId, week }: { matchups: Matchup[]; cl
         <p className="text-[11px] font-semibold uppercase tracking-widest text-muted">
           All Matchups · Week {week}
         </p>
-        <Link href="/matchups" className="text-[12px] font-medium text-accent hover:text-accent-hover transition-colors">
+        <Link href="/matchups" className="text-[12px] font-medium text-accent hover:text-accent-hover transition-colors inline-flex items-center min-h-[24px]">
           See all →
         </Link>
       </div>
@@ -340,7 +340,7 @@ function HomeStandingsPanel({ standings }: { standings: StandingEntry[] }) {
     <div className="bg-surface rounded-xl border border-border overflow-hidden">
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <p className="text-[13px] font-bold text-foreground">Standings</p>
-        <Link href="/league" className="text-[12px] font-medium text-accent hover:text-accent-hover transition-colors">
+        <Link href="/league" className="text-[12px] font-medium text-accent hover:text-accent-hover transition-colors inline-flex items-center min-h-[24px]">
           Full table →
         </Link>
       </div>
@@ -399,7 +399,7 @@ function PlayoffLeaderboardPreview() {
           <p className="text-[13px] font-bold text-foreground">Playoffs Picks</p>
           <p className="text-[10px] text-muted">NBA 2026 · Play-In</p>
         </div>
-        <Link href="/nba-playoffs" className="text-[12px] font-medium text-accent hover:text-accent-hover transition-colors">
+        <Link href="/nba-playoffs" className="text-[12px] font-medium text-accent hover:text-accent-hover transition-colors inline-flex items-center min-h-[24px]">
           Full table →
         </Link>
       </div>

@@ -36,28 +36,29 @@ a pair-up by `matchupPeriod` + `opponentName`.
 
 ## 2. The awards
 
-Names are playful per the agreed tone — in the spirit of the existing "Toilet
-Bowl Hall of Shame". **These are first drafts; renaming is cheap, so push back
-on any that don't sound like the league.**
+Names were set by Dor on 2026-08-19 and are **final** — several are league
+in-jokes referencing specific members, so use them exactly as written and do
+not translate, "correct", or reinterpret them.
 
 ### Core five
 
-1. **Beatdown** — biggest margin of victory.
+1. **עשה לו גלס** *(Beatdown)* — biggest margin of victory.
    `max(teamScore − opponentScore)` among winners.
 2. **Heart Attack** — smallest margin.
    `min(teamScore − opponentScore)` among winners. Show both scores.
 3. **Ceiling** — highest single-team score of the week.
-4. **Robbed** — the unluckiest loss: the losing team whose score would have
-   beaten the most *other* teams that week. Compute, for each loser, how many
-   of the week's other team-scores it exceeds; take the max. Ties → higher
-   score wins. This is the "I scored 120 and still lost" award.
-5. **Heist** — the luckiest win: the winning team whose score would have lost
-   to the most other teams that week. Mirror of Robbed.
+4. **לאילי אין מזל** *(Robbed)* — the unluckiest loss: the losing team whose
+   score would have beaten the most *other* teams that week. Compute, for each
+   loser, how many of the week's other team-scores it exceeds; take the max.
+   Ties → higher score wins. The "I scored 120 and still lost" award.
+5. **פרס הסלוצקי** *(Heist)* — the luckiest win: the winning team whose score
+   would have lost to the most other teams that week. Mirror of Robbed.
 
 ### Effort awards
 
-6. **The Grinder** — most starter-games used (`totalPlayers`). The streaming
-   award: who actually worked the waiver wire and filled every slot.
+6. **עשה ברדה** *(The Grinder)* — most starter-games used (`totalPlayers`).
+   The streaming award: who actually worked the waiver wire and filled every
+   slot.
 7. **Sniper** — best `efficiency` (points per starter-game): most output per
    roster slot used. Deliberately the counterpoint to Grinder — one rewards
    volume, the other rewards precision.
@@ -67,16 +68,17 @@ on any that don't sound like the league.**
 8. **Hot Pickup** — the most-added player across the league that week, with the
    add count and how many managers grabbed him. Needs §4.
 
-### Optional (defer unless wanted)
+### Explicitly out of scope
 
-- **Riser / Faller** — biggest standings movement vs. last week. Derivable, but
-  it makes the page longer; hold until the core reads well.
+- **Riser / Faller** — standings movement. Dor decided 2026-08-19 not to
+  include it. Do not add it back without asking.
 
 ### Tie-breaks and edge cases (apply to all)
 
 - **Ties:** show all tied recipients rather than picking arbitrarily. Two
   managers tied on the biggest blowout is itself a good group-chat fact.
-- **Week 1:** no previous standings, so movement awards are omitted, not zeroed.
+- **Week 1:** nothing special — every award is computed within a single week,
+  so week 1 behaves like any other.
 - **In-progress weeks:** the recap renders only for weeks where every row has
   `won !== null`. `/recap` shows the latest *completed* week.
 - **Ghost teams:** exclude automated/placeholder teams, matching the existing
@@ -87,6 +89,30 @@ on any that don't sound like the league.**
   yet" state, never a half-filled card.
 
 ---
+
+## 2b. Hebrew names — typography and direction
+
+Five award names are Hebrew, which the current stack does not serve well.
+Handle before building the tiles.
+
+**Font.** `@fontsource/inter` ships no Hebrew subset — only latin, latin-ext,
+cyrillic, greek and vietnamese. Hebrew therefore falls through
+`font-family: 'Inter', sans-serif` to whatever each device happens to have
+(Arial Hebrew on iOS/macOS, Noto Sans Hebrew on Android, Segoe UI on Windows),
+so the names look different on each friend's phone and mismatched against the
+English beside them. Fix by adding a Hebrew face that pairs with Inter —
+`@fontsource/heebo` or `@fontsource/assistant` are both good geometric
+companions — and putting it ahead of the fallback for these elements.
+
+**Direction.** Hebrew is RTL inside an otherwise LTR page. Give each Hebrew
+name its own element with `dir="rtl"` (or `dir="auto"`), rather than relying on
+the bidi algorithm inside a mixed run — otherwise adjacent punctuation,
+parentheses and the score numbers can reorder unexpectedly. Do not set `dir` on
+a container that also holds English or numbers.
+
+**Verify on a real render**, not in source: check both themes at 390px and
+confirm the Hebrew sits on the same baseline and optical weight as the English
+labels around it.
 
 ## 3. Code shape
 
@@ -178,6 +204,8 @@ page, above the matchup grid, so it is seen without hunting.
 
 ## 7. Open
 
-- **Award names** — the list in §2 is a first draft; expect edits.
-- **Riser / Faller** — include now or hold?
-- Nothing else blocks starting.
+- **Hebrew webfont** — add `@fontsource/heebo`/`assistant`, or accept the
+  system fallback? (See §2b.)
+- **English subtitles** — should each Hebrew name carry a small English gloss
+  underneath, or stand alone?
+- Award names and scope are settled. Nothing else blocks starting.

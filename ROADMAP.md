@@ -51,10 +51,10 @@ gotchas.
 ## Next up — features (agreed 2026-08-19, see NEXT-SESSION.md)
 
 - [ ] Weekly recap at `/recap` — **defined, ready to build**; spec in
-      `docs/RECAP-SPEC.md`. Eight playful awards (Beatdown, Heart Attack,
-      Ceiling, Robbed, Heist, The Grinder, Sniper, Hot Pickup), own page plus
-      a home teaser, screenshot-first layout. No snapshot change needed except
-      for Hot Pickup (per-week adds).
+      `docs/RECAP-SPEC.md`. Eight awards, names final (עשה לו גלס, Heart
+      Attack, Ceiling, לאילי אין מזל, פרס הסלוצקי, עשה ברדה, Sniper, Hot
+      Pickup), own page plus a home teaser, screenshot-first layout. No
+      snapshot change needed except for Hot Pickup (per-week adds).
 - [ ] Rivalry pages (`/rivalries/[a]-vs-[b]`, linked from the existing H2H
       matrix) and power rankings with week-over-week movement.
 

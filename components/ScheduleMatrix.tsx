@@ -53,13 +53,13 @@ export default function ScheduleMatrix({ week }: { week: ScheduleWeek }) {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <SummaryTile
           label="Busiest"
-          value={`${maxGames} games`}
+          value={`${maxGames} ${maxGames === 1 ? 'game' : 'games'}`}
           detail={busiest}
           tone="positive"
         />
         <SummaryTile
           label="Quietest"
-          value={`${minGames} games`}
+          value={`${minGames} ${minGames === 1 ? 'game' : 'games'}`}
           detail={quietest}
           tone="negative"
         />

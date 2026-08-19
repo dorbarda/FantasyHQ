@@ -195,8 +195,8 @@ export default async function AnalysisPage() {
   if (!depthSnap && !statsSnap && !hasEspnCredentials()) {
     return (
       <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground mb-2">Analysis</h1>
-        <p className="text-[14px] text-secondary mt-1">ESPN credentials required.</p>
+        <h1 className="type-page-title text-foreground mb-2">Analysis</h1>
+        <p className="type-page-subtitle mt-1">ESPN credentials required.</p>
       </div>
     );
   }
@@ -229,7 +229,7 @@ export default async function AnalysisPage() {
   if (error || !result) {
     return (
       <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground mb-2">Analysis</h1>
+        <h1 className="type-page-title text-foreground mb-2">Analysis</h1>
         {statsData.categoryStandings.length > 0 ? (
           <section className="bg-surface-secondary border border-border rounded-xl px-4 py-4 mt-4">
             <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-1">
@@ -241,7 +241,7 @@ export default async function AnalysisPage() {
             <CategoryRadarChartClient standings={statsData.categoryStandings} />
           </section>
         ) : (
-          <p className="text-[14px] text-secondary mt-1">Could not load data — try again later.</p>
+          <p className="type-page-subtitle mt-1">Could not load data — try again later.</p>
         )}
       </div>
     );
@@ -259,8 +259,8 @@ export default async function AnalysisPage() {
     <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
       {/* Header */}
       <div className="mb-5">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground">Analysis</h1>
-        <p className="text-[14px] text-secondary mt-1">
+        <h1 className="type-page-title text-foreground">Analysis</h1>
+        <p className="type-page-subtitle mt-1">
           {leagueSummary.totalWeeks} week{leagueSummary.totalWeeks !== 1 ? 's' : ''} · avg {leagueSummary.avgLeagueScore.toFixed(1)} pts/team · season high {leagueSummary.highScore.toFixed(1)}
         </p>
       </div>

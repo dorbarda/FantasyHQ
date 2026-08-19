@@ -31,7 +31,7 @@ interface Props {
 
 const STATUS: Record<SeriesStatus, { bar: string; bg: string; border: string; header: string; icon: string; text: string }> = {
   pending: { bar: 'bg-border-strong', bg: 'bg-background',   border: 'border-border',   header: 'bg-background',   icon: '',  text: 'text-secondary'  },
-  correct: { bar: 'bg-positive', bg: 'bg-positive-surface',   border: 'border-positive-bright',   header: 'bg-positive-surface',   icon: '✓', text: 'text-positive'  },
+  correct: { bar: 'bg-positive', bg: 'bg-positive-surface',   border: 'border-positive-bright',   header: 'bg-positive-surface',   icon: '✓', text: 'text-positive-strong'  },
   exact:   { bar: 'bg-gold', bg: 'bg-warning-surface',   border: 'border-warning-bright',   header: 'bg-gold-surface',   icon: '★', text: 'text-warning'  },
   wrong43: { bar: 'bg-warning', bg: 'bg-warning-surface',   border: 'border-warning-bright',   header: 'bg-warning-surface',   icon: '~', text: 'text-warning'  },
   wrong:   { bar: 'bg-negative', bg: 'bg-negative-surface',   border: 'border-negative-bright',   header: 'bg-negative-surface',   icon: '✗', text: 'text-negative'  },

@@ -24,8 +24,8 @@ export default async function TransactionsPage() {
   } else {
     return (
       <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground mb-2">Transactions</h1>
-        <p className="text-[14px] text-secondary mt-1">ESPN credentials required.</p>
+        <h1 className="type-page-title text-foreground mb-2">Transactions</h1>
+        <p className="type-page-subtitle mt-1">ESPN credentials required.</p>
       </div>
     );
   }
@@ -33,8 +33,8 @@ export default async function TransactionsPage() {
   return (
     <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
       <div className="mb-6">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground">Transactions</h1>
-        <p className="text-[14px] text-secondary mt-1">
+        <h1 className="type-page-title text-foreground">Transactions</h1>
+        <p className="type-page-subtitle mt-1">
           Season pickup activity · most targeted players · busiest managers
           {asOf && <span className="text-muted"> · updated {formatSnapshotDate(asOf)}</span>}
         </p>

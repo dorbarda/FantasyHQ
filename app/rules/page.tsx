@@ -8,8 +8,8 @@ export default function RulesPage() {
     <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
       {/* Header */}
       <div className="mb-5">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground">League Rules</h1>
-        <p className="text-[14px] text-secondary mt-1">Last updated {rules.lastUpdated}</p>
+        <h1 className="type-page-title text-foreground">League Rules</h1>
+        <p className="type-page-subtitle mt-1">Last updated {rules.lastUpdated}</p>
       </div>
 
       <div className="border border-border rounded-lg overflow-hidden">

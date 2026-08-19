@@ -35,8 +35,8 @@ export default async function MatchupDepthPage({
   if (!snap && !hasEspnCredentials()) {
     return (
       <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground mb-2">Matchup Depth</h1>
-        <p className="text-[14px] text-secondary mt-1">ESPN credentials required.</p>
+        <h1 className="type-page-title text-foreground mb-2">Matchup Depth</h1>
+        <p className="type-page-subtitle mt-1">ESPN credentials required.</p>
       </div>
     );
   }
@@ -64,8 +64,8 @@ export default async function MatchupDepthPage({
   return (
     <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
       <div className="mb-5">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground">{meta.title}</h1>
-        <p className="text-[14px] text-secondary mt-1">{meta.subtitle}</p>
+        <h1 className="type-page-title text-foreground">{meta.title}</h1>
+        <p className="type-page-subtitle mt-1">{meta.subtitle}</p>
       </div>
 
       <Suspense fallback={null}>

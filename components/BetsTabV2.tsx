@@ -166,7 +166,7 @@ function H2HCard({
           {series.label}
         </div>
         {series.winner ? (
-          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--positive)' }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--positive-strong)' }}>
             ✓ {getTeamMeta(series.winner).abbr} in {series.score}
           </div>
         ) : (

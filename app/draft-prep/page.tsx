@@ -164,10 +164,10 @@ export default function DraftPrepPage() {
   return (
     <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
       <div className="mb-6">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground">
+        <h1 className="type-page-title text-foreground">
           Draft Prep
         </h1>
-        <p className="text-[14px] text-secondary mt-1">
+        <p className="type-page-subtitle mt-1">
           Getting ready for the {seasonLabel(prep.season)} season
         </p>
       </div>

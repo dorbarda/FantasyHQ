@@ -48,9 +48,11 @@
   --accent:               #C8956C;
   --accent-hover:         #D4A77C;
   --accent-light:         rgba(200, 149, 108, 0.15);
+  --accent-text:          #8A5A2B;
 
   /* Semantic status — `-bright` variants are tuned for dark surfaces */
   --positive:             #10B981;
+  --positive-strong:      #047857;
   --positive-bright:      #34D399;
   --positive-surface:     #DCFCE7;
   --positive-text:        #14532D;
@@ -72,6 +74,9 @@
   --silver:               #94A3B8;
   --bronze:               #FDBA74;
   --bronze-surface:       #FDF6F0;
+  --gold-text:            #A16207;
+  --silver-text:          #64748B;
+  --bronze-text:          #92400E;
 }
 
 :root[data-theme="dark"] {
@@ -101,8 +106,10 @@
   --accent:               #D9A87E;
   --accent-hover:         #E5BB94;
   --accent-light:         rgba(217, 168, 126, 0.18);
+  --accent-text:          #E0B48A;
 
   --positive:             #34D399;
+  --positive-strong:      #34D399;
   --positive-bright:      #6EE7B7;
   --positive-surface:     rgba(52, 211, 153, 0.15);
   --positive-text:        #86EFAC;
@@ -123,6 +130,44 @@
   --silver:               #94A3B8;
   --bronze:               #FDBA74;
   --bronze-surface:       rgba(253, 186, 116, 0.12);
+  --gold-text:            #FACC15;
+  --silver-text:          #CBD5E1;
+  --bronze-text:          #FDBA74;
+}
+
+/* ─── Type scale ─────────────────────────────────────────────────────────────
+   The app sets sizes per element with arbitrary values; these classes give
+   the recurring roles one definition so headings and eyebrows stay
+   consistent as new pages are added. */
+
+@layer components {
+  .type-page-title {
+    font-size: 28px;
+    line-height: 1.1;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  @media (min-width: 640px) {
+    .type-page-title { font-size: 32px; }
+  }
+  .type-page-subtitle {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--foreground-secondary);
+  }
+  .type-section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--foreground-muted);
+  }
+  .type-stat {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
 }
 
 body {

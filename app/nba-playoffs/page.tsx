@@ -426,10 +426,10 @@ export default async function NBAPlayoffsPage({
     <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground">
+        <h1 className="type-page-title text-foreground">
           NBA {pool.year} Playoffs
         </h1>
-        <p className="text-[14px] text-secondary mt-1">
+        <p className="type-page-subtitle mt-1">
           {ownerCount > 0
             ? `${ownerCount} participants · ${stageLabel}`
             : `Play-In Tournament · April 14–17 · Playoffs begin April 18`}

@@ -32,8 +32,8 @@ export default async function NBALivePage() {
       {/* Page header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground">NBA Live</h1>
-          <p className="text-[14px] text-secondary mt-1">
+          <h1 className="type-page-title text-foreground">NBA Live</h1>
+          <p className="type-page-subtitle mt-1">
             2025–26 Season
           </p>
         </div>

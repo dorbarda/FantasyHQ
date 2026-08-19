@@ -25,8 +25,8 @@ export default async function RecordsPage() {
   } else {
     return (
       <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground mb-2">Records</h1>
-        <p className="text-[14px] text-secondary mt-1">
+        <h1 className="type-page-title text-foreground mb-2">Records</h1>
+        <p className="type-page-subtitle mt-1">
           ESPN credentials required to compute all-time records.
         </p>
       </div>
@@ -36,8 +36,8 @@ export default async function RecordsPage() {
   if (!data) {
     return (
       <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground mb-2">Records</h1>
-        <p className="text-[14px] text-secondary mt-1">Could not load records — try again later.</p>
+        <h1 className="type-page-title text-foreground mb-2">Records</h1>
+        <p className="type-page-subtitle mt-1">Could not load records — try again later.</p>
       </div>
     );
   }
@@ -46,8 +46,8 @@ export default async function RecordsPage() {
     <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
       {/* Header */}
       <div className="mb-5">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground">Records</h1>
-        <p className="text-[14px] text-secondary mt-1">
+        <h1 className="type-page-title text-foreground">Records</h1>
+        <p className="type-page-subtitle mt-1">
           All-time stats across every season
           {asOf && <span className="text-muted"> · updated {formatSnapshotDate(asOf)}</span>}
         </p>

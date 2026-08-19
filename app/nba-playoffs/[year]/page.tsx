@@ -144,10 +144,10 @@ export default async function PlayoffArchivePage({
         >
           ← Back to Playoffs
         </Link>
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground">
+        <h1 className="type-page-title text-foreground">
           {pool.year} Playoffs Archive
         </h1>
-        <p className="text-[14px] text-secondary mt-1">
+        <p className="type-page-subtitle mt-1">
           {pool.bets.length} participants · {champLine}
         </p>
       </div>

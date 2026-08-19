@@ -37,7 +37,7 @@ export default async function LeaguePage() {
       ) : (
         <>
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground">Standings</h1>
+            <h1 className="type-page-title text-foreground">Standings</h1>
             <div className="flex items-center gap-1.5">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-positive-bright opacity-75" />

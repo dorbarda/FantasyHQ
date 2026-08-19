@@ -7,7 +7,7 @@ import { loadCurrentPlayoffs } from '@/lib/playoffs';
 import { computeAllScores } from '@/lib/playoff-scoring';
 import type { Matchup, MatchupsData, StandingEntry, PlayoffBracketData, BracketMatchup } from '@/lib/types';
 import ScoreStrip from '@/components/ScoreStrip';
-import { teamLogoSrc } from '@/lib/team-logos';
+import OwnerAvatar from '@/components/OwnerAvatar';
 
 export const revalidate = 1800;
 
@@ -82,11 +82,7 @@ function SemiFinalsCard({ matchups }: { matchups: BracketMatchup[] }) {
                       }`}
                     >
                       <span className="text-[10px] font-bold text-panel-text-muted">#{team.seed}</span>
-                      {teamLogoSrc(team.teamName) ? (
-                        <Image src={teamLogoSrc(team.teamName)!} alt={team.teamName} width={56} height={56} className="rounded-full object-cover object-top w-14 h-14" />
-                      ) : (
-                        <div className="w-14 h-14 rounded-full bg-white/10" />
-                      )}
+                      <OwnerAvatar ownerName={team.ownerName} teamName={team.teamName} size={56} />
                       <div className="min-w-0 w-full">
                         <p className={`text-[13px] font-bold leading-tight truncate ${won ? 'text-positive' : 'text-white'}`}>
                           {team.ownerName}
@@ -232,14 +228,17 @@ function ClosestMatchupCard({ matchup, week }: { matchup: Matchup; week: number 
 
 // ─── Weekly Score Cards (Statmuse-style) ─────────────────────────────────────
 
-const CARD_COLORS = [
-  { bg: '#1E3A5F', border: '#2D5A8E' },  // navy
-  { bg: '#7F1D1D', border: '#991B1B' },  // deep red
-  { bg: '#064E3B', border: '#065F46' },  // teal
-  { bg: '#78350F', border: 'var(--warning-text)' },  // amber
-  { bg: '#312E81', border: '#3730A3' },  // indigo
-  { bg: '#134E4A', border: '#115E59' },  // cyan
-];
+/**
+ * Matchup cards share one surface and let *state* carry the colour, so the
+ * grid reads as a system: a live game is accented and forward, a finished
+ * one recedes, an upcoming one is quiet. (These used to be six decorative
+ * fills applied by list position, which meant nothing.)
+ */
+function cardStateStyle(m: Matchup) {
+  if (m.isLive)  return { ring: 'border-accent', label: 'Live',     labelClass: 'text-accent' };
+  if (m.isFinal) return { ring: 'border-panel-border', label: 'Final', labelClass: 'text-panel-text-muted' };
+  return { ring: 'border-panel-border/60', label: 'Upcoming', labelClass: 'text-panel-text-muted' };
+}
 
 function WeekScoreCards({ matchups, closestId, week }: { matchups: Matchup[]; closestId: string; week: number }) {
   const others = matchups.filter((m) => m.id !== closestId);
@@ -250,22 +249,21 @@ function WeekScoreCards({ matchups, closestId, week }: { matchups: Matchup[]; cl
         <p className="text-[11px] font-semibold uppercase tracking-widest text-muted">
           All Matchups · Week {week}
         </p>
-        <Link href="/matchups" className="text-[12px] font-medium text-accent hover:text-accent-hover transition-colors inline-flex items-center min-h-[24px]">
+        <Link href="/matchups" className="text-[12px] font-medium text-accent-text hover:text-accent transition-colors inline-flex items-center min-h-[24px]">
           See all →
         </Link>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {others.map((m, i) => {
-          const color = CARD_COLORS[i % CARD_COLORS.length];
+        {others.map((m) => {
+          const state = cardStateStyle(m);
           const homeLeading = m.home.actualScore >= m.away.actualScore;
           const hasScores = m.home.actualScore > 0 || m.away.actualScore > 0;
 
           return (
             <div
               key={m.id}
-              style={{ backgroundColor: color.bg, borderColor: color.border }}
-              className="rounded-xl border p-4 flex flex-col gap-3"
+              className={`rounded-xl border bg-panel p-4 flex flex-col gap-3 ${state.ring} ${m.isLive ? 'border-2' : ''}`}
             >
               {/* Status */}
               <div className="flex items-center gap-1.5">
@@ -275,10 +273,8 @@ function WeekScoreCards({ matchups, closestId, week }: { matchups: Matchup[]; cl
                     <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-positive" />
                   </span>
                 )}
-                <span className={`text-[10px] font-semibold uppercase tracking-wider ${
-                  m.isLive ? 'text-positive' : m.isFinal ? 'text-white/40' : 'text-white/30'
-                }`}>
-                  {m.isLive ? 'Live' : m.isFinal ? 'Final' : 'Upcoming'}
+                <span className={`text-[10px] font-semibold uppercase tracking-wider ${state.labelClass}`}>
+                  {state.label}
                 </span>
               </div>
 
@@ -294,11 +290,7 @@ function WeekScoreCards({ matchups, closestId, week }: { matchups: Matchup[]; cl
                         </div>
                       )}
                       <div key={team.teamId} className={`flex flex-col items-center gap-1.5 rounded-lg p-3 text-center ${isLeading ? 'bg-white/8' : 'bg-white/3'}`}>
-                        {teamLogoSrc(team.teamName) ? (
-                          <Image src={teamLogoSrc(team.teamName)!} alt={team.teamName} width={48} height={48} className="rounded-full object-cover object-top w-12 h-12" />
-                        ) : (
-                          <div className="w-12 h-12 rounded-full bg-white/10" />
-                        )}
+                        <OwnerAvatar ownerName={team.ownerName} teamName={team.teamName} size={48} />
                         <p className={`text-[12px] font-bold leading-tight truncate w-full ${isLeading ? 'text-white' : 'text-white/60'}`}>
                           {team.ownerName}
                         </p>
@@ -340,7 +332,7 @@ function HomeStandingsPanel({ standings }: { standings: StandingEntry[] }) {
     <div className="bg-surface rounded-xl border border-border overflow-hidden">
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <p className="text-[13px] font-bold text-foreground">Standings</p>
-        <Link href="/league" className="text-[12px] font-medium text-accent hover:text-accent-hover transition-colors inline-flex items-center min-h-[24px]">
+        <Link href="/league" className="text-[12px] font-medium text-accent-text hover:text-accent transition-colors inline-flex items-center min-h-[24px]">
           Full table →
         </Link>
       </div>
@@ -348,7 +340,7 @@ function HomeStandingsPanel({ standings }: { standings: StandingEntry[] }) {
       <div className="divide-y divide-surface-secondary">
         {top.map((entry) => {
           const isTop3 = entry.rank <= 3;
-          const rankColor = entry.rank === 1 ? '#F59E0B' : entry.rank === 2 ? '#94A3B8' : entry.rank === 3 ? '#C8956C' : '#CBD5E1';
+          const rankColor = entry.rank === 1 ? 'var(--gold-text)' : entry.rank === 2 ? 'var(--silver-text)' : entry.rank === 3 ? 'var(--bronze-text)' : 'var(--foreground-muted)';
 
           return (
             <div key={entry.teamId} className="flex items-center gap-3 px-4 py-2.5 hover:bg-background transition-colors">
@@ -358,9 +350,7 @@ function HomeStandingsPanel({ standings }: { standings: StandingEntry[] }) {
               >
                 {entry.rank}
               </span>
-              {teamLogoSrc(entry.teamName) && (
-                <Image src={teamLogoSrc(entry.teamName)!} alt={entry.teamName} width={28} height={28} className="rounded-full object-cover object-top w-7 h-7 shrink-0" />
-              )}
+              <OwnerAvatar ownerName={entry.ownerName} teamName={entry.teamName} size={28} />
               <div className="flex-1 min-w-0">
                 <p className={`text-[13px] font-semibold leading-tight truncate ${isTop3 ? 'text-foreground' : 'text-foreground-strong'}`}>
                   {entry.ownerName}
@@ -390,7 +380,7 @@ function PlayoffLeaderboardPreview() {
   if (allBets.length === 0) return null;
 
   const scores = computeAllScores(allBets, results);
-  const rankColors = ['#F59E0B', '#94A3B8', '#C8956C'];
+  const rankColors = ['var(--gold-text)', 'var(--silver-text)', 'var(--bronze-text)'];
 
   return (
     <div className="bg-surface rounded-xl border border-border overflow-hidden">
@@ -399,7 +389,7 @@ function PlayoffLeaderboardPreview() {
           <p className="text-[13px] font-bold text-foreground">Playoffs Picks</p>
           <p className="text-[10px] text-muted">NBA 2026 · Play-In</p>
         </div>
-        <Link href="/nba-playoffs" className="text-[12px] font-medium text-accent hover:text-accent-hover transition-colors inline-flex items-center min-h-[24px]">
+        <Link href="/nba-playoffs" className="text-[12px] font-medium text-accent-text hover:text-accent transition-colors inline-flex items-center min-h-[24px]">
           Full table →
         </Link>
       </div>
@@ -408,7 +398,7 @@ function PlayoffLeaderboardPreview() {
           <div key={s.ownerName} className="flex items-center gap-3 px-4 py-2 hover:bg-background transition-colors">
             <span
               className="text-[12px] font-bold w-5 text-center shrink-0 tabular-nums"
-              style={{ color: rankColors[i] ?? '#CBD5E1' }}
+              style={{ color: rankColors[i] ?? 'var(--foreground-muted)' }}
             >
               {i + 1}
             </span>

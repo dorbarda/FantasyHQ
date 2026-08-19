@@ -58,8 +58,8 @@ export default function ScoreStrip({ matchups, week, closestMatchupId }: ScoreSt
                     </span>
                   </span>
                 ) : null}
-                <span className={`text-[9px] font-semibold uppercase tracking-wide ${
-                  live ? 'text-positive' : 'text-muted'
+                <span className={`text-[10px] font-semibold uppercase tracking-wide ${
+                  live ? 'text-positive-strong' : 'text-muted'
                 }`}>
                   {text}
                 </span>

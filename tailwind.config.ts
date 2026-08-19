@@ -48,9 +48,11 @@ const config: Config = {
         accent: "var(--accent)",
         "accent-hover": "var(--accent-hover)",
         "accent-light": "var(--accent-light)",
+        "accent-text": "var(--accent-text)",
 
         // Semantic status
         positive: "var(--positive)",
+        "positive-strong": "var(--positive-strong)",
         "positive-bright": "var(--positive-bright)",
         "positive-surface": "var(--positive-surface)",
         "positive-text": "var(--positive-text)",
@@ -72,6 +74,9 @@ const config: Config = {
         silver: "var(--silver)",
         bronze: "var(--bronze)",
         "bronze-surface": "var(--bronze-surface)",
+        "gold-text": "var(--gold-text)",
+        "silver-text": "var(--silver-text)",
+        "bronze-text": "var(--bronze-text)",
       },
     },
   },

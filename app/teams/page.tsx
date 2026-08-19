@@ -55,8 +55,8 @@ export default async function TeamsPage() {
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground">Teams</h1>
-          <p className="text-[14px] text-secondary mt-1">
+          <h1 className="type-page-title text-foreground">Teams</h1>
+          <p className="type-page-subtitle mt-1">
             {teams.length} franchises · select a team to view their profile
           </p>
         </div>

@@ -40,8 +40,8 @@ export default async function MatchupsPage({
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground">Matchups</h1>
-          <p className="text-[14px] text-secondary mt-1">
+          <h1 className="type-page-title text-foreground">Matchups</h1>
+          <p className="type-page-subtitle mt-1">
             Week {data.week} · Head-to-Head{!isCurrentWeek ? ' · Final' : ''}
           </p>
         </div>

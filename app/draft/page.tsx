@@ -19,8 +19,8 @@ export default async function DraftPage({ searchParams: searchParamsPromise }: P
   if (!hasEspnCredentials()) {
     return (
       <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground mb-2">Draft Board</h1>
-        <p className="text-[14px] text-secondary mt-1">ESPN credentials required.</p>
+        <h1 className="type-page-title text-foreground mb-2">Draft Board</h1>
+        <p className="type-page-subtitle mt-1">ESPN credentials required.</p>
       </div>
     );
   }
@@ -50,8 +50,8 @@ export default async function DraftPage({ searchParams: searchParamsPromise }: P
     <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
       {/* Header */}
       <div className="mb-4">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground">Draft Board</h1>
-        <p className="text-[14px] text-secondary mt-1">
+        <h1 className="type-page-title text-foreground">Draft Board</h1>
+        <p className="type-page-subtitle mt-1">
           {isHistory
             ? 'Search a player to see their full draft history'
             : isValueAnalysis

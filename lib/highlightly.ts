@@ -23,19 +23,28 @@
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-const API_KEY = process.env.HIGHLIGHTLY_API_KEY;
+/**
+ * Config is read at call time, not module load. The snapshot script loads
+ * .env.local itself, and tests need to vary the key — neither works if the
+ * value is frozen the moment this module is imported.
+ */
+const DEFAULT_HOST = 'basketball.highlightly.net';
+
+function apiKey(): string | undefined {
+  return process.env.HIGHLIGHTLY_API_KEY;
+}
 
 /**
  * Direct Highlightly access. If the key came from RapidAPI instead, set
  * HIGHLIGHTLY_API_HOST to the RapidAPI host and the request switches to
  * RapidAPI's header pair.
  */
-const DEFAULT_HOST = 'basketball.highlightly.net';
-const HOST = process.env.HIGHLIGHTLY_API_HOST || DEFAULT_HOST;
-const IS_RAPIDAPI = HOST.includes('rapidapi.com');
+function apiHost(): string {
+  return process.env.HIGHLIGHTLY_API_HOST || DEFAULT_HOST;
+}
 
 export function hasHighlightlyKey() {
-  return !!API_KEY;
+  return !!apiKey();
 }
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -134,45 +143,89 @@ export function usableHighlights(raw: any, date: string, limit = 6): Highlight[]
 // ─── Fetching ────────────────────────────────────────────────────────────────
 
 function headers(): Record<string, string> {
-  if (IS_RAPIDAPI) {
-    return { 'x-rapidapi-key': API_KEY as string, 'x-rapidapi-host': HOST, Accept: 'application/json' };
+  const key = apiKey() as string;
+  const host = apiHost();
+  if (host.includes('rapidapi.com')) {
+    return { 'x-rapidapi-key': key, 'x-rapidapi-host': host, Accept: 'application/json' };
   }
-  return { 'x-api-key': API_KEY as string, Accept: 'application/json' };
+  return { 'x-api-key': key, Accept: 'application/json' };
 }
 
+/** The API refused us — as opposed to answering with no clips. */
+export class HighlightlyError extends Error {}
+
 /**
- * Highlights for one date. Resolves to [] on any failure — a highlights spike
- * must never be able to take a page or the nightly job down.
+ * Highlights for one date.
+ *
+ * Throws HighlightlyError when the API refuses the request, and returns [] when
+ * it answers with nothing usable. Keeping those apart matters: "no clips" is
+ * normal out of season, while a refusal means the key, host or header is wrong
+ * and someone has to go fix it. Only the nightly job calls this — pages read
+ * the snapshot file — so throwing here cannot affect a page render.
  */
 export async function getHighlightsForDate(date: string, limit = 6): Promise<Highlight[]> {
-  if (!API_KEY) return [];
+  if (!apiKey()) return [];
 
-  const url = `https://${HOST}/highlights?date=${encodeURIComponent(date)}&leagueName=NBA&limit=${limit * 4}`;
+  const host = apiHost();
+  const url = `https://${host}/highlights?date=${encodeURIComponent(date)}&leagueName=NBA&limit=${limit * 4}`;
+  let res: Response;
   try {
-    const res = await fetch(url, { headers: headers(), next: { revalidate: 86400 } } as RequestInit);
-    if (!res.ok) {
-      console.error(`Highlightly ${res.status} for ${date}`);
-      return [];
+    res = await fetch(url, { headers: headers(), next: { revalidate: 86400 } } as RequestInit);
+  } catch (err) {
+    throw new HighlightlyError(`could not reach ${host}: ${err instanceof Error ? err.message : err}`);
+  }
+
+  if (!res.ok) {
+    // The body normally says exactly why — quota, plan, bad key — and that is
+    // the difference between a five-second fix and an afternoon of guessing.
+    let detail = '';
+    try {
+      detail = (await res.text()).slice(0, 200).replace(/\s+/g, ' ').trim();
+    } catch {
+      /* body unavailable — status alone still tells us something */
     }
+    const hint =
+      res.status === 401 ? ' (key not accepted — wrong header for this key?)'
+      : res.status === 403 ? ' (key accepted but not allowed — wrong host, or plan lacks /highlights?)'
+      : res.status === 429 ? ' (rate limited — free tier is 100/day)'
+      : '';
+    throw new HighlightlyError(
+      `HTTP ${res.status} from ${host} for ${date}${hint}${detail ? ` — ${detail}` : ''}`
+    );
+  }
+
+  try {
     return usableHighlights(await res.json(), date, limit);
   } catch (err) {
-    console.error(`Highlightly fetch failed for ${date}:`, err);
-    return [];
+    throw new HighlightlyError(`unreadable response for ${date}: ${err instanceof Error ? err.message : err}`);
   }
 }
 
 /**
  * Highlights for a set of dates, fetched in sequence to stay polite on a
  * 100-requests-a-day free tier. Days with nothing usable are omitted.
+ *
+ * If EVERY date was refused, the API is misconfigured rather than quiet, so
+ * this rethrows the first reason instead of returning an innocent-looking {}.
  */
 export async function getHighlightsForDates(
   dates: string[],
   perDay = 4
 ): Promise<HighlightsByDate> {
   const byDate: HighlightsByDate = {};
+  let firstError: HighlightlyError | null = null;
+  let refused = 0;
+
   for (const date of dates) {
-    const clips = await getHighlightsForDate(date, perDay);
-    if (clips.length > 0) byDate[date] = clips;
+    try {
+      const clips = await getHighlightsForDate(date, perDay);
+      if (clips.length > 0) byDate[date] = clips;
+    } catch (err) {
+      refused++;
+      if (!firstError && err instanceof HighlightlyError) firstError = err;
+    }
   }
+
+  if (firstError && refused === dates.length) throw firstError;
   return byDate;
 }

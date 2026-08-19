@@ -1,10 +1,14 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import {
   isVerified,
   isEmbeddable,
   normalizeHighlight,
   extractItems,
   usableHighlights,
+  getHighlightsForDate,
+  getHighlightsForDates,
+  hasHighlightlyKey,
+  HighlightlyError,
 } from '../highlightly';
 
 const GOOD = {
@@ -132,5 +136,81 @@ describe('usableHighlights', () => {
   it('returns nothing for an unexpected response shape', () => {
     expect(usableHighlights({ unexpected: true }, '2025-12-01')).toEqual([]);
     expect(usableHighlights(null, '2025-12-01')).toEqual([]);
+  });
+});
+
+/**
+ * A refusal and a quiet day look identical if you only check for an empty
+ * result — that mix-up reported a real 403 as "no data for this season yet".
+ */
+describe('API refusal vs. a quiet day', () => {
+  const realFetch = globalThis.fetch;
+  const realKey = process.env.HIGHLIGHTLY_API_KEY;
+
+  beforeEach(() => { process.env.HIGHLIGHTLY_API_KEY = 'test-key'; });
+  afterEach(() => {
+    globalThis.fetch = realFetch;
+    if (realKey === undefined) delete process.env.HIGHLIGHTLY_API_KEY;
+    else process.env.HIGHLIGHTLY_API_KEY = realKey;
+  });
+
+  function mockFetch(init: { ok: boolean; status?: number; body?: unknown; text?: string }) {
+    globalThis.fetch = (async () => ({
+      ok: init.ok,
+      status: init.status ?? 200,
+      json: async () => init.body ?? {},
+      text: async () => init.text ?? '',
+    })) as unknown as typeof fetch;
+  }
+
+  it('throws on a 403 rather than pretending there were no clips', async () => {
+    mockFetch({ ok: false, status: 403, text: 'plan does not include highlights' });
+    await expect(getHighlightsForDate('2026-04-15')).rejects.toBeInstanceOf(HighlightlyError);
+  });
+
+  it('explains what a 403 usually means and quotes the body', async () => {
+    mockFetch({ ok: false, status: 403, text: 'plan does not include highlights' });
+    await expect(getHighlightsForDate('2026-04-15')).rejects.toThrow(/not allowed/);
+    await expect(getHighlightsForDate('2026-04-15')).rejects.toThrow(/plan does not include highlights/);
+  });
+
+  it('names the rate limit on a 429', async () => {
+    mockFetch({ ok: false, status: 429 });
+    await expect(getHighlightsForDate('2026-04-15')).rejects.toThrow(/100\/day/);
+  });
+
+  it('points at the header on a 401', async () => {
+    mockFetch({ ok: false, status: 401 });
+    await expect(getHighlightsForDate('2026-04-15')).rejects.toThrow(/wrong header/);
+  });
+
+  it('returns empty — not an error — when the API answers with no clips', async () => {
+    mockFetch({ ok: true, body: { data: [] } });
+    await expect(getHighlightsForDate('2026-08-15')).resolves.toEqual([]);
+  });
+
+  it('rethrows when every date was refused', async () => {
+    mockFetch({ ok: false, status: 403 });
+    await expect(getHighlightsForDates(['2026-04-15', '2026-04-16'])).rejects.toBeInstanceOf(HighlightlyError);
+  });
+
+  it('stays quiet when the API simply had nothing on those days', async () => {
+    mockFetch({ ok: true, body: { data: [] } });
+    await expect(getHighlightsForDates(['2026-08-15', '2026-08-16'])).resolves.toEqual({});
+  });
+});
+
+describe('hasHighlightlyKey', () => {
+  const realKey = process.env.HIGHLIGHTLY_API_KEY;
+  afterEach(() => {
+    if (realKey === undefined) delete process.env.HIGHLIGHTLY_API_KEY;
+    else process.env.HIGHLIGHTLY_API_KEY = realKey;
+  });
+
+  it('reflects the environment at call time, not at import time', () => {
+    delete process.env.HIGHLIGHTLY_API_KEY;
+    expect(hasHighlightlyKey()).toBe(false);
+    process.env.HIGHLIGHTLY_API_KEY = 'set-later';
+    expect(hasHighlightlyKey()).toBe(true);
   });
 });

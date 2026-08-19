@@ -28,7 +28,10 @@ jobs:
           ESPN_S2: ${{ secrets.ESPN_S2 }}
           SWID: ${{ secrets.SWID }}
           LEAGUE_ID: ${{ secrets.LEAGUE_ID }}
-          SEASON: ${{ vars.SEASON }}
+          # Repo *variable* is the documented home for this, but accept a secret
+          # too — setting it in the wrong tab is silent and looks like nothing
+          # happened at all.
+          SEASON: ${{ vars.SEASON || secrets.SEASON }}
           # Optional: highlight clips for the recap. Missing or failing, the
           # highlights snapshot is skipped and the run still passes — a red run
           # must keep meaning "the ESPN cookies expired".

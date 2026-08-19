@@ -75,6 +75,15 @@ const jobs: Array<[string, () => Promise<unknown>, (d: any) => boolean, boolean?
 
 mkdirSync(OUT_DIR, { recursive: true });
 
+// Say which season this run is for, loudly. Without it, a SEASON variable that
+// never reached the Action looks identical to one that did — the only hint is
+// which numbers show up in the data, which nobody reads.
+const { CURRENT_SEASON, CURRENT_SEASON_LABEL } = await import('../lib/season');
+console.log(
+  `📅 Season ${CURRENT_SEASON} (${CURRENT_SEASON_LABEL})` +
+  (process.env.SEASON ? '' : '  ← SEASON not set, using the built-in default')
+);
+
 // Auth probe first — this is what gives an empty result its meaning. It exits
 // on failure, so everything past this point knows the cookies are good.
 try {

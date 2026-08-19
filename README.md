@@ -69,6 +69,17 @@ Create `.env.local` (never committed) with:
 Without ESPN credentials the site still runs: ESPN-backed pages show a
 "credentials required" notice or fall back to the committed JSON.
 
+## Data sources
+
+`docs/DATA-SOURCES.md` catalogues the free APIs and endpoints available to the
+site — what ESPN's fantasy and public APIs expose beyond what we already call,
+NBA.com's public JSON, and the free-tier vendors — with a ranked list of what's
+worth building. Verify any endpoint before building on it:
+
+```bash
+npm run probe-sources   # hits every endpoint in the doc, reports what answers
+```
+
 ## Development
 
 ```bash

@@ -36,6 +36,16 @@ try {
 
 const { ESPN_S2, SWID, LEAGUE_ID } = process.env;
 const SEASON = process.env.SEASON || '2026';
+/** stats.nba.com wants "2025-26" for season 2026 — same rule as lib/season.ts */
+const NBA_SEASON = `${Number(SEASON) - 1}-${String(SEASON).slice(2)}`;
+
+/**
+ * --date=YYYY-MM-DD overrides the day the Highlightly probe asks about.
+ * Out of season there are no games, so a plain run proves nothing; pass a
+ * date from last season to prove the key and the response shape really work.
+ */
+const dateArg = process.argv.find(a => a.startsWith('--date'));
+const DATE_OVERRIDE = dateArg ? dateArg.split('=')[1] || process.argv[process.argv.indexOf(dateArg) + 1] : null;
 const HAS_CREDS = !!(ESPN_S2 && SWID && LEAGUE_ID);
 
 const LEAGUE_BASE = `https://lm-api-reads.fantasy.espn.com/apis/v3/games/fba/seasons/${SEASON}/segments/0/leagues/${LEAGUE_ID}`;
@@ -269,7 +279,7 @@ async function probeNba() {
   await probe(
     '§3.2 stats.nba.com leagueleaders',
     'https://stats.nba.com/stats/leagueleaders?LeagueID=00&PerMode=PerGame' +
-      '&Scope=S&Season=2025-26&SeasonType=Regular+Season&StatCategory=PTS',
+      `&Scope=S&Season=${NBA_SEASON}&SeasonType=Regular+Season&StatCategory=PTS`,
     {
       headers: { ...NBA_HEADERS, 'x-nba-stats-origin': 'stats', 'x-nba-stats-token': 'true' },
       note: 'NBA blocks cloud IPs — a hang/timeout here from a server is expected, from a laptop is not',
@@ -291,10 +301,13 @@ async function probeHighlightly() {
     ? { 'x-rapidapi-key': key, 'x-rapidapi-host': host }
     : { 'x-api-key': key };
 
-  // Yesterday — most likely to have finished games with clips
-  const d = new Date();
-  d.setUTCDate(d.getUTCDate() - 1);
-  const date = d.toISOString().slice(0, 10);
+  // Yesterday by default; --date=YYYY-MM-DD to check a day that had games.
+  let date = DATE_OVERRIDE;
+  if (!date) {
+    const d = new Date();
+    d.setUTCDate(d.getUTCDate() - 1);
+    date = d.toISOString().slice(0, 10);
+  }
 
   const raw = await probe(
     '§4 Highlightly highlights',
@@ -324,7 +337,10 @@ async function probeHighlightly() {
       console.log('   ↳ rights fields present — usableHighlights() can filter on them');
     }
   } else {
-    console.log('   ↳ no items — try another date, or NBA may be out of season');
+    console.log(
+      '   ↳ no items for this date. If the NBA is out of season this is CORRECT, not a failure — ' +
+      're-run with a date from last season, e.g. npm run probe-sources -- --date=2026-04-15'
+    );
   }
 }
 

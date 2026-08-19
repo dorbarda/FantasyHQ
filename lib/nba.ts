@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { NBAGame, NBAConferenceStanding, NBAStatLeader, NBAStatLeadersData } from './types';
+import { CURRENT_SEASON, CURRENT_SEASON_LABEL } from './season';
 
 const NBA_HEADERS = {
   'User-Agent':
@@ -74,7 +75,7 @@ export async function getNBAConferenceStandings(): Promise<{
   try {
     // ESPN public standings API — reliable server-side, no auth required
     const res = await fetchWithTimeout(
-      'https://site.api.espn.com/apis/v2/sports/basketball/nba/standings?season=2026',
+      `https://site.api.espn.com/apis/v2/sports/basketball/nba/standings?season=${CURRENT_SEASON}`,
       { headers: NBA_HEADERS, next: { revalidate: 3600 } }
     );
     if (!res.ok) return { east: [], west: [] };
@@ -143,7 +144,7 @@ async function fetchStatLeaders(statCategory: string, top: number = 3): Promise<
   try {
     const url =
       `https://stats.nba.com/stats/leagueleaders?LeagueID=00&PerMode=PerGame` +
-      `&Scope=S&Season=2025-26&SeasonType=Regular+Season&StatCategory=${statCategory}`;
+      `&Scope=S&Season=${CURRENT_SEASON_LABEL}&SeasonType=Regular+Season&StatCategory=${statCategory}`;
     const res = await fetchWithTimeout(url, {
       headers: NBA_STATS_HEADERS,
       next: { revalidate: 3600 },

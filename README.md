@@ -27,10 +27,30 @@ a Vercel redeploy (~1 min). Each season's pool lives in `data/playoffs/<year>/`
 
 ### Starting a new season
 
-Set the `SEASON` env var (ending year — `2027` for the 2026-27 season) in the
-Vercel project and as the GitHub Actions `SEASON` variable. Everything derives
-from it via `lib/season.ts`: ESPN fetches, records/history/draft year lists,
-and the playoffs page. Create `data/playoffs/<year>/` when the pool opens.
+Everything derives from one env var. `SEASON` is the **ending** year — `2027`
+for the 2026-27 season — and `lib/season.ts` is the only place it's read.
+
+> ⚠️ **Roll the ESPN league over first.** Switching `SEASON` points every ESPN
+> call at that season's league. If the league doesn't exist on ESPN yet, those
+> calls 404: live pages fall back to their "credentials required" notice, and
+> the nightly snapshot Action goes **red** and emails you — which is the same
+> alarm as expired cookies, so you'd be chasing the wrong problem. Confirm the
+> league opens in the ESPN app for the new season, then switch.
+
+Steps:
+
+1. ESPN: confirm the league exists for the new season.
+2. Vercel → Settings → Environment Variables → set `SEASON=2027` → redeploy.
+3. GitHub → Settings → Secrets and variables → Actions → **Variables** tab →
+   set `SEASON=2027`. (Variable, not secret — it isn't sensitive.)
+4. Run the `ESPN snapshot` Action manually to refill `data/snapshots/` for the
+   new season.
+5. Create `data/playoffs/<year>/` when that season's pool opens.
+
+Nothing else is year-aware: ESPN fetches, the NBA standings and stat-leaders
+calls, records/history/draft year lists, the schedule grid, the playoffs page
+and every on-screen season label all read `lib/season.ts`. Verified by building
+and rendering the whole site under `SEASON=2027`.
 
 ### Nightly snapshots
 

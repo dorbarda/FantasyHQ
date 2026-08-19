@@ -10,6 +10,7 @@ import ScoreStrip from '@/components/ScoreStrip';
 import OwnerAvatar from '@/components/OwnerAvatar';
 import RecapTeaser from '@/components/RecapTeaser';
 import { computeWeeklyRecap, latestRecapWeek } from '@/lib/recap';
+import { CURRENT_SEASON, CURRENT_SEASON_DISPLAY } from '@/lib/season';
 import { loadRecapRows, loadAddsForWeek } from '@/lib/recap-data';
 
 export const revalidate = 1800;
@@ -390,7 +391,7 @@ function PlayoffLeaderboardPreview() {
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <div>
           <p className="text-[13px] font-bold text-foreground">Playoffs Picks</p>
-          <p className="text-[10px] text-muted">NBA 2026 · Play-In</p>
+          <p className="text-[10px] text-muted">NBA {CURRENT_SEASON} · Play-In</p>
         </div>
         <Link href="/nba-playoffs" className="text-[12px] font-medium text-accent-text hover:text-accent transition-colors inline-flex items-center min-h-[24px]">
           Full table →
@@ -509,7 +510,7 @@ export default async function HomePage() {
           />
           <div className="hidden sm:block h-8 w-px bg-border" />
           <div className="hidden sm:block">
-            <p className="text-[13px] font-medium text-secondary">Season 2025–26</p>
+            <p className="text-[13px] font-medium text-secondary">Season {CURRENT_SEASON_DISPLAY}</p>
             <p className="text-[12px] text-muted">Private NBA Fantasy League</p>
           </div>
         </div>

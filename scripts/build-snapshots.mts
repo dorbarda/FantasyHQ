@@ -68,7 +68,7 @@ const jobs: Array<[string, () => Promise<unknown>, (d: any) => boolean, boolean?
   ['playoff-depth', getPlayoffDepth, d => d.rows?.length > 0],
   // NBA schedule grid — season-static, so one nightly write keeps /schedule
   // working (and fast) all week even when the cookies expire.
-  ['schedule', getScheduleSeason, d => d.schedules?.length > 0 && Object.keys(d.weeks ?? {}).length > 0],
+  ['schedule', getScheduleSeason, d => d.schedules?.length > 0 && d.weekCount > 0],
   // Highlight clips for the recap — optional, and skipped entirely without a key.
   ['highlights', buildHighlightsSnapshot, d => Object.keys(d ?? {}).length > 0, true],
 ];

@@ -3,6 +3,9 @@ import {
   parseProTeamSchedules,
   countMatchupPeriods,
   buildWeekMap,
+  currentWeekFor,
+  weeksOf,
+  weekCountOf,
   buildWeekMatrix,
   weekFromSeason,
   datesForWeek,
@@ -272,9 +275,7 @@ describe('buildWeekMatrix', () => {
 
 describe('weekFromSeason', () => {
   const season = {
-    currentWeek: 3,
-    maxWeek: 3,
-    weeks: buildWeekMap(parseProTeamSchedules(RAW_SCHEDULE) as ProTeamSchedule[], 3),
+    weekCount: 3,
     schedules: parseProTeamSchedules(RAW_SCHEDULE) as ProTeamSchedule[],
   };
 
@@ -297,9 +298,7 @@ describe('weekFromSeason', () => {
 
 describe('datesForWeek', () => {
   const season = {
-    currentWeek: 3,
-    maxWeek: 3,
-    weeks: buildWeekMap(parseProTeamSchedules(RAW_SCHEDULE) as ProTeamSchedule[], 3),
+    weekCount: 3,
     schedules: parseProTeamSchedules(RAW_SCHEDULE) as ProTeamSchedule[],
   };
 
@@ -321,5 +320,80 @@ describe('datesForWeek', () => {
 
   it('returns nothing for a week the league does not have', () => {
     expect(datesForWeek(season, 99)).toEqual([]);
+  });
+});
+
+/**
+ * The derived week map used to be frozen into the snapshot, so this corrected
+ * mapping kept serving the old broken weeks until the nightly job re-ran.
+ * Deriving on read is what makes a logic fix take effect on deploy.
+ */
+describe('derived-on-read season', () => {
+  const TIP_OFF = Date.UTC(2025, 9, 21, 23, 0); // Tue 21 Oct
+  const schedules: ProTeamSchedule[] = [{
+    proTeamId: 2, abbrev: 'BOS',
+    games: Array.from({ length: 27 }, (_, i) => ({
+      scoringPeriodId: i + 1, opponentId: 13, isHome: true,
+      dateMs: TIP_OFF + i * 86_400_000,
+    })),
+  }];
+  const season = { weekCount: 4, schedules };
+
+  it('computes the week map from the stored schedules', () => {
+    expect(weeksOf(season)[1]).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(weeksOf(season)[2]).toHaveLength(7);
+  });
+
+  it('ignores a stale week map left by an older snapshot', () => {
+    const stale = { ...season, weeks: { 1: [1], 2: [2], 3: [3], 4: [4] } };
+    // the broken one-day-per-week shape must not survive
+    expect(weeksOf(stale)[1]).toEqual([1, 2, 3, 4, 5, 6]);
+  });
+
+  it('recovers the week count from an older snapshot that lacks it', () => {
+    const old = { weekCount: 0, schedules, weeks: { 1: [1], 2: [2], 3: [3] } };
+    expect(weekCountOf(old)).toBe(3);
+  });
+});
+
+describe('currentWeekFor', () => {
+  const TIP_OFF = Date.UTC(2025, 9, 21, 23, 0); // Tue 21 Oct 2025
+  const schedules: ProTeamSchedule[] = [{
+    proTeamId: 2, abbrev: 'BOS',
+    games: Array.from({ length: 27 }, (_, i) => ({
+      scoringPeriodId: i + 1, opponentId: 13, isHome: true,
+      dateMs: TIP_OFF + i * 86_400_000,
+    })),
+  }];
+  const season = { weekCount: 4, schedules };
+
+  it('returns week 1 before the season has started', () => {
+    expect(currentWeekFor(season, new Date('2025-08-19T12:00:00Z'))).toBe(1);
+  });
+
+  it('finds the week containing today', () => {
+    // week 1 is Tue 21 - Sun 26 Oct, week 2 is Mon 27 Oct - Sun 2 Nov
+    expect(currentWeekFor(season, new Date('2025-10-23T20:00:00Z'))).toBe(1);
+    expect(currentWeekFor(season, new Date('2025-10-28T20:00:00Z'))).toBe(2);
+  });
+
+  it('treats the last day of a week as still that week', () => {
+    expect(currentWeekFor(season, new Date('2025-10-26T20:00:00Z'))).toBe(1);
+  });
+
+  it('clamps to the final week once the season is over', () => {
+    expect(currentWeekFor(season, new Date('2026-07-01T12:00:00Z'))).toBe(4);
+  });
+
+  it('never returns the last week for a season that has not started', () => {
+    // the exact bug: the page opened on week 21 of an unplayed season
+    const future = { weekCount: 21, schedules: [{
+      proTeamId: 2, abbrev: 'BOS',
+      games: Array.from({ length: 150 }, (_, i) => ({
+        scoringPeriodId: i + 1, opponentId: 13, isHome: true,
+        dateMs: Date.UTC(2026, 9, 20, 23, 0) + i * 86_400_000,
+      })),
+    }] };
+    expect(currentWeekFor(future, new Date('2026-08-19T12:00:00Z'))).toBe(1);
   });
 });

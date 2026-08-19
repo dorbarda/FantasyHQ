@@ -103,6 +103,7 @@ so the names look different on each friend's phone and mismatched against the
 English beside them. Fix by adding a Hebrew face that pairs with Inter —
 `@fontsource/heebo` or `@fontsource/assistant` are both good geometric
 companions — and putting it ahead of the fallback for these elements.
+**Decided: add the webfont** rather than accept the system fallback.
 
 **Direction.** Hebrew is RTL inside an otherwise LTR page. Give each Hebrew
 name its own element with `dir="rtl"` (or `dir="auto"`), rather than relying on
@@ -202,10 +203,11 @@ page, above the matchup grid, so it is seen without hunting.
 4. The §4 transactions change; Hot Pickup lights up after the next snapshot.
 5. Optional Riser/Faller if the page still feels thin.
 
-## 7. Open
+## 7. Settled
 
-- **Hebrew webfont** — add `@fontsource/heebo`/`assistant`, or accept the
-  system fallback? (See §2b.)
-- **English subtitles** — should each Hebrew name carry a small English gloss
-  underneath, or stand alone?
-- Award names and scope are settled. Nothing else blocks starting.
+- **Hebrew webfont: yes** (Dor, 2026-08-19). Add a paired Hebrew face so the
+  names render identically on every device. See §2b.
+- **English gloss: yes.** Each award shows its name with a small English
+  subtitle beneath (e.g. עשה לו גלס / "biggest blowout"), so the reference
+  still reads for anyone who misses the joke.
+- Award names and scope are settled. Nothing blocks starting.

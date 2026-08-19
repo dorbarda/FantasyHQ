@@ -46,10 +46,10 @@ function CustomTooltip({ active, payload, label }: {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload;
   return (
-    <div className="bg-white border border-[#E2E8F0] rounded-lg p-3 shadow-lg text-left">
-      <p className="text-[12px] font-bold text-[#0F172A] mb-1">{label}</p>
-      <p className="text-[11px] text-[#475569]">{d.teamName}</p>
-      <p className="text-[11px] text-[#0F172A] font-semibold mt-1">
+    <div className="bg-surface border border-border rounded-lg p-3 shadow-lg text-left">
+      <p className="text-[12px] font-bold text-foreground mb-1">{label}</p>
+      <p className="text-[11px] text-secondary">{d.teamName}</p>
+      <p className="text-[11px] text-foreground font-semibold mt-1">
         #{d.position} of {d.totalTeams} &nbsp;·&nbsp; {d.wins}–{d.losses}
       </p>
     </div>
@@ -70,7 +70,7 @@ export default function TeamCareerChart({ data }: { data: CareerPoint[] }) {
         <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
         <XAxis
           dataKey="seasonLabel"
-          tick={{ fill: '#94A3B8', fontSize: 11 }}
+          tick={{ fill: 'var(--foreground-muted)', fontSize: 11 }}
           axisLine={false}
           tickLine={false}
         />

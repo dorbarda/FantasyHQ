@@ -1,11 +1,12 @@
 import { getTeamMeta } from '@/lib/team-meta';
+import { bestTextOn } from '@/lib/contrast';
 import { getInitials } from '@/lib/owner-meta';
 import type { PickStatus } from '@/lib/playoff-analytics';
 
 export function Avatar({
   name,
   size = 24,
-  color = '#94A3B8',
+  color = 'var(--foreground-muted)',
 }: {
   name: string;
   size?: number;
@@ -19,7 +20,7 @@ export function Avatar({
         height: size,
         borderRadius: '50%',
         background: color,
-        color: '#fff',
+        color: color.startsWith('#') ? bestTextOn(color) : '#fff',
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -50,7 +51,7 @@ export function TeamMark({
         height: size,
         borderRadius: '50%',
         background: meta.primary,
-        color: '#fff',
+        color: bestTextOn(meta.primary),
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -66,10 +67,10 @@ export function TeamMark({
 }
 
 const STREAK_COLORS: Record<string, string> = {
-  exact:   '#EAB308',
-  correct: '#10B981',
-  wrong:   '#EF4444',
-  wrong43: '#EF4444',
+  exact: 'var(--gold)',
+  correct: 'var(--positive)',
+  wrong: 'var(--negative)',
+  wrong43: 'var(--negative)',
 };
 
 export function Streak({

@@ -23,7 +23,7 @@ interface Props {
   color?: string;
 }
 
-export default function TeamCategoryRadar({ percs, color = '#60A5FA' }: Props) {
+export default function TeamCategoryRadar({ percs, color = 'var(--info-bright)' }: Props) {
   const data = KEYS.map(key => ({
     category: CATEGORY_LABELS[key],
     value: percs[key],
@@ -36,7 +36,7 @@ export default function TeamCategoryRadar({ percs, color = '#60A5FA' }: Props) {
           <PolarGrid stroke="#E2E8F0" />
           <PolarAngleAxis
             dataKey="category"
-            tick={{ fill: '#94A3B8', fontSize: 11, fontWeight: 600 }}
+            tick={{ fill: 'var(--foreground-muted)', fontSize: 11, fontWeight: 600 }}
           />
           <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
           <Radar
@@ -51,17 +51,17 @@ export default function TeamCategoryRadar({ percs, color = '#60A5FA' }: Props) {
           />
           <Tooltip
             contentStyle={{
-              background: '#F1F5F9',
-              border: '1px solid #E2E8F0',
+              background: 'var(--surface-secondary)',
+              border: '1px solid var(--border)',
               borderRadius: 8,
               fontSize: 12,
             }}
-            itemStyle={{ color: '#0F172A' }}
+            itemStyle={{ color: 'var(--foreground)' }}
             formatter={(value) => [`${value}`, 'Percentile']}
           />
         </RadarChart>
       </ResponsiveContainer>
-      <p className="text-[11px] text-[#475569] text-center mt-1">
+      <p className="text-[11px] text-secondary text-center mt-1">
         Avg rank percentile across {percs.seasonsCount} season{percs.seasonsCount !== 1 ? 's' : ''} · 100 = league leader · TO: lower is better (inverted)
       </p>
     </div>

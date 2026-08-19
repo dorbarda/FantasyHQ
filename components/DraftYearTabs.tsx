@@ -26,8 +26,8 @@ export default function DraftYearTabs({ years, currentYear, view }: DraftYearTab
             onClick={() => router.push(`/draft?year=${y}`)}
             className={`px-3 py-1.5 rounded text-[13px] font-medium transition-colors ${
               active
-                ? 'bg-[#2A4066] text-white'
-                : 'bg-white border border-[#E2E8F0] text-[#94A3B8] hover:bg-white hover:text-[#0F172A]'
+                ? 'bg-panel-border text-white'
+                : 'bg-surface border border-border text-muted hover:bg-surface hover:text-foreground'
             }`}
           >
             {seasonLabel(y)}
@@ -36,15 +36,15 @@ export default function DraftYearTabs({ years, currentYear, view }: DraftYearTab
       })}
 
       {/* Divider */}
-      <span className="w-px h-5 bg-[#E2E8F0] mx-1" />
+      <span className="w-px h-5 bg-border mx-1" />
 
       {/* Player History tab */}
       <button
         onClick={() => router.push('/draft?view=history')}
         className={`px-3 py-1.5 rounded text-[13px] font-medium transition-colors ${
           isHistory
-            ? 'bg-[#2A4066] text-white'
-            : 'bg-white border border-[#E2E8F0] text-[#94A3B8] hover:bg-white hover:text-[#0F172A]'
+            ? 'bg-panel-border text-white'
+            : 'bg-surface border border-border text-muted hover:bg-surface hover:text-foreground'
         }`}
       >
         Player History
@@ -55,8 +55,8 @@ export default function DraftYearTabs({ years, currentYear, view }: DraftYearTab
         onClick={() => router.push(`/draft?year=${currentYear}&view=value`)}
         className={`px-3 py-1.5 rounded text-[13px] font-medium transition-colors ${
           view === 'value'
-            ? 'bg-[#2A4066] text-white'
-            : 'bg-white border border-[#E2E8F0] text-[#94A3B8] hover:bg-white hover:text-[#0F172A]'
+            ? 'bg-panel-border text-white'
+            : 'bg-surface border border-border text-muted hover:bg-surface hover:text-foreground'
         }`}
       >
         Value Analysis

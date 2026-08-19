@@ -27,15 +27,15 @@ export default function PlayoffTabNav({ active }: { active: Tab }) {
 
   return (
     <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0 mb-6">
-      <div className="flex gap-1 p-1 bg-[#F1F5F9] rounded-lg border border-[#E2E8F0] w-max">
+      <div className="flex gap-1 p-1 bg-surface-secondary rounded-lg border border-border w-max">
         {TABS.map(t => (
           <button
             key={t.id}
             onClick={() => navigate(t.id)}
             className={`whitespace-nowrap px-3 sm:px-4 py-1.5 rounded-md text-[13px] font-semibold transition-all ${
               active === t.id
-                ? 'bg-white text-[#0F172A] shadow-sm border border-[#E2E8F0]'
-                : 'text-[#64748B] hover:text-[#0F172A]'
+                ? 'bg-surface text-foreground shadow-sm border border-border'
+                : 'text-tertiary hover:text-foreground'
             }`}
           >
             {t.label}

@@ -194,9 +194,9 @@ export default async function AnalysisPage() {
 
   if (!depthSnap && !statsSnap && !hasEspnCredentials()) {
     return (
-      <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A] mb-2">Analysis</h1>
-        <p className="text-[14px] text-[#475569] mt-1">ESPN credentials required.</p>
+      <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
+        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground mb-2">Analysis</h1>
+        <p className="text-[14px] text-secondary mt-1">ESPN credentials required.</p>
       </div>
     );
   }
@@ -228,20 +228,20 @@ export default async function AnalysisPage() {
 
   if (error || !result) {
     return (
-      <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A] mb-2">Analysis</h1>
+      <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
+        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground mb-2">Analysis</h1>
         {statsData.categoryStandings.length > 0 ? (
-          <section className="bg-[#F1F5F9] border border-[#E2E8F0] rounded-xl px-4 py-4 mt-4">
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-1">
+          <section className="bg-surface-secondary border border-border rounded-xl px-4 py-4 mt-4">
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-1">
               Category Standings
             </p>
-            <p className="text-[11px] text-[#475569] mb-4">
+            <p className="text-[11px] text-secondary mb-4">
               Rank percentile per category — 100 = league leader
             </p>
             <CategoryRadarChartClient standings={statsData.categoryStandings} />
           </section>
         ) : (
-          <p className="text-[14px] text-[#475569] mt-1">Could not load data — try again later.</p>
+          <p className="text-[14px] text-secondary mt-1">Could not load data — try again later.</p>
         )}
       </div>
     );
@@ -256,22 +256,22 @@ export default async function AnalysisPage() {
   const mostEfficient = [...teams].sort((a, b) => b.avgScorePP - a.avgScorePP)[0];
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
+    <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
       {/* Header */}
       <div className="mb-5">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A]">Analysis</h1>
-        <p className="text-[14px] text-[#475569] mt-1">
+        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground">Analysis</h1>
+        <p className="text-[14px] text-secondary mt-1">
           {leagueSummary.totalWeeks} week{leagueSummary.totalWeeks !== 1 ? 's' : ''} · avg {leagueSummary.avgLeagueScore.toFixed(1)} pts/team · season high {leagueSummary.highScore.toFixed(1)}
         </p>
       </div>
 
       {/* Category Standings Radar */}
       {statsData.categoryStandings.length > 0 && (
-        <section className="bg-[#F1F5F9] border border-[#E2E8F0] rounded-xl px-4 py-4 mb-6">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-1">
+        <section className="bg-surface-secondary border border-border rounded-xl px-4 py-4 mb-6">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-1">
             Category Standings
           </p>
-          <p className="text-[11px] text-[#475569] mb-4">
+          <p className="text-[11px] text-secondary mb-4">
             Rank percentile per category — 100 = league leader
           </p>
           <CategoryRadarChartClient standings={statsData.categoryStandings} />
@@ -281,17 +281,17 @@ export default async function AnalysisPage() {
       {/* Insight cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
         {[
-          { label: 'Most Consistent', value: mostConsistent.ownerName, sub: `±${mostConsistent.scoreStdDev.toFixed(1)} std dev`, color: '#34D399' },
-          { label: 'Most Efficient', value: mostEfficient.ownerName, sub: `${mostEfficient.avgScorePP.toFixed(1)} pts/player`, color: '#C8956C' },
-          { label: 'Most Starters', value: mostPlayers.ownerName, sub: `${mostPlayers.avgPlayers.toFixed(2)} players/day`, color: '#94A3B8' },
+          { label: 'Most Consistent', value: mostConsistent.ownerName, sub: `±${mostConsistent.scoreStdDev.toFixed(1)} std dev`, color: 'var(--positive-bright)' },
+          { label: 'Most Efficient', value: mostEfficient.ownerName, sub: `${mostEfficient.avgScorePP.toFixed(1)} pts/player`, color: 'var(--accent)' },
+          { label: 'Most Starters', value: mostPlayers.ownerName, sub: `${mostPlayers.avgPlayers.toFixed(2)} players/day`, color: 'var(--foreground-muted)' },
           { label: 'Luckiest', value: luckiest.ownerName, sub: `+${luckiest.luckDelta.toFixed(1)} luck delta`, color: luckiest.luckDelta >= 0 ? '#34D399' : '#F87171' },
         ].map(card => (
-          <div key={card.label} className="bg-[#F1F5F9] border border-[#E2E8F0] rounded-xl px-4 py-3">
+          <div key={card.label} className="bg-surface-secondary border border-border rounded-xl px-4 py-3">
             <p className="text-[10px] font-semibold uppercase tracking-widest mb-1" style={{ color: card.color }}>
               {card.label}
             </p>
-            <p className="text-[15px] font-bold text-[#0F172A] leading-tight">{card.value}</p>
-            <p className="text-[11px] text-[#475569] mt-0.5">{card.sub}</p>
+            <p className="text-[15px] font-bold text-foreground leading-tight">{card.value}</p>
+            <p className="text-[11px] text-secondary mt-0.5">{card.sub}</p>
           </div>
         ))}
       </div>
@@ -299,22 +299,22 @@ export default async function AnalysisPage() {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {/* Weekly score/player trend */}
-        <section className="bg-[#F1F5F9] border border-[#E2E8F0] rounded-xl px-4 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-1">
+        <section className="bg-surface-secondary border border-border rounded-xl px-4 py-4">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-1">
             Score / Player — Weekly Trend
           </p>
-          <p className="text-[11px] text-[#475569] mb-4">
+          <p className="text-[11px] text-secondary mb-4">
             Normalizes for matchup length — longer weeks have more players
           </p>
           <WeeklyTrendChart entries={weeklyTrend} />
         </section>
 
         {/* Luck delta */}
-        <section className="bg-[#F1F5F9] border border-[#E2E8F0] rounded-xl px-4 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-1">
+        <section className="bg-surface-secondary border border-border rounded-xl px-4 py-4">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-1">
             Luck Delta
           </p>
-          <p className="text-[11px] text-[#475569] mb-4">
+          <p className="text-[11px] text-secondary mb-4">
             Actual wins minus expected wins — positive means you&apos;ve been lucky
           </p>
           <LuckDeltaChart entries={luckEntries} />
@@ -322,21 +322,21 @@ export default async function AnalysisPage() {
       </div>
 
       {/* Efficiency scatter */}
-      <section className="bg-[#F1F5F9] border border-[#E2E8F0] rounded-xl px-4 py-4 mb-6">
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-1">
+      <section className="bg-surface-secondary border border-border rounded-xl px-4 py-4 mb-6">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-1">
           Score vs Efficiency
         </p>
-        <p className="text-[11px] text-[#475569] mb-4">
+        <p className="text-[11px] text-secondary mb-4">
           X = avg score · Y = pts per player · Bubble size = wins &mdash; top-right is high-volume &amp; efficient
         </p>
         <EfficiencyScatterChart points={scatterPoints} />
       </section>
 
-      <div className="border-b border-[#E2E8F0] mb-6" />
+      <div className="border-b border-border mb-6" />
 
       {/* Team rankings table */}
       <section className="mb-6">
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-3">
           Team Rankings · Click any column header to sort
         </p>
         <AnalysisTable teams={teams} />
@@ -347,18 +347,18 @@ export default async function AnalysisPage() {
             ['Score/PP', 'Average score per player started — quality over quantity'],
             ['Luck', 'Actual wins minus expected wins (if you played every team each week)'],
           ].map(([term, def]) => (
-            <p key={term} className="text-[11px] text-[#475569]">
-              <span className="text-[#94A3B8] font-medium">{term}:</span> {def}
+            <p key={term} className="text-[11px] text-secondary">
+              <span className="text-muted font-medium">{term}:</span> {def}
             </p>
           ))}
         </div>
       </section>
 
-      <div className="border-b border-[#E2E8F0] mb-6" />
+      <div className="border-b border-border mb-6" />
 
       {/* Weekly highlights */}
       <section className="mb-6">
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-3">
           Weekly Highlights
         </p>
         <WeeklyHighlights
@@ -368,24 +368,24 @@ export default async function AnalysisPage() {
         />
       </section>
 
-      <div className="border-b border-[#E2E8F0] mb-6" />
+      <div className="border-b border-border mb-6" />
 
       {/* Depth analysis table */}
       <section>
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-3">
           Depth Advantage
         </p>
-        <p className="text-[12px] text-[#475569] mb-3">
+        <p className="text-[12px] text-secondary mb-3">
           Win rate when starting more players than your opponent vs. fewer players
         </p>
-        <div className="overflow-x-auto rounded-xl border border-[#E2E8F0]">
+        <div className="overflow-x-auto rounded-xl border border-border">
           <table className="w-full text-sm">
-            <thead className="border-b border-[#E2E8F0] bg-[#F1F5F9]">
+            <thead className="border-b border-border bg-surface-secondary">
               <tr>
-                <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8]">Team</th>
-                <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8]">More Players</th>
-                <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8]">Fewer Players</th>
-                <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8]">Depth Matters?</th>
+                <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-muted">Team</th>
+                <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-muted">More Players</th>
+                <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-muted">Fewer Players</th>
+                <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-muted">Depth Matters?</th>
               </tr>
             </thead>
             <tbody>
@@ -398,10 +398,10 @@ export default async function AnalysisPage() {
                 const disadvPct = t.depthDisadvTotal > 0 ? t.depthDisadvWins / t.depthDisadvTotal : null;
                 const delta = advPct !== null && disadvPct !== null ? advPct - disadvPct : null;
                 return (
-                  <tr key={t.teamId} className="border-b border-[#E2E8F0]/50 last:border-0 hover:bg-[#F1F5F9]/60">
+                  <tr key={t.teamId} className="border-b border-border/50 last:border-0 hover:bg-surface-secondary/60">
                     <td className="px-3 py-2.5">
                       <div className="flex items-center gap-2">
-                        <span className="text-[13px] font-semibold text-[#0F172A]">{t.ownerName}</span>
+                        <span className="text-[13px] font-semibold text-foreground">{t.ownerName}</span>
                       </div>
                     </td>
                     <td className="px-3 py-2.5">
@@ -409,23 +409,23 @@ export default async function AnalysisPage() {
                         <span className="text-[13px] font-mono" style={{ color: advPct >= 0.6 ? '#34D399' : advPct >= 0.4 ? '#94A3B8' : '#F87171' }}>
                           {(advPct * 100).toFixed(0)}%
                         </span>
-                      ) : <span className="text-[#475569]">—</span>}
-                      <span className="ml-1.5 text-[11px] text-[#475569]">({t.depthAdvWins}/{t.depthAdvTotal})</span>
+                      ) : <span className="text-secondary">—</span>}
+                      <span className="ml-1.5 text-[11px] text-secondary">({t.depthAdvWins}/{t.depthAdvTotal})</span>
                     </td>
                     <td className="px-3 py-2.5">
                       {disadvPct !== null ? (
                         <span className="text-[13px] font-mono" style={{ color: disadvPct >= 0.5 ? '#34D399' : disadvPct >= 0.3 ? '#94A3B8' : '#F87171' }}>
                           {(disadvPct * 100).toFixed(0)}%
                         </span>
-                      ) : <span className="text-[#475569]">—</span>}
-                      <span className="ml-1.5 text-[11px] text-[#475569]">({t.depthDisadvWins}/{t.depthDisadvTotal})</span>
+                      ) : <span className="text-secondary">—</span>}
+                      <span className="ml-1.5 text-[11px] text-secondary">({t.depthDisadvWins}/{t.depthDisadvTotal})</span>
                     </td>
                     <td className="px-3 py-2.5">
                       {delta !== null ? (
-                        <span className={`text-[12px] font-medium ${delta > 0.15 ? 'text-[#34D399]' : delta < -0.1 ? 'text-[#F87171]' : 'text-[#94A3B8]'}`}>
+                        <span className={`text-[12px] font-medium ${delta > 0.15 ? 'text-positive-bright' : delta < -0.1 ? 'text-negative-bright' : 'text-muted'}`}>
                           {delta > 0.15 ? 'Yes — depth wins' : delta < -0.1 ? 'No — talent wins' : 'Neutral'}
                         </span>
-                      ) : <span className="text-[#475569]">—</span>}
+                      ) : <span className="text-secondary">—</span>}
                     </td>
                   </tr>
                 );

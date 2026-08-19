@@ -11,16 +11,16 @@ export default function AnalyticsAccordionSection({ title, defaultOpen = false, 
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div className="mb-4 border border-[#E2E8F0] rounded-xl overflow-hidden">
+    <div className="mb-4 border border-border rounded-xl overflow-hidden">
       <button
-        className="w-full flex items-center justify-between px-5 py-4 bg-white hover:bg-[#F8FAFC] transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 bg-surface hover:bg-background transition-colors"
         onClick={() => setIsOpen(o => !o)}
       >
-        <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#94A3B8]">{title}</span>
-        <span className="text-[#94A3B8] text-[13px] font-bold">{isOpen ? '▲' : '▼'}</span>
+        <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-muted">{title}</span>
+        <span className="text-muted text-[13px] font-bold">{isOpen ? '▲' : '▼'}</span>
       </button>
       {isOpen && (
-        <div className="p-4 border-t border-[#E2E8F0] bg-[#F8FAFC]">
+        <div className="p-4 border-t border-border bg-background">
           {children}
         </div>
       )}

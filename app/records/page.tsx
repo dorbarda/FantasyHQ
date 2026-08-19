@@ -24,9 +24,9 @@ export default async function RecordsPage() {
     }
   } else {
     return (
-      <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A] mb-2">Records</h1>
-        <p className="text-[14px] text-[#475569] mt-1">
+      <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
+        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground mb-2">Records</h1>
+        <p className="text-[14px] text-secondary mt-1">
           ESPN credentials required to compute all-time records.
         </p>
       </div>
@@ -35,47 +35,47 @@ export default async function RecordsPage() {
 
   if (!data) {
     return (
-      <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A] mb-2">Records</h1>
-        <p className="text-[14px] text-[#475569] mt-1">Could not load records — try again later.</p>
+      <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
+        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground mb-2">Records</h1>
+        <p className="text-[14px] text-secondary mt-1">Could not load records — try again later.</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
+    <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
       {/* Header */}
       <div className="mb-5">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A]">Records</h1>
-        <p className="text-[14px] text-[#475569] mt-1">
+        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground">Records</h1>
+        <p className="text-[14px] text-secondary mt-1">
           All-time stats across every season
-          {asOf && <span className="text-[#94A3B8]"> · updated {formatSnapshotDate(asOf)}</span>}
+          {asOf && <span className="text-muted"> · updated {formatSnapshotDate(asOf)}</span>}
         </p>
       </div>
 
       {/* ── Hall of Fame ──────────────────────────────────────── */}
       <section className="mb-5">
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-3">
           Hall of Fame
         </p>
         <HallOfFame careers={data.hallOfFame} />
       </section>
 
-      <div className="border-b border-[#E2E8F0] mb-5" />
+      <div className="border-b border-border mb-5" />
 
       {/* ── All-Time Records ──────────────────────────────────── */}
       <section className="mb-5">
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-3">
           All-Time Records
         </p>
         <SuperlativesGrid superlatives={data.superlatives} />
       </section>
 
-      <div className="border-b border-[#E2E8F0] mb-5" />
+      <div className="border-b border-border mb-5" />
 
       {/* ── Head-to-Head Matrix ───────────────────────────────── */}
       <section>
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-3">
           Head-to-Head · All Time
         </p>
         <H2HMatrix h2hMap={data.h2hMap} ownerNames={data.ownerNames} />

@@ -36,45 +36,45 @@ export default async function MatchupsPage({
   const projectedMatchups = data.matchups.filter((m) => !m.isLive && !m.isFinal);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
+    <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A]">Matchups</h1>
-          <p className="text-[14px] text-[#475569] mt-1">
+          <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground">Matchups</h1>
+          <p className="text-[14px] text-secondary mt-1">
             Week {data.week} · Head-to-Head{!isCurrentWeek ? ' · Final' : ''}
           </p>
         </div>
         {liveMatchups.length > 0 && (
           <div className="flex items-center gap-1.5">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#34D399] opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#34D399]"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-positive-bright opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-positive-bright"></span>
             </span>
-            <span className="text-[12px] font-semibold text-[#34D399]">Live</span>
+            <span className="text-[12px] font-semibold text-positive-bright">Live</span>
           </div>
         )}
       </div>
 
       {/* Week navigation */}
-      <div className="flex items-center justify-center gap-6 mb-6 bg-white border border-[#E2E8F0] rounded-xl px-4 py-3">
+      <div className="flex items-center justify-center gap-6 mb-6 bg-surface border border-border rounded-xl px-4 py-3">
         {prevWeek ? (
           <Link
             href={`/matchups?week=${prevWeek}`}
-            className="text-[13px] text-[#475569] hover:text-[#94A3B8] transition-colors"
+            className="text-[13px] text-secondary hover:text-muted transition-colors"
           >
             ← Wk {prevWeek}
           </Link>
         ) : (
           <span className="w-14" />
         )}
-        <span className="text-[13px] font-semibold text-[#94A3B8]">
+        <span className="text-[13px] font-semibold text-muted">
           Week {data.week}{isCurrentWeek ? ' · Current' : ''}
         </span>
         {nextWeek ? (
           <Link
             href={`/matchups?week=${nextWeek}`}
-            className="text-[13px] text-[#475569] hover:text-[#94A3B8] transition-colors"
+            className="text-[13px] text-secondary hover:text-muted transition-colors"
           >
             Wk {nextWeek} →
           </Link>
@@ -86,7 +86,7 @@ export default async function MatchupsPage({
       {/* In Progress */}
       {liveMatchups.length > 0 && (
         <section className="mb-6">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-3">
             In Progress
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -98,13 +98,13 @@ export default async function MatchupsPage({
       )}
 
       {liveMatchups.length > 0 && (projectedMatchups.length > 0 || finalMatchups.length > 0) && (
-        <div className="border-b border-[#E2E8F0] mb-5" />
+        <div className="border-b border-border mb-5" />
       )}
 
       {/* Final (past weeks) */}
       {finalMatchups.length > 0 && (
         <section className="mb-6">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-3">
             Final
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -118,7 +118,7 @@ export default async function MatchupsPage({
       {/* Projected (current week, not started) */}
       {projectedMatchups.length > 0 && (
         <section className="mb-6">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-3">
             Projected
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

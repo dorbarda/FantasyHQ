@@ -9,16 +9,16 @@ interface StandingsTableProps {
 
 export default function StandingsTable({ standings }: StandingsTableProps) {
   return (
-    <div className="border border-[#E2E8F0] rounded-lg overflow-hidden bg-white">
+    <div className="border border-border rounded-lg overflow-hidden bg-surface">
       {/* Header */}
-      <div className="grid grid-cols-[28px_28px_36px_1fr_72px_64px_64px] gap-x-2 px-4 py-2 border-b border-[#E2E8F0] bg-[#F1F5F9]">
-        <span className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8]">#</span>
-        <span className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8]">PR</span>
+      <div className="grid grid-cols-[28px_28px_36px_1fr_72px_64px_64px] gap-x-2 px-4 py-2 border-b border-border bg-surface-secondary">
+        <span className="text-[11px] font-semibold uppercase tracking-widest text-muted">#</span>
+        <span className="text-[11px] font-semibold uppercase tracking-widest text-muted">PR</span>
         <span />
-        <span className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8]">Team</span>
-        <span className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] text-right">W–L</span>
-        <span className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] text-right">PTS</span>
-        <span className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] text-right">Streak</span>
+        <span className="text-[11px] font-semibold uppercase tracking-widest text-muted">Team</span>
+        <span className="text-[11px] font-semibold uppercase tracking-widest text-muted text-right">W–L</span>
+        <span className="text-[11px] font-semibold uppercase tracking-widest text-muted text-right">PTS</span>
+        <span className="text-[11px] font-semibold uppercase tracking-widest text-muted text-right">Streak</span>
       </div>
 
       {standings.map((entry, idx) => (
@@ -26,20 +26,20 @@ export default function StandingsTable({ standings }: StandingsTableProps) {
           key={entry.teamId}
           className={`
             grid grid-cols-[28px_28px_36px_1fr_72px_64px_64px] gap-x-2 items-center px-4 py-2.5
-            transition-colors cursor-default hover:bg-white
-            ${idx < standings.length - 1 ? 'border-b border-[#E2E8F0]' : ''}
+            transition-colors cursor-default hover:bg-surface
+            ${idx < standings.length - 1 ? 'border-b border-border' : ''}
           `}
         >
           {/* Standing rank */}
-          <span className={`text-[13px] font-semibold tracking-tight ${entry.rank === 1 ? 'text-[#FB923C]' : 'text-[#94A3B8]'}`}>
+          <span className={`text-[13px] font-semibold tracking-tight ${entry.rank === 1 ? 'text-warning-bright' : 'text-muted'}`}>
             {entry.rank}
           </span>
 
           {/* Power rank */}
           <span className={`text-[13px] font-semibold tracking-tight ${
-            entry.powerRank <= 3 ? 'text-[#34D399]' :
-            entry.powerRank >= 8 ? 'text-[#F87171]' :
-            'text-[#94A3B8]'
+            entry.powerRank <= 3 ? 'text-positive-bright' :
+            entry.powerRank >= 8 ? 'text-negative-bright' :
+            'text-muted'
           }`}>
             {entry.powerRank}
           </span>
@@ -54,19 +54,19 @@ export default function StandingsTable({ standings }: StandingsTableProps) {
 
           {/* Team */}
           <div className="min-w-0">
-            <p className="text-[13px] font-semibold tracking-tight truncate text-[#0F172A]">
+            <p className="text-[13px] font-semibold tracking-tight truncate text-foreground">
               {entry.teamName}
             </p>
-            <p className="text-[11px] text-[#475569] truncate">{entry.ownerName}</p>
+            <p className="text-[11px] text-secondary truncate">{entry.ownerName}</p>
           </div>
 
           {/* W-L */}
-          <span className="text-[13px] font-medium text-[#0F172A] text-right tabular-nums">
+          <span className="text-[13px] font-medium text-foreground text-right tabular-nums">
             {entry.wins}–{entry.losses}
           </span>
 
           {/* Points */}
-          <span className="text-[13px] font-medium text-[#0F172A] text-right tabular-nums">
+          <span className="text-[13px] font-medium text-foreground text-right tabular-nums">
             {entry.points.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
           </span>
 
@@ -78,9 +78,9 @@ export default function StandingsTable({ standings }: StandingsTableProps) {
       ))}
 
       {/* Legend */}
-      <div className="px-4 py-2 border-t border-[#E2E8F0] bg-[#F1F5F9] flex items-center gap-3">
-        <span className="text-[11px] text-[#94A3B8]"><span className="font-semibold">#</span> = Standing rank</span>
-        <span className="text-[11px] text-[#94A3B8]"><span className="font-semibold">PR</span> = Power rank</span>
+      <div className="px-4 py-2 border-t border-border bg-surface-secondary flex items-center gap-3">
+        <span className="text-[11px] text-muted"><span className="font-semibold">#</span> = Standing rank</span>
+        <span className="text-[11px] text-muted"><span className="font-semibold">PR</span> = Power rank</span>
       </div>
     </div>
   );

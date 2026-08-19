@@ -29,20 +29,20 @@ export default function PfPaScatterChart({ entries }: Props) {
   const maxVal = Math.ceil(Math.max(...allVals) * 1.03);
 
   return (
-    <div className="border border-[#E2E8F0] rounded-lg bg-white p-4">
+    <div className="border border-border rounded-lg bg-surface p-4">
       {/* Legend */}
       <div className="flex items-center gap-4 flex-wrap mb-4">
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded-full bg-[#34D399]" />
-          <span className="text-[11px] text-[#94A3B8]">PF &gt; PA (net positive)</span>
+          <div className="w-3 h-3 rounded-full bg-positive-bright" />
+          <span className="text-[11px] text-muted">PF &gt; PA (net positive)</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded-full bg-[#F87171]" />
-          <span className="text-[11px] text-[#94A3B8]">PA &gt; PF (net negative)</span>
+          <div className="w-3 h-3 rounded-full bg-negative-bright" />
+          <span className="text-[11px] text-muted">PA &gt; PF (net negative)</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-8 border-t border-dashed border-[#94A3B8]" />
-          <span className="text-[11px] text-[#94A3B8]">Break-even line</span>
+          <div className="w-8 border-t border-dashed border-muted" />
+          <span className="text-[11px] text-muted">Break-even line</span>
         </div>
       </div>
 
@@ -53,22 +53,22 @@ export default function PfPaScatterChart({ entries }: Props) {
             type="number"
             dataKey="x"
             domain={[minVal, maxVal]}
-            tick={{ fill: '#475569', fontSize: 10 }}
-            axisLine={{ stroke: '#E2E8F0' }}
+            tick={{ fill: 'var(--foreground-secondary)', fontSize: 10 }}
+            axisLine={{ stroke: 'var(--border)' }}
             tickLine={false}
             tickFormatter={v => v.toLocaleString()}
-            label={{ value: 'Points For →', position: 'insideBottomRight', offset: -4, fill: '#94A3B8', fontSize: 11 }}
+            label={{ value: 'Points For →', position: 'insideBottomRight', offset: -4, fill: 'var(--foreground-muted)', fontSize: 11 }}
             name="PF"
           />
           <YAxis
             type="number"
             dataKey="y"
             domain={[minVal, maxVal]}
-            tick={{ fill: '#475569', fontSize: 10 }}
+            tick={{ fill: 'var(--foreground-secondary)', fontSize: 10 }}
             axisLine={false}
             tickLine={false}
             tickFormatter={v => v.toLocaleString()}
-            label={{ value: '← Points Against', angle: -90, position: 'insideLeft', offset: -4, fill: '#94A3B8', fontSize: 11 }}
+            label={{ value: '← Points Against', angle: -90, position: 'insideLeft', offset: -4, fill: 'var(--foreground-muted)', fontSize: 11 }}
             name="PA"
           />
           {/* Y = X diagonal: teams below this line have PF > PA */}
@@ -79,16 +79,16 @@ export default function PfPaScatterChart({ entries }: Props) {
             strokeWidth={1.5}
           />
           <Tooltip
-            cursor={{ strokeDasharray: '3 3', stroke: '#E2E8F0' }}
+            cursor={{ strokeDasharray: '3 3', stroke: 'var(--border)' }}
             content={({ active, payload }) => {
               if (!active || !payload?.length) return null;
               const d = payload[0].payload;
               return (
-                <div className="bg-[#F1F5F9] border border-[#E2E8F0] rounded-lg px-3 py-2 text-[12px]">
-                  <p className="font-semibold text-[#0F172A] mb-1">{d.name}</p>
-                  <p className="text-[#94A3B8]">PF: <span className="text-[#0F172A] tabular-nums">{d.x.toLocaleString()}</span></p>
-                  <p className="text-[#94A3B8]">PA: <span className="text-[#0F172A] tabular-nums">{d.y.toLocaleString()}</span></p>
-                  <p className={`font-semibold ${d.diff >= 0 ? 'text-[#34D399]' : 'text-[#F87171]'}`}>
+                <div className="bg-surface-secondary border border-border rounded-lg px-3 py-2 text-[12px]">
+                  <p className="font-semibold text-foreground mb-1">{d.name}</p>
+                  <p className="text-muted">PF: <span className="text-foreground tabular-nums">{d.x.toLocaleString()}</span></p>
+                  <p className="text-muted">PA: <span className="text-foreground tabular-nums">{d.y.toLocaleString()}</span></p>
+                  <p className={`font-semibold ${d.diff >= 0 ? 'text-positive-bright' : 'text-negative-bright'}`}>
                     Diff: {d.diff > 0 ? '+' : ''}{d.diff.toLocaleString()}
                   </p>
                 </div>
@@ -129,7 +129,7 @@ export default function PfPaScatterChart({ entries }: Props) {
         </ScatterChart>
       </ResponsiveContainer>
 
-      <p className="text-[11px] text-[#475569] text-center mt-1">
+      <p className="text-[11px] text-secondary text-center mt-1">
         Below the diagonal = PF &gt; PA · teams that scored more than they gave up all season
       </p>
     </div>

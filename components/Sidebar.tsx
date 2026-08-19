@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import ThemeToggle from './ThemeToggle';
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
@@ -188,9 +189,9 @@ const BOTTOM_NAV = [
 
 function DesktopSidebar({ pathname }: { pathname: string }) {
   return (
-    <aside className="hidden md:flex fixed top-0 left-0 h-screen w-[220px] bg-[#0B1628] border-r border-[#1E3050] flex-col z-50 overflow-y-auto">
+    <aside className="hidden md:flex fixed top-0 left-0 h-screen w-[220px] bg-panel border-r border-panel-border flex-col z-50 overflow-y-auto">
       {/* Logo */}
-      <div className="px-4 py-5 border-b border-[#1E3050] shrink-0">
+      <div className="px-4 py-5 border-b border-panel-border shrink-0">
         <Image src="/logo.png" alt="Fantasy HQ" width={140} height={52} className="object-contain" priority />
       </div>
 
@@ -198,7 +199,7 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
       <nav className="flex-1 px-2 py-3 space-y-5">
         {NAV_GROUPS.map((group) => (
           <div key={group.label}>
-            <p className="px-2 mb-1 text-[10px] font-semibold tracking-[0.15em] text-[#475569] uppercase">
+            <p className="px-2 mb-1 text-[10px] font-semibold tracking-[0.15em] text-panel-text-muted uppercase">
               {group.label}
             </p>
             <ul className="space-y-0.5">
@@ -210,11 +211,11 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
                       href={href}
                       className={`flex items-center gap-2.5 px-2 py-2 rounded-md text-[13px] font-medium transition-all duration-150 ${
                         isActive
-                          ? 'bg-[#1E3A5F] text-[#F0F4F8] border-l-2 border-[#C8956C] pl-[6px]'
-                          : 'text-[#CBD5E1] hover:bg-white/5 hover:text-[#F0F4F8]'
+                          ? 'bg-panel-secondary text-panel-text-strong border-l-2 border-accent pl-[6px]'
+                          : 'text-panel-text hover:bg-white/5 hover:text-panel-text-strong'
                       }`}
                     >
-                      <span className={isActive ? 'text-[#C8956C]' : 'text-[#64748B]'}>
+                      <span className={isActive ? 'text-accent' : 'text-tertiary'}>
                         <Icon />
                       </span>
                       {label}
@@ -227,8 +228,9 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
         ))}
       </nav>
 
-      <div className="px-4 py-3 border-t border-[#1E3050] shrink-0">
-        <p className="text-[10px] text-[#334155]">© {new Date().getFullYear()} Fantasy HQ</p>
+      <div className="px-4 py-3 border-t border-panel-border shrink-0">
+        <ThemeToggle />
+        <p className="text-[10px] text-panel-text-muted mt-2">© {new Date().getFullYear()} Fantasy HQ</p>
       </div>
     </aside>
   );
@@ -251,19 +253,22 @@ function MobileNav({ pathname }: { pathname: string }) {
   return (
     <>
       {/* Top bar */}
-      <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-[#0B1628] border-b border-[#1E3050] flex items-center justify-between px-4 z-50">
+      <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-panel border-b border-panel-border flex items-center justify-between px-4 z-50">
         <Link href="/">
           <Image src="/logo.png" alt="Fantasy HQ" width={100} height={38} className="object-contain" priority />
         </Link>
+        <div className="flex items-center gap-1">
+        <ThemeToggle compact />
         <button
           onClick={() => setOpen(true)}
           className="flex flex-col gap-1.5 p-2 rounded-md hover:bg-white/5 transition-colors"
           aria-label="Open menu"
         >
-          <span className="block w-5 h-0.5 bg-[#94A3B8]" />
-          <span className="block w-5 h-0.5 bg-[#94A3B8]" />
-          <span className="block w-5 h-0.5 bg-[#94A3B8]" />
+          <span className="block w-5 h-0.5 bg-panel-text" />
+          <span className="block w-5 h-0.5 bg-panel-text" />
+          <span className="block w-5 h-0.5 bg-panel-text" />
         </button>
+        </div>
       </header>
 
       {/* Backdrop */}
@@ -275,13 +280,13 @@ function MobileNav({ pathname }: { pathname: string }) {
       )}
 
       {/* Drawer */}
-      <div className={`md:hidden fixed top-0 right-0 h-full w-[280px] bg-[#0B1628] border-l border-[#1E3050] z-[70] flex flex-col transition-transform duration-300 ${open ? 'translate-x-0' : 'translate-x-full'}`}>
+      <div className={`md:hidden fixed top-0 right-0 h-full w-[280px] bg-panel border-l border-panel-border z-[70] flex flex-col transition-transform duration-300 ${open ? 'translate-x-0' : 'translate-x-full'}`}>
         {/* Drawer header */}
-        <div className="flex items-center justify-between px-4 py-4 border-b border-[#1E3050]">
+        <div className="flex items-center justify-between px-4 py-4 border-b border-panel-border">
           <Image src="/logo.png" alt="Fantasy HQ" width={100} height={38} className="object-contain" />
           <button
             onClick={() => setOpen(false)}
-            className="p-2 rounded-md hover:bg-white/5 text-[#94A3B8] transition-colors"
+            className="p-2 rounded-md hover:bg-white/5 text-panel-text transition-colors"
             aria-label="Close menu"
           >
             <svg viewBox="0 0 20 20" fill="none" className="w-5 h-5">
@@ -294,7 +299,7 @@ function MobileNav({ pathname }: { pathname: string }) {
         <nav className="flex-1 px-3 py-4 space-y-5 overflow-y-auto">
           {NAV_GROUPS.map((group) => (
             <div key={group.label}>
-              <p className="px-2 mb-1 text-[10px] font-semibold tracking-[0.15em] text-[#475569] uppercase">
+              <p className="px-2 mb-1 text-[10px] font-semibold tracking-[0.15em] text-panel-text-muted uppercase">
                 {group.label}
               </p>
               <ul className="space-y-0.5">
@@ -306,11 +311,11 @@ function MobileNav({ pathname }: { pathname: string }) {
                         href={href}
                         className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] font-medium transition-all ${
                           isActive
-                            ? 'bg-[#1E3A5F] text-[#F0F4F8] border-l-2 border-[#C8956C] pl-[10px]'
-                            : 'text-[#CBD5E1] hover:bg-white/5'
+                            ? 'bg-panel-secondary text-panel-text-strong border-l-2 border-accent pl-[10px]'
+                            : 'text-border-strong hover:bg-white/5'
                         }`}
                       >
-                        <span className={isActive ? 'text-[#C8956C]' : 'text-[#64748B]'}>
+                        <span className={isActive ? 'text-accent' : 'text-tertiary'}>
                           <Icon />
                         </span>
                         {label}
@@ -323,13 +328,13 @@ function MobileNav({ pathname }: { pathname: string }) {
           ))}
         </nav>
 
-        <div className="px-4 py-3 border-t border-[#1E3050]">
-          <p className="text-[10px] text-[#334155]">© {new Date().getFullYear()} Fantasy HQ</p>
+        <div className="px-4 py-3 border-t border-panel-border">
+          <p className="text-[10px] text-panel-text-muted">© {new Date().getFullYear()} Fantasy HQ</p>
         </div>
       </div>
 
       {/* Bottom navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0B1628] border-t border-[#1E3050] z-50 flex">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-panel border-t border-panel-border z-50 flex">
         {BOTTOM_NAV.map(({ href, label, Icon }) => {
           const isActive = href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(href + '/');
           return (
@@ -337,7 +342,7 @@ function MobileNav({ pathname }: { pathname: string }) {
               key={href}
               href={href}
               className={`flex-1 flex flex-col items-center gap-1 py-2 transition-colors ${
-                isActive ? 'text-[#C8956C]' : 'text-[#475569] hover:text-[#94A3B8]'
+                isActive ? 'text-accent' : 'text-panel-text-muted hover:text-panel-text'
               }`}
             >
               <Icon />

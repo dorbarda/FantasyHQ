@@ -82,12 +82,12 @@ export default async function HistoryPage() {
   const shameLeader = Object.entries(shameCount).sort(([, a], [, b]) => b - a)[0] ?? null;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
+    <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
 
       {/* Page header */}
       <div className="mb-6">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A]">History</h1>
-        <p className="text-[14px] text-[#475569] mt-1">
+        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground">History</h1>
+        <p className="text-[14px] text-secondary mt-1">
           {merged.length} season{merged.length !== 1 ? 's' : ''} · Champions &amp; final standings
         </p>
       </div>
@@ -98,8 +98,8 @@ export default async function HistoryPage() {
 
           {/* Championship leaderboard */}
           {dynastyRanking.length > 0 && (
-            <div className="bg-white border border-[#E2E8F0] rounded-2xl px-4 pt-4 pb-3 shadow-sm">
-              <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
+            <div className="bg-surface border border-border rounded-2xl px-4 pt-4 pb-3 shadow-sm">
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-3">
                 🏆 All-Time Champions
               </p>
               <div className="flex flex-col gap-2">
@@ -111,8 +111,8 @@ export default async function HistoryPage() {
                     >
                       {i + 1}
                     </span>
-                    <span className="text-[14px] font-semibold text-[#0F172A] flex-1 min-w-0 truncate">{owner}</span>
-                    <span className="text-[13px] font-black tabular-nums text-[#D97706]">
+                    <span className="text-[14px] font-semibold text-foreground flex-1 min-w-0 truncate">{owner}</span>
+                    <span className="text-[13px] font-black tabular-nums text-warning">
                       {count} {count === 1 ? 'title' : 'titles'}
                     </span>
                   </div>
@@ -123,8 +123,8 @@ export default async function HistoryPage() {
 
           {/* Shame leaderboard */}
           {shameLeader && (
-            <div className="bg-white border border-[#E2E8F0] rounded-2xl px-4 pt-4 pb-3 shadow-sm">
-              <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
+            <div className="bg-surface border border-border rounded-2xl px-4 pt-4 pb-3 shadow-sm">
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-3">
                 🚽 Toilet Bowl Hall of Shame
               </p>
               <div className="flex flex-col gap-2">
@@ -139,8 +139,8 @@ export default async function HistoryPage() {
                       >
                         {i + 1}
                       </span>
-                      <span className="text-[14px] font-semibold text-[#0F172A] flex-1 min-w-0 truncate">{owner}</span>
-                      <span className="text-[13px] font-black tabular-nums text-[#DC2626]">
+                      <span className="text-[14px] font-semibold text-foreground flex-1 min-w-0 truncate">{owner}</span>
+                      <span className="text-[13px] font-black tabular-nums text-negative">
                         {count}× last
                       </span>
                     </div>

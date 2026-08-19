@@ -31,19 +31,19 @@ export default async function LeaguePage() {
   const isPlayoffs = bracket?.isPlayoffs ?? false;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
+    <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
       {isPlayoffs && bracket ? (
         <PlayoffBracket data={bracket} />
       ) : (
         <>
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A]">Standings</h1>
+            <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-foreground">Standings</h1>
             <div className="flex items-center gap-1.5">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#34D399] opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#34D399]" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-positive-bright opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-positive-bright" />
               </span>
-              <span className="text-[12px] font-semibold text-[#34D399]">Live · Week {week}</span>
+              <span className="text-[12px] font-semibold text-positive-bright">Live · Week {week}</span>
             </div>
           </div>
           <StandingsTable standings={standings} />

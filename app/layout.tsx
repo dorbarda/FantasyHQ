@@ -30,8 +30,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="bg-[#F8FAFC] text-[#0F172A] flex min-h-screen">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Applies the saved (or system) theme before first paint, so the
+            page never flashes the wrong colours. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('fhq-theme');if(!t){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`,
+          }}
+        />
+      </head>
+      <body className="bg-background text-foreground flex min-h-screen">
         <div className="print:hidden">
           <Sidebar />
         </div>

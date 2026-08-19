@@ -51,24 +51,24 @@ export default function WeeklyTrendChart({ entries }: Props) {
         <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
         <XAxis
           dataKey="week"
-          tick={{ fill: '#475569', fontSize: 11 }}
-          axisLine={{ stroke: '#E2E8F0' }}
+          tick={{ fill: 'var(--foreground-secondary)', fontSize: 11 }}
+          axisLine={{ stroke: 'var(--border)' }}
           tickLine={false}
         />
         <YAxis
-          tick={{ fill: '#475569', fontSize: 11 }}
+          tick={{ fill: 'var(--foreground-secondary)', fontSize: 11 }}
           axisLine={false}
           tickLine={false}
           tickFormatter={v => v.toFixed(1)}
         />
         <Tooltip
-          contentStyle={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 8, fontSize: 12 }}
-          labelStyle={{ color: '#94A3B8', marginBottom: 4 }}
-          itemStyle={{ color: '#0F172A' }}
+          contentStyle={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }}
+          labelStyle={{ color: 'var(--foreground-muted)', marginBottom: 4 }}
+          itemStyle={{ color: 'var(--foreground)' }}
           formatter={(value) => [`${Number(value).toFixed(2)} pts/player`]}
         />
         <Legend
-          wrapperStyle={{ fontSize: 11, color: '#94A3B8', paddingTop: 8 }}
+          wrapperStyle={{ fontSize: 11, color: 'var(--foreground-muted)', paddingTop: 8 }}
           formatter={(value, entry) => (
             <span style={{ color: (entry as { color?: string }).color }}>{value}</span>
           )}

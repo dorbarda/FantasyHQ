@@ -29,10 +29,10 @@ interface StatBox {
 
 function StatCard({ box }: { box: StatBox }) {
   return (
-    <div className="flex-1 min-w-[160px] bg-[#F1F5F9] border border-[#E2E8F0] rounded-lg px-4 py-3">
-      <p className="text-[10px] font-semibold uppercase tracking-widest text-[#475569] mb-1">{box.label}</p>
+    <div className="flex-1 min-w-[160px] bg-surface-secondary border border-border rounded-lg px-4 py-3">
+      <p className="text-[10px] font-semibold uppercase tracking-widest text-secondary mb-1">{box.label}</p>
       <p className={`text-[14px] font-bold leading-tight ${box.accent}`}>{box.name}</p>
-      <p className="text-[11px] text-[#94A3B8] mt-0.5">{box.sub}</p>
+      <p className="text-[11px] text-muted mt-0.5">{box.sub}</p>
     </div>
   );
 }
@@ -47,20 +47,20 @@ function PickCell({ pick, benchmark }: { pick: DraftPick; benchmark: number }) {
   const isBad = !isINJ && !isUnknown && delta < 0;
 
   const bg = isGood
-    ? 'bg-[#34D399]/10 border-[#34D399]/20'
+    ? 'bg-positive-bright/10 border-positive-bright/20'
     : isBad
-    ? 'bg-[#F87171]/10 border-[#F87171]/20'
-    : 'bg-[#6B7280]/10 border-[#E2E8F0]';
+    ? 'bg-negative-bright/10 border-negative-bright/20'
+    : 'bg-tertiary/10 border-border';
 
-  const fpColor = isGood ? 'text-[#34D399]' : isBad ? 'text-[#F87171]' : 'text-[#475569]';
+  const fpColor = isGood ? 'text-positive-bright' : isBad ? 'text-negative-bright' : 'text-secondary';
   const deltaSign = delta >= 0 ? '+' : '';
 
   return (
     <div className={`h-full flex flex-col justify-between gap-0.5 px-2 py-1.5 rounded border ${bg}`}>
-      <p className={`text-[11px] font-semibold leading-tight truncate ${isINJ ? 'text-[#475569] line-through' : 'text-[#0F172A]'}`}>
+      <p className={`text-[11px] font-semibold leading-tight truncate ${isINJ ? 'text-secondary line-through' : 'text-foreground'}`}>
         {pick.playerName}
       </p>
-      <p className="text-[10px] text-[#475569] truncate">{pick.position} · {pick.proTeam}</p>
+      <p className="text-[10px] text-secondary truncate">{pick.position} · {pick.proTeam}</p>
       <div className="flex items-center justify-between gap-1 mt-0.5">
         <span className={`text-[10px] font-semibold tabular-nums ${fpColor}`}>
           {isINJ ? 'DNP' : isUnknown ? '—' : `${pick.fp.toFixed(0)} fp`}
@@ -82,9 +82,9 @@ export default function DraftValueAnalysis({ data, topPlayers }: Props) {
 
   if (!hasStats) {
     return (
-      <div className="border border-[#E2E8F0] rounded-lg px-6 py-10 text-center bg-white">
-        <p className="text-[15px] font-bold text-[#0F172A]">Season stats not yet available</p>
-        <p className="text-[13px] text-[#94A3B8] mt-1">
+      <div className="border border-border rounded-lg px-6 py-10 text-center bg-surface">
+        <p className="text-[15px] font-bold text-foreground">Season stats not yet available</p>
+        <p className="text-[13px] text-muted mt-1">
           Value analysis will appear once the season ends and FP totals are finalized.
         </p>
       </div>
@@ -146,7 +146,7 @@ export default function DraftValueAnalysis({ data, topPlayers }: Props) {
       sub: mostSurprising
         ? `${mostSurprising.fp.toFixed(0)} fp · +${mostSurprisingDelta.toFixed(0)} vs benchmark`
         : '',
-      accent: 'text-[#34D399]',
+      accent: 'text-positive-bright',
     },
     {
       label: 'Most Disappointing',
@@ -154,19 +154,19 @@ export default function DraftValueAnalysis({ data, topPlayers }: Props) {
       sub: mostDisappointing
         ? `${mostDisappointing.fp.toFixed(0)} fp · ${mostDisappointingDelta.toFixed(0)} vs benchmark`
         : '',
-      accent: 'text-[#F87171]',
+      accent: 'text-negative-bright',
     },
     {
       label: 'Best Drafter',
       name: bestDrafterId != null ? (teamById.get(bestDrafterId)?.ownerName ?? '—') : '—',
       sub: bestDrafterId != null ? `+${bestSurplus.toFixed(0)} total surplus` : '',
-      accent: 'text-[#60A5FA]',
+      accent: 'text-info-bright',
     },
     {
       label: 'Worst Drafter',
       name: worstDrafterId != null ? (teamById.get(worstDrafterId)?.ownerName ?? '—') : '—',
       sub: worstDrafterId != null ? `${worstSurplus.toFixed(0)} total surplus` : '',
-      accent: 'text-[#FB923C]',
+      accent: 'text-warning-bright',
     },
   ];
 
@@ -193,22 +193,22 @@ export default function DraftValueAnalysis({ data, topPlayers }: Props) {
       </div>
 
       {/* ── Main benchmark grid ───────────────────────────────────────────── */}
-      <div className="border border-[#E2E8F0] rounded-lg overflow-hidden bg-white">
+      <div className="border border-border rounded-lg overflow-hidden bg-surface">
         <div className="overflow-x-auto">
           <table style={{ minWidth: totalWidth, width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr className="border-b border-[#E2E8F0] bg-[#F1F5F9]">
-                <th className="sticky left-0 bg-[#F1F5F9] w-[100px] px-2 py-2 text-left">
-                  <span className="text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8]">Rd / Avg</span>
+              <tr className="border-b border-border bg-surface-secondary">
+                <th className="sticky left-0 bg-surface-secondary w-[100px] px-2 py-2 text-left">
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-muted">Rd / Avg</span>
                 </th>
                 {teams.map(t => (
                   <th
                     key={t.teamId}
                     style={{ width: CELL_W, minWidth: CELL_W }}
-                    className="px-2 py-2 border-l border-[#E2E8F0] text-left"
+                    className="px-2 py-2 border-l border-border text-left"
                   >
-                    <p className="text-[11px] font-semibold text-[#0F172A] truncate">{t.ownerName.split(' ')[0]}</p>
-                    <p className="text-[10px] text-[#475569] truncate">{t.teamName}</p>
+                    <p className="text-[11px] font-semibold text-foreground truncate">{t.ownerName.split(' ')[0]}</p>
+                    <p className="text-[10px] text-secondary truncate">{t.teamName}</p>
                   </th>
                 ))}
               </tr>
@@ -218,10 +218,10 @@ export default function DraftValueAnalysis({ data, topPlayers }: Props) {
               {Array.from({ length: rounds }, (_, i) => i + 1).map(round => {
                 const benchmark = benchmarks[round - 1] ?? 0;
                 return (
-                  <tr key={round} className="border-b border-[#E2E8F0] last:border-0">
-                    <td className="sticky left-0 bg-white px-2 py-2 border-r border-[#E2E8F0] align-top">
-                      <p className="text-[11px] font-bold text-[#94A3B8]">Rd {round}</p>
-                      <p className="text-[10px] text-[#475569] tabular-nums mt-0.5">{benchmark.toFixed(0)} avg</p>
+                  <tr key={round} className="border-b border-border last:border-0">
+                    <td className="sticky left-0 bg-surface px-2 py-2 border-r border-border align-top">
+                      <p className="text-[11px] font-bold text-muted">Rd {round}</p>
+                      <p className="text-[10px] text-secondary tabular-nums mt-0.5">{benchmark.toFixed(0)} avg</p>
                     </td>
 
                     {teams.map(t => {
@@ -230,12 +230,12 @@ export default function DraftValueAnalysis({ data, topPlayers }: Props) {
                         <td
                           key={t.teamId}
                           style={{ width: CELL_W, minWidth: CELL_W }}
-                          className="px-1.5 py-1.5 border-l border-[#E2E8F0] align-top h-[76px]"
+                          className="px-1.5 py-1.5 border-l border-border align-top h-[76px]"
                         >
                           {pick ? (
                             <PickCell pick={pick} benchmark={benchmark} />
                           ) : (
-                            <span className="text-[10px] text-[#475569]">—</span>
+                            <span className="text-[10px] text-secondary">—</span>
                           )}
                         </td>
                       );
@@ -245,9 +245,9 @@ export default function DraftValueAnalysis({ data, topPlayers }: Props) {
               })}
 
               {/* Surplus row */}
-              <tr className="bg-[#F1F5F9] border-t-2 border-[#2A4066]">
-                <td className="sticky left-0 bg-[#F1F5F9] px-2 py-2 border-r border-[#E2E8F0]">
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8]">Surplus</p>
+              <tr className="bg-surface-secondary border-t-2 border-panel-border">
+                <td className="sticky left-0 bg-surface-secondary px-2 py-2 border-r border-border">
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-muted">Surplus</p>
                 </td>
                 {teams.map(t => {
                   const surplus = surplusMap.get(t.teamId) ?? 0;
@@ -256,9 +256,9 @@ export default function DraftValueAnalysis({ data, topPlayers }: Props) {
                     <td
                       key={t.teamId}
                       style={{ width: CELL_W, minWidth: CELL_W }}
-                      className="px-2 py-2 border-l border-[#E2E8F0] text-center"
+                      className="px-2 py-2 border-l border-border text-center"
                     >
-                      <span className={`text-[13px] font-bold tabular-nums ${isPos ? 'text-[#34D399]' : 'text-[#F87171]'}`}>
+                      <span className={`text-[13px] font-bold tabular-nums ${isPos ? 'text-positive-bright' : 'text-negative-bright'}`}>
                         {isPos ? '+' : ''}{surplus.toFixed(0)}
                       </span>
                     </td>
@@ -270,39 +270,39 @@ export default function DraftValueAnalysis({ data, topPlayers }: Props) {
         </div>
 
         {/* Legend */}
-        <div className="flex flex-wrap gap-4 px-4 py-3 border-t border-[#E2E8F0] bg-[#F1F5F9] text-[11px] text-[#94A3B8]">
+        <div className="flex flex-wrap gap-4 px-4 py-3 border-t border-border bg-surface-secondary text-[11px] text-muted">
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-sm bg-[#34D399]/20 border border-[#34D399]/30 inline-block" />
+            <span className="w-3 h-3 rounded-sm bg-positive-bright/20 border border-positive-bright/30 inline-block" />
             Beat round benchmark
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-sm bg-[#F87171]/20 border border-[#F87171]/30 inline-block" />
+            <span className="w-3 h-3 rounded-sm bg-negative-bright/20 border border-negative-bright/30 inline-block" />
             Below round benchmark
           </div>
-          <span className="text-[#475569]">
+          <span className="text-secondary">
             Benchmark = avg FP of top-130 players (incl. undrafted) per round tier · delta shown per pick · Surplus = sum of all deltas
           </span>
         </div>
       </div>
 
       {/* ── Position comparison table ─────────────────────────────────────── */}
-      <div className="border border-[#E2E8F0] rounded-lg overflow-hidden bg-white">
-        <div className="px-4 py-3 border-b border-[#E2E8F0] bg-[#F1F5F9]">
-          <p className="text-[13px] font-semibold text-[#0F172A]">Draft Position vs. End-of-Season Rank</p>
-          <p className="text-[11px] text-[#475569] mt-0.5">Sorted by draft position · rank among all top-130 league players including undrafted · green = ranked higher than drafted · red = ranked lower</p>
+      <div className="border border-border rounded-lg overflow-hidden bg-surface">
+        <div className="px-4 py-3 border-b border-border bg-surface-secondary">
+          <p className="text-[13px] font-semibold text-foreground">Draft Position vs. End-of-Season Rank</p>
+          <p className="text-[11px] text-secondary mt-0.5">Sorted by draft position · rank among all top-130 league players including undrafted · green = ranked higher than drafted · red = ranked lower</p>
         </div>
 
         <div className="overflow-x-auto">
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr className="border-b border-[#E2E8F0] bg-[#F1F5F9]">
-                <th className="px-4 py-2 text-left text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8] w-[40%]">
+              <tr className="border-b border-border bg-surface-secondary">
+                <th className="px-4 py-2 text-left text-[10px] font-semibold uppercase tracking-widest text-muted w-[40%]">
                   Player
                 </th>
-                <th className="px-4 py-2 text-center text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8] w-[30%]">
+                <th className="px-4 py-2 text-center text-[10px] font-semibold uppercase tracking-widest text-muted w-[30%]">
                   Draft Position
                 </th>
-                <th className="px-4 py-2 text-center text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8] w-[30%]">
+                <th className="px-4 py-2 text-center text-[10px] font-semibold uppercase tracking-widest text-muted w-[30%]">
                   End-of-Season Rank
                 </th>
               </tr>
@@ -315,12 +315,12 @@ export default function DraftValueAnalysis({ data, topPlayers }: Props) {
                 const improved = !isINJ && seasonRank !== undefined && seasonRank < pick.overallPick;
                 const declined = !isINJ && (outsideTop130 || (seasonRank !== undefined && seasonRank > pick.overallPick));
                 const nameColor = isINJ
-                  ? 'text-[#475569] line-through'
+                  ? 'text-secondary line-through'
                   : improved
-                  ? 'text-[#34D399]'
+                  ? 'text-positive-bright'
                   : declined
-                  ? 'text-[#F87171]'
-                  : 'text-[#0F172A]';
+                  ? 'text-negative-bright'
+                  : 'text-foreground';
                 const movement = improved && seasonRank !== undefined
                   ? `▲ ${pick.overallPick - seasonRank}`
                   : outsideTop130
@@ -328,28 +328,28 @@ export default function DraftValueAnalysis({ data, topPlayers }: Props) {
                   : declined && seasonRank !== undefined
                   ? `▼ ${seasonRank - pick.overallPick}`
                   : '—';
-                const movColor = improved ? 'text-[#34D399]' : declined ? 'text-[#F87171]' : 'text-[#475569]';
+                const movColor = improved ? 'text-positive-bright' : declined ? 'text-negative-bright' : 'text-secondary';
 
                 return (
-                  <tr key={pick.playerId} className="border-b border-[#E2E8F0] last:border-0 hover:bg-[#1a2d45]/40">
+                  <tr key={pick.playerId} className="border-b border-border last:border-0 hover:bg-panel/40">
                     <td className="px-4 py-2">
                       <p className={`text-[12px] font-semibold ${nameColor}`}>{pick.playerName}</p>
-                      <p className="text-[10px] text-[#475569]">{pick.position} · {pick.proTeam} · {pick.ownerName.split(' ')[0]}</p>
+                      <p className="text-[10px] text-secondary">{pick.position} · {pick.proTeam} · {pick.ownerName.split(' ')[0]}</p>
                     </td>
                     <td className="px-4 py-2 text-center">
-                      <span className="text-[12px] font-semibold tabular-nums text-[#94A3B8]">#{pick.overallPick}</span>
+                      <span className="text-[12px] font-semibold tabular-nums text-muted">#{pick.overallPick}</span>
                     </td>
                     <td className="px-4 py-2 text-center">
                       {isINJ ? (
-                        <span className="text-[11px] text-[#475569]">DNP</span>
+                        <span className="text-[11px] text-secondary">DNP</span>
                       ) : outsideTop130 ? (
                         <div className="flex items-center justify-center gap-1.5">
-                          <span className="text-[11px] text-[#475569]">&gt;130</span>
-                          <span className="text-[10px] font-medium text-[#F87171]">▼ out</span>
+                          <span className="text-[11px] text-secondary">&gt;130</span>
+                          <span className="text-[10px] font-medium text-negative-bright">▼ out</span>
                         </div>
                       ) : (
                         <div className="flex items-center justify-center gap-1.5">
-                          <span className="text-[12px] font-semibold tabular-nums text-[#94A3B8]">#{seasonRank}</span>
+                          <span className="text-[12px] font-semibold tabular-nums text-muted">#{seasonRank}</span>
                           <span className={`text-[10px] font-medium ${movColor}`}>{movement}</span>
                         </div>
                       )}

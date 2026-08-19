@@ -9,10 +9,10 @@ type PillStatus = 'exact' | 'correct' | 'wrong' | 'pending';
 
 function pillStyle(status: PillStatus): React.CSSProperties {
   switch (status) {
-    case 'exact':   return { background: '#FEF9C3', color: '#713F12', border: '1px solid #EAB308' };
-    case 'correct': return { background: '#DCFCE7', color: '#14532D', border: '1px solid transparent' };
-    case 'wrong':   return { background: '#FEE2E2', color: '#7F1D1D', border: '1px solid transparent' };
-    case 'pending': return { background: '#FFFFFF', color: '#475569', border: '1px solid #E2E8F0' };
+    case 'exact':   return { background: 'var(--gold-surface)', color: 'var(--warning-text)', border: '1px solid var(--gold)' };
+    case 'correct': return { background: 'var(--positive-surface)', color: 'var(--positive-text)', border: '1px solid transparent' };
+    case 'wrong':   return { background: 'var(--negative-surface)', color: 'var(--negative-text)', border: '1px solid transparent' };
+    case 'pending': return { background: 'var(--surface)', color: 'var(--foreground-secondary)', border: '1px solid var(--border)' };
   }
 }
 
@@ -43,7 +43,7 @@ function BackerRow({ backer, exact }: { backer: Backer; exact: boolean }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
       <Avatar name={backer.ownerName} size={26} color={backer.color} />
-      <div style={{ flex: 1, fontSize: 12, fontWeight: 600, color: '#0F172A' }}>
+      <div style={{ flex: 1, fontSize: 12, fontWeight: 600, color: 'var(--foreground)' }}>
         {backer.ownerName.split(' ')[0]}
       </div>
       <div
@@ -79,7 +79,7 @@ function BackerColumn({
       style={{
         flex: 1,
         padding: '14px 16px',
-        background: side === 'A' ? 'rgba(248,250,252,0.6)' : 'rgba(241,245,249,0.5)',
+        background: side === 'A' ? 'var(--background)' : 'var(--surface-secondary)',
         borderTop: `3px solid ${meta.primary}`,
         display: 'flex',
         flexDirection: 'column',
@@ -87,7 +87,7 @@ function BackerColumn({
       }}
     >
       {backers.length === 0 ? (
-        <div style={{ fontSize: 11, color: '#94A3B8', fontStyle: 'italic' }}>No backers</div>
+        <div style={{ fontSize: 11, color: 'var(--foreground-muted)', fontStyle: 'italic' }}>No backers</div>
       ) : (
         backers.map(b => (
           <BackerRow key={b.ownerName} backer={b} exact={b.status === 'exact'} />
@@ -134,8 +134,8 @@ function H2HCard({
   return (
     <div
       style={{
-        background: '#FFFFFF',
-        border: '1px solid #E2E8F0',
+        background: 'var(--surface)',
+        border: '1px solid var(--border)',
         borderRadius: 14,
         overflow: 'hidden',
         display: 'flex',
@@ -147,8 +147,8 @@ function H2HCard({
       <div
         style={{
           padding: '10px 16px',
-          background: '#F8FAFC',
-          borderBottom: '1px solid #E2E8F0',
+          background: 'var(--background)',
+          borderBottom: '1px solid var(--border)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -158,7 +158,7 @@ function H2HCard({
           style={{
             fontSize: 11,
             fontWeight: 800,
-            color: '#94A3B8',
+            color: 'var(--foreground-muted)',
             textTransform: 'uppercase',
             letterSpacing: '0.12em',
           }}
@@ -166,7 +166,7 @@ function H2HCard({
           {series.label}
         </div>
         {series.winner ? (
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#10B981' }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--positive)' }}>
             ✓ {getTeamMeta(series.winner).abbr} in {series.score}
           </div>
         ) : (
@@ -176,7 +176,7 @@ function H2HCard({
                 width: 6,
                 height: 6,
                 borderRadius: 999,
-                background: '#F59E0B',
+                background: 'var(--warning)',
                 display: 'inline-block',
               }}
             />
@@ -184,7 +184,7 @@ function H2HCard({
               style={{
                 fontSize: 11,
                 fontWeight: 700,
-                color: '#92400E',
+                color: 'var(--warning-text)',
                 letterSpacing: '0.05em',
               }}
             >
@@ -220,7 +220,7 @@ function H2HCard({
                 style={{
                   fontSize: 12,
                   fontWeight: 800,
-                  color: '#0F172A',
+                  color: 'var(--foreground)',
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
@@ -228,13 +228,13 @@ function H2HCard({
               >
                 {teamA.split(' ').slice(-1)[0]}
               </div>
-              <div style={{ fontSize: 10, color: '#94A3B8' }}>
+              <div style={{ fontSize: 10, color: 'var(--foreground-muted)' }}>
                 {backersA.length} backer{backersA.length !== 1 ? 's' : ''}
               </div>
             </div>
           </div>
 
-          <div style={{ fontSize: 10, fontWeight: 700, color: '#94A3B8', flexShrink: 0 }}>vs</div>
+          <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--foreground-muted)', flexShrink: 0 }}>vs</div>
 
           {/* Team B (reversed) */}
           <div
@@ -252,7 +252,7 @@ function H2HCard({
                 style={{
                   fontSize: 12,
                   fontWeight: 800,
-                  color: '#0F172A',
+                  color: 'var(--foreground)',
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
@@ -260,7 +260,7 @@ function H2HCard({
               >
                 {teamB.split(' ').slice(-1)[0]}
               </div>
-              <div style={{ fontSize: 10, color: '#94A3B8' }}>
+              <div style={{ fontSize: 10, color: 'var(--foreground-muted)' }}>
                 {backersB.length} backer{backersB.length !== 1 ? 's' : ''}
               </div>
             </div>
@@ -274,7 +274,7 @@ function H2HCard({
             style={{
               fontSize: 11,
               fontWeight: 800,
-              color: metaA.primary,
+              color: 'var(--foreground)',
               width: 32,
               textAlign: 'right',
               fontVariantNumeric: 'tabular-nums',
@@ -289,7 +289,7 @@ function H2HCard({
               height: 10,
               borderRadius: 999,
               overflow: 'hidden',
-              background: '#F1F5F9',
+              background: 'var(--surface-secondary)',
             }}
           >
             <div
@@ -311,7 +311,7 @@ function H2HCard({
             style={{
               fontSize: 11,
               fontWeight: 800,
-              color: metaB.primary,
+              color: 'var(--foreground)',
               width: 32,
               fontVariantNumeric: 'tabular-nums',
             }}
@@ -322,9 +322,9 @@ function H2HCard({
       </div>
 
       {/* Backer columns */}
-      <div style={{ display: 'flex', borderTop: '1px solid #F1F5F9' }}>
+      <div style={{ display: 'flex', borderTop: '1px solid var(--surface-secondary)' }}>
         <BackerColumn team={teamA} backers={backersA} side="A" />
-        <div style={{ width: 1, background: '#E2E8F0' }} />
+        <div style={{ width: 1, background: 'var(--border)' }} />
         <BackerColumn team={teamB} backers={backersB} side="B" />
       </div>
     </div>
@@ -363,14 +363,14 @@ function RoundSection({
             fontWeight: 800,
             letterSpacing: '0.16em',
             textTransform: 'uppercase',
-            color: '#94A3B8',
+            color: 'var(--foreground-muted)',
           }}
         >
           {kicker}
         </div>
-        <div style={{ fontSize: 16, fontWeight: 800, color: '#0F172A' }}>{title}</div>
-        <div style={{ fontSize: 12, color: '#94A3B8' }}>· {countLabel}</div>
-        <div style={{ flex: 1, height: 1, background: '#E2E8F0' }} />
+        <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--foreground)' }}>{title}</div>
+        <div style={{ fontSize: 12, color: 'var(--foreground-muted)' }}>· {countLabel}</div>
+        <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
       </div>
 
       {/* 2-col grid */}
@@ -401,7 +401,7 @@ export default function BetsTabV2({
 }) {
   if (allBets.length === 0) {
     return (
-      <div className="text-center py-16 text-[#94A3B8] text-[14px]">
+      <div className="text-center py-16 text-muted text-[14px]">
         No bets entered yet — data/playoff-bets.json is empty.
       </div>
     );
@@ -432,7 +432,7 @@ export default function BetsTabV2({
   const sortedRounds = Array.from(byRound.keys()).sort((a, b) => b - a);
 
   return (
-    <div className="px-3 sm:px-6" style={{ paddingTop: 20, paddingBottom: 20, background: '#F8FAFC', minHeight: 600 }}>
+    <div className="px-3 sm:px-6" style={{ paddingTop: 20, paddingBottom: 20, background: 'var(--background)', minHeight: 600 }}>
       {sortedRounds.map(round => {
         const seriesList = byRound.get(round)!;
         const settled    = seriesList.filter(s => s.winner !== null).length;

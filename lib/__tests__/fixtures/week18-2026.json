@@ -1,0 +1,226 @@
+{
+  "_comment": "Frozen copy of week 18 of the 2025-26 season, taken from the nightly snapshot on 2026-08-18. Committed deliberately: data/snapshots/ is regenerated every night and replaced wholesale each season, so golden tests must not read it directly.",
+  "week": 18,
+  "rows": [
+    {
+      "matchupPeriod": 18,
+      "teamId": "team8",
+      "teamName": "Flint Tropics 70's Show",
+      "ownerName": "Gelless",
+      "dailyPlayers": [
+        4,
+        10,
+        7,
+        6,
+        7,
+        4,
+        9
+      ],
+      "totalPlayers": 47,
+      "teamScore": 1372,
+      "opponentName": "Barak Miller",
+      "opponentScore": 1137,
+      "won": true,
+      "scorePP": 29.2,
+      "efficiency": 0.621
+    },
+    {
+      "matchupPeriod": 18,
+      "teamId": "team9",
+      "teamName": "Inglourious Basterds",
+      "ownerName": "Omer Rosenberg",
+      "dailyPlayers": [
+        1,
+        8,
+        5,
+        7,
+        1,
+        5,
+        5
+      ],
+      "totalPlayers": 32,
+      "teamScore": 1364,
+      "opponentName": "Nir Zele",
+      "opponentScore": 1370,
+      "won": false,
+      "scorePP": 42.6,
+      "efficiency": 1.331
+    },
+    {
+      "matchupPeriod": 18,
+      "teamId": "team5",
+      "teamName": "King Ozniyon",
+      "ownerName": "Ilay Mendel",
+      "dailyPlayers": [
+        2,
+        10,
+        4,
+        9,
+        2,
+        8,
+        7
+      ],
+      "totalPlayers": 42,
+      "teamScore": 1229,
+      "opponentName": "Yoav Coracos",
+      "opponentScore": 1168,
+      "won": true,
+      "scorePP": 29.3,
+      "efficiency": 0.698
+    },
+    {
+      "matchupPeriod": 18,
+      "teamId": "team11",
+      "teamName": "League's American Problem ",
+      "ownerName": "Yuval Halevy",
+      "dailyPlayers": [
+        3,
+        10,
+        6,
+        6,
+        5,
+        3,
+        10
+      ],
+      "totalPlayers": 43,
+      "teamScore": 1526,
+      "opponentName": "Yotam Goldin",
+      "opponentScore": 1422,
+      "won": true,
+      "scorePP": 35.5,
+      "efficiency": 0.826
+    },
+    {
+      "matchupPeriod": 18,
+      "teamId": "team6",
+      "teamName": "Libi\u2019s Legacy",
+      "ownerName": "Amir Ben Izhak",
+      "dailyPlayers": [
+        4,
+        9,
+        6,
+        8,
+        6,
+        4,
+        8
+      ],
+      "totalPlayers": 45,
+      "teamScore": 1398,
+      "opponentName": "Dor Barda",
+      "opponentScore": 1515,
+      "won": false,
+      "scorePP": 31.1,
+      "efficiency": 0.691
+    },
+    {
+      "matchupPeriod": 18,
+      "teamId": "team4",
+      "teamName": "Nordau Peaky Blinder\ud83d\udeac",
+      "ownerName": "Dor Barda",
+      "dailyPlayers": [
+        6,
+        8,
+        6,
+        8,
+        4,
+        5,
+        9
+      ],
+      "totalPlayers": 46,
+      "teamScore": 1515,
+      "opponentName": "Amir Ben Izhak",
+      "opponentScore": 1398,
+      "won": true,
+      "scorePP": 32.9,
+      "efficiency": 0.715
+    },
+    {
+      "matchupPeriod": 18,
+      "teamId": "team2",
+      "teamName": "PlottKe",
+      "ownerName": "Yotam Goldin",
+      "dailyPlayers": [
+        3,
+        10,
+        7,
+        10,
+        5,
+        5,
+        10
+      ],
+      "totalPlayers": 50,
+      "teamScore": 1422,
+      "opponentName": "Yuval Halevy",
+      "opponentScore": 1526,
+      "won": false,
+      "scorePP": 28.4,
+      "efficiency": 0.568
+    },
+    {
+      "matchupPeriod": 18,
+      "teamId": "team10",
+      "teamName": "Slotzki",
+      "ownerName": "Nir Zele",
+      "dailyPlayers": [
+        2,
+        9,
+        3,
+        8,
+        5,
+        7,
+        8
+      ],
+      "totalPlayers": 42,
+      "teamScore": 1370,
+      "opponentName": "Omer Rosenberg",
+      "opponentScore": 1364,
+      "won": true,
+      "scorePP": 32.6,
+      "efficiency": 0.776
+    },
+    {
+      "matchupPeriod": 18,
+      "teamId": "team1",
+      "teamName": "Team Mamba Forever",
+      "ownerName": "Yoav Coracos",
+      "dailyPlayers": [
+        2,
+        10,
+        5,
+        8,
+        5,
+        1,
+        9
+      ],
+      "totalPlayers": 40,
+      "teamScore": 1168,
+      "opponentName": "Ilay Mendel",
+      "opponentScore": 1229,
+      "won": false,
+      "scorePP": 29.2,
+      "efficiency": 0.73
+    },
+    {
+      "matchupPeriod": 18,
+      "teamId": "team3",
+      "teamName": "Team Miller",
+      "ownerName": "Barak Miller",
+      "dailyPlayers": [
+        3,
+        8,
+        4,
+        8,
+        2,
+        1,
+        10
+      ],
+      "totalPlayers": 36,
+      "teamScore": 1137,
+      "opponentName": "Gelless",
+      "opponentScore": 1372,
+      "won": false,
+      "scorePP": 31.6,
+      "efficiency": 0.878
+    }
+  ]
+}

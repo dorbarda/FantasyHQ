@@ -2,6 +2,12 @@
 @import '@fontsource/inter/500.css';
 @import '@fontsource/inter/600.css';
 @import '@fontsource/inter/700.css';
+/* Inter ships no Hebrew subset, so Hebrew would otherwise fall back to a
+   different system font on every device. Heebo covers Hebrew and sits
+   comfortably next to Inter. */
+@import '@fontsource/heebo/400.css';
+@import '@fontsource/heebo/500.css';
+@import '@fontsource/heebo/700.css';
 
 @tailwind base;
 @tailwind components;
@@ -167,6 +173,13 @@
     font-variant-numeric: tabular-nums;
     font-weight: 700;
     letter-spacing: -0.02em;
+  }
+  /* Hebrew display text (award names). Pair with dir="rtl" on the same
+     element so adjacent numbers and punctuation don't reorder. */
+  .type-he {
+    font-family: 'Heebo', 'Inter', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0;
   }
 }
 

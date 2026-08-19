@@ -35,6 +35,20 @@ https://github.com/dorbarda/FantasyHQ/compare/main...claude/nba-fantasy-review-r
 
 ## 1. Task A — Weekly recap  *(agreed priority #1)*
 
+> **Defined 2026-08-19 — full spec in `docs/RECAP-SPEC.md`.** Read that first;
+> it has the eight awards with tie-break rules, the code shape, the page
+> layout, edge cases, and the one pipeline change needed. The summary below
+> is kept for context.
+>
+> Two things settled while defining it:
+> - The weekly-history worry was unfounded. `MatchupDepthRow` already carries
+>   every completed week per team (scores, opponent, W/L, starter-games,
+>   efficiency), so per-week superlatives and standings movement need **no**
+>   snapshot changes.
+> - "Most added player this week" **does** need a change: `getTransactions()`
+>   fetches per scoring period but discards the period when tallying. See
+>   §4 of the spec. One nightly run backfills all past weeks afterwards.
+
 **Why:** the thing people screenshot into the group chat. The league's
 favourite pages are the playoff bets pool, analytics/records, and the depth
 pages — this feeds the same appetite without needing anyone to open ESPN.

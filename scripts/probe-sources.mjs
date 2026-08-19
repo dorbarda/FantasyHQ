@@ -122,6 +122,7 @@ async function probeFantasy() {
     `${SEASON_BASE}?view=proTeamSchedules_wl`,
     { headers: cookie, note: 'season-level URL — no /segments/0/leagues suffix' }
   );
+  // lib/espn-schedule.ts parses exactly these fields — verify each one is really there.
   if (sched?.settings?.proTeams) {
     const teams = sched.settings.proTeams.filter(t => t.id !== 0);
     const withGames = teams.filter(t => t.proGamesByScoringPeriod);
@@ -129,6 +130,41 @@ async function probeFantasy() {
       `   ↳ ${teams.length} pro teams, ${withGames.length} carry proGamesByScoringPeriod ` +
       `— games-per-week is computable: ${withGames.length > 0 ? 'YES' : 'NO'}`
     );
+
+    const sampleTeam = withGames[0];
+    const samplePeriod = sampleTeam && Object.keys(sampleTeam.proGamesByScoringPeriod)[0];
+    const sampleGame = samplePeriod && sampleTeam.proGamesByScoringPeriod[samplePeriod]?.[0];
+    if (sampleGame) {
+      const need = ['homeProTeamId', 'awayProTeamId', 'date'];
+      const missing = need.filter(k => sampleGame[k] === undefined);
+      console.log(`   ↳ game keys: ${Object.keys(sampleGame).join(', ')}`);
+      console.log(
+        missing.length === 0
+          ? '   ↳ parser fields all present — lib/espn-schedule.ts should parse this as-is'
+          : `   ↳ ⚠ MISSING ${missing.join(', ')} — update parseProTeamSchedules() in lib/espn-schedule.ts`
+      );
+    } else {
+      console.log('   ↳ ⚠ no sample game found — inspect the response before trusting /schedule');
+    }
+  } else if (sched) {
+    console.log('   ↳ ⚠ no settings.proTeams in the response — the /schedule parser expects it');
+  }
+
+  // The week → days map the schedule grid slices on (works for future weeks)
+  const settings = await probe(
+    '§1.1 mSettings scheduleSettings.matchupPeriods',
+    `${LEAGUE_BASE}?view=mSettings`,
+    { headers: cookie, note: '/schedule maps fantasy weeks to days with this' }
+  );
+  const matchupPeriods = settings?.settings?.scheduleSettings?.matchupPeriods;
+  if (matchupPeriods) {
+    const weeks = Object.keys(matchupPeriods);
+    console.log(
+      `   ↳ ${weeks.length} weeks mapped, e.g. week ${weeks[0]} → days ` +
+      `[${(matchupPeriods[weeks[0]] || []).join(', ')}]`
+    );
+  } else if (settings) {
+    console.log('   ↳ ⚠ no scheduleSettings.matchupPeriods — /schedule cannot map weeks to days');
   }
 
   // §1.2 / §1.3 / §1.5 — splits, injury status, ownership all ride one call

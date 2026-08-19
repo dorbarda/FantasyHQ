@@ -40,6 +40,7 @@ if (!process.env.ESPN_S2 || !process.env.SWID || !process.env.LEAGUE_ID) {
 const { getStatsData, getTransactions, getMatchupDepth, getPlayoffDepth } =
   await import('../lib/espn');
 const { getAllRecords } = await import('../lib/espn-records');
+const { getScheduleSeason } = await import('../lib/espn-schedule');
 const { getAllHistoricalSeasons } = await import('../lib/espn-history');
 
 // Some loaders (records, history) swallow per-season fetch errors and return
@@ -54,6 +55,9 @@ const jobs: Array<[string, () => Promise<unknown>, (d: any) => boolean]> = [
   ['transactions', getTransactions, d => d.byFantasyTeam?.length > 0],
   ['matchup-depth', getMatchupDepth, d => d.rows?.length > 0],
   ['playoff-depth', getPlayoffDepth, d => d.rows?.length > 0],
+  // NBA schedule grid — season-static, so one nightly write keeps /schedule
+  // working (and fast) all week even when the cookies expire.
+  ['schedule', getScheduleSeason, d => d.schedules?.length > 0 && Object.keys(d.weeks ?? {}).length > 0],
 ];
 
 mkdirSync(OUT_DIR, { recursive: true });

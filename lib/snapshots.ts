@@ -25,7 +25,8 @@ export type SnapshotName =
   | 'history'
   | 'transactions'
   | 'matchup-depth'
-  | 'playoff-depth';
+  | 'playoff-depth'
+  | 'schedule';
 
 export function readSnapshot<T>(name: SnapshotName): SnapshotFile<T> | null {
   try {

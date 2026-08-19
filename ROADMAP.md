@@ -56,8 +56,26 @@ gotchas.
       Attack, Ceiling, לאילי אין מזל, פרס הסלוצקי, עשה ברדה, Sniper, Hot
       Pickup), own page plus a home teaser, screenshot-first layout. No
       snapshot change needed except for Hot Pickup (per-week adds).
+- [x] **NBA schedule grid** at `/schedule` — games per week and back-to-backs
+      per NBA team, as a week-by-week matrix paired with `/matchups`. Data
+      comes from ESPN's `proTeamSchedules_wl` (season-level) joined to
+      `scheduleSettings.matchupPeriods` for the week→days map, so future weeks
+      work too. Snapshot-backed (`data/snapshots/schedule.json`); parsing and
+      matrix building are pure and unit-tested. **One open item:** the ESPN
+      response shape was documented rather than verified — run
+      `npm run probe-sources` once from a normal network to confirm it.
+      Full source catalogue in `docs/DATA-SOURCES.md`.
 - [ ] Rivalry pages (`/rivalries/[a]-vs-[b]`, linked from the existing H2H
       matrix) and power rankings with week-over-week movement.
+- [ ] Highlightly spike — embeddable, VERIFIED highlight clips on the weekly
+      recap (free tier, 100 req/day). See `docs/DATA-SOURCES.md` §4.1.
+
+### Data-source decisions (2026-08-19)
+
+Injury status and player news were researched and **dropped** — the official
+ESPN app covers them well enough. Form splits (last 15 / last 30 averages
+alongside the season number) are **deferred**. Reasoning and endpoints are
+preserved in `docs/DATA-SOURCES.md` in case that changes.
 
 ## Phase 3 — In-season (October → March)
 

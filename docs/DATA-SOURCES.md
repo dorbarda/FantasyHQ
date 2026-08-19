@@ -8,6 +8,17 @@ enhancements, in priority order:
 2. **Injuries & player news** — status, headlines, day-to-day vs. out
 3. **Advanced & per-game stats** — usage, minutes trends, hot/cold form
 
+**Revised after review (2026-08-19).** Dor's calls on the findings below:
+
+- **Schedule is the priority** and is now built — see §1.1 and `/schedule`.
+- **Injuries: dropped.** The official ESPN app already covers this well enough;
+  duplicating it on the site isn't worth the surface area.
+- **Player news: dropped.** Same reason.
+- **Form splits: deferred.** Worth revisiting once someone wants it — it means
+  showing a player's last-15 and last-30 averages next to the season number so
+  you can see who's heating up, rather than one flat season figure.
+- **Highlightly: worth a spike** for highlight videos — see §4.1.
+
 > ### How to read the confidence column
 >
 > The session that wrote this ran behind an egress proxy that **blocked every
@@ -50,7 +61,7 @@ by adding a vendor.
 Highest value per unit of effort. Same host, same cookies, same cache and
 snapshot patterns. Nothing new to configure.
 
-### 1.1 NBA pro schedule → games per week, back-to-backs ★ priority 1
+### 1.1 NBA pro schedule → games per week, back-to-backs ★ BUILT
 
 **`view=proTeamSchedules_wl`** returns the full NBA season schedule keyed by
 pro team — which is exactly the games-per-week signal a weekly H2H league runs
@@ -81,10 +92,22 @@ const schedule = await espnSeasonFetch('?view=proTeamSchedules_wl');
 You already have the `proTeamId → tricode` map (`PRO_TEAMS`, `lib/espn.ts:45`),
 so joining schedule to roster is a few lines.
 
-**What it powers:** games-per-week per roster, "heavy week / light week" badges
-on `/matchups`, a back-to-back column on `/teams`, streaming advice on
-`/draft-prep`, and a schedule-strength term for the power rankings in
-`NEXT-SESSION.md` §2. This is the single best addition on the list.
+**Status: shipped.** `lib/espn-schedule.ts` parses this into a week grid,
+`/schedule` renders it (NBA teams × days, sorted heaviest-first, with a GP and
+B2B column), and the nightly snapshot writes `data/snapshots/schedule.json` so
+the page survives cookie expiry. Parsing and matrix building are pure functions
+covered by `lib/__tests__/schedule.test.ts`.
+
+Because the response shape was documented rather than verified, both parsers
+accept the documented shape plus a couple of plausible variants and return an
+empty result instead of throwing — a shape surprise degrades to "no schedule
+yet", not a broken page. `npm run probe-sources` now checks the exact fields
+`parseProTeamSchedules()` depends on (`homeProTeamId`, `awayProTeamId`, `date`)
+and says so explicitly if any are missing.
+
+**Still unbuilt from this source:** per-roster games-per-week (join the grid to
+each fantasy team's players), "heavy/light week" badges on `/matchups`, and a
+schedule-strength term for the power rankings in `NEXT-SESSION.md` §2.
 
 **Fallback if that view disappears:** `site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/{id}/schedule`
 (no auth, per team, 30 calls) gives the same thing more verbosely.
@@ -277,17 +300,45 @@ show last season's data after the switch. `lib/season.ts` would need a
 None of these are necessary given sections 1–3. Ranked by whether they'd earn
 the extra secret in Vercel.
 
+### 4.1 Highlightly — the one worth trying
+
+Requested for highlight videos. Free tier is **100 requests/day, no credit
+card**. Beyond scores and box scores it returns NBA highlight clips, which is
+the part no other free source here offers.
+
+What matters for putting clips on the site — each highlight carries:
+
+- **`embedUrl`** — the URL to embed directly in a page.
+- **`embeddable`** — a boolean saying whether embedding is actually permitted.
+  Honour it; don't embed anything where this is false.
+- **`source`** — where the clip was aggregated from (`youtube`, `twitter`,
+  `reddit`, `espn`, …).
+- A **VERIFIED** marker for clips from official rights-holding channels.
+
+*Confidence: reported* — from Highlightly's own documentation; not called live.
+
+**Suggested spike:** pull highlights for the games in one completed fantasy
+week, filter to `embeddable === true` and VERIFIED sources only, and put them on
+the weekly recap page — that's where the league already looks back at the week.
+100 requests/day is ample for a nightly job. If people watch them, expand;
+if not, it's one file to delete.
+
+**Watch out for:** rights. Filtering on `embeddable` and VERIFIED is what keeps
+this clean — an unverified clip is someone's re-upload, and embedding it on a
+site, even a private one, is the part to avoid.
+
 | Provider | Free tier | NBA coverage | Verdict |
 | --- | --- | --- | --- |
 | **Big Balls Data** (`bigballsdata.com`) | 1,000 req/day (2,000 via GitHub), no card | Scores, box scores, play-by-play back to 1946, standings, **injuries refreshed ~30 min** | *Reported.* Best free injury feed found. Worth a spike **only if** ESPN's `injuries` endpoint disappoints. Young vendor — don't make it load-bearing |
 | **API-Sports / API-NBA** | 100 req/day | Teams, players, standings, games, stats, odds, injuries | *Reported.* 100/day is tight, but a nightly snapshot needs ~10. Mature, documented, stable |
 | **balldontlie** | 5 req/min, key required | Players, teams, games, stats; advanced stats and injuries sit in paid tiers ($9.99+/mo) | *Reported.* The classic free NBA API is now mostly paywalled for the things you'd want. Skip |
 | **TheSportsDB** | 30 req/min, public key `123` | Teams, players, logos, images, some scores | *Reported.* Good for **branding assets** — logos, player images, team colours. Thin for stats |
-| **Highlightly** | 100 req/day, no card | Scores, stats, highlights across many leagues | *Reported.* Highlight video links are the differentiator; peripheral for you |
+| **Highlightly** | 100 req/day, no card | Scores, stats, **highlight videos** | *Reported.* **Chosen for a spike** — see §4.1 |
 
-**Recommendation: add none of them yet.** Sections 1 and 2 cover all three
-priorities using credentials and hosts you already run. Revisit only if the
-ESPN injuries endpoint turns out to be thin.
+**Recommendation: Highlightly only.** Sections 1 and 2 cover the schedule work
+using credentials and hosts already in production. Highlightly earns its key
+because highlight video is the one thing none of the free ESPN/NBA endpoints
+provide.
 
 ---
 
@@ -295,20 +346,24 @@ ESPN injuries endpoint turns out to be thin.
 
 Ordered by value ÷ effort, mapped to the roadmap in `NEXT-SESSION.md`.
 
-| # | Change | Source | Effort | Payoff |
-| --- | --- | --- | --- | --- |
-| 1 | **Injury dots everywhere** — read `injuryStatus` / `injured` off responses you already fetch | §1.3 | ~1h | Visible on every roster view, zero new requests |
-| 2 | **Games-per-week / back-to-backs** — `proTeamSchedules_wl` + season-level helper, into the nightly snapshot | §1.1 | ~half day | The signal a weekly H2H league actually plays on. Feeds power rankings |
-| 3 | **Form splits (L7/L15/L30)** — extend the existing `kona_player_info` call | §1.2 | ~half day | Hot/cold on `/teams`, honest recent-form term for rankings |
-| 4 | **League-wide injury report page** — ESPN `injuries`, one call | §2 | ~2h | A page the league checks before lineups lock |
-| 5 | **Hot Pickup unblock** — spike `kona_league_communication` for per-week adds | §1.6 | ~half day | Closes the one open award in `docs/RECAP-SPEC.md` §4 |
-| 6 | **Player news on injured/added players** — nightly, cached | §1.4 | ~half day | Context in the recap without opening ESPN |
-| 7 | **Fix the two hardcoded seasons** in `lib/nba.ts` | §3.3 | ~30m | Prevents a silent wrong-season page in October |
-| 8 | **Verify `/nba` stat leaders render in production** | §3.2 | ~15m | May already be broken; decides whether to move or replace the call |
+Revised after Dor's review — injuries and news are dropped, form splits are
+deferred, Highlightly is in.
 
-Items 1–3 are the ones I'd actually build. They serve all three stated
-priorities, add **no new vendor, no new secret, and no new failure mode** — every
-one goes through the ESPN session and snapshot pipeline you already operate.
+| # | Change | Source | Status |
+| --- | --- | --- | --- |
+| 1 | **Games-per-week / back-to-backs grid** at `/schedule` | §1.1 | ✅ **Built** |
+| 2 | **Verify the schedule endpoint shape** — one `npm run probe-sources` run | §1.1 | ⏳ Needs a real network |
+| 3 | **Highlightly spike** — embeddable, VERIFIED clips on the weekly recap | §4.1 | Next |
+| 4 | **Fix the two hardcoded seasons** in `lib/nba.ts` | §3.3 | Open (~30m) |
+| 5 | **Verify `/nba` stat leaders render in production** | §3.2 | Open (~15m) |
+| 6 | **Hot Pickup unblock** — spike `kona_league_communication` for per-week adds | §1.6 | Open (~half day) |
+| 7 | **Per-roster games-per-week** — join the schedule grid to fantasy rosters | §1.1 | Open (~half day) |
+| 8 | **Form splits (L7/L15/L30)** — extend the existing `kona_player_info` call | §1.2 | Deferred |
+
+Dropped by decision, not by difficulty: **injury status/dots** (§1.3), the
+**league-wide injury page** (§2) and **player news** (§1.4) — the official ESPN
+app already serves these well enough that duplicating them isn't worth the
+surface area. The findings stay documented above in case that changes.
 
 ---
 

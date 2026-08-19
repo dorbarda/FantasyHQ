@@ -50,10 +50,11 @@ gotchas.
 
 ## Next up — features (agreed 2026-08-19, see NEXT-SESSION.md)
 
-- [ ] Weekly recap at `/recap`: blowouts, closest game, luckiest win,
-      manager of the week, biggest riser, streamer of the week. Built to be
-      screenshotted into the group chat. Depends on a decision about how to
-      store per-week history.
+- [ ] Weekly recap at `/recap` — **defined, ready to build**; spec in
+      `docs/RECAP-SPEC.md`. Eight playful awards (Beatdown, Heart Attack,
+      Ceiling, Robbed, Heist, The Grinder, Sniper, Hot Pickup), own page plus
+      a home teaser, screenshot-first layout. No snapshot change needed except
+      for Hot Pickup (per-week adds).
 - [ ] Rivalry pages (`/rivalries/[a]-vs-[b]`, linked from the existing H2H
       matrix) and power rankings with week-over-week movement.
 

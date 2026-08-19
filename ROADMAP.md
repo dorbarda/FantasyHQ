@@ -3,6 +3,10 @@
 Decided 2026-08-18 after the off-season review. Phases 1–3 are active work;
 Bets Pool 2.0 is planned but deferred until the season work is done.
 
+**Picking this up in a new session? Start with `NEXT-SESSION.md`** — it has
+the current branch state, the next two tasks in detail, and the environment
+gotchas.
+
 ## Phase 1 — Platform hygiene (now → September)
 
 - [x] Upgrade Next.js 14 → 15, React 18 → 19, ESLint 8 → 9
@@ -27,6 +31,31 @@ Bets Pool 2.0 is planned but deferred until the season work is done.
       `/nba-playoffs/[year]`; new season = set `SEASON` env var
 - [x] Draft prep page (`/draft-prep`): countdown, draft order and notes
       from `data/draft-prep.json`, scouting links to last season's boards
+
+## Design pass (done 2026-08-19, on `claude/nba-fantasy-review-ri3x0e`)
+
+- [x] Token migration + dark mode: every colour resolves through a CSS
+      variable (~1,700 hardcoded values migrated), so the site restyles from
+      one block in `app/globals.css` and dark mode needs no `dark:` variants.
+      Toggle persists and defaults to the system preference; an inline script
+      applies it before first paint.
+- [x] Full mobile pass: fixed sideways scrolling (a `min-width:auto` flex
+      child, then four grids whose inline `gridTemplateColumns` overrode their
+      responsive classes), raised tap targets to 24px, enlarged nav labels.
+      All 12 audited pages now fit a 390px viewport.
+- [x] Visual refresh: matchup card colour encodes state instead of list
+      position; `OwnerAvatar` shows logo-or-initials everywhere instead of
+      empty grey circles; added a type scale; added `-text` variants for
+      decorative colours that failed as small text.
+
+## Next up — features (agreed 2026-08-19, see NEXT-SESSION.md)
+
+- [ ] Weekly recap at `/recap`: blowouts, closest game, luckiest win,
+      manager of the week, biggest riser, streamer of the week. Built to be
+      screenshotted into the group chat. Depends on a decision about how to
+      store per-week history.
+- [ ] Rivalry pages (`/rivalries/[a]-vs-[b]`, linked from the existing H2H
+      matrix) and power rankings with week-over-week movement.
 
 ## Phase 3 — In-season (October → March)
 

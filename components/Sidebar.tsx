@@ -146,6 +146,19 @@ function TeamsIcon() {
   );
 }
 
+function ScheduleIcon() {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4 shrink-0">
+      <rect x="3" y="4.5" width="14" height="12" rx="2" stroke="currentColor" strokeWidth="1.4"/>
+      <path d="M3 8.5h14" stroke="currentColor" strokeWidth="1.4"/>
+      <path d="M7 3v3M13 3v3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+      <circle cx="7" cy="11.5" r="1" fill="currentColor"/>
+      <circle cx="10.5" cy="11.5" r="1" fill="currentColor"/>
+      <circle cx="14" cy="11.5" r="1" fill="currentColor"/>
+    </svg>
+  );
+}
+
 // ─── Nav config ───────────────────────────────────────────────────────────────
 
 const NAV_GROUPS = [
@@ -155,6 +168,7 @@ const NAV_GROUPS = [
       { href: '/',              label: 'Home',        Icon: HomeIcon     },
       { href: '/league',        label: 'League',      Icon: LeagueIcon   },
       { href: '/matchups',      label: 'Matchups',    Icon: MatchupsIcon },
+      { href: '/schedule',      label: 'Schedule',    Icon: ScheduleIcon },
       { href: '/matchup-depth', label: 'Depth',       Icon: DepthIcon    },
       { href: '/recap',         label: 'Recap',       Icon: RecapIcon    },
       { href: '/draft',         label: 'Draft',       Icon: DraftIcon    },

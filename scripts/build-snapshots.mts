@@ -40,6 +40,8 @@ if (!process.env.ESPN_S2 || !process.env.SWID || !process.env.LEAGUE_ID) {
 const { getStatsData, getTransactions, getMatchupDepth, getPlayoffDepth } =
   await import('../lib/espn');
 const { getAllRecords } = await import('../lib/espn-records');
+const { getScheduleSeason } = await import('../lib/espn-schedule');
+const { buildHighlightsSnapshot } = await import('../lib/highlights-data');
 const { getAllHistoricalSeasons } = await import('../lib/espn-history');
 
 // Some loaders (records, history) swallow per-season fetch errors and return
@@ -47,20 +49,28 @@ const { getAllHistoricalSeasons } = await import('../lib/espn-history');
 // with empty ones. Each job validates its result looks non-empty before the
 // write; an empty result counts as a failure and leaves the old file alone.
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const jobs: Array<[string, () => Promise<unknown>, (d: any) => boolean]> = [
+// The fourth field marks a job optional: it still writes when it works, but a
+// failure is logged and does NOT fail the run. Reserved for nice-to-have data
+// from third parties — a red run must keep meaning "the ESPN cookies expired".
+const jobs: Array<[string, () => Promise<unknown>, (d: any) => boolean, boolean?]> = [
   ['stats', getStatsData, d => d.seasonStats?.length > 0],
   ['records', getAllRecords, d => d.hallOfFame?.length > 0],
   ['history', getAllHistoricalSeasons, d => Array.isArray(d) && d.length > 0],
   ['transactions', getTransactions, d => d.byFantasyTeam?.length > 0],
   ['matchup-depth', getMatchupDepth, d => d.rows?.length > 0],
   ['playoff-depth', getPlayoffDepth, d => d.rows?.length > 0],
+  // NBA schedule grid — season-static, so one nightly write keeps /schedule
+  // working (and fast) all week even when the cookies expire.
+  ['schedule', getScheduleSeason, d => d.schedules?.length > 0 && Object.keys(d.weeks ?? {}).length > 0],
+  // Highlight clips for the recap — optional, and skipped entirely without a key.
+  ['highlights', buildHighlightsSnapshot, d => Object.keys(d ?? {}).length > 0, true],
 ];
 
 mkdirSync(OUT_DIR, { recursive: true });
 
 const failures: string[] = [];
 
-for (const [name, load, looksValid] of jobs) {
+for (const [name, load, looksValid, optional] of jobs) {
   const started = Date.now();
   try {
     const data = await load();
@@ -71,14 +81,19 @@ for (const [name, load, looksValid] of jobs) {
     writeFileSync(resolve(OUT_DIR, `${name}.json`), JSON.stringify(payload) + '\n');
     console.log(`✅ ${name} (${((Date.now() - started) / 1000).toFixed(1)}s)`);
   } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    if (optional) {
+      console.warn(`⚠️  ${name} skipped (optional): ${message}`);
+      continue;
+    }
     failures.push(name);
-    console.error(`❌ ${name}: ${err instanceof Error ? err.message : err}`);
+    console.error(`❌ ${name}: ${message}`);
   }
 }
 
 if (failures.length > 0) {
-  console.error(`\n❌ ${failures.length}/${jobs.length} snapshots failed: ${failures.join(', ')}`);
+  console.error(`\n❌ ${failures.length}/${jobs.filter(j => !j[3]).length} required snapshots failed: ${failures.join(', ')}`);
   console.error('If errors are ESPN 401s, the espn_s2/SWID cookies have expired — refresh them.');
   process.exit(1);
 }
-console.log(`\n🏀 All ${jobs.length} snapshots written to data/snapshots/`);
+console.log(`\n🏀 All required snapshots written to data/snapshots/`);

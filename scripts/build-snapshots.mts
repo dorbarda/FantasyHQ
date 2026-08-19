@@ -37,7 +37,7 @@ if (!process.env.ESPN_S2 || !process.env.SWID || !process.env.LEAGUE_ID) {
 }
 
 // Import AFTER env is loaded — lib/espn.ts reads process.env at module level.
-const { getStatsData, getTransactions, getMatchupDepth, getPlayoffDepth } =
+const { getStatsData, getTransactions, getMatchupDepth, getPlayoffDepth, checkEspnAuth } =
   await import('../lib/espn');
 const { getAllRecords } = await import('../lib/espn-records');
 const { getScheduleSeason } = await import('../lib/espn-schedule');
@@ -47,7 +47,14 @@ const { getAllHistoricalSeasons } = await import('../lib/espn-history');
 // Some loaders (records, history) swallow per-season fetch errors and return
 // empty structures, so a dead cookie would silently overwrite good snapshots
 // with empty ones. Each job validates its result looks non-empty before the
-// write; an empty result counts as a failure and leaves the old file alone.
+// write; an empty result never overwrites a good file.
+//
+// Whether an empty result FAILS the run depends on the auth probe below. An
+// empty snapshot means one of two completely different things:
+//   • ESPN rejected us      → the cookies died      → fail loudly, that's the alarm
+//   • ESPN answered fine    → season hasn't started → warn, keep the old file
+// Conflating them is what makes an alarm useless: between a rollover and
+// opening night, every night would be red and you'd learn to ignore the mail.
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // The fourth field marks a job optional: it still writes when it works, but a
 // failure is logged and does NOT fail the run. Reserved for nice-to-have data
@@ -68,14 +75,31 @@ const jobs: Array<[string, () => Promise<unknown>, (d: any) => boolean, boolean?
 
 mkdirSync(OUT_DIR, { recursive: true });
 
+// Auth probe first — this is what gives an empty result its meaning. It exits
+// on failure, so everything past this point knows the cookies are good.
+try {
+  await checkEspnAuth();
+  console.log('🔑 ESPN cookies OK\n');
+} catch (err) {
+  console.error(`❌ ESPN rejected the request: ${err instanceof Error ? err.message : err}`);
+  console.error('The espn_s2/SWID cookies have expired, or LEAGUE_ID/SEASON is wrong.');
+  console.error('Refresh them and re-run — no snapshots were touched.');
+  process.exit(1);
+}
+
 const failures: string[] = [];
+const pending: string[] = [];
 
 for (const [name, load, looksValid, optional] of jobs) {
   const started = Date.now();
   try {
     const data = await load();
     if (!looksValid(data)) {
-      throw new Error('result is empty — snapshot not written (expired cookies, or no data for this season yet)');
+      // Cookies are alive (probe above), so this is a season with no data yet.
+      // Keep the existing file and carry on — this is not a failure.
+      pending.push(name);
+      console.warn(`⏳ ${name}: no data for this season yet — existing snapshot left untouched`);
+      continue;
     }
     const payload = { generatedAt: new Date().toISOString(), data };
     writeFileSync(resolve(OUT_DIR, `${name}.json`), JSON.stringify(payload) + '\n');
@@ -91,9 +115,13 @@ for (const [name, load, looksValid, optional] of jobs) {
   }
 }
 
+if (pending.length > 0) {
+  console.log(`\n⏳ Waiting on season data: ${pending.join(', ')} — normal before opening night.`);
+}
+
 if (failures.length > 0) {
   console.error(`\n❌ ${failures.length}/${jobs.filter(j => !j[3]).length} required snapshots failed: ${failures.join(', ')}`);
-  console.error('If errors are ESPN 401s, the espn_s2/SWID cookies have expired — refresh them.');
+  console.error('The cookies were valid, so these are real errors, not a rollover — read the messages above.');
   process.exit(1);
 }
 console.log(`\n🏀 All required snapshots written to data/snapshots/`);

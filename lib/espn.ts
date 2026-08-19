@@ -40,6 +40,18 @@ async function espnFetch(params: string, extraHeaders?: Record<string, string>, 
   return res.json();
 }
 
+/**
+ * Cheapest possible authenticated call, used to tell two very different
+ * failures apart: dead cookies vs. a season that simply hasn't started.
+ * Throws when ESPN rejects us; resolves when the league answers.
+ */
+export async function checkEspnAuth(): Promise<void> {
+  const data = await espnFetch('?view=mTeam', undefined, true);
+  if (!data || !Array.isArray(data.teams)) {
+    throw new Error('ESPN answered but returned no teams — league id or season may be wrong');
+  }
+}
+
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 
 const PRO_TEAMS: Record<number, string> = {

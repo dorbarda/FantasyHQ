@@ -59,10 +59,22 @@ night (09:00 UTC), calls the heavy ESPN loaders, and commits the results to
 `data/snapshots/*.json` — which triggers a Vercel redeploy on fresh data.
 The analytical pages (records, history, transactions, matchup depth,
 analysis) prefer these snapshots over live ESPN calls, so they stay fast and
-keep working even when the ESPN cookies expire. A red Action run is the
-expired-cookie alarm: GitHub emails the repo owner, and stale-but-valid
-snapshots keep serving until the cookies are refreshed. Empty results are
-never written, so a dead cookie can't wipe good data.
+keep working even when the ESPN cookies expire.
+
+The run starts with an **auth probe** — one cheap authenticated call. It's what
+gives an empty result its meaning, because "no data" means two opposite things:
+
+| Probe | Empty snapshot means | Run |
+| --- | --- | --- |
+| ESPN rejects us | The cookies expired | ❌ **Red** — exits immediately, writes nothing. This is the alarm |
+| ESPN answers | The season hasn't started yet | ⏳ Logged as pending, old file kept, run still passes |
+
+That split matters most right after a season rollover: between switching
+`SEASON` and opening night there is legitimately no matchup data, and without
+the probe every nightly run would be red for weeks — which teaches you to
+ignore the one email that actually matters.
+
+Empty results are never written either way, so nothing can wipe good data.
 
 The Action needs repository **secrets** `ESPN_S2`, `SWID`, `LEAGUE_ID` and
 optionally the **variable** `SEASON` (Settings → Secrets and variables →

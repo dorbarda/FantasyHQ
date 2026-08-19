@@ -79,21 +79,21 @@ export default function PlayoffSeriesAnalyticsCard({ label, teams, winPicks, sco
   }) ?? null;
 
   return (
-    <div className="bg-white border border-[#E2E8F0] rounded-xl p-4 flex flex-col gap-3">
+    <div className="bg-surface border border-border rounded-xl p-4 flex flex-col gap-3">
       {/* Header: team names as primary, seed label as secondary */}
       {(teams[0] && teams[1]) ? (
         <div>
-          <p className="text-[12px] font-semibold text-[#0F172A] leading-tight">
-            {shortName(teams[0])} <span className="text-[#94A3B8] font-normal">vs</span> {shortName(teams[1])}
+          <p className="text-[12px] font-semibold text-foreground leading-tight">
+            {shortName(teams[0])} <span className="text-muted font-normal">vs</span> {shortName(teams[1])}
           </p>
-          <p className="text-[10px] text-[#94A3B8] mt-0.5">{label}</p>
+          <p className="text-[10px] text-muted mt-0.5">{label}</p>
         </div>
       ) : (
-        <p className="text-[12px] font-semibold text-[#0F172A]">{label}</p>
+        <p className="text-[12px] font-semibold text-foreground">{label}</p>
       )}
 
       {total === 0 ? (
-        <p className="text-[12px] text-[#94A3B8] italic">No bets yet</p>
+        <p className="text-[12px] text-muted italic">No bets yet</p>
       ) : (
         <>
           {/* Pie chart */}
@@ -123,15 +123,15 @@ export default function PlayoffSeriesAnalyticsCard({ label, teams, winPicks, sco
 
           {/* Win % split */}
           {!isPlayIn && (
-            <div className="border-t border-[#F1F5F9] pt-3 space-y-2">
+            <div className="border-t border-surface-secondary pt-3 space-y-2">
               {[
                 { team: teams[0], count: teamACt, pct: teamAPct, color: TEAM_COLORS[0] },
                 { team: teams[1], count: teamBCt, pct: teamBPct, color: TEAM_COLORS[1] },
               ].map(({ team, count, pct, color }) => team ? (
                 <div key={team} className="flex items-center gap-2">
                   <span className="shrink-0 w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
-                  <span className="text-[11px] text-[#0F172A] flex-1 truncate">{team}</span>
-                  <span className="text-[11px] font-semibold text-[#475569] shrink-0">
+                  <span className="text-[11px] text-foreground flex-1 truncate">{team}</span>
+                  <span className="text-[11px] font-semibold text-secondary shrink-0">
                     {count}/{total} · {pct}%
                   </span>
                 </div>
@@ -141,15 +141,15 @@ export default function PlayoffSeriesAnalyticsCard({ label, teams, winPicks, sco
 
           {/* Contrarian bet */}
           {contrarian && (
-            <div className="border-t border-[#F1F5F9] pt-2">
-              <p className="text-[9px] font-bold uppercase tracking-wide text-[#94A3B8] mb-1">Contrarian</p>
+            <div className="border-t border-surface-secondary pt-2">
+              <p className="text-[9px] font-bold uppercase tracking-wide text-muted mb-1">Contrarian</p>
               <div className="flex items-center gap-1.5 flex-wrap">
                 <span className="text-[11px]">🎯</span>
-                <span className="text-[11px] font-semibold text-[#475569]">{contrarian.owner}</span>
-                <span className="text-[10px] text-[#94A3B8]">·</span>
-                <span className="text-[11px] font-medium text-[#0F172A]">{shortName(contrarian.team)}</span>
+                <span className="text-[11px] font-semibold text-secondary">{contrarian.owner}</span>
+                <span className="text-[10px] text-muted">·</span>
+                <span className="text-[11px] font-medium text-foreground">{shortName(contrarian.team)}</span>
                 {!isPlayIn && contrarian.score && (
-                  <span className="text-[10px] text-[#64748B]">({contrarian.score})</span>
+                  <span className="text-[10px] text-tertiary">({contrarian.score})</span>
                 )}
               </div>
             </div>

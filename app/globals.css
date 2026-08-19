@@ -7,35 +7,167 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   Design tokens.
+
+   Every colour in the app resolves through one of these variables, so the
+   whole site restyles by editing this block. Dark mode works by redefining
+   the same names under [data-theme="dark"] — components never need `dark:`
+   variants.
+
+   The neutral ramp runs from `background` (lightest) to `foreground`
+   (darkest) in light mode, and inverts in dark mode. "Panel" is the
+   deliberately dark surface (sidebar, hero cards) that stays dark in
+   both themes.
+   ──────────────────────────────────────────────────────────────────────────── */
+
 :root {
-  /* Main surface */
+  /* Neutral ramp — surfaces */
   --background:           #F8FAFC;
   --surface:              #FFFFFF;
   --surface-secondary:    #F1F5F9;
   --border:               #E2E8F0;
+  --border-strong:        #CBD5E1;
 
-  /* Text */
+  /* Neutral ramp — text */
   --foreground:           #0F172A;
+  --foreground-strong:    #334155;
   --foreground-secondary: #475569;
-  --foreground-muted:     #94A3B8;
+  --foreground-tertiary:  #55637A;
+  --foreground-muted:     #64748B;
 
-  /* Sidebar (stays dark) */
-  --sidebar-bg:           #0B1628;
-  --sidebar-active:       #1E3A5F;
-  --sidebar-border:       #1E3050;
-  --sidebar-text:         #CBD5E1;
-  --sidebar-text-active:  #F0F4F8;
+  /* Panel — always-dark surface (sidebar, hero cards) */
+  --panel:                #0B1628;
+  --panel-secondary:      #1E3A5F;
+  --panel-border:         #1E3050;
+  --panel-text:           #CBD5E1;
+  --panel-text-muted:     #94A3B8;
+  --panel-text-strong:    #F0F4F8;
 
   /* Accent */
   --accent:               #C8956C;
   --accent-hover:         #D4A77C;
-  --accent-light:         rgba(200,149,108,0.15);
+  --accent-light:         rgba(200, 149, 108, 0.15);
+  --accent-text:          #8A5A2B;
 
-  /* Status */
-  --green:                #10B981;
-  --red:                  #EF4444;
-  --orange:               #F59E0B;
-  --blue:                 #3B82F6;
+  /* Semantic status — `-bright` variants are tuned for dark surfaces */
+  --positive:             #10B981;
+  --positive-strong:      #047857;
+  --positive-bright:      #34D399;
+  --positive-surface:     #DCFCE7;
+  --positive-text:        #14532D;
+  --negative:             #EF4444;
+  --negative-bright:      #F87171;
+  --negative-surface:     #FEF2F2;
+  --negative-text:        #7F1D1D;
+  --warning:              #F59E0B;
+  --warning-bright:       #FB923C;
+  --warning-surface:      #FEF3C7;
+  --warning-text:         #92400E;
+  --info:                 #3B82F6;
+  --info-bright:          #60A5FA;
+  --info-surface:         #EFF6FF;
+
+  /* Medals */
+  --gold:                 #EAB308;
+  --gold-surface:         #FEF9C3;
+  --silver:               #94A3B8;
+  --bronze:               #FDBA74;
+  --bronze-surface:       #FDF6F0;
+  --gold-text:            #A16207;
+  --silver-text:          #64748B;
+  --bronze-text:          #92400E;
+}
+
+:root[data-theme="dark"] {
+  /* Surfaces get lighter as they come forward, mirroring the light ramp */
+  --background:           #0A101C;
+  --surface:              #141D2E;
+  --surface-secondary:    #1C2739;
+  --border:               #27354B;
+  --border-strong:        #3A4A63;
+
+  /* Text ramp inverts */
+  --foreground:           #E8EDF5;
+  --foreground-strong:    #CBD5E1;
+  --foreground-secondary: #AEBACB;
+  --foreground-tertiary:  #93A2B8;
+  --foreground-muted:     #8291AB;
+
+  /* Panels sit above the background so cards still read as raised */
+  --panel:                #16213A;
+  --panel-secondary:      #24406A;
+  --panel-border:         #2A3C5C;
+  --panel-text:           #C3CFE0;
+  --panel-text-muted:     #93A2B8;
+  --panel-text-strong:    #F0F4F8;
+
+  /* Accent brightens slightly to hold contrast on dark ground */
+  --accent:               #D9A87E;
+  --accent-hover:         #E5BB94;
+  --accent-light:         rgba(217, 168, 126, 0.18);
+  --accent-text:          #E0B48A;
+
+  --positive:             #34D399;
+  --positive-strong:      #34D399;
+  --positive-bright:      #6EE7B7;
+  --positive-surface:     rgba(52, 211, 153, 0.15);
+  --positive-text:        #86EFAC;
+  --negative:             #F87171;
+  --negative-bright:      #FCA5A5;
+  --negative-surface:     rgba(248, 113, 113, 0.15);
+  --negative-text:        #FCA5A5;
+  --warning:              #FBBF24;
+  --warning-bright:       #FCD34D;
+  --warning-surface:      rgba(251, 191, 36, 0.15);
+  --warning-text:         #FCD34D;
+  --info:                 #60A5FA;
+  --info-bright:          #93C5FD;
+  --info-surface:         rgba(96, 165, 250, 0.15);
+
+  --gold:                 #FACC15;
+  --gold-surface:         rgba(250, 204, 21, 0.14);
+  --silver:               #94A3B8;
+  --bronze:               #FDBA74;
+  --bronze-surface:       rgba(253, 186, 116, 0.12);
+  --gold-text:            #FACC15;
+  --silver-text:          #CBD5E1;
+  --bronze-text:          #FDBA74;
+}
+
+/* ─── Type scale ─────────────────────────────────────────────────────────────
+   The app sets sizes per element with arbitrary values; these classes give
+   the recurring roles one definition so headings and eyebrows stay
+   consistent as new pages are added. */
+
+@layer components {
+  .type-page-title {
+    font-size: 28px;
+    line-height: 1.1;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  @media (min-width: 640px) {
+    .type-page-title { font-size: 32px; }
+  }
+  .type-page-subtitle {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--foreground-secondary);
+  }
+  .type-section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--foreground-muted);
+  }
+  .type-stat {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
 }
 
 body {
@@ -45,9 +177,60 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Theme transition — skipped for users who prefer reduced motion */
+@media (prefers-reduced-motion: no-preference) {
+  body, [class*="bg-"], [class*="text-"], [class*="border-"] {
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+}
+
 @media print {
   body { background: white !important; }
   @page { margin: 0.4in; size: A4; }
+}
+
+/* ─── Recharts theming ───────────────────────────────────────────────────────
+   Recharts writes colours as SVG presentation attributes, which CSS
+   properties override. Styling the chart chrome here keeps axes, grids and
+   tooltips on-token in both themes without threading colours through every
+   chart component. Data-series colours stay in the components, where they
+   carry meaning. */
+
+.recharts-cartesian-axis-tick text,
+.recharts-polar-angle-axis-tick text,
+.recharts-polar-radius-axis-tick text,
+.recharts-label,
+.recharts-legend-item-text {
+  fill: var(--foreground-muted) !important;
+  color: var(--foreground-muted) !important;
+}
+
+.recharts-cartesian-grid line,
+.recharts-polar-grid-angle line,
+.recharts-polar-grid-concentric circle,
+.recharts-polar-grid-concentric path {
+  stroke: var(--border);
+}
+
+.recharts-cartesian-axis-line,
+.recharts-cartesian-axis-tick-line {
+  stroke: var(--border-strong);
+}
+
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px;
+  color: var(--foreground) !important;
+}
+
+.recharts-tooltip-wrapper .recharts-tooltip-label,
+.recharts-tooltip-wrapper .recharts-tooltip-item {
+  color: var(--foreground) !important;
+}
+
+.recharts-reference-line line {
+  stroke: var(--border-strong);
 }
 
 @layer utilities {

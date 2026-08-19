@@ -40,13 +40,13 @@ export default function CategoryRadarChart({ standings, teamCount }: Props) {
   });
 
   return (
-    <div className="border border-[#E2E8F0] rounded-lg bg-white p-4">
+    <div className="border border-border rounded-lg bg-surface p-4">
       <ResponsiveContainer width="100%" height={340}>
         <RadarChart data={data} margin={{ top: 12, right: 32, bottom: 4, left: 32 }}>
           <PolarGrid stroke="#E2E8F0" />
           <PolarAngleAxis
             dataKey="category"
-            tick={{ fill: '#94A3B8', fontSize: 11, fontWeight: 600 }}
+            tick={{ fill: 'var(--foreground-muted)', fontSize: 11, fontWeight: 600 }}
           />
           <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
           {standings.map((team, i) => (
@@ -64,22 +64,22 @@ export default function CategoryRadarChart({ standings, teamCount }: Props) {
           ))}
           <Tooltip
             contentStyle={{
-              background: '#F1F5F9',
-              border: '1px solid #E2E8F0',
+              background: 'var(--surface-secondary)',
+              border: '1px solid var(--border)',
               borderRadius: 8,
               fontSize: 12,
             }}
-            itemStyle={{ color: '#0F172A' }}
+            itemStyle={{ color: 'var(--foreground)' }}
             formatter={(value, name) => [`${value ?? ''}`, String(name)]}
           />
           <Legend
-            wrapperStyle={{ fontSize: 11, color: '#94A3B8', paddingTop: 8 }}
+            wrapperStyle={{ fontSize: 11, color: 'var(--foreground-muted)', paddingTop: 8 }}
             iconType="line"
             iconSize={12}
           />
         </RadarChart>
       </ResponsiveContainer>
-      <p className="text-[11px] text-[#475569] text-center mt-1">
+      <p className="text-[11px] text-secondary text-center mt-1">
         Score = rank percentile · 100 = league leader in that category · TO: lower is better (inverted)
       </p>
     </div>

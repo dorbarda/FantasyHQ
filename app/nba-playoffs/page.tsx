@@ -43,7 +43,7 @@ const playInComplete = results.playIn.every(g => g.winner !== null);
 function LeaderboardTab() {
   if (allBets.length === 0) {
     return (
-      <div className="text-center py-16 text-[#94A3B8] text-[14px]">
+      <div className="text-center py-16 text-muted text-[14px]">
         No bets entered yet — the {pool.year} pool opens with the playoffs.
       </div>
     );
@@ -59,26 +59,26 @@ function LeaderboardTab() {
     })
     .sort((a, b) => b.total - a.total);
 
-  const rankColors = ['bg-[#FEF9C3] border border-[#EAB308]', 'bg-[#F1F5F9] border border-[#CBD5E1]', 'bg-[#FDF6F0] border border-[#FDBA74]'];
+  const rankColors = ['bg-gold-surface border border-gold', 'bg-surface-secondary border border-border-strong', 'bg-bronze-surface border border-bronze'];
 
   return (
     <div>
-      <div className="overflow-x-auto rounded-xl border border-[#E2E8F0] mb-8">
+      <div className="overflow-x-auto rounded-xl border border-border mb-8">
         <table className="w-full text-[13px]">
           <thead>
-            <tr className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
+            <tr className="bg-background border-b border-border">
               {['Rank', 'Owner', 'Total', 'Play-In', 'Rd 1', 'Semis', 'Conf Finals', 'Finals', 'Bonus'].map(h => (
-                <th key={h} className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">{h}</th>
+                <th key={h} className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-muted">{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {scores.map((s, i) => (
-              <tr key={s.ownerName} className={`border-b border-[#F1F5F9] last:border-0 ${i < 3 ? rankColors[i] : (i % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]')}`}>
-                <td className="px-4 py-3 font-bold text-[#0F172A]">
+              <tr key={s.ownerName} className={`border-b border-surface-secondary last:border-0 ${i < 3 ? rankColors[i] : (i % 2 === 0 ? 'bg-surface' : 'bg-background')}`}>
+                <td className="px-4 py-3 font-bold text-foreground">
                   {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`}
                 </td>
-                <td className="px-4 py-3 font-semibold text-[#0F172A]">
+                <td className="px-4 py-3 font-semibold text-foreground">
                   <span className="inline-flex items-center gap-1.5">
                     {s.ownerName}
                     {s.fine && (
@@ -89,7 +89,7 @@ function LeaderboardTab() {
                           width: 8,
                           height: 8,
                           borderRadius: '50%',
-                          background: '#EF4444',
+                          background: 'var(--negative)',
                           flexShrink: 0,
                           cursor: 'help',
                         }}
@@ -97,20 +97,20 @@ function LeaderboardTab() {
                     )}
                   </span>
                 </td>
-                <td className="px-4 py-3 font-black text-[18px] text-[#0F172A]">
+                <td className="px-4 py-3 font-black text-[18px] text-foreground">
                   <span>{s.total}</span>
                   {s.fine && (
-                    <span className="ml-1.5 text-[11px] font-semibold text-[#EF4444]">
+                    <span className="ml-1.5 text-[11px] font-semibold text-negative">
                       ({s.fine.points})
                     </span>
                   )}
                 </td>
-                <td className="px-4 py-3 text-[#475569]">{s.bySection.playIn}</td>
-                <td className="px-4 py-3 text-[#475569]">{s.bySection.rounds[0]}</td>
-                <td className="px-4 py-3 text-[#475569]">{s.bySection.rounds[1]}</td>
-                <td className="px-4 py-3 text-[#475569]">{s.bySection.rounds[2]}</td>
-                <td className="px-4 py-3 text-[#475569]">{s.bySection.rounds[3]}</td>
-                <td className="px-4 py-3 text-[#475569]">{s.bySection.bonus}</td>
+                <td className="px-4 py-3 text-secondary">{s.bySection.playIn}</td>
+                <td className="px-4 py-3 text-secondary">{s.bySection.rounds[0]}</td>
+                <td className="px-4 py-3 text-secondary">{s.bySection.rounds[1]}</td>
+                <td className="px-4 py-3 text-secondary">{s.bySection.rounds[2]}</td>
+                <td className="px-4 py-3 text-secondary">{s.bySection.rounds[3]}</td>
+                <td className="px-4 py-3 text-secondary">{s.bySection.bonus}</td>
               </tr>
             ))}
           </tbody>
@@ -141,14 +141,14 @@ function ResultsSection({ title, items, isPlayIn }: {
 }) {
   return (
     <div className="mb-6">
-      <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#94A3B8] mb-3">{title}</p>
-      <div className="rounded-xl border border-[#E2E8F0] overflow-hidden">
+      <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-muted mb-3">{title}</p>
+      <div className="rounded-xl border border-border overflow-hidden">
         {items.map((item, i) => (
-          <div key={i} className={`flex items-center justify-between px-4 py-3 border-b border-[#F1F5F9] last:border-0 ${i % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'}`}>
+          <div key={i} className={`flex items-center justify-between px-4 py-3 border-b border-surface-secondary last:border-0 ${i % 2 === 0 ? 'bg-surface' : 'bg-background'}`}>
             <div className="min-w-0 flex-1">
-              <p className="text-[13px] font-semibold text-[#0F172A]">{item.label}</p>
+              <p className="text-[13px] font-semibold text-foreground">{item.label}</p>
               {item.teams[0] || item.teams[1] ? (
-                <p className="text-[12px] text-[#64748B] mt-0.5">
+                <p className="text-[12px] text-tertiary mt-0.5">
                   {item.teams[0] || 'TBD'} vs {item.teams[1] || 'TBD'}
                 </p>
               ) : null}
@@ -157,16 +157,16 @@ function ResultsSection({ title, items, isPlayIn }: {
               {item.winner ? (
                 <div className="flex items-center gap-2">
                   {!isPlayIn && item.score && (
-                    <span className="text-[11px] font-bold bg-[#F8FAFC] border border-[#E2E8F0] rounded px-2 py-0.5 text-[#475569]">
+                    <span className="text-[11px] font-bold bg-background border border-border rounded px-2 py-0.5 text-secondary">
                       {item.score}
                     </span>
                   )}
-                  <span className="text-[12px] font-semibold text-[#10B981] bg-[#DCFCE7] rounded-lg px-3 py-1">
+                  <span className="text-[12px] font-semibold text-positive bg-positive-surface rounded-lg px-3 py-1">
                     ✓ {item.winner}
                   </span>
                 </div>
               ) : (
-                <span className="text-[12px] text-[#94A3B8] italic">— Pending —</span>
+                <span className="text-[12px] text-muted italic">— Pending —</span>
               )}
             </div>
           </div>
@@ -221,20 +221,20 @@ function RulesTab() {
     <div className="max-w-2xl space-y-8">
       {/* Bonus Bets */}
       <div>
-        <p className="text-[15px] font-bold text-[#0F172A] mb-4">Bonus Bets</p>
-        <div className="rounded-xl border border-[#E2E8F0] overflow-hidden">
+        <p className="text-[15px] font-bold text-foreground mb-4">Bonus Bets</p>
+        <div className="rounded-xl border border-border overflow-hidden">
           <table className="w-full text-[13px]">
             <thead>
-              <tr className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
-                <th className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">Bet</th>
-                <th className="px-4 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">Points</th>
+              <tr className="bg-background border-b border-border">
+                <th className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-muted">Bet</th>
+                <th className="px-4 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-muted">Points</th>
               </tr>
             </thead>
             <tbody>
               {bonusRows.map((row, i) => (
-                <tr key={i} className={`border-b border-[#F1F5F9] last:border-0 ${i % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'}`}>
-                  <td className="px-4 py-3 text-[#0F172A]">{row.bet}</td>
-                  <td className="px-4 py-3 text-right font-bold text-[#C8956C]">{row.pts}</td>
+                <tr key={i} className={`border-b border-surface-secondary last:border-0 ${i % 2 === 0 ? 'bg-surface' : 'bg-background'}`}>
+                  <td className="px-4 py-3 text-foreground">{row.bet}</td>
+                  <td className="px-4 py-3 text-right font-bold text-accent">{row.pts}</td>
                 </tr>
               ))}
             </tbody>
@@ -244,24 +244,24 @@ function RulesTab() {
 
       {/* Series Scoring */}
       <div>
-        <p className="text-[15px] font-bold text-[#0F172A] mb-4">Series Scoring</p>
-        <div className="rounded-xl border border-[#E2E8F0] overflow-hidden">
+        <p className="text-[15px] font-bold text-foreground mb-4">Series Scoring</p>
+        <div className="rounded-xl border border-border overflow-hidden">
           <table className="w-full text-[13px]">
             <thead>
-              <tr className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
-                <th className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">Round</th>
-                <th className="px-4 py-3 text-center text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">Correct Winner</th>
-                <th className="px-4 py-3 text-center text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">Exact Score</th>
-                <th className="px-4 py-3 text-center text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">4-3 (Wrong Winner)</th>
+              <tr className="bg-background border-b border-border">
+                <th className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-muted">Round</th>
+                <th className="px-4 py-3 text-center text-[11px] font-semibold uppercase tracking-wider text-muted">Correct Winner</th>
+                <th className="px-4 py-3 text-center text-[11px] font-semibold uppercase tracking-wider text-muted">Exact Score</th>
+                <th className="px-4 py-3 text-center text-[11px] font-semibold uppercase tracking-wider text-muted">4-3 (Wrong Winner)</th>
               </tr>
             </thead>
             <tbody>
               {seriesRows.map((row, i) => (
-                <tr key={i} className={`border-b border-[#F1F5F9] last:border-0 ${i % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'}`}>
-                  <td className="px-4 py-3 font-semibold text-[#0F172A]">{row.round}</td>
-                  <td className="px-4 py-3 text-center font-bold text-[#10B981]">{row.correct}</td>
-                  <td className="px-4 py-3 text-center font-bold text-[#EAB308]">{row.exact}</td>
-                  <td className="px-4 py-3 text-center font-bold text-[#F59E0B]">{row.wrong43}</td>
+                <tr key={i} className={`border-b border-surface-secondary last:border-0 ${i % 2 === 0 ? 'bg-surface' : 'bg-background'}`}>
+                  <td className="px-4 py-3 font-semibold text-foreground">{row.round}</td>
+                  <td className="px-4 py-3 text-center font-bold text-positive">{row.correct}</td>
+                  <td className="px-4 py-3 text-center font-bold text-gold">{row.exact}</td>
+                  <td className="px-4 py-3 text-center font-bold text-warning">{row.wrong43}</td>
                 </tr>
               ))}
             </tbody>
@@ -270,23 +270,23 @@ function RulesTab() {
       </div>
 
       {/* Special bonus */}
-      <div className="bg-[#FEF3C7] border border-[#FDE68A] rounded-xl px-5 py-4">
-        <p className="text-[13px] font-bold text-[#92400E] mb-1">⭐ Special Bonus</p>
-        <p className="text-[13px] text-[#92400E]">
+      <div className="bg-warning-surface border border-warning-bright rounded-xl px-5 py-4">
+        <p className="text-[13px] font-bold text-warning-text mb-1">⭐ Special Bonus</p>
+        <p className="text-[13px] text-warning-text">
           All 8 Round 1 series winners correct → <strong>+8 points</strong>
         </p>
       </div>
 
       {/* Legend */}
       <div>
-        <p className="text-[13px] font-bold text-[#0F172A] mb-3">Score Legend</p>
+        <p className="text-[13px] font-bold text-foreground mb-3">Score Legend</p>
         <div className="flex flex-wrap gap-3">
           {[
-            { label: 'Exact (winner + score)', style: 'bg-[#FEF9C3] border-2 border-[#EAB308] text-[#713F12]' },
-            { label: 'Correct winner',         style: 'bg-[#DCFCE7] text-[#14532D]' },
-            { label: '4-3 wrong winner',       style: 'bg-[#FEF3C7] text-[#92400E]' },
-            { label: 'Wrong',                  style: 'bg-[#FEE2E2] text-[#7F1D1D]' },
-            { label: 'Pending',                style: 'bg-white border border-[#E2E8F0] text-[#475569]' },
+            { label: 'Exact (winner + score)', style: 'bg-gold-surface border-2 border-gold text-warning-text' },
+            { label: 'Correct winner',         style: 'bg-positive-surface text-positive' },
+            { label: '4-3 wrong winner',       style: 'bg-warning-surface text-warning-text' },
+            { label: 'Wrong',                  style: 'bg-negative-surface text-negative' },
+            { label: 'Pending',                style: 'bg-surface border border-border text-secondary' },
           ].map(({ label, style }) => (
             <span key={label} className={`text-[12px] font-medium rounded px-2.5 py-1 ${style}`}>{label}</span>
           ))}
@@ -301,7 +301,7 @@ function RulesTab() {
 function BracketTab() {
   if (allBets.length === 0) {
     return (
-      <div className="text-center py-16 text-[#94A3B8] text-[14px]">
+      <div className="text-center py-16 text-muted text-[14px]">
         No bets entered yet — the {pool.year} pool opens with the playoffs.
       </div>
     );
@@ -336,7 +336,7 @@ function HistoryTab() {
 
   if (sorted.length === 0) {
     return (
-      <div className="text-center py-16 text-[#94A3B8] text-[14px]">
+      <div className="text-center py-16 text-muted text-[14px]">
         No past seasons logged yet.
       </div>
     );
@@ -347,21 +347,21 @@ function HistoryTab() {
       {sorted.map(entry => (
         <div
           key={entry.year}
-          className="bg-white border border-[#E2E8F0] rounded-2xl overflow-hidden shadow-sm"
+          className="bg-surface border border-border rounded-2xl overflow-hidden shadow-sm"
         >
           {/* Season header */}
-          <div className="px-5 pt-4 pb-3 border-b border-[#E2E8F0] bg-gradient-to-r from-[#F8FAFC] to-[#F1F5F9] flex items-center justify-between">
-            <h2 className="text-[20px] font-black tracking-tight text-[#0F172A]">
+          <div className="px-5 pt-4 pb-3 border-b border-border bg-gradient-to-r from-background to-surface-secondary flex items-center justify-between">
+            <h2 className="text-[20px] font-black tracking-tight text-foreground">
               {entry.label} Season
             </h2>
             <div className="flex items-center gap-3">
-              <span className="text-[11px] font-semibold text-[#94A3B8]">
+              <span className="text-[11px] font-semibold text-muted">
                 🏀 {entry.nbaChampion} won {entry.nbaScore} over {entry.nbaRunnerUp}
               </span>
               {archiveYears.has(entry.year) && (
                 <Link
                   href={`/nba-playoffs/${entry.year}`}
-                  className="text-[11px] font-semibold text-[#2563EB] hover:text-[#1D4ED8] transition-colors shrink-0"
+                  className="text-[11px] font-semibold text-info hover:text-info transition-colors shrink-0"
                 >
                   Full archive →
                 </Link>
@@ -372,23 +372,23 @@ function HistoryTab() {
           {/* Fantasy winner + runner-up */}
           <div className="px-5 py-4 flex flex-col sm:flex-row gap-3">
             {/* Winner */}
-            <div className="flex-1 flex items-center gap-3 bg-[#FFFBEB] border border-[#F59E0B]/30 rounded-xl px-4 py-3">
+            <div className="flex-1 flex items-center gap-3 bg-warning-surface border border-warning/30 rounded-xl px-4 py-3">
               <span className="text-[28px] shrink-0">🏆</span>
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] font-black uppercase tracking-widest text-[#D97706] mb-0.5">Fantasy Champion</p>
-                <p className="text-[16px] font-black text-[#0F172A] truncate">{entry.fantasyWinner.ownerName}</p>
-                <p className="text-[12px] font-semibold text-[#D97706]">
+                <p className="text-[10px] font-black uppercase tracking-widest text-warning mb-0.5">Fantasy Champion</p>
+                <p className="text-[16px] font-black text-foreground truncate">{entry.fantasyWinner.ownerName}</p>
+                <p className="text-[12px] font-semibold text-warning">
                   {entry.fantasyWinner.points} pts · {entry.fantasyWinner.exactScores} exact
                 </p>
               </div>
             </div>
             {/* Runner-up */}
-            <div className="flex-1 flex items-center gap-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3">
+            <div className="flex-1 flex items-center gap-3 bg-background border border-border rounded-xl px-4 py-3">
               <span className="text-[28px] shrink-0">🥈</span>
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] font-black uppercase tracking-widest text-[#94A3B8] mb-0.5">Runner-Up</p>
-                <p className="text-[16px] font-black text-[#0F172A] truncate">{entry.fantasyRunnerUp.ownerName}</p>
-                <p className="text-[12px] text-[#94A3B8]">
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted mb-0.5">Runner-Up</p>
+                <p className="text-[16px] font-black text-foreground truncate">{entry.fantasyRunnerUp.ownerName}</p>
+                <p className="text-[12px] text-muted">
                   {entry.fantasyRunnerUp.points} pts · {entry.fantasyRunnerUp.exactScores} exact
                 </p>
               </div>
@@ -423,13 +423,13 @@ export default async function NBAPlayoffsPage({
     : `Playoffs · ${seriesComplete}/${seriesTotal} series complete`;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
+    <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A]">
+        <h1 className="type-page-title text-foreground">
           NBA {pool.year} Playoffs
         </h1>
-        <p className="text-[14px] text-[#475569] mt-1">
+        <p className="type-page-subtitle mt-1">
           {ownerCount > 0
             ? `${ownerCount} participants · ${stageLabel}`
             : `Play-In Tournament · April 14–17 · Playoffs begin April 18`}

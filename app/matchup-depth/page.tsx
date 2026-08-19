@@ -34,9 +34,9 @@ export default async function MatchupDepthPage({
 
   if (!snap && !hasEspnCredentials()) {
     return (
-      <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A] mb-2">Matchup Depth</h1>
-        <p className="text-[14px] text-[#475569] mt-1">ESPN credentials required.</p>
+      <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
+        <h1 className="type-page-title text-foreground mb-2">Matchup Depth</h1>
+        <p className="type-page-subtitle mt-1">ESPN credentials required.</p>
       </div>
     );
   }
@@ -62,10 +62,10 @@ export default async function MatchupDepthPage({
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
+    <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
       <div className="mb-5">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A]">{meta.title}</h1>
-        <p className="text-[14px] text-[#475569] mt-1">{meta.subtitle}</p>
+        <h1 className="type-page-title text-foreground">{meta.title}</h1>
+        <p className="type-page-subtitle mt-1">{meta.subtitle}</p>
       </div>
 
       <Suspense fallback={null}>
@@ -73,13 +73,13 @@ export default async function MatchupDepthPage({
       </Suspense>
 
       {error && (
-        <p className="text-[14px] text-[#475569]">Could not load data — try again later.</p>
+        <p className="text-[14px] text-secondary">Could not load data — try again later.</p>
       )}
 
       {tab === 'full' && data && (
         <>
           {data.completedPeriods.length > 0 && (
-            <p className="text-[13px] text-[#94A3B8] mb-4">
+            <p className="text-[13px] text-muted mb-4">
               {data.completedPeriods.length} week{data.completedPeriods.length !== 1 ? 's' : ''} completed
             </p>
           )}
@@ -90,13 +90,13 @@ export default async function MatchupDepthPage({
       {tab === 'playoff' && data && (
         <>
           {data.completedPeriods.length === 0 ? (
-            <div className="border border-[#E2E8F0] rounded-lg px-6 py-10 text-center bg-white">
-              <p className="text-[15px] font-semibold text-[#0F172A]">Playoffs haven&apos;t started yet</p>
-              <p className="text-[13px] text-[#94A3B8] mt-1">Data will appear once week 19 completes.</p>
+            <div className="border border-border rounded-lg px-6 py-10 text-center bg-surface">
+              <p className="text-[15px] font-semibold text-foreground">Playoffs haven&apos;t started yet</p>
+              <p className="text-[13px] text-muted mt-1">Data will appear once week 19 completes.</p>
             </div>
           ) : (
             <>
-              <p className="text-[13px] text-[#94A3B8] mb-4">
+              <p className="text-[13px] text-muted mb-4">
                 {data.completedPeriods.length} playoff week{data.completedPeriods.length !== 1 ? 's' : ''} completed
                 {' · '}weeks {data.completedPeriods[0]}–{data.completedPeriods[data.completedPeriods.length - 1]}
               </p>

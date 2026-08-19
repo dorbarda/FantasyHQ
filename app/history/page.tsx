@@ -1,9 +1,13 @@
 import { hasEspnCredentials } from '@/lib/espn';
 import { getAllHistoricalSeasons } from '@/lib/espn-history';
 import { readSnapshot } from '@/lib/snapshots';
+import { bestTextOn } from '@/lib/contrast';
 import overridesJson from '@/data/history.json';
 import { HistoricalSeason, SeasonOverride } from '@/lib/types';
 import SeasonCard from '@/components/SeasonCard';
+
+const MEDAL_FILL = ['#D97706', '#94A3B8', '#C8956C'];
+const SHAME_FILL = ['#DC2626', '#EF4444'];
 
 export const revalidate = 86400; // historical data — revalidate once a day
 
@@ -82,12 +86,12 @@ export default async function HistoryPage() {
   const shameLeader = Object.entries(shameCount).sort(([, a], [, b]) => b - a)[0] ?? null;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
+    <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
 
       {/* Page header */}
       <div className="mb-6">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A]">History</h1>
-        <p className="text-[14px] text-[#475569] mt-1">
+        <h1 className="type-page-title text-foreground">History</h1>
+        <p className="type-page-subtitle mt-1">
           {merged.length} season{merged.length !== 1 ? 's' : ''} · Champions &amp; final standings
         </p>
       </div>
@@ -98,21 +102,24 @@ export default async function HistoryPage() {
 
           {/* Championship leaderboard */}
           {dynastyRanking.length > 0 && (
-            <div className="bg-white border border-[#E2E8F0] rounded-2xl px-4 pt-4 pb-3 shadow-sm">
-              <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
+            <div className="bg-surface border border-border rounded-2xl px-4 pt-4 pb-3 shadow-sm">
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-3">
                 🏆 All-Time Champions
               </p>
               <div className="flex flex-col gap-2">
                 {dynastyRanking.map(([owner, count], i) => (
                   <div key={owner} className="flex items-center gap-2.5">
                     <span
-                      className="text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center text-white shrink-0"
-                      style={{ backgroundColor: i === 0 ? '#D97706' : i === 1 ? '#94A3B8' : '#C8956C' }}
+                      className="text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center shrink-0"
+                      style={{
+                        backgroundColor: MEDAL_FILL[Math.min(i, 2)],
+                        color: bestTextOn(MEDAL_FILL[Math.min(i, 2)]),
+                      }}
                     >
                       {i + 1}
                     </span>
-                    <span className="text-[14px] font-semibold text-[#0F172A] flex-1 min-w-0 truncate">{owner}</span>
-                    <span className="text-[13px] font-black tabular-nums text-[#D97706]">
+                    <span className="text-[14px] font-semibold text-foreground flex-1 min-w-0 truncate">{owner}</span>
+                    <span className="text-[13px] font-black tabular-nums text-bronze-text">
                       {count} {count === 1 ? 'title' : 'titles'}
                     </span>
                   </div>
@@ -123,8 +130,8 @@ export default async function HistoryPage() {
 
           {/* Shame leaderboard */}
           {shameLeader && (
-            <div className="bg-white border border-[#E2E8F0] rounded-2xl px-4 pt-4 pb-3 shadow-sm">
-              <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] mb-3">
+            <div className="bg-surface border border-border rounded-2xl px-4 pt-4 pb-3 shadow-sm">
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-3">
                 🚽 Toilet Bowl Hall of Shame
               </p>
               <div className="flex flex-col gap-2">
@@ -134,13 +141,16 @@ export default async function HistoryPage() {
                   .map(([owner, count], i) => (
                     <div key={owner} className="flex items-center gap-2.5">
                       <span
-                        className="text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center text-white shrink-0"
-                        style={{ backgroundColor: i === 0 ? '#DC2626' : '#EF4444' }}
+                        className="text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center shrink-0"
+                        style={{
+                          backgroundColor: SHAME_FILL[i === 0 ? 0 : 1],
+                          color: bestTextOn(SHAME_FILL[i === 0 ? 0 : 1]),
+                        }}
                       >
                         {i + 1}
                       </span>
-                      <span className="text-[14px] font-semibold text-[#0F172A] flex-1 min-w-0 truncate">{owner}</span>
-                      <span className="text-[13px] font-black tabular-nums text-[#DC2626]">
+                      <span className="text-[14px] font-semibold text-foreground flex-1 min-w-0 truncate">{owner}</span>
+                      <span className="text-[13px] font-black tabular-nums text-negative-text">
                         {count}× last
                       </span>
                     </div>

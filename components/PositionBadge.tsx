@@ -3,9 +3,9 @@ interface PositionBadgeProps {
 }
 
 const positionStyles: Record<string, string> = {
-  G: 'bg-[#C8956C] text-white',
-  F: 'bg-[#34D399] text-white',
-  C: 'bg-[#FB923C] text-white',
+  G: 'bg-accent text-white',
+  F: 'bg-positive-bright text-white',
+  C: 'bg-warning-bright text-white',
 };
 
 export default function PositionBadge({ position }: PositionBadgeProps) {

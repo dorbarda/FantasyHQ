@@ -75,24 +75,24 @@ export default function AnalysisTable({ teams }: { teams: TeamAnalytics[] }) {
 
   const Th = ({ label, sortId, title }: { label: string; sortId: SortKey; title?: string }) => (
     <th
-      className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8] cursor-pointer hover:text-[#C8956C] select-none whitespace-nowrap"
+      className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-muted cursor-pointer hover:text-accent select-none whitespace-nowrap"
       onClick={() => handleSort(sortId)}
       title={title}
     >
       {label}
       {sortKey === sortId && (
-        <span className="ml-1 text-[#C8956C]">{sortAsc ? '↑' : '↓'}</span>
+        <span className="ml-1 text-accent">{sortAsc ? '↑' : '↓'}</span>
       )}
     </th>
   );
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-[#E2E8F0]">
+    <div className="overflow-x-auto rounded-xl border border-border">
       <table className="w-full text-sm">
-        <thead className="border-b border-[#E2E8F0] bg-[#F1F5F9]">
+        <thead className="border-b border-border bg-surface-secondary">
           <tr>
-            <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8] w-[28px]">#</th>
-            <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8]">Team</th>
+            <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-muted w-[28px]">#</th>
+            <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-muted">Team</th>
             <Th label="Record"   sortId="record"      title="Win-Loss record" />
             <Th label="Avg Score" sortId="avgScore"   title="Average weekly score" />
             <Th label="Best Wk"  sortId="bestWeek"    title="Best single-week score" />
@@ -108,24 +108,24 @@ export default function AnalysisTable({ teams }: { teams: TeamAnalytics[] }) {
             return (
               <tr
                 key={t.teamId}
-                className="border-b border-[#E2E8F0]/50 last:border-0 transition-colors hover:bg-[#F1F5F9]/60"
+                className="border-b border-border/50 last:border-0 transition-colors hover:bg-surface-secondary/60"
               >
                 {/* Rank */}
-                <td className="px-3 py-2.5 text-[13px] text-[#475569] font-mono">{i + 1}</td>
+                <td className="px-3 py-2.5 text-[13px] text-secondary font-mono">{i + 1}</td>
 
                 {/* Team */}
                 <td className="px-3 py-2.5">
                   <div className="flex items-center gap-2">
                     <div>
-                      <p className="text-[13px] font-semibold text-[#0F172A] leading-tight">{t.ownerName}</p>
-                      <p className="text-[11px] text-[#475569]">{t.teamName}</p>
+                      <p className="text-[13px] font-semibold text-foreground leading-tight">{t.ownerName}</p>
+                      <p className="text-[11px] text-secondary">{t.teamName}</p>
                     </div>
                   </div>
                 </td>
 
                 {/* Record */}
-                <td className="px-3 py-2.5 text-[13px] font-mono text-[#0F172A]">
-                  {t.wins}<span className="text-[#475569]">-</span>{t.losses}
+                <td className="px-3 py-2.5 text-[13px] font-mono text-foreground">
+                  {t.wins}<span className="text-secondary">-</span>{t.losses}
                 </td>
 
                 {/* Avg Score */}
@@ -138,7 +138,7 @@ export default function AnalysisTable({ teams }: { teams: TeamAnalytics[] }) {
                   <span className="text-[13px] font-mono" style={{ color: heatColor(t.bestWeekScore, minOf(bestScores), maxOf(bestScores)) }}>
                     {fmt(t.bestWeekScore)}
                   </span>
-                  <span className="ml-1.5 text-[10px] text-[#475569]">Wk{t.bestWeekPeriod}</span>
+                  <span className="ml-1.5 text-[10px] text-secondary">Wk{t.bestWeekPeriod}</span>
                 </td>
 
                 {/* Worst Week */}
@@ -146,7 +146,7 @@ export default function AnalysisTable({ teams }: { teams: TeamAnalytics[] }) {
                   <span className="text-[13px] font-mono" style={{ color: heatColor(t.worstWeekScore, minOf(worstScores), maxOf(worstScores)) }}>
                     {fmt(t.worstWeekScore)}
                   </span>
-                  <span className="ml-1.5 text-[10px] text-[#475569]">Wk{t.worstWeekPeriod}</span>
+                  <span className="ml-1.5 text-[10px] text-secondary">Wk{t.worstWeekPeriod}</span>
                 </td>
 
                 {/* Std Dev (lower = better) */}
@@ -173,7 +173,7 @@ export default function AnalysisTable({ teams }: { teams: TeamAnalytics[] }) {
                     >
                       {t.luckDelta > 0 ? '+' : ''}{fmt(t.luckDelta)}
                     </span>
-                    <span className="text-[10px] text-[#475569]">
+                    <span className="text-[10px] text-secondary">
                       ({t.wins}W / {fmt(t.expectedWins)}E)
                     </span>
                   </div>

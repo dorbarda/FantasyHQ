@@ -19,13 +19,13 @@ const prep = prepJson as DraftPrep;
 function CountdownCard() {
   if (!prep.draftDate) {
     return (
-      <div className="rounded-2xl overflow-hidden bg-[#0B1628] text-white px-6 py-8 text-center">
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-[#C8956C] mb-2">
+      <div className="rounded-2xl overflow-hidden bg-panel text-white px-6 py-8 text-center">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-accent mb-2">
           Draft Night
         </p>
         <p className="text-[24px] font-black">Date TBD</p>
-        <p className="text-[13px] text-[#94A3B8] mt-2">
-          Commissioner sets it in <code className="text-[#C8956C]">data/draft-prep.json</code>
+        <p className="text-[13px] text-muted mt-2">
+          Commissioner sets it in <code className="text-accent">data/draft-prep.json</code>
         </p>
       </div>
     );
@@ -41,18 +41,18 @@ function CountdownCard() {
   });
 
   return (
-    <div className="rounded-2xl overflow-hidden bg-[#0B1628] text-white px-6 py-8 text-center">
-      <p className="text-[11px] font-semibold uppercase tracking-widest text-[#C8956C] mb-2">
+    <div className="rounded-2xl overflow-hidden bg-panel text-white px-6 py-8 text-center">
+      <p className="text-[11px] font-semibold uppercase tracking-widest text-accent mb-2">
         Draft Night
       </p>
       <p className="text-[48px] font-black leading-none tabular-nums">
         {daysLeft}
       </p>
-      <p className="text-[13px] font-semibold text-[#C8956C] mt-1">
+      <p className="text-[13px] font-semibold text-accent mt-1">
         day{daysLeft !== 1 ? 's' : ''} to go
       </p>
-      <p className="text-[14px] text-[#E2E8F0] mt-4">{dateLabel} · {timeLabel}</p>
-      {prep.location && <p className="text-[13px] text-[#94A3B8] mt-1">{prep.location}</p>}
+      <p className="text-[14px] text-border mt-4">{dateLabel} · {timeLabel}</p>
+      {prep.location && <p className="text-[13px] text-muted mt-1">{prep.location}</p>}
     </div>
   );
 }
@@ -61,20 +61,20 @@ function CountdownCard() {
 
 function DraftOrderCard() {
   return (
-    <div className="bg-white border border-[#E2E8F0] rounded-2xl overflow-hidden">
-      <div className="px-5 pt-4 pb-3 border-b border-[#E2E8F0]">
-        <p className="text-[11px] font-black uppercase tracking-widest text-[#94A3B8]">Draft Order</p>
+    <div className="bg-surface border border-border rounded-2xl overflow-hidden">
+      <div className="px-5 pt-4 pb-3 border-b border-border">
+        <p className="text-[11px] font-black uppercase tracking-widest text-muted">Draft Order</p>
       </div>
       {prep.draftOrder.length === 0 ? (
-        <p className="px-5 py-8 text-center text-[13px] text-[#94A3B8]">
+        <p className="px-5 py-8 text-center text-[13px] text-muted">
           Order not drawn yet — it appears here once the league decides.
         </p>
       ) : (
-        <div className="divide-y divide-[#F1F5F9]">
+        <div className="divide-y divide-surface-secondary">
           {prep.draftOrder.map((owner, i) => (
             <div key={owner} className="flex items-center gap-3 px-5 py-2.5">
-              <span className="text-[13px] font-black tabular-nums text-[#C8956C] w-7">#{i + 1}</span>
-              <span className="text-[14px] font-semibold text-[#0F172A]">{owner}</span>
+              <span className="text-[13px] font-black tabular-nums text-accent w-7">#{i + 1}</span>
+              <span className="text-[14px] font-semibold text-foreground">{owner}</span>
             </div>
           ))}
         </div>
@@ -88,14 +88,14 @@ function DraftOrderCard() {
 function NotesCard() {
   if (prep.notes.length === 0) return null;
   return (
-    <div className="bg-white border border-[#E2E8F0] rounded-2xl overflow-hidden">
-      <div className="px-5 pt-4 pb-3 border-b border-[#E2E8F0]">
-        <p className="text-[11px] font-black uppercase tracking-widest text-[#94A3B8]">League Notes</p>
+    <div className="bg-surface border border-border rounded-2xl overflow-hidden">
+      <div className="px-5 pt-4 pb-3 border-b border-border">
+        <p className="text-[11px] font-black uppercase tracking-widest text-muted">League Notes</p>
       </div>
       <ul className="px-5 py-4 flex flex-col gap-2">
         {prep.notes.map((note, i) => (
-          <li key={i} className="text-[13px] text-[#475569] flex gap-2">
-            <span className="text-[#C8956C] shrink-0">•</span>
+          <li key={i} className="text-[13px] text-secondary flex gap-2">
+            <span className="text-accent shrink-0">•</span>
             {note}
           </li>
         ))}
@@ -136,7 +136,7 @@ const SCOUTING_LINKS = [
 function ScoutingGrid() {
   return (
     <div>
-      <p className="text-[11px] font-black uppercase tracking-widest text-[#94A3B8] mb-3">
+      <p className="text-[11px] font-black uppercase tracking-widest text-muted mb-3">
         Scouting Room
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -144,13 +144,13 @@ function ScoutingGrid() {
           <Link
             key={link.href}
             href={link.href}
-            className="bg-white border border-[#E2E8F0] rounded-xl px-4 py-4 hover:border-[#C8956C] transition-colors group"
+            className="bg-surface border border-border rounded-xl px-4 py-4 hover:border-accent transition-colors group"
           >
             <span className="text-[20px]">{link.emoji}</span>
-            <p className="text-[14px] font-bold text-[#0F172A] mt-2 group-hover:text-[#C8956C] transition-colors">
+            <p className="text-[14px] font-bold text-foreground mt-2 group-hover:text-accent transition-colors">
               {link.title}
             </p>
-            <p className="text-[12px] text-[#94A3B8] mt-0.5">{link.desc}</p>
+            <p className="text-[12px] text-muted mt-0.5">{link.desc}</p>
           </Link>
         ))}
       </div>
@@ -162,12 +162,12 @@ function ScoutingGrid() {
 
 export default function DraftPrepPage() {
   return (
-    <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
+    <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
       <div className="mb-6">
-        <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A]">
+        <h1 className="type-page-title text-foreground">
           Draft Prep
         </h1>
-        <p className="text-[14px] text-[#475569] mt-1">
+        <p className="type-page-subtitle mt-1">
           Getting ready for the {seasonLabel(prep.season)} season
         </p>
       </div>

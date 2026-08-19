@@ -36,8 +36,8 @@ export default function LuckDeltaChart({ entries }: Props) {
         <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" horizontal={false} />
         <XAxis
           type="number"
-          tick={{ fill: '#475569', fontSize: 11 }}
-          axisLine={{ stroke: '#E2E8F0' }}
+          tick={{ fill: 'var(--foreground-secondary)', fontSize: 11 }}
+          axisLine={{ stroke: 'var(--border)' }}
           tickLine={false}
           tickFormatter={v => (v > 0 ? `+${v.toFixed(1)}` : v.toFixed(1))}
         />
@@ -45,27 +45,27 @@ export default function LuckDeltaChart({ entries }: Props) {
           type="category"
           dataKey="ownerName"
           width={72}
-          tick={{ fill: '#94A3B8', fontSize: 12 }}
+          tick={{ fill: 'var(--foreground-muted)', fontSize: 12 }}
           axisLine={false}
           tickLine={false}
         />
         <ReferenceLine x={0} stroke="#334155" strokeWidth={1.5} />
         <Tooltip
-          cursor={{ fill: '#E2E8F0', fillOpacity: 0.4 }}
-          contentStyle={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 8, fontSize: 12 }}
+          cursor={{ fill: 'var(--border)', fillOpacity: 0.4 }}
+          contentStyle={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }}
           content={({ active, payload }) => {
             if (!active || !payload?.length) return null;
             const d = payload[0].payload as LuckDeltaEntry;
             return (
-              <div className="bg-white border border-[#E2E8F0] rounded-lg px-3 py-2 text-xs">
-                <p className="font-semibold text-[#0F172A] mb-1">{d.ownerName}</p>
-                <p className="text-[#94A3B8]">
+              <div className="bg-surface border border-border rounded-lg px-3 py-2 text-xs">
+                <p className="font-semibold text-foreground mb-1">{d.ownerName}</p>
+                <p className="text-muted">
                   Luck delta: <span style={{ color: d.luckDelta >= 0 ? '#34D399' : '#F87171' }}>
                     {d.luckDelta >= 0 ? '+' : ''}{d.luckDelta.toFixed(2)}
                   </span>
                 </p>
-                <p className="text-[#94A3B8]">Actual wins: <span className="text-[#0F172A]">{d.wins}</span></p>
-                <p className="text-[#94A3B8]">Expected wins: <span className="text-[#0F172A]">{d.expectedWins.toFixed(1)}</span></p>
+                <p className="text-muted">Actual wins: <span className="text-foreground">{d.wins}</span></p>
+                <p className="text-muted">Expected wins: <span className="text-foreground">{d.expectedWins.toFixed(1)}</span></p>
               </div>
             );
           }}

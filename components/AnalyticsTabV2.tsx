@@ -17,7 +17,7 @@ function BigStat({
   label,
   value,
   sub,
-  color = '#0F172A',
+  color = 'var(--foreground)',
 }: {
   label: string;
   value: string | number;
@@ -32,7 +32,7 @@ function BigStat({
           fontWeight: 800,
           letterSpacing: '0.18em',
           textTransform: 'uppercase',
-          color: '#94A3B8',
+          color: 'var(--foreground-muted)',
           marginBottom: 8,
         }}
       >
@@ -50,7 +50,7 @@ function BigStat({
       >
         {value}
       </div>
-      <div style={{ fontSize: 12, color: '#64748B', maxWidth: 200 }}>{sub}</div>
+      <div style={{ fontSize: 12, color: 'var(--foreground-tertiary)', maxWidth: 200 }}>{sub}</div>
     </div>
   );
 }
@@ -76,17 +76,12 @@ function EditorialHeader({
   return (
     <div
       style={{
-        background: '#FFFFFF',
-        border: '1px solid #E2E8F0',
+        background: 'var(--surface)',
+        border: '1px solid var(--border)',
         borderRadius: 16,
-        padding: 28,
         marginBottom: 18,
-        display: 'grid',
-        gridTemplateColumns: '1.4fr 1fr 1fr 1fr',
-        gap: 32,
-        alignItems: 'end',
       }}
-      className="max-[720px]:grid-cols-2"
+      className="grid grid-cols-2 md:grid-cols-[1.4fr_1fr_1fr_1fr] gap-6 md:gap-8 items-end p-5 sm:p-7"
     >
       {/* Pool leader */}
       <div>
@@ -96,7 +91,7 @@ function EditorialHeader({
             fontWeight: 800,
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
-            color: '#94A3B8',
+            color: 'var(--foreground-muted)',
             marginBottom: 8,
           }}
         >
@@ -111,14 +106,14 @@ function EditorialHeader({
                   fontSize: 32,
                   fontWeight: 900,
                   letterSpacing: '-0.03em',
-                  color: '#0F172A',
+                  color: 'var(--foreground)',
                   lineHeight: 1,
                 }}
               >
                 {leader.ownerName.split(' ')[0]}
               </div>
               {second && (
-                <div style={{ fontSize: 13, color: '#64748B', marginTop: 4 }}>
+                <div style={{ fontSize: 13, color: 'var(--foreground-tertiary)', marginTop: 4 }}>
                   +{leader.total - second.total} pts ahead of {second.ownerName.split(' ')[0]}
                 </div>
               )}
@@ -163,7 +158,7 @@ function TrajectoryChart({ standings }: { standings: OwnerAnalytics[] }) {
   return (
     <div
       style={{
-        background: '#0F172A',
+        background: 'var(--panel)',
         borderRadius: 16,
         padding: 24,
         color: '#fff',
@@ -184,7 +179,7 @@ function TrajectoryChart({ standings }: { standings: OwnerAnalytics[] }) {
               fontWeight: 800,
               letterSpacing: '0.18em',
               textTransform: 'uppercase',
-              color: '#94A3B8',
+              color: 'var(--panel-text-muted)',
               marginBottom: 6,
             }}
           >
@@ -196,7 +191,7 @@ function TrajectoryChart({ standings }: { standings: OwnerAnalytics[] }) {
             The race so far
           </div>
         </div>
-        <div style={{ fontSize: 11, color: '#94A3B8' }}>
+        <div style={{ fontSize: 11, color: 'var(--panel-text-muted)' }}>
           Cumulative pts · Round 1
         </div>
       </div>
@@ -280,8 +275,8 @@ function FormStrip({ standings }: { standings: OwnerAnalytics[] }) {
   return (
     <div
       style={{
-        background: '#FFFFFF',
-        border: '1px solid #E2E8F0',
+        background: 'var(--surface)',
+        border: '1px solid var(--border)',
         borderRadius: 16,
         padding: 22,
       }}
@@ -293,7 +288,7 @@ function FormStrip({ standings }: { standings: OwnerAnalytics[] }) {
             fontWeight: 800,
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
-            color: '#94A3B8',
+            color: 'var(--foreground-muted)',
             marginBottom: 6,
           }}
         >
@@ -304,7 +299,7 @@ function FormStrip({ standings }: { standings: OwnerAnalytics[] }) {
             fontSize: 22,
             fontWeight: 800,
             letterSpacing: '-0.02em',
-            color: '#0F172A',
+            color: 'var(--foreground)',
           }}
         >
           Last 8 picks
@@ -319,7 +314,7 @@ function FormStrip({ standings }: { standings: OwnerAnalytics[] }) {
               style={{
                 fontSize: 12,
                 fontWeight: 600,
-                color: '#0F172A',
+                color: 'var(--foreground)',
                 flex: 1,
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
@@ -333,7 +328,7 @@ function FormStrip({ standings }: { standings: OwnerAnalytics[] }) {
               style={{
                 fontSize: 13,
                 fontWeight: 800,
-                color: '#0F172A',
+                color: 'var(--foreground)',
                 width: 38,
                 textAlign: 'right',
                 fontVariantNumeric: 'tabular-nums',
@@ -351,13 +346,13 @@ function FormStrip({ standings }: { standings: OwnerAnalytics[] }) {
           gap: 10,
           marginTop: 12,
           paddingTop: 10,
-          borderTop: '1px solid #F1F5F9',
+          borderTop: '1px solid var(--surface-secondary)',
         }}
       >
         {[
-          { label: 'Exact',   color: '#EAB308' },
-          { label: 'Correct', color: '#10B981' },
-          { label: 'Wrong',   color: '#EF4444' },
+          { label: 'Exact',   color: 'var(--gold)' },
+          { label: 'Correct', color: 'var(--positive)' },
+          { label: 'Wrong',   color: 'var(--negative)' },
         ].map(l => (
           <div
             key={l.label}
@@ -371,7 +366,7 @@ function FormStrip({ standings }: { standings: OwnerAnalytics[] }) {
                 background: l.color,
               }}
             />
-            <span style={{ fontSize: 10, color: '#64748B' }}>{l.label}</span>
+            <span style={{ fontSize: 10, color: 'var(--foreground-tertiary)' }}>{l.label}</span>
           </div>
         ))}
       </div>
@@ -388,8 +383,8 @@ function UpsetPanel({ allBets, results }: { allBets: OwnerPlayoffBets[]; results
     return (
       <div
         style={{
-          background: '#FEF3C7',
-          border: '1px solid #FDE68A',
+          background: 'var(--warning-surface)',
+          border: '1px solid var(--warning-bright)',
           borderRadius: 16,
           padding: 24,
         }}
@@ -400,13 +395,13 @@ function UpsetPanel({ allBets, results }: { allBets: OwnerPlayoffBets[]; results
             fontWeight: 800,
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
-            color: '#92400E',
+            color: 'var(--warning-text)',
             marginBottom: 12,
           }}
         >
           Upset of the round
         </div>
-        <div style={{ fontSize: 16, color: '#92400E' }}>No upsets yet.</div>
+        <div style={{ fontSize: 16, color: 'var(--warning-text)' }}>No upsets yet.</div>
       </div>
     );
   }
@@ -421,8 +416,8 @@ function UpsetPanel({ allBets, results }: { allBets: OwnerPlayoffBets[]; results
   return (
     <div
       style={{
-        background: '#FEF3C7',
-        border: '1px solid #FDE68A',
+        background: 'var(--warning-surface)',
+        border: '1px solid var(--warning-bright)',
         borderRadius: 16,
         padding: 24,
       }}
@@ -434,7 +429,7 @@ function UpsetPanel({ allBets, results }: { allBets: OwnerPlayoffBets[]; results
             fontWeight: 800,
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
-            color: '#92400E',
+            color: 'var(--warning-text)',
             marginBottom: 6,
           }}
         >
@@ -445,7 +440,7 @@ function UpsetPanel({ allBets, results }: { allBets: OwnerPlayoffBets[]; results
             fontSize: 28,
             fontWeight: 900,
             letterSpacing: '-0.025em',
-            color: '#0F172A',
+            color: 'var(--foreground)',
             lineHeight: 1.05,
           }}
         >
@@ -462,13 +457,13 @@ function UpsetPanel({ allBets, results }: { allBets: OwnerPlayoffBets[]; results
         }}
       >
         <TeamMark team={winner} size={48} />
-        <div style={{ fontSize: 22, fontWeight: 800, color: '#94A3B8' }}>over</div>
+        <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--foreground-muted)' }}>over</div>
         <TeamMark team={loser} size={48} />
         <div
           style={{
             fontSize: 24,
             fontWeight: 900,
-            color: '#0F172A',
+            color: 'var(--foreground)',
             marginLeft: 'auto',
             letterSpacing: '-0.02em',
           }}
@@ -480,7 +475,7 @@ function UpsetPanel({ allBets, results }: { allBets: OwnerPlayoffBets[]; results
       <div
         style={{
           fontSize: 13,
-          color: '#0F172A',
+          color: 'var(--foreground)',
           lineHeight: 1.5,
           marginBottom: 14,
         }}
@@ -502,7 +497,7 @@ function UpsetPanel({ allBets, results }: { allBets: OwnerPlayoffBets[]; results
         }}
       >
         <div style={{ fontSize: 18 }}>🚫</div>
-        <div style={{ fontSize: 12, color: '#92400E', fontWeight: 600 }}>
+        <div style={{ fontSize: 12, color: 'var(--warning-text)', fontWeight: 600 }}>
           <strong>{callerCount} of {totalCallers}</strong> friends called it.{' '}
           {callerCount === 0 ? 'Group blind spot of the playoffs.' : 'Contrarian minority.'}
         </div>
@@ -526,13 +521,13 @@ function ConsensusFever({
     return (
       <div
         style={{
-          background: '#FFFFFF',
-          border: '1px solid #E2E8F0',
+          background: 'var(--surface)',
+          border: '1px solid var(--border)',
           borderRadius: 16,
           padding: 22,
         }}
       >
-        <div style={{ fontSize: 14, color: '#94A3B8' }}>No active series.</div>
+        <div style={{ fontSize: 14, color: 'var(--foreground-muted)' }}>No active series.</div>
       </div>
     );
   }
@@ -540,8 +535,8 @@ function ConsensusFever({
   return (
     <div
       style={{
-        background: '#FFFFFF',
-        border: '1px solid #E2E8F0',
+        background: 'var(--surface)',
+        border: '1px solid var(--border)',
         borderRadius: 16,
         padding: 22,
       }}
@@ -553,7 +548,7 @@ function ConsensusFever({
             fontWeight: 800,
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
-            color: '#94A3B8',
+            color: 'var(--foreground-muted)',
             marginBottom: 6,
           }}
         >
@@ -564,7 +559,7 @@ function ConsensusFever({
             fontSize: 22,
             fontWeight: 800,
             letterSpacing: '-0.02em',
-            color: '#0F172A',
+            color: 'var(--foreground)',
           }}
         >
           Where the room agrees
@@ -591,10 +586,10 @@ function ConsensusFever({
                   marginBottom: 6,
                 }}
               >
-                <div style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600 }}>
+                <div style={{ fontSize: 11, color: 'var(--foreground-muted)', fontWeight: 600 }}>
                   {s.label}
                 </div>
-                <div style={{ fontSize: 11, color: '#94A3B8' }}>{total} picks</div>
+                <div style={{ fontSize: 11, color: 'var(--foreground-muted)' }}>{total} picks</div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <TeamMark team={top[0]} size={28} />
@@ -603,17 +598,17 @@ function ConsensusFever({
                     style={{
                       fontSize: 13,
                       fontWeight: 700,
-                      color: '#0F172A',
+                      color: 'var(--foreground)',
                       marginBottom: 4,
                     }}
                   >
                     {top[0].split(' ').slice(-1)[0]}{' '}
-                    <span style={{ color: '#94A3B8', fontWeight: 500 }}>favored</span>
+                    <span style={{ color: 'var(--foreground-muted)', fontWeight: 500 }}>favored</span>
                   </div>
                   <div
                     style={{
                       height: 8,
-                      background: '#F1F5F9',
+                      background: 'var(--surface-secondary)',
                       borderRadius: 999,
                       overflow: 'hidden',
                     }}
@@ -666,7 +661,7 @@ function HeatmapRow({
         alignItems: 'center',
         gap: 10,
         padding: '8px 0',
-        borderBottom: '1px solid #F1F5F9',
+        borderBottom: '1px solid var(--surface-secondary)',
       }}
     >
       <TeamMark team={team} size={24} />
@@ -674,7 +669,7 @@ function HeatmapRow({
         style={{
           fontSize: 13,
           fontWeight: 700,
-          color: '#0F172A',
+          color: 'var(--foreground)',
           flex: 1,
         }}
       >
@@ -684,7 +679,7 @@ function HeatmapRow({
         style={{
           width: 80,
           height: 5,
-          background: '#F1F5F9',
+          background: 'var(--surface-secondary)',
           borderRadius: 999,
           overflow: 'hidden',
         }}
@@ -701,7 +696,7 @@ function HeatmapRow({
         style={{
           fontSize: 13,
           fontWeight: 800,
-          color: '#0F172A',
+          color: 'var(--foreground)',
           width: 24,
           textAlign: 'right',
           fontVariantNumeric: 'tabular-nums',
@@ -730,19 +725,18 @@ function PicksHeatmap({
   return (
     <div
       style={{
-        background: '#FFFFFF',
-        border: '1px solid #E2E8F0',
+        background: 'var(--surface)',
+        border: '1px solid var(--border)',
         borderRadius: 16,
         padding: 22,
       }}
     >
       <div
         style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
+
           gap: 24,
         }}
-        className="max-[500px]:grid-cols-1"
+        className="grid grid-cols-1 min-[500px]:grid-cols-2"
       >
         <div>
           <div
@@ -751,13 +745,13 @@ function PicksHeatmap({
               fontWeight: 800,
               letterSpacing: '0.18em',
               textTransform: 'uppercase',
-              color: '#94A3B8',
+              color: 'var(--foreground-muted)',
               marginBottom: 6,
             }}
           >
             Most loved
           </div>
-          <div style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', marginBottom: 10 }}>
+          <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--foreground)', marginBottom: 10 }}>
             Bracket favorites
           </div>
           {top5.map(([team, picks]) => (
@@ -771,13 +765,13 @@ function PicksHeatmap({
               fontWeight: 800,
               letterSpacing: '0.18em',
               textTransform: 'uppercase',
-              color: '#94A3B8',
+              color: 'var(--foreground-muted)',
               marginBottom: 6,
             }}
           >
             Least loved
           </div>
-          <div style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', marginBottom: 10 }}>
+          <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--foreground)', marginBottom: 10 }}>
             Lonely calls
           </div>
           {bottom5.map(([team, picks]) => (
@@ -802,7 +796,7 @@ export default function AnalyticsTabV2({
 }) {
   if (allBets.length === 0) {
     return (
-      <div className="text-center py-16 text-[#94A3B8] text-[14px]">
+      <div className="text-center py-16 text-muted text-[14px]">
         No bets entered yet — data/playoff-bets.json is empty.
       </div>
     );
@@ -819,19 +813,18 @@ export default function AnalyticsTabV2({
     .sort((a, b) => b.total - a.total);
 
   return (
-    <div style={{ padding: 24, background: '#F8FAFC', minHeight: 600 }}>
+    <div style={{ padding: 24, background: 'var(--background)', minHeight: 600 }}>
       {/* Panel 1: Editorial header */}
       <EditorialHeader standings={standings} fullScores={fullScores} />
 
       {/* Panel 2+3: Trajectory + Form strip */}
       <div
         style={{
-          display: 'grid',
-          gridTemplateColumns: '1.4fr 1fr',
+
           gap: 16,
           marginBottom: 18,
         }}
-        className="max-[720px]:grid-cols-1"
+        className="grid grid-cols-1 min-[720px]:grid-cols-[1.4fr_1fr]"
       >
         <TrajectoryChart standings={standings} />
         <FormStrip standings={standings} />
@@ -840,12 +833,11 @@ export default function AnalyticsTabV2({
       {/* Panel 4+5: Upset + Consensus */}
       <div
         style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
+
           gap: 16,
           marginBottom: 18,
         }}
-        className="max-[720px]:grid-cols-1"
+        className="grid grid-cols-1 min-[720px]:grid-cols-2"
       >
         <UpsetPanel allBets={allBets} results={results} />
         <ConsensusFever allBets={allBets} results={results} />

@@ -7,11 +7,11 @@ interface CategoryTableProps {
 
 function rankColor(rank: number, total: number): string {
   const pct = rank / total;
-  if (pct <= 0.2) return 'bg-[#34D399]/20 text-[#6EE7B7] font-semibold';
-  if (pct <= 0.4) return 'bg-[#34D399]/10 text-[#34D399] font-semibold';
-  if (pct <= 0.6) return 'text-[#94A3B8]';
-  if (pct <= 0.8) return 'bg-[#F87171]/10 text-[#F87171] font-semibold';
-  return 'bg-[#F87171]/20 text-[#FCA5A5] font-semibold';
+  if (pct <= 0.2) return 'bg-positive-bright/20 text-positive-bright font-semibold';
+  if (pct <= 0.4) return 'bg-positive-bright/10 text-positive-bright font-semibold';
+  if (pct <= 0.6) return 'text-muted';
+  if (pct <= 0.8) return 'bg-negative-bright/10 text-negative-bright font-semibold';
+  return 'bg-negative-bright/20 text-negative-bright font-semibold';
 }
 
 function CatCell({ stat, total, isTO = false }: {
@@ -47,16 +47,16 @@ const CATEGORIES = [
 
 export default function CategoryTable({ standings, teamCount }: CategoryTableProps) {
   return (
-    <div className="border border-[#E2E8F0] rounded-lg overflow-hidden bg-white">
+    <div className="border border-border rounded-lg overflow-hidden bg-surface">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[560px]">
           <thead>
-            <tr className="border-b border-[#E2E8F0] bg-[#F1F5F9]">
-              <th className="text-left px-4 py-2 text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] w-[180px]">
+            <tr className="border-b border-border bg-surface-secondary">
+              <th className="text-left px-4 py-2 text-[11px] font-semibold uppercase tracking-widest text-muted w-[180px]">
                 Team
               </th>
               {CATEGORIES.map(cat => (
-                <th key={cat.key} className="px-1 py-2 text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8] text-center">
+                <th key={cat.key} className="px-1 py-2 text-[11px] font-semibold uppercase tracking-widest text-muted text-center">
                   {cat.label}
                 </th>
               ))}
@@ -68,13 +68,13 @@ export default function CategoryTable({ standings, teamCount }: CategoryTablePro
                 key={row.teamId}
                 className={`
                   transition-colors cursor-default
-                  ${idx < standings.length - 1 ? 'border-b border-[#E2E8F0]' : ''}
-                  hover:bg-white
+                  ${idx < standings.length - 1 ? 'border-b border-border' : ''}
+                  hover:bg-surface
                 `}
               >
                 <td className="px-4 py-2">
-                  <p className="text-[13px] font-semibold text-[#0F172A] truncate max-w-[160px]">{row.teamName}</p>
-                  <p className="text-[11px] text-[#475569]">{row.ownerName}</p>
+                  <p className="text-[13px] font-semibold text-foreground truncate max-w-[160px]">{row.teamName}</p>
+                  <p className="text-[11px] text-secondary">{row.ownerName}</p>
                 </td>
                 <td className="px-1 py-2"><CatCell stat={row.fgPct} total={teamCount} /></td>
                 <td className="px-1 py-2"><CatCell stat={row.ftPct} total={teamCount} /></td>
@@ -89,15 +89,15 @@ export default function CategoryTable({ standings, teamCount }: CategoryTablePro
             ))}
           </tbody>
           <tfoot>
-            <tr className="border-t border-[#E2E8F0] bg-[#F1F5F9]">
+            <tr className="border-t border-border bg-surface-secondary">
               <td className="px-4 py-2">
-                <span className="text-[11px] font-semibold uppercase tracking-widest text-[#94A3B8]">Leader</span>
+                <span className="text-[11px] font-semibold uppercase tracking-widest text-muted">Leader</span>
               </td>
               {CATEGORIES.map(cat => {
                 const leader = standings.find(s => s[cat.key].rank === 1);
                 return (
                   <td key={cat.key} className="px-1 py-2 text-center">
-                    <span className="text-[11px] font-semibold text-[#34D399]">
+                    <span className="text-[11px] font-semibold text-positive-bright">
                       {leader ? leader.teamName.split(' ')[0] : '—'}
                     </span>
                   </td>
@@ -109,24 +109,24 @@ export default function CategoryTable({ standings, teamCount }: CategoryTablePro
       </div>
 
       {/* Legend */}
-      <div className="px-4 py-2 border-t border-[#E2E8F0] bg-[#F1F5F9] flex items-center gap-4 flex-wrap">
+      <div className="px-4 py-2 border-t border-border bg-surface-secondary flex items-center gap-4 flex-wrap">
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded bg-[#34D399]/20"></div>
-          <span className="text-[11px] text-[#94A3B8]">Top 20%</span>
+          <div className="w-3 h-3 rounded bg-positive-bright/20"></div>
+          <span className="text-[11px] text-muted">Top 20%</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded bg-[#34D399]/10"></div>
-          <span className="text-[11px] text-[#94A3B8]">Top 40%</span>
+          <div className="w-3 h-3 rounded bg-positive-bright/10"></div>
+          <span className="text-[11px] text-muted">Top 40%</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded bg-[#F87171]/10"></div>
-          <span className="text-[11px] text-[#94A3B8]">Bottom 40%</span>
+          <div className="w-3 h-3 rounded bg-negative-bright/10"></div>
+          <span className="text-[11px] text-muted">Bottom 40%</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded bg-[#F87171]/20"></div>
-          <span className="text-[11px] text-[#94A3B8]">Bottom 20%</span>
+          <div className="w-3 h-3 rounded bg-negative-bright/20"></div>
+          <span className="text-[11px] text-muted">Bottom 20%</span>
         </div>
-        <span className="text-[11px] text-[#94A3B8]">· TO: lower is better</span>
+        <span className="text-[11px] text-muted">· TO: lower is better</span>
       </div>
     </div>
   );

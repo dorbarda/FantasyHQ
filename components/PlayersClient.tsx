@@ -28,7 +28,7 @@ function PosBadge({ pos }: { pos: string }) {
 function StatBar({ value, max, color }: { value: number; max: number; color: string }) {
   const pct = max > 0 ? Math.min((value / max) * 100, 100) : 0;
   return (
-    <div className="h-1 rounded-full bg-[#E2E8F0] overflow-hidden w-full">
+    <div className="h-1 rounded-full bg-border overflow-hidden w-full">
       <div
         className="h-full rounded-full transition-all"
         style={{ width: `${pct}%`, backgroundColor: color }}
@@ -77,7 +77,7 @@ function PodiumCard({ player, rank, view }: { player: Player; rank: number; view
   return (
     <div
       className={`relative rounded-2xl border overflow-hidden flex flex-col gap-3 p-5 transition-transform hover:-translate-y-0.5 ${
-        isFirst ? 'border-[#F59E0B]/40 bg-gradient-to-b from-[#FFFBEB] to-[#FEF3C7]/30' : 'border-[#E2E8F0] bg-white'
+        isFirst ? 'border-warning/40 bg-gradient-to-b from-warning-surface to-warning-surface/30' : 'border-border bg-surface'
       }`}
     >
       {/* Rank */}
@@ -93,8 +93,8 @@ function PodiumCard({ player, rank, view }: { player: Player; rank: number; view
 
       {/* Name + team */}
       <div>
-        <p className="text-[17px] font-bold text-[#0F172A] leading-tight">{player.name}</p>
-        <p className="text-[12px] text-[#475569] mt-0.5">{player.team}</p>
+        <p className="text-[17px] font-bold text-foreground leading-tight">{player.name}</p>
+        <p className="text-[12px] text-secondary mt-0.5">{player.team}</p>
       </div>
 
       {/* FP */}
@@ -105,11 +105,11 @@ function PodiumCard({ player, rank, view }: { player: Player; rank: number; view
         >
           {vs.fp.toFixed(1)}
         </span>
-        <span className="text-[11px] text-[#475569] mb-1">FP/g</span>
+        <span className="text-[11px] text-secondary mb-1">FP/g</span>
       </div>
 
       {/* Stats row */}
-      <div className="grid grid-cols-4 gap-1 pt-3 border-t border-[#E2E8F0]">
+      <div className="grid grid-cols-4 gap-1 pt-3 border-t border-border">
         {[
           { label: 'PTS', v: vs.pts },
           { label: 'REB', v: vs.reb },
@@ -117,8 +117,8 @@ function PodiumCard({ player, rank, view }: { player: Player; rank: number; view
           { label: '3PM', v: vs.tpm },
         ].map(({ label, v }) => (
           <div key={label} className="text-center">
-            <p className="text-[14px] font-bold tabular-nums text-[#0F172A]">{v.toFixed(1)}</p>
-            <p className="text-[9px] uppercase tracking-wider text-[#475569] mt-0.5">{label}</p>
+            <p className="text-[14px] font-bold tabular-nums text-foreground">{v.toFixed(1)}</p>
+            <p className="text-[9px] uppercase tracking-wider text-secondary mt-0.5">{label}</p>
           </div>
         ))}
       </div>
@@ -156,32 +156,32 @@ function TableRow({
 }) {
   const BAR_COLORS: Record<SortKey, string> = {
     fp:  '#C8956C',
-    pts: '#F59E0B',
-    reb: '#10B981',
-    ast: '#3B82F6',
+    pts: 'var(--warning)',
+    reb: 'var(--positive)',
+    ast: 'var(--info)',
     tpm: '#A78BFA',
   };
 
   const vs = getViewStats(player, view);
 
   return (
-    <div className="grid grid-cols-[32px_1fr_56px_56px_56px_56px_68px] gap-x-2 items-center px-4 py-3 border-b border-[#E2E8F0] last:border-0 hover:bg-[#F1F5F9] transition-colors group">
+    <div className="grid grid-cols-[32px_1fr_56px_56px_56px_56px_68px] gap-x-2 items-center px-4 py-3 border-b border-border last:border-0 hover:bg-surface-secondary transition-colors group">
       {/* Rank */}
-      <span className="text-[12px] font-semibold text-[#475569] tabular-nums">{rank}</span>
+      <span className="text-[12px] font-semibold text-secondary tabular-nums">{rank}</span>
 
       {/* Player */}
       <div className="min-w-0 flex items-center gap-2">
         <PosBadge pos={player.position} />
         <div className="min-w-0">
-          <p className="text-[13px] font-semibold text-[#0F172A] truncate leading-tight">{player.name}</p>
-          <p className="text-[10px] text-[#475569]">{player.team}</p>
+          <p className="text-[13px] font-semibold text-foreground truncate leading-tight">{player.name}</p>
+          <p className="text-[10px] text-secondary">{player.team}</p>
         </div>
       </div>
 
       {/* Stats with mini bars */}
       {(['pts', 'reb', 'ast', 'tpm'] as const).map((key) => (
         <div key={key} className="text-right">
-          <p className={`text-[13px] tabular-nums font-semibold ${sortKey === key ? 'text-[#C8956C]' : 'text-[#94A3B8]'}`}>
+          <p className={`text-[13px] tabular-nums font-semibold ${sortKey === key ? 'text-accent' : 'text-muted'}`}>
             {vs[key].toFixed(1)}
           </p>
           <div className="mt-1">
@@ -192,7 +192,7 @@ function TableRow({
 
       {/* FP */}
       <div className="text-right">
-        <p className={`text-[14px] font-bold tabular-nums ${sortKey === 'fp' ? 'text-[#C8956C]' : 'text-[#0F172A]'}`}>
+        <p className={`text-[14px] font-bold tabular-nums ${sortKey === 'fp' ? 'text-accent' : 'text-foreground'}`}>
           {vs.fp.toFixed(1)}
         </p>
         <div className="mt-1">
@@ -240,15 +240,15 @@ export default function PlayersClient({ players }: { players: Player[] }) {
         {/* Left: position filter + season/L7 toggle */}
         <div className="flex items-center gap-2 flex-wrap">
           {/* Position filter */}
-          <div className="flex items-center gap-1 bg-white rounded-lg p-1 border border-[#E2E8F0]">
+          <div className="flex items-center gap-1 bg-surface rounded-lg p-1 border border-border">
             {(['All', 'G', 'F', 'C'] as const).map((pos) => (
               <button
                 key={pos}
                 onClick={() => setPosFilter(pos)}
                 className={`px-3 py-1.5 rounded text-[12px] font-semibold transition-colors ${
                   posFilter === pos
-                    ? 'bg-[#C8956C] text-white'
-                    : 'text-[#94A3B8] hover:text-[#0F172A]'
+                    ? 'bg-accent text-white'
+                    : 'text-muted hover:text-foreground'
                 }`}
               >
                 {pos}
@@ -257,11 +257,11 @@ export default function PlayersClient({ players }: { players: Player[] }) {
           </div>
 
           {/* Season / Last 7 toggle */}
-          <div className="flex items-center gap-1 bg-white rounded-lg p-1 border border-[#E2E8F0]">
+          <div className="flex items-center gap-1 bg-surface rounded-lg p-1 border border-border">
             <button
               onClick={() => setView('season')}
               className={`px-3 py-1.5 rounded text-[12px] font-semibold transition-colors ${
-                view === 'season' ? 'bg-[#0F172A] text-[#C8956C]' : 'text-[#475569] hover:text-[#94A3B8]'
+                view === 'season' ? 'bg-foreground text-accent' : 'text-secondary hover:text-muted'
               }`}
             >
               Season
@@ -269,7 +269,7 @@ export default function PlayersClient({ players }: { players: Player[] }) {
             <button
               onClick={() => setView('l7')}
               className={`px-3 py-1.5 rounded text-[12px] font-semibold transition-colors ${
-                view === 'l7' ? 'bg-[#0F172A] text-[#C8956C]' : 'text-[#475569] hover:text-[#94A3B8]'
+                view === 'l7' ? 'bg-foreground text-accent' : 'text-secondary hover:text-muted'
               }`}
             >
               Last 7
@@ -279,16 +279,16 @@ export default function PlayersClient({ players }: { players: Player[] }) {
 
         {/* Sort selector */}
         <div className="flex items-center gap-2">
-          <span className="text-[11px] text-[#475569] uppercase tracking-wider">Sort by</span>
-          <div className="flex items-center gap-1 bg-white rounded-lg p-1 border border-[#E2E8F0]">
+          <span className="text-[11px] text-secondary uppercase tracking-wider">Sort by</span>
+          <div className="flex items-center gap-1 bg-surface rounded-lg p-1 border border-border">
             {SORT_OPTIONS.map(({ key, label }) => (
               <button
                 key={key}
                 onClick={() => setSortKey(key)}
                 className={`px-3 py-1.5 rounded text-[12px] font-semibold transition-colors ${
                   sortKey === key
-                    ? 'bg-[#0F172A] text-[#C8956C]'
-                    : 'text-[#475569] hover:text-[#94A3B8]'
+                    ? 'bg-foreground text-accent'
+                    : 'text-secondary hover:text-muted'
                 }`}
               >
                 {label}
@@ -299,7 +299,7 @@ export default function PlayersClient({ players }: { players: Player[] }) {
       </div>
 
       {filtered.length === 0 ? (
-        <div className="text-center py-16 text-[#475569]">No players found</div>
+        <div className="text-center py-16 text-secondary">No players found</div>
       ) : (
         <>
           {/* Podium */}
@@ -311,20 +311,20 @@ export default function PlayersClient({ players }: { players: Player[] }) {
 
           {/* Table */}
           {rest.length > 0 && (
-            <div className="rounded-xl border border-[#E2E8F0] bg-white overflow-hidden">
+            <div className="rounded-xl border border-border bg-surface overflow-hidden">
               {/* Table header */}
-              <div className="grid grid-cols-[32px_1fr_56px_56px_56px_56px_68px] gap-x-2 px-4 py-2.5 bg-[#F1F5F9] border-b border-[#E2E8F0]">
-                <span className="text-[10px] font-semibold uppercase tracking-widest text-[#475569]">#</span>
-                <span className="text-[10px] font-semibold uppercase tracking-widest text-[#475569]">Player</span>
+              <div className="grid grid-cols-[32px_1fr_56px_56px_56px_56px_68px] gap-x-2 px-4 py-2.5 bg-surface-secondary border-b border-border">
+                <span className="text-[10px] font-semibold uppercase tracking-widest text-secondary">#</span>
+                <span className="text-[10px] font-semibold uppercase tracking-widest text-secondary">Player</span>
                 {(['PTS', 'REB', 'AST', '3PM'] as const).map((lbl) => (
                   <span key={lbl} className={`text-[10px] font-semibold uppercase tracking-widest text-right ${
-                    sortKey === lbl.toLowerCase().replace('3pm', 'tpm') ? 'text-[#C8956C]' : 'text-[#475569]'
+                    sortKey === lbl.toLowerCase().replace('3pm', 'tpm') ? 'text-accent' : 'text-secondary'
                   }`}>
                     {lbl}
                   </span>
                 ))}
                 <span className={`text-[10px] font-semibold uppercase tracking-widest text-right ${
-                  sortKey === 'fp' ? 'text-[#C8956C]' : 'text-[#475569]'
+                  sortKey === 'fp' ? 'text-accent' : 'text-secondary'
                 }`}>
                   FP/g
                 </span>

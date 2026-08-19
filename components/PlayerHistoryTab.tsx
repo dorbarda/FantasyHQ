@@ -7,14 +7,14 @@ import type { DraftGrade } from '@/lib/types';
 // ─── Grade badge (mirrors DraftBoard) ────────────────────────────────────────
 
 const GRADE_STYLES: Record<DraftGrade, string> = {
-  'A+': 'bg-[#34D399] text-white',
-  'A':  'bg-[#34D399]/20 text-[#34D399]',
-  'B':  'bg-[#C8956C]/15 text-[#C8956C]',
-  'C':  'bg-[#6B7280]/10 text-[#94A3B8]',
-  'D':  'bg-[#FB923C]/15 text-[#FB923C]',
-  'F':  'bg-[#F87171]/15 text-[#F87171]',
-  'INJ': 'bg-[#6B7280]/10 text-[#94A3B8]',
-  '?':  'bg-[#6B7280]/10 text-[#94A3B8]',
+  'A+': 'bg-positive-bright text-white',
+  'A':  'bg-positive-bright/20 text-positive-bright',
+  'B':  'bg-accent/15 text-accent',
+  'C':  'bg-tertiary/10 text-muted',
+  'D':  'bg-warning-bright/15 text-warning-bright',
+  'F':  'bg-negative-bright/15 text-negative-bright',
+  'INJ': 'bg-tertiary/10 text-muted',
+  '?':  'bg-tertiary/10 text-muted',
 };
 
 function GradeBadge({ grade }: { grade: DraftGrade }) {
@@ -127,30 +127,30 @@ function PickChart({ seasons }: { seasons: PlayerSeasonData[] }) {
 
 function PlayerCard({ result }: { result: PlayerHistoryResult }) {
   return (
-    <div className="border border-[#E2E8F0] rounded-lg overflow-hidden bg-white">
+    <div className="border border-border rounded-lg overflow-hidden bg-surface">
       {/* Header */}
-      <div className="px-5 py-4 border-b border-[#E2E8F0] bg-[#F1F5F9] flex items-start justify-between gap-4">
+      <div className="px-5 py-4 border-b border-border bg-surface-secondary flex items-start justify-between gap-4">
         <div>
-          <p className="text-[16px] font-semibold text-[#0F172A]">{result.playerName}</p>
-          <p className="text-[12px] text-[#475569] mt-0.5">
+          <p className="text-[16px] font-semibold text-foreground">{result.playerName}</p>
+          <p className="text-[12px] text-secondary mt-0.5">
             {result.seasons[0].position} · {result.seasons[0].proTeam}
           </p>
         </div>
         <div className="flex gap-5 text-right shrink-0">
           <div>
-            <p className="text-[11px] text-[#475569] uppercase tracking-wide">Seasons</p>
-            <p className="text-[20px] font-bold text-[#0F172A] leading-none mt-0.5">
+            <p className="text-[11px] text-secondary uppercase tracking-wide">Seasons</p>
+            <p className="text-[20px] font-bold text-foreground leading-none mt-0.5">
               {result.seasons.length}
             </p>
           </div>
           <div>
-            <p className="text-[11px] text-[#475569] uppercase tracking-wide">Avg Pick</p>
-            <p className="text-[20px] font-bold text-[#0F172A] leading-none mt-0.5">
+            <p className="text-[11px] text-secondary uppercase tracking-wide">Avg Pick</p>
+            <p className="text-[20px] font-bold text-foreground leading-none mt-0.5">
               #{result.avgPick}
             </p>
           </div>
           <div>
-            <p className="text-[11px] text-[#475569] uppercase tracking-wide">Avg Grade</p>
+            <p className="text-[11px] text-secondary uppercase tracking-wide">Avg Grade</p>
             <div className="mt-1.5">
               <GradeBadge grade={result.avgGrade as DraftGrade} />
             </div>
@@ -161,19 +161,19 @@ function PlayerCard({ result }: { result: PlayerHistoryResult }) {
       {/* Chart */}
       {result.seasons.length >= 2 && (
         <div className="px-5 pt-4 pb-2">
-          <p className="text-[11px] text-[#475569] uppercase tracking-wide mb-2">Draft Position by Season</p>
+          <p className="text-[11px] text-secondary uppercase tracking-wide mb-2">Draft Position by Season</p>
           <PickChart seasons={result.seasons} />
         </div>
       )}
 
       {/* Season rows */}
-      <div className="divide-y divide-[#E2E8F0]">
+      <div className="divide-y divide-border">
         {result.seasons.map(s => (
           <div key={s.year} className="flex items-center gap-3 px-5 py-2.5 text-[13px]">
-            <span className="text-[#94A3B8] w-14 shrink-0">{s.seasonLabel}</span>
-            <span className="text-[#0F172A] font-medium w-10 shrink-0">#{s.overallPick}</span>
+            <span className="text-muted w-14 shrink-0">{s.seasonLabel}</span>
+            <span className="text-foreground font-medium w-10 shrink-0">#{s.overallPick}</span>
             <GradeBadge grade={s.grade} />
-            <span className="text-[#475569] ml-auto truncate">{s.ownerName}</span>
+            <span className="text-secondary ml-auto truncate">{s.ownerName}</span>
           </div>
         ))}
       </div>
@@ -205,7 +205,7 @@ export default function PlayerHistoryTab() {
       {/* Search input */}
       <div className="relative mb-6">
         <svg
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#475569]"
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary"
           fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
         >
           <path strokeLinecap="round" strokeLinejoin="round"
@@ -216,10 +216,10 @@ export default function PlayerHistoryTab() {
           value={query}
           onChange={e => handleChange(e.target.value)}
           placeholder="Search player name…"
-          className="w-full max-w-md pl-9 pr-4 py-2.5 rounded-lg bg-white border border-[#E2E8F0] text-[#0F172A] text-[14px] placeholder-[#64748B] focus:outline-none focus:border-[#2A4066] transition-colors"
+          className="w-full max-w-md pl-9 pr-4 py-2.5 rounded-lg bg-surface border border-border text-foreground text-[14px] placeholder-tertiary focus:outline-none focus:border-panel-border transition-colors"
         />
         {isPending && (
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[12px] text-[#475569]">
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[12px] text-secondary">
             Loading…
           </span>
         )}
@@ -227,9 +227,9 @@ export default function PlayerHistoryTab() {
 
       {/* Empty state */}
       {!isPending && results !== null && results.length === 0 && (
-        <div className="border border-[#E2E8F0] rounded-lg px-6 py-10 text-center max-w-md">
-          <p className="text-[15px] font-bold text-[#0F172A]">No results</p>
-          <p className="text-[13px] text-[#94A3B8] mt-1">
+        <div className="border border-border rounded-lg px-6 py-10 text-center max-w-md">
+          <p className="text-[15px] font-bold text-foreground">No results</p>
+          <p className="text-[13px] text-muted mt-1">
             No player matching &ldquo;{query}&rdquo; found in draft history.
           </p>
         </div>
@@ -246,7 +246,7 @@ export default function PlayerHistoryTab() {
 
       {/* Idle hint */}
       {results === null && !isPending && (
-        <p className="text-[13px] text-[#475569]">
+        <p className="text-[13px] text-secondary">
           Type at least 2 characters to search across all draft years.
         </p>
       )}

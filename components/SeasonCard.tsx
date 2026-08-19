@@ -41,7 +41,7 @@ function Avatar({ teamName, size = 'md' }: { teamName: string; size?: 'sm' | 'md
 
   if (logo) {
     return (
-      <div className={`${sizeClass} rounded-full overflow-hidden shrink-0 ring-2 ring-white bg-white shadow-sm`}>
+      <div className={`${sizeClass} rounded-full overflow-hidden shrink-0 ring-2 ring-white bg-surface shadow-sm`}>
         <Image src={logo} alt={teamName} width={px} height={px} className="w-full h-full object-cover" />
       </div>
     );
@@ -87,10 +87,10 @@ function PodiumSlot({
 
       {/* Name + record */}
       <div className="text-center px-1">
-        <p className={`font-bold leading-tight truncate max-w-[100px] text-[13px] ${isCentre ? 'text-[#0F172A]' : 'text-[#334155]'}`}>
+        <p className={`font-bold leading-tight truncate max-w-[100px] text-[13px] ${isCentre ? 'text-foreground' : 'text-foreground-strong'}`}>
           {team.teamName}
         </p>
-        <p className="text-[11px] text-[#94A3B8] truncate max-w-[100px]">{team.ownerName.split(' ')[0]}</p>
+        <p className="text-[11px] text-muted truncate max-w-[100px]">{team.ownerName.split(' ')[0]}</p>
         {team.wins > 0 && (
           <p className="text-[11px] font-semibold tabular-nums mt-0.5" style={{ color: labelColor }}>
             {team.wins}–{team.losses}
@@ -124,34 +124,34 @@ export default function SeasonCard({ season, isBackToBack = false }: SeasonCardP
   ) ?? null;
 
   return (
-    <div className="border border-[#E2E8F0] rounded-2xl overflow-hidden bg-white shadow-sm">
+    <div className="border border-border rounded-2xl overflow-hidden bg-surface shadow-sm">
 
       {/* ── Season header ──────────────────────────────────────────── */}
-      <div className="px-5 pt-4 pb-3 flex items-start justify-between border-b border-[#E2E8F0] bg-gradient-to-r from-[#F8FAFC] to-[#F1F5F9]">
+      <div className="px-5 pt-4 pb-3 flex items-start justify-between border-b border-border bg-gradient-to-r from-background to-surface-secondary">
         <div>
           <div className="flex items-center gap-2 flex-wrap">
-            <h2 className="text-[22px] font-black tracking-tight text-[#0F172A]">
+            <h2 className="text-[22px] font-black tracking-tight text-foreground">
               {season.seasonLabel}
             </h2>
             {isBackToBack && (
-              <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-[#F59E0B]/15 text-[#D97706] border border-[#F59E0B]/30">
+              <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-warning/15 text-warning border border-warning/30">
                 🔥 Back-to-Back
               </span>
             )}
           </div>
           {season.champion && (
-            <p className="text-[13px] text-[#475569] mt-0.5">
-              Champion: <span className="font-semibold text-[#0F172A]">{season.champion.ownerName}</span>
+            <p className="text-[13px] text-secondary mt-0.5">
+              Champion: <span className="font-semibold text-foreground">{season.champion.ownerName}</span>
             </p>
           )}
         </div>
         <div className="flex flex-col items-end gap-1.5">
           {season.mvpPlayer && (
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#C8956C]/15 text-[#C8956C] border border-[#C8956C]/30 flex items-center gap-1">
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-accent/15 text-accent border border-accent/30 flex items-center gap-1">
               ⭐ {season.mvpPlayer}
             </span>
           )}
-          <span className="text-[10px] font-semibold text-[#94A3B8] uppercase tracking-widest">
+          <span className="text-[10px] font-semibold text-muted uppercase tracking-widest">
             {season.year - 1}–{String(season.year).slice(2)}
           </span>
         </div>
@@ -201,21 +201,21 @@ export default function SeasonCard({ season, isBackToBack = false }: SeasonCardP
 
       {/* ── Last place "Shame" section ─────────────────────────────── */}
       {season.lastPlace && (
-        <div className="mx-5 mb-4 px-3 py-2.5 rounded-xl bg-[#FEF2F2] border border-[#FCA5A5]/40 flex items-center gap-2.5">
+        <div className="mx-5 mb-4 px-3 py-2.5 rounded-xl bg-negative-surface border border-negative-bright/40 flex items-center gap-2.5">
           {teamLogoPath(season.lastPlace.teamName) ? (
             <Image
               src={teamLogoPath(season.lastPlace.teamName)!}
               alt={season.lastPlace.teamName}
               width={32} height={32}
-              className="w-8 h-8 rounded-full object-cover shrink-0 ring-1 ring-[#FCA5A5]/40 bg-white"
+              className="w-8 h-8 rounded-full object-cover shrink-0 ring-1 ring-negative-bright/40 bg-surface"
             />
           ) : (
             <span className="text-[18px] shrink-0">🚽</span>
           )}
           <div className="min-w-0">
-            <p className="text-[11px] font-black uppercase tracking-widest text-[#DC2626] mb-0.5">Toilet Bowl Champion</p>
-            <p className="text-[13px] font-semibold text-[#0F172A] truncate">{season.lastPlace.teamName}</p>
-            <p className="text-[11px] text-[#94A3B8]">
+            <p className="text-[11px] font-black uppercase tracking-widest text-negative mb-0.5">Toilet Bowl Champion</p>
+            <p className="text-[13px] font-semibold text-foreground truncate">{season.lastPlace.teamName}</p>
+            <p className="text-[11px] text-muted">
               {season.lastPlace.ownerName}
               {season.lastPlace.wins > 0 && ` · ${season.lastPlace.wins}–${season.lastPlace.losses}`}
             </p>
@@ -225,8 +225,8 @@ export default function SeasonCard({ season, isBackToBack = false }: SeasonCardP
 
       {/* ── Notes / Quote ──────────────────────────────────────────── */}
       {season.notes && (
-        <div className="mx-5 mb-4 pl-3 border-l-2 border-[#C8956C]">
-          <p className="text-[13px] text-[#475569] italic leading-relaxed">
+        <div className="mx-5 mb-4 pl-3 border-l-2 border-accent">
+          <p className="text-[13px] text-secondary italic leading-relaxed">
             &ldquo;{season.notes}&rdquo;
           </p>
         </div>
@@ -234,23 +234,23 @@ export default function SeasonCard({ season, isBackToBack = false }: SeasonCardP
 
       {/* ── Full Standings toggle ───────────────────────────────────── */}
       {season.finalStandings.length > 0 && (
-        <div className="border-t border-[#E2E8F0]">
+        <div className="border-t border-border">
           <button
             onClick={() => setShowStandings(v => !v)}
-            className="w-full px-5 py-2.5 flex items-center justify-between text-[12px] font-semibold text-[#475569] hover:bg-[#F8FAFC] transition-colors"
+            className="w-full px-5 py-2.5 flex items-center justify-between text-[12px] font-semibold text-secondary hover:bg-background transition-colors"
           >
             <span>Full Standings</span>
-            <span className="text-[#94A3B8]">{showStandings ? '▲' : '▼'}</span>
+            <span className="text-muted">{showStandings ? '▲' : '▼'}</span>
           </button>
 
           {showStandings && (
-            <div className="border-t border-[#E2E8F0]">
+            <div className="border-t border-border">
               {/* Column headers */}
-              <div className="grid grid-cols-[28px_1fr_56px_68px] gap-x-2 px-5 py-2 bg-[#F8FAFC]">
-                <span className="text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8]">#</span>
-                <span className="text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8]">Team</span>
-                <span className="text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8] text-right">W–L</span>
-                <span className="text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8] text-right">PF</span>
+              <div className="grid grid-cols-[28px_1fr_56px_68px] gap-x-2 px-5 py-2 bg-background">
+                <span className="text-[10px] font-semibold uppercase tracking-widest text-muted">#</span>
+                <span className="text-[10px] font-semibold uppercase tracking-widest text-muted">Team</span>
+                <span className="text-[10px] font-semibold uppercase tracking-widest text-muted text-right">W–L</span>
+                <span className="text-[10px] font-semibold uppercase tracking-widest text-muted text-right">PF</span>
               </div>
 
               {season.finalStandings.map((team, idx) => {
@@ -265,26 +265,26 @@ export default function SeasonCard({ season, isBackToBack = false }: SeasonCardP
                   <div
                     key={`${team.teamName}-${idx}`}
                     className={`grid grid-cols-[36px_1fr_56px_68px] gap-x-2 items-center px-5 py-2.5 ${
-                      idx < season.finalStandings.length - 1 ? 'border-b border-[#E2E8F0]' : ''
-                    } ${isChamp ? 'bg-[#FFFBEB]' : isLast ? 'bg-[#FEF2F2]' : ''}`}
+                      idx < season.finalStandings.length - 1 ? 'border-b border-border' : ''
+                    } ${isChamp ? 'bg-warning-surface' : isLast ? 'bg-negative-surface' : ''}`}
                   >
                     {/* Logo or colored rank bubble */}
                     <div className="relative w-8 h-8 shrink-0">
                       {logo ? (
-                        <Image src={logo} alt={team.teamName} width={32} height={32} className="w-8 h-8 rounded-full object-cover ring-1 ring-[#E2E8F0] bg-white" />
+                        <Image src={logo} alt={team.teamName} width={32} height={32} className="w-8 h-8 rounded-full object-cover ring-1 ring-border bg-surface" />
                       ) : (
                         <div className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white" style={{ backgroundColor: color }}>
                           {initials(team.teamName)}
                         </div>
                       )}
-                      <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#0F172A] text-white text-[8px] font-black flex items-center justify-center ring-1 ring-white">
+                      <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-foreground text-white text-[8px] font-black flex items-center justify-center ring-1 ring-white">
                         {idx + 1}
                       </span>
                     </div>
 
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <p className="text-[13px] font-semibold truncate text-[#0F172A]">
+                        <p className="text-[13px] font-semibold truncate text-foreground">
                           {team.teamName}
                         </p>
                         {isChamp    && <span className="text-[9px] font-bold shrink-0">🏆</span>}
@@ -292,13 +292,13 @@ export default function SeasonCard({ season, isBackToBack = false }: SeasonCardP
                         {isThird    && <span className="text-[9px] font-bold shrink-0">🥉</span>}
                         {isLast     && <span className="text-[9px] font-bold shrink-0">🚽</span>}
                       </div>
-                      <p className="text-[11px] text-[#94A3B8] truncate">{team.ownerName}</p>
+                      <p className="text-[11px] text-muted truncate">{team.ownerName}</p>
                     </div>
 
-                    <span className="text-[12px] font-medium text-[#0F172A] text-right tabular-nums">
+                    <span className="text-[12px] font-medium text-foreground text-right tabular-nums">
                       {team.wins > 0 || team.losses > 0 ? `${team.wins}–${team.losses}` : '—'}
                     </span>
-                    <span className="text-[12px] font-medium text-[#94A3B8] text-right tabular-nums">
+                    <span className="text-[12px] font-medium text-muted text-right tabular-nums">
                       {team.pf > 0 ? team.pf.toLocaleString() : '—'}
                     </span>
                   </div>

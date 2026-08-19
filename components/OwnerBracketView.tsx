@@ -30,11 +30,11 @@ interface Props {
 }
 
 const STATUS: Record<SeriesStatus, { bar: string; bg: string; border: string; header: string; icon: string; text: string }> = {
-  pending: { bar: 'bg-[#CBD5E1]', bg: 'bg-[#F8FAFC]',   border: 'border-[#E2E8F0]',   header: 'bg-[#F8FAFC]',   icon: '',  text: 'text-[#475569]'  },
-  correct: { bar: 'bg-[#10B981]', bg: 'bg-[#F0FDF4]',   border: 'border-[#86EFAC]',   header: 'bg-[#DCFCE7]',   icon: '✓', text: 'text-[#059669]'  },
-  exact:   { bar: 'bg-[#EAB308]', bg: 'bg-[#FEFCE8]',   border: 'border-[#FDE047]',   header: 'bg-[#FEF9C3]',   icon: '★', text: 'text-[#CA8A04]'  },
-  wrong43: { bar: 'bg-[#F59E0B]', bg: 'bg-[#FFFBEB]',   border: 'border-[#FCD34D]',   header: 'bg-[#FEF3C7]',   icon: '~', text: 'text-[#D97706]'  },
-  wrong:   { bar: 'bg-[#EF4444]', bg: 'bg-[#FEF2F2]',   border: 'border-[#FCA5A5]',   header: 'bg-[#FEE2E2]',   icon: '✗', text: 'text-[#DC2626]'  },
+  pending: { bar: 'bg-border-strong', bg: 'bg-background',   border: 'border-border',   header: 'bg-background',   icon: '',  text: 'text-secondary'  },
+  correct: { bar: 'bg-positive', bg: 'bg-positive-surface',   border: 'border-positive-bright',   header: 'bg-positive-surface',   icon: '✓', text: 'text-positive-strong'  },
+  exact:   { bar: 'bg-gold', bg: 'bg-warning-surface',   border: 'border-warning-bright',   header: 'bg-gold-surface',   icon: '★', text: 'text-warning'  },
+  wrong43: { bar: 'bg-warning', bg: 'bg-warning-surface',   border: 'border-warning-bright',   header: 'bg-warning-surface',   icon: '~', text: 'text-warning'  },
+  wrong:   { bar: 'bg-negative', bg: 'bg-negative-surface',   border: 'border-negative-bright',   header: 'bg-negative-surface',   icon: '✗', text: 'text-negative'  },
 };
 
 function seriesStatus(
@@ -88,7 +88,7 @@ function SeriesCard({
     <div className={`rounded-xl border overflow-hidden ${cfg.border}`}>
       {/* Header */}
       <div className={`flex items-center justify-between px-3 py-1.5 ${cfg.header}`}>
-        <span className="text-[10px] font-bold uppercase tracking-wider text-[#94A3B8]">
+        <span className="text-[10px] font-bold uppercase tracking-wider text-muted">
           {series.label}
         </span>
         {cfg.icon && (
@@ -97,14 +97,14 @@ function SeriesCard({
       </div>
 
       {/* Teams */}
-      <div className="bg-white divide-y divide-[#F1F5F9]">
+      <div className="bg-surface divide-y divide-surface-secondary">
         {[teamA, teamB].map((team, i) => {
           if (!team) return null;
           const isPicked = !!pick && pick.trim().toLowerCase() === team.trim().toLowerCase();
           return (
             <div key={i} className={`flex items-center gap-3 px-3 py-2.5 ${isPicked ? cfg.bg : ''}`}>
-              <span className={`shrink-0 w-2 h-2 rounded-full ${isPicked ? cfg.bar : 'bg-[#E2E8F0]'}`} />
-              <span className={`flex-1 text-[12px] truncate ${isPicked ? `font-bold ${cfg.text}` : 'font-medium text-[#94A3B8]'}`}>
+              <span className={`shrink-0 w-2 h-2 rounded-full ${isPicked ? cfg.bar : 'bg-border'}`} />
+              <span className={`flex-1 text-[12px] truncate ${isPicked ? `font-bold ${cfg.text}` : 'font-medium text-muted'}`}>
                 {team}
               </span>
               {isPicked && pickScore && (
@@ -117,10 +117,10 @@ function SeriesCard({
 
       {/* Result footer */}
       {series.winner && (
-        <div className="px-3 py-1.5 bg-[#F8FAFC] border-t border-[#F1F5F9]">
-          <span className="text-[10px] text-[#64748B]">
+        <div className="px-3 py-1.5 bg-background border-t border-surface-secondary">
+          <span className="text-[10px] text-tertiary">
             Result:{' '}
-            <span className="font-semibold text-[#0F172A]">{series.winner}</span>
+            <span className="font-semibold text-foreground">{series.winner}</span>
             {series.score ? ` (${series.score})` : ''}
           </span>
         </div>
@@ -151,8 +151,8 @@ function BonusCard({
 
   return (
     <div className={`flex-1 min-w-0 rounded-xl border p-3 ${cfg.bg} ${cfg.border}`}>
-      <p className="text-[9px] font-bold uppercase tracking-wider text-[#94A3B8] mb-1">{label}</p>
-      <p className={`text-[13px] font-bold truncate ${status === 'pending' ? 'text-[#0F172A]' : cfg.text}`}>
+      <p className="text-[9px] font-bold uppercase tracking-wider text-muted mb-1">{label}</p>
+      <p className={`text-[13px] font-bold truncate ${status === 'pending' ? 'text-foreground' : cfg.text}`}>
         {pick ? shortName(pick) : '—'}
       </p>
       {status !== 'pending' && (
@@ -182,13 +182,13 @@ function RoundSection({
 
   return (
     <div className="mt-6">
-      <p className="text-[12px] font-black uppercase tracking-[0.15em] text-[#475569] mb-3 border-t border-[#E2E8F0] pt-4">
+      <p className="text-[12px] font-black uppercase tracking-[0.15em] text-secondary mb-3 border-t border-border pt-4">
         {label}
       </p>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {eastVisible.length > 0 && (
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#94A3B8] mb-3">
+            <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-muted mb-3">
               East Conference · {label}
             </p>
             <div className="space-y-3">
@@ -204,7 +204,7 @@ function RoundSection({
         )}
         {westVisible.length > 0 && (
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#94A3B8] mb-3">
+            <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-muted mb-3">
               West Conference · {label}
             </p>
             <div className="space-y-3">
@@ -252,8 +252,8 @@ export default function OwnerBracketView({ owners, r1Series, r2Series, r3Series,
               onClick={() => setSelected(o.ownerName)}
               className={`px-4 py-2 rounded-xl text-[13px] font-semibold transition-all border ${
                 active
-                  ? 'bg-[#0F172A] text-white border-[#0F172A] shadow-sm'
-                  : 'bg-white text-[#475569] border-[#E2E8F0] hover:border-[#CBD5E1] hover:text-[#0F172A]'
+                  ? 'bg-foreground text-white border-foreground shadow-sm'
+                  : 'bg-surface text-secondary border-border hover:border-border-strong hover:text-foreground'
               }`}
             >
               {first}
@@ -289,7 +289,7 @@ export default function OwnerBracketView({ owners, r1Series, r2Series, r3Series,
           {/* Round 1 */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#94A3B8] mb-3">
+              <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-muted mb-3">
                 East Conference · Round 1
               </p>
               <div className="space-y-3">
@@ -303,7 +303,7 @@ export default function OwnerBracketView({ owners, r1Series, r2Series, r3Series,
               </div>
             </div>
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#94A3B8] mb-3">
+              <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-muted mb-3">
                 West Conference · Round 1
               </p>
               <div className="space-y-3">
@@ -339,7 +339,7 @@ export default function OwnerBracketView({ owners, r1Series, r2Series, r3Series,
               return (
                 <span
                   key={s}
-                  className={`text-[11px] font-medium rounded-lg px-2.5 py-1 border ${cfg.bg} ${cfg.border} ${s !== 'pending' ? cfg.text : 'text-[#94A3B8]'}`}
+                  className={`text-[11px] font-medium rounded-lg px-2.5 py-1 border ${cfg.bg} ${cfg.border} ${s !== 'pending' ? cfg.text : 'text-muted'}`}
                 >
                   {cfg.icon && `${cfg.icon} `}{label}
                 </span>

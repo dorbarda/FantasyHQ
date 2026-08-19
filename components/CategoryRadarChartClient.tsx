@@ -45,8 +45,8 @@ export default function CategoryRadarChartClient({ standings }: Props) {
           onClick={selectAll}
           className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-colors border ${
             allSelected
-              ? 'bg-[#0F172A] text-white border-[#0F172A]'
-              : 'bg-white text-[#475569] border-[#E2E8F0] hover:border-[#94A3B8]'
+              ? 'bg-foreground text-white border-foreground'
+              : 'bg-surface text-secondary border-border hover:border-muted'
           }`}
         >
           All

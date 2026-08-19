@@ -3,10 +3,11 @@ import type {
   RecordsData, Superlative, H2HRecord, OwnerCareer,
 } from './types';
 
+import { ALL_SEASONS, CURRENT_SEASON, seasonLabel } from './season';
+
 const ESPN_S2   = process.env.ESPN_S2;
 const SWID      = process.env.SWID;
 const LEAGUE_ID = process.env.LEAGUE_ID;
-const CURRENT_YEAR = parseInt(process.env.SEASON || '2026');
 
 // Automated/placeholder teams that should be excluded from H2H records.
 // Matched case-insensitively against team name OR owner name.
@@ -15,19 +16,13 @@ function isGhostTeam(name: string): boolean {
 }
 
 // All years to pull — historical + current season
-const ALL_YEARS = [2021, 2022, 2023, 2024, 2025, CURRENT_YEAR].filter(
-  (y, i, arr) => arr.indexOf(y) === i   // deduplicate if CURRENT_YEAR already in list
-);
-
-function seasonLabel(year: number) {
-  return `${year - 1}-${String(year).slice(2)}`;
-}
+const ALL_YEARS = ALL_SEASONS;
 
 async function espnFetch(year: number, params: string, noCache = false): Promise<any> {
   const base = `https://lm-api-reads.fantasy.espn.com/apis/v3/games/fba/seasons/${year}/segments/0/leagues/${LEAGUE_ID}`;
   const cacheOpt: RequestInit = noCache
     ? { cache: 'no-store' }
-    : { next: { revalidate: year < CURRENT_YEAR ? 86400 : 1800 } } as RequestInit;
+    : { next: { revalidate: year < CURRENT_SEASON ? 86400 : 1800 } } as RequestInit;
   const res = await fetch(`${base}${params}`, {
     headers: { Cookie: `espn_s2=${ESPN_S2}; SWID=${SWID}`, Accept: 'application/json' },
     ...cacheOpt,

@@ -1,8 +1,7 @@
 import { Suspense } from 'react';
-import betsJson          from '@/data/playoff-bets.json';
-import resultsJson       from '@/data/playoff-results.json';
-import finesJson         from '@/data/playoff-fines.json';
+import Link from 'next/link';
 import playoffHistoryJson from '@/data/playoff-history.json';
+import { loadCurrentPlayoffs, listPlayoffYears } from '@/lib/playoffs';
 import { computeAllScores } from '@/lib/playoff-scoring';
 import type {
   OwnerPlayoffBets,
@@ -26,11 +25,14 @@ interface PlayoffHistoryEntry {
 
 export const revalidate = 300;
 
-// ─── Cast JSON to typed shapes ────────────────────────────────────────────────
+// ─── Current season's pool (data/playoffs/<year>/) ───────────────────────────
+// Loaded at module scope: the files only change via commits, and every commit
+// redeploys — same freshness semantics as the static imports this replaces.
 
-const allBets: OwnerPlayoffBets[] = betsJson.owners as OwnerPlayoffBets[];
-const results: PlayoffResults     = resultsJson as PlayoffResults;
-const fines: PlayoffFine[]        = finesJson as PlayoffFine[];
+const pool = loadCurrentPlayoffs();
+const allBets: OwnerPlayoffBets[] = pool.bets;
+const results: PlayoffResults     = pool.results;
+const fines: PlayoffFine[]        = pool.fines;
 
 // ─── Stage detection ─────────────────────────────────────────────────────────
 // Only advance past play-in once all play-in games have a winner
@@ -42,7 +44,7 @@ function LeaderboardTab() {
   if (allBets.length === 0) {
     return (
       <div className="text-center py-16 text-[#94A3B8] text-[14px]">
-        No bets entered yet — data/playoff-bets.json is empty.
+        No bets entered yet — the {pool.year} pool opens with the playoffs.
       </div>
     );
   }
@@ -300,7 +302,7 @@ function BracketTab() {
   if (allBets.length === 0) {
     return (
       <div className="text-center py-16 text-[#94A3B8] text-[14px]">
-        No bets entered yet — data/playoff-bets.json is empty.
+        No bets entered yet — the {pool.year} pool opens with the playoffs.
       </div>
     );
   }
@@ -330,6 +332,7 @@ function BracketTab() {
 function HistoryTab() {
   const history = playoffHistoryJson as PlayoffHistoryEntry[];
   const sorted  = [...history].sort((a, b) => b.year - a.year);
+  const archiveYears = new Set(listPlayoffYears());
 
   if (sorted.length === 0) {
     return (
@@ -351,9 +354,19 @@ function HistoryTab() {
             <h2 className="text-[20px] font-black tracking-tight text-[#0F172A]">
               {entry.label} Season
             </h2>
-            <span className="text-[11px] font-semibold text-[#94A3B8]">
-              🏀 {entry.nbaChampion} won {entry.nbaScore} over {entry.nbaRunnerUp}
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="text-[11px] font-semibold text-[#94A3B8]">
+                🏀 {entry.nbaChampion} won {entry.nbaScore} over {entry.nbaRunnerUp}
+              </span>
+              {archiveYears.has(entry.year) && (
+                <Link
+                  href={`/nba-playoffs/${entry.year}`}
+                  className="text-[11px] font-semibold text-[#2563EB] hover:text-[#1D4ED8] transition-colors shrink-0"
+                >
+                  Full archive →
+                </Link>
+              )}
+            </div>
           </div>
 
           {/* Fantasy winner + runner-up */}
@@ -414,7 +427,7 @@ export default async function NBAPlayoffsPage({
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A]">
-          NBA 2026 Playoffs
+          NBA {pool.year} Playoffs
         </h1>
         <p className="text-[14px] text-[#475569] mt-1">
           {ownerCount > 0

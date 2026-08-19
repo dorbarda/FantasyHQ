@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
 
+import { CURRENT_SEASON } from '@/lib/season';
+
 const GH_TOKEN  = process.env.GITHUB_TOKEN;
 const ADMIN_KEY = process.env.ADMIN_KEY;
 const REPO      = 'dorbarda/FantasyHQ';
-const FILE      = 'data/playoff-results.json';
+const FILE      = `data/playoffs/${CURRENT_SEASON}/results.json`;
 const BRANCH    = process.env.GITHUB_BRANCH || 'main';
 const GH_URL    = `https://api.github.com/repos/${REPO}/contents/${FILE}`;
 

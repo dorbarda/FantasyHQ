@@ -22,9 +22,11 @@ Bets Pool 2.0 is planned but deferred until the season work is done.
       first; Action failure (expired cookies) alerts by email; empty
       results are rejected so bad cookies can't wipe good data
       (needs `ESPN_S2`/`SWID`/`LEAGUE_ID` repo secrets set once)
-- [ ] New-season switch: single source of truth for the active season;
-      per-year archive folders (`data/<year>/…`) so history accumulates
-- [ ] Draft prep page: draft order, last season's draft value hits/busts
+- [x] New-season switch: `lib/season.ts` single source; playoff pool data
+      per-year under `data/playoffs/<year>/` with generic archive route
+      `/nba-playoffs/[year]`; new season = set `SEASON` env var
+- [x] Draft prep page (`/draft-prep`): countdown, draft order and notes
+      from `data/draft-prep.json`, scouting links to last season's boards
 
 ## Phase 3 — In-season (October → March)
 

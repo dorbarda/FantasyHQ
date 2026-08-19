@@ -1,23 +1,22 @@
-import betsJson    from '@/data/playoff-bets.json';
-import resultsJson from '@/data/playoff-results.json';
-import finesJson   from '@/data/playoff-fines.json';
-import { computeAllScores } from '@/lib/playoff-scoring';
-import type { OwnerPlayoffBets, PlayoffResults, PlayoffFine } from '@/lib/types';
+import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { loadPlayoffYear, listPlayoffYears } from '@/lib/playoffs';
+import { computeAllScores } from '@/lib/playoff-scoring';
+import type { PlayoffYearData } from '@/lib/playoffs';
 
-export const revalidate = false; // static — archived season never changes
+export const dynamicParams = false;
 
-const allBets: OwnerPlayoffBets[] = betsJson.owners as OwnerPlayoffBets[];
-const results: PlayoffResults     = resultsJson as PlayoffResults;
-const fines: PlayoffFine[]        = finesJson as PlayoffFine[];
+export function generateStaticParams() {
+  return listPlayoffYears().map(year => ({ year: String(year) }));
+}
 
 // ─── Final standings ─────────────────────────────────────────────────────────
 
-function FinalStandings() {
-  const rawScores = computeAllScores(allBets, results);
+function FinalStandings({ pool }: { pool: PlayoffYearData }) {
+  const rawScores = computeAllScores(pool.bets, pool.results);
   const scores = rawScores
     .map(s => {
-      const fine = fines.find(f => f.ownerName === s.ownerName);
+      const fine = pool.fines.find(f => f.ownerName === s.ownerName);
       return fine ? { ...s, total: s.total + fine.points, fine } : { ...s, fine: undefined };
     })
     .sort((a, b) => b.total - a.total);
@@ -72,6 +71,7 @@ function ResultsSection({ title, items }: {
   title: string;
   items: { label: string; teams: [string, string]; winner: string | null; score?: string | null }[];
 }) {
+  if (items.length === 0) return null;
   return (
     <div className="mb-4">
       <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#94A3B8] mb-2">{title}</p>
@@ -101,22 +101,18 @@ function ResultsSection({ title, items }: {
   );
 }
 
-function NBAResults() {
-  const r1 = results.series.filter(s => s.round === 1);
-  const r2 = results.series.filter(s => s.round === 2);
-  const r3 = results.series.filter(s => s.round === 3);
-  const r4 = results.series.filter(s => s.round === 4);
-
+function NBAResults({ pool }: { pool: PlayoffYearData }) {
+  const { series } = pool.results;
   return (
     <div className="bg-white border border-[#E2E8F0] rounded-2xl overflow-hidden shadow-sm">
       <div className="px-5 pt-4 pb-3 border-b border-[#E2E8F0] bg-gradient-to-r from-[#F8FAFC] to-[#F1F5F9]">
         <p className="text-[11px] font-black uppercase tracking-widest text-[#94A3B8]">NBA Results</p>
       </div>
       <div className="px-5 py-4">
-        <ResultsSection title="Round 1"           items={r1} />
-        <ResultsSection title="Semifinals"        items={r2} />
-        <ResultsSection title="Conference Finals" items={r3} />
-        <ResultsSection title="NBA Finals"        items={r4} />
+        <ResultsSection title="Round 1"           items={series.filter(s => s.round === 1)} />
+        <ResultsSection title="Semifinals"        items={series.filter(s => s.round === 2)} />
+        <ResultsSection title="Conference Finals" items={series.filter(s => s.round === 3)} />
+        <ResultsSection title="NBA Finals"        items={series.filter(s => s.round === 4)} />
       </div>
     </div>
   );
@@ -124,7 +120,20 @@ function NBAResults() {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
-export default function Archive2026Page() {
+export default async function PlayoffArchivePage({
+  params,
+}: {
+  params: Promise<{ year: string }>;
+}) {
+  const { year } = await params;
+  const pool = loadPlayoffYear(parseInt(year, 10));
+  if (!pool) notFound();
+
+  const finals = pool.results.series.find(s => s.round === 4);
+  const champLine = finals?.winner
+    ? `Season complete · 🏆 ${finals.winner} won ${finals.score ?? ''}`.trim()
+    : 'Season in progress';
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] px-4 sm:px-6 lg:px-8 py-6">
       {/* Header */}
@@ -136,15 +145,15 @@ export default function Archive2026Page() {
           ← Back to Playoffs
         </Link>
         <h1 className="text-[28px] sm:text-[32px] font-black tracking-tight text-[#0F172A]">
-          2026 Playoffs Archive
+          {pool.year} Playoffs Archive
         </h1>
         <p className="text-[14px] text-[#475569] mt-1">
-          {allBets.length} participants · Season complete · 🏆 New York Knicks won 4-1
+          {pool.bets.length} participants · {champLine}
         </p>
       </div>
 
-      <FinalStandings />
-      <NBAResults />
+      <FinalStandings pool={pool} />
+      <NBAResults pool={pool} />
     </div>
   );
 }

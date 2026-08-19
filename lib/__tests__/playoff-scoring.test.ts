@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { computeOwnerScore, computeAllScores, FINALS_WINNER_POINTS } from '../playoff-scoring';
 import type { OwnerPlayoffBets, PlayoffResults, SeriesResult, PlayInResult } from '../types';
-import realBets from '../../data/playoff-bets.json';
-import realResults from '../../data/playoff-results.json';
+import realBets from '../../data/playoffs/2026/bets.json';
+import realResults from '../../data/playoffs/2026/results.json';
 
 // ── Fixture builders ─────────────────────────────────────────────────────────
 

@@ -53,7 +53,9 @@ export default async function SchedulePage({
   const isCurrentWeek = data.week === data.currentWeek;
   const prevWeek = data.week > 1 ? data.week - 1 : null;
   const nextWeek = data.week < data.maxWeek ? data.week + 1 : null;
-  const totalGames = data.rows.reduce((n, r) => n + r.gameCount, 0);
+  // Every game appears on two teams' rows, so summing gameCount double-counts:
+  // an 11-game night was reported as "22 games".
+  const totalGames = data.rows.reduce((n, r) => n + r.gameCount, 0) / 2;
 
   return (
     <Shell>
@@ -61,7 +63,7 @@ export default async function SchedulePage({
         <div>
           <h1 className="type-page-title text-foreground">NBA Schedule</h1>
           <p className="type-page-subtitle mt-1">
-            Week {data.week} · {totalGames} games · {CURRENT_SEASON_LABEL}
+            Week {data.week} · {totalGames} {totalGames === 1 ? 'game' : 'games'} · {CURRENT_SEASON_LABEL}
             {isCurrentWeek ? ' · Current' : ''}
           </p>
         </div>

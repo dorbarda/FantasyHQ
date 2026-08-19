@@ -158,26 +158,125 @@ export function parseProTeamSchedules(raw: any): ProTeamSchedule[] {
 }
 
 /**
- * week → scoring period ids, from `settings.scheduleSettings.matchupPeriods`.
+ * How many matchup periods (fantasy weeks) the league has.
  *
- * Covers future weeks, which the per-matchup `pointsByScoringPeriod` route used
- * in lib/espn.ts cannot — that only exists once a week has been scored.
+ * NOTE: `scheduleSettings.matchupPeriods` also *looks* like a week → days map,
+ * and that is how this module first read it. In fantasy basketball it is not:
+ * it maps each matchup period to itself ({1:[1], 2:[2], …}), because a
+ * basketball matchup never spans several of ESPN's own periods the way an NFL
+ * one can. Reading it as days gave every week exactly one day, and the grid
+ * claimed each NBA team played once a week all season. Only its SIZE is
+ * meaningful here; the days come from buildWeekMap() below.
  */
-export function parseMatchupPeriods(raw: any): Record<number, number[]> {
+export function countMatchupPeriods(raw: any): number {
   const periods = raw?.settings?.scheduleSettings?.matchupPeriods;
-  const out: Record<number, number[]> = {};
-  if (!periods || typeof periods !== 'object') return out;
-
-  for (const [weekKey, days] of Object.entries(periods)) {
-    const week = Number(weekKey);
-    if (Number.isNaN(week)) continue;
-    const list = (Array.isArray(days) ? days : [])
-      .map(Number)
-      .filter(n => !Number.isNaN(n))
-      .sort((a, b) => a - b);
-    if (list.length > 0) out[week] = list;
+  if (periods && typeof periods === 'object') {
+    const weeks = Object.keys(periods).map(Number).filter(n => !Number.isNaN(n));
+    if (weeks.length > 0) return Math.max(...weeks);
   }
-  return out;
+  const count = Number(raw?.settings?.scheduleSettings?.matchupPeriodCount);
+  return Number.isFinite(count) && count > 0 ? count : 0;
+}
+
+/**
+ * The calendar day a game belongs to.
+ *
+ * Games tip in the US evening, which is already past midnight UTC, so a plain
+ * UTC date files a Tuesday night game under Wednesday. Shifting to US Pacific
+ * puts every game on the day it was actually played. Checked against a full
+ * season: with the shift all 164 game days agree on one anchor, without it
+ * they split 89/75.
+ */
+const NBA_DAY_SHIFT_MS = 8 * 60 * 60 * 1000;
+
+export function nbaDate(ms: number): string {
+  return new Date(ms - NBA_DAY_SHIFT_MS).toISOString().slice(0, 10);
+}
+
+function addDays(date: string, days: number): string {
+  return new Date(Date.parse(`${date}T00:00:00Z`) + days * 86_400_000)
+    .toISOString()
+    .slice(0, 10);
+}
+
+/** 0 = Sunday … 1 = Monday. */
+function weekdayOf(date: string): number {
+  return new Date(`${date}T00:00:00Z`).getUTCDay();
+}
+
+/**
+ * Scoring periods are consecutive calendar days, so day N is simply the
+ * season's first day plus N-1. Recovering that anchor from the games lets us
+ * date every scoring period — including ones with no NBA game, which appear
+ * nowhere in the schedule but still belong to a fantasy week.
+ */
+export function buildDateIndex(schedules: ProTeamSchedule[]) {
+  const earliest = new Map<number, string>();
+  for (const team of schedules) {
+    for (const g of team.games) {
+      if (g.dateMs === null) continue;
+      const d = nbaDate(g.dateMs);
+      const current = earliest.get(g.scoringPeriodId);
+      if (current === undefined || d < current) earliest.set(g.scoringPeriodId, d);
+    }
+  }
+
+  // Every game day implies an anchor; take the one they mostly agree on so a
+  // single odd fixture can't shift the whole season.
+  const votes = new Map<string, number>();
+  for (const [sp, date] of earliest) {
+    const implied = addDays(date, -(sp - 1));
+    votes.set(implied, (votes.get(implied) ?? 0) + 1);
+  }
+
+  let anchor: string | null = null;
+  let best = 0;
+  for (const [candidate, count] of votes) {
+    if (count > best) { anchor = candidate; best = count; }
+  }
+
+  const maxScoringPeriod = earliest.size > 0 ? Math.max(...earliest.keys()) : 0;
+
+  return {
+    anchor,
+    maxScoringPeriod,
+    /** Date of any scoring period, game or not. */
+    dateFor(scoringPeriodId: number): string | null {
+      return anchor ? addDays(anchor, scoringPeriodId - 1) : null;
+    },
+  };
+}
+
+/**
+ * week → the scoring period ids (days) it covers.
+ *
+ * ESPN fantasy basketball weeks run Monday to Sunday; week 1 is short whenever
+ * the season tips off mid-week. Verified against a played season: this
+ * reproduces 6 days for week 1 (Tue 21 Oct → Sun 26 Oct) and 7 for every week
+ * after, matching the per-week day counts recorded in the matchup-depth data.
+ */
+export function buildWeekMap(
+  schedules: ProTeamSchedule[],
+  weekCount: number
+): Record<number, number[]> {
+  const index = buildDateIndex(schedules);
+  if (!index.anchor || weekCount < 1) return {};
+
+  const weeks: Record<number, number[]> = {};
+  let week = 1;
+  let current: number[] = [];
+
+  for (let sp = 1; sp <= index.maxScoringPeriod; sp++) {
+    const date = index.dateFor(sp)!;
+    if (current.length > 0 && weekdayOf(date) === 1) {
+      weeks[week++] = current;
+      current = [];
+      if (week > weekCount) return weeks;
+    }
+    current.push(sp);
+  }
+  if (current.length > 0 && week <= weekCount) weeks[week] = current;
+  return weeks;
 }
 
 // ─── Matrix building (pure) ──────────────────────────────────────────────────
@@ -186,24 +285,16 @@ const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 /**
- * Label each day of the week from the games actually scheduled on it. ESPN
- * gives dates per game rather than per scoring period, so the earliest game
- * found on a day names it; a day with no games anywhere stays unlabelled.
+ * Label each day column. Uses the derived date index rather than only the days
+ * that happen to have games, so an empty Monday still shows its date.
  */
 function buildDays(schedules: ProTeamSchedule[], scoringPeriods: number[]): ScheduleDay[] {
-  const earliest = new Map<number, number>();
-  for (const team of schedules) {
-    for (const g of team.games) {
-      if (g.dateMs === null) continue;
-      const current = earliest.get(g.scoringPeriodId);
-      if (current === undefined || g.dateMs < current) earliest.set(g.scoringPeriodId, g.dateMs);
-    }
-  }
+  const index = buildDateIndex(schedules);
 
   return scoringPeriods.map(scoringPeriodId => {
-    const ms = earliest.get(scoringPeriodId);
-    if (ms === undefined) return { scoringPeriodId, weekday: '', label: '' };
-    const d = new Date(ms);
+    const date = index.dateFor(scoringPeriodId);
+    if (!date) return { scoringPeriodId, weekday: '', label: '' };
+    const d = new Date(`${date}T00:00:00Z`);
     return {
       scoringPeriodId,
       weekday: WEEKDAYS[d.getUTCDay()],
@@ -293,7 +384,7 @@ export function datesForWeek(season: ScheduleSeason, week: number): string[] {
   for (const team of season.schedules) {
     for (const g of team.games) {
       if (!scoringPeriods.has(g.scoringPeriodId) || g.dateMs === null) continue;
-      dates.add(new Date(g.dateMs).toISOString().slice(0, 10));
+      dates.add(nbaDate(g.dateMs));
     }
   }
   return [...dates].sort();
@@ -340,7 +431,7 @@ export async function getScheduleSeason(): Promise<ScheduleSeason> {
   ]);
 
   const schedules = parseProTeamSchedules(scheduleRaw);
-  const weeks = parseMatchupPeriods(settingsRaw);
+  const weeks = buildWeekMap(schedules, countMatchupPeriods(settingsRaw));
   const weekNumbers = Object.keys(weeks).map(Number).sort((a, b) => a - b);
 
   const currentWeek: number =

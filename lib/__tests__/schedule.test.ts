@@ -1,10 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import {
   parseProTeamSchedules,
-  parseMatchupPeriods,
+  countMatchupPeriods,
+  buildWeekMap,
   buildWeekMatrix,
   weekFromSeason,
   datesForWeek,
+  nbaDate,
   type ProTeamSchedule,
 } from '../espn-schedule';
 
@@ -18,7 +20,9 @@ import {
  * GSW(9)  plays 3 games with two back-to-backs in a row (14/15/16).
  */
 const DAY = 86_400_000;
-const MON = Date.UTC(2025, 11, 1); // Mon Dec 1 2025 → scoring period 10
+// Mon 1 Dec 2025, 3pm Pacific — a realistic tip-off. Midnight UTC would be the
+// previous afternoon in the US, which is how NBA days are reckoned here.
+const MON = Date.UTC(2025, 11, 1, 23, 0);
 
 function gameDate(offsetDays: number) {
   return MON + offsetDays * DAY;
@@ -112,18 +116,95 @@ describe('parseProTeamSchedules', () => {
   });
 });
 
-describe('parseMatchupPeriods', () => {
-  it('maps each fantasy week to its scoring periods', () => {
-    expect(parseMatchupPeriods(RAW_SETTINGS)).toEqual({
-      1: [1, 2, 3],
-      2: [4, 5, 6, 7, 8, 9],
-      3: WEEK_3,
-    });
+describe('countMatchupPeriods', () => {
+  it('reads how many fantasy weeks the league has', () => {
+    expect(countMatchupPeriods(RAW_SETTINGS)).toBe(3);
   });
 
-  it('returns an empty map rather than throwing on a missing block', () => {
-    expect(parseMatchupPeriods(null)).toEqual({});
-    expect(parseMatchupPeriods({ settings: {} })).toEqual({});
+  it('falls back to matchupPeriodCount when the map is absent', () => {
+    expect(countMatchupPeriods({ settings: { scheduleSettings: { matchupPeriodCount: 21 } } })).toBe(21);
+  });
+
+  it('returns 0 rather than throwing on a missing block', () => {
+    expect(countMatchupPeriods(null)).toBe(0);
+    expect(countMatchupPeriods({ settings: {} })).toBe(0);
+  });
+});
+
+describe('nbaDate', () => {
+  it('files a late US tip-off under the day it was played, not the next UTC day', () => {
+    // 22:30 Pacific on 1 Dec = 06:30 UTC on 2 Dec
+    expect(nbaDate(Date.UTC(2025, 11, 2, 6, 30))).toBe('2025-12-01');
+  });
+
+  it('leaves an afternoon game on its own day', () => {
+    expect(nbaDate(Date.UTC(2025, 11, 1, 20, 0))).toBe('2025-12-01');
+  });
+});
+
+describe('buildWeekMap', () => {
+  /**
+   * Regression for the bug that shipped: matchupPeriods was read as a
+   * week → days map, so every week got exactly one day and the grid claimed
+   * each NBA team played once a week for a whole season.
+   *
+   * Fixture mirrors the real shape — a season tipping off on a Tuesday, so
+   * week 1 is short and every week after is Monday to Sunday.
+   */
+  const TIP_OFF = Date.UTC(2025, 9, 21, 23, 0); // Tue 21 Oct, 4pm Pacific
+  const season: ProTeamSchedule[] = [
+    {
+      proTeamId: 2,
+      abbrev: 'BOS',
+      // a game every day for 3 weeks' worth of scoring periods
+      games: Array.from({ length: 20 }, (_, i) => ({
+        scoringPeriodId: i + 1,
+        opponentId: 13,
+        isHome: i % 2 === 0,
+        dateMs: TIP_OFF + i * 86_400_000,
+      })),
+    },
+  ];
+
+  it('gives week 1 only the days before the first Monday', () => {
+    const weeks = buildWeekMap(season, 3);
+    // Tue 21 Oct -> Sun 26 Oct is six days
+    expect(weeks[1]).toEqual([1, 2, 3, 4, 5, 6]);
+  });
+
+  it('runs every later week Monday to Sunday', () => {
+    const weeks = buildWeekMap(season, 3);
+    expect(weeks[2]).toEqual([7, 8, 9, 10, 11, 12, 13]);
+    expect(weeks[3]).toEqual([14, 15, 16, 17, 18, 19, 20]);
+  });
+
+  it('never returns a one-day week — the symptom of the original bug', () => {
+    const weeks = buildWeekMap(season, 3);
+    for (const [week, days] of Object.entries(weeks)) {
+      expect(days.length, `week ${week} should not be a single day`).toBeGreaterThan(1);
+    }
+  });
+
+  it('stops at the number of weeks the league actually has', () => {
+    expect(Object.keys(buildWeekMap(season, 2))).toEqual(['1', '2']);
+  });
+
+  it('dates days that have no NBA game at all', () => {
+    // Only two games, 8 days apart: the gap days still belong to a week
+    const sparse: ProTeamSchedule[] = [{
+      proTeamId: 2, abbrev: 'BOS',
+      games: [
+        { scoringPeriodId: 1, opponentId: 13, isHome: true, dateMs: TIP_OFF },
+        { scoringPeriodId: 9, opponentId: 13, isHome: true, dateMs: TIP_OFF + 8 * 86_400_000 },
+      ],
+    }];
+    const weeks = buildWeekMap(sparse, 2);
+    expect(weeks[1]).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(weeks[2]).toEqual([7, 8, 9]);
+  });
+
+  it('returns nothing when there are no dated games to anchor on', () => {
+    expect(buildWeekMap([], 5)).toEqual({});
   });
 });
 
@@ -171,8 +252,10 @@ describe('buildWeekMatrix', () => {
   it('labels day columns from the games actually scheduled', () => {
     expect(week.days[0].label).toBe('Dec 1');
     expect(week.days[0].weekday).toBe('Mon');
-    // scoring period 11 has no games in this fixture
-    expect(week.days[1].label).toBe('');
+    // Scoring period 11 has no NBA game, but it is still a day of the week and
+    // gets its date — dates come from the derived index, not from the games.
+    expect(week.days[1].label).toBe('Dec 2');
+    expect(week.days[1].weekday).toBe('Tue');
   });
 
   it('reports the busiest and quietest schedules for the legend', () => {
@@ -191,7 +274,7 @@ describe('weekFromSeason', () => {
   const season = {
     currentWeek: 3,
     maxWeek: 3,
-    weeks: parseMatchupPeriods(RAW_SETTINGS),
+    weeks: buildWeekMap(parseProTeamSchedules(RAW_SCHEDULE) as ProTeamSchedule[], 3),
     schedules: parseProTeamSchedules(RAW_SCHEDULE) as ProTeamSchedule[],
   };
 
@@ -216,7 +299,7 @@ describe('datesForWeek', () => {
   const season = {
     currentWeek: 3,
     maxWeek: 3,
-    weeks: parseMatchupPeriods(RAW_SETTINGS),
+    weeks: buildWeekMap(parseProTeamSchedules(RAW_SCHEDULE) as ProTeamSchedule[], 3),
     schedules: parseProTeamSchedules(RAW_SCHEDULE) as ProTeamSchedule[],
   };
 

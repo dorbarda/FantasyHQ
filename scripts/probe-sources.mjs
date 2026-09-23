@@ -299,7 +299,7 @@ async function probeHighlightly() {
   const isRapid = host.includes('rapidapi.com');
   const authHeaders = isRapid
     ? { 'x-rapidapi-key': key, 'x-rapidapi-host': host }
-    : { 'x-api-key': key };
+    : { 'x-rapidapi-key': key }; // Highlightly's own host uses this name too
 
   // Yesterday by default; --date=YYYY-MM-DD to check a day that had games.
   let date = DATE_OVERRIDE;
@@ -312,7 +312,7 @@ async function probeHighlightly() {
   const raw = await probe(
     '§4 Highlightly highlights',
     `https://${host}/highlights?date=${date}&leagueName=NBA&limit=10`,
-    { headers: authHeaders, note: `host ${host}, ${isRapid ? 'rapidapi' : 'x-api-key'} auth` }
+    { headers: authHeaders, note: `host ${host}, ${isRapid ? 'rapidapi' : 'direct'} auth` }
   );
   if (!raw) {
     console.log('   ↳ if this is 401/403, the header name or host is wrong — see lib/highlightly.ts');

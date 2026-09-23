@@ -1,5 +1,6 @@
 import { hasEspnCredentials } from '@/lib/espn';
 import { getDraftBoard, getTopPlayersFP, DRAFT_YEARS, AllPlayerFP } from '@/lib/espn-draft';
+import { CURRENT_SEASON, FIRST_SEASON } from '@/lib/season';
 import { DraftBoardData } from '@/lib/types';
 import DraftBoard from '@/components/DraftBoard';
 import DraftYearTabs from '@/components/DraftYearTabs';
@@ -8,7 +9,10 @@ import DraftValueAnalysis from '@/components/DraftValueAnalysis';
 
 export const revalidate = 3600;
 
-const DEFAULT_YEAR = Math.max(...DRAFT_YEARS.filter(y => y <= new Date().getFullYear()));
+// The draft happens in October, but the season is named for the year it ends —
+// so the newest board is the current season's once it's drafted, else last one's.
+const LATEST_YEAR = CURRENT_SEASON;
+const FALLBACK_YEAR = Math.max(FIRST_SEASON, CURRENT_SEASON - 1);
 
 interface PageProps {
   searchParams: Promise<{ year?: string; view?: string }>;
@@ -27,8 +31,9 @@ export default async function DraftPage({ searchParams: searchParamsPromise }: P
 
   const isHistory = searchParams.view === 'history';
   const isValueAnalysis = searchParams.view === 'value';
-  const requestedYear = parseInt(searchParams.year || String(DEFAULT_YEAR));
-  const year = DRAFT_YEARS.includes(requestedYear) ? requestedYear : DEFAULT_YEAR;
+  const requestedYear = parseInt(searchParams.year ?? '');
+  const explicitYear = DRAFT_YEARS.includes(requestedYear);
+  let year = explicitYear ? requestedYear : LATEST_YEAR;
 
   let data: DraftBoardData | null = null;
   let topPlayers: AllPlayerFP[] = [];
@@ -36,10 +41,14 @@ export default async function DraftPage({ searchParams: searchParamsPromise }: P
 
   if (!isHistory) {
     try {
-      [data, topPlayers] = await Promise.all([
-        getDraftBoard(year),
-        isValueAnalysis ? getTopPlayersFP(year, 130) : Promise.resolve([]),
-      ]);
+      data = await getDraftBoard(year);
+      // No year asked for and this season's draft hasn't happened yet →
+      // open on last season's board rather than an empty one.
+      if (!explicitYear && data.picks.length === 0 && FALLBACK_YEAR !== year) {
+        year = FALLBACK_YEAR;
+        data = await getDraftBoard(year);
+      }
+      if (isValueAnalysis) topPlayers = await getTopPlayersFP(year, 130);
     } catch (err) {
       console.error('Draft board fetch failed:', err);
       error = true;

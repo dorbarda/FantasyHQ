@@ -33,7 +33,7 @@ function buildMemberMap(members: any[]): Record<string, string> {
   return map;
 }
 
-async function fetchOneSeason(year: number): Promise<HistoricalSeason> {
+async function fetchOneSeason(year: number): Promise<HistoricalSeason | null> {
   // Fetch teams/standings + full schedule in parallel
   const [standingsData, scheduleData] = await Promise.all([
     espnFetchYear(year, '?view=mTeam&view=mStandings'),
@@ -82,6 +82,17 @@ async function fetchOneSeason(year: number): Promise<HistoricalSeason> {
 
   let champion: HistoricalTeam | null = null;
   let runnerUp: HistoricalTeam | null = null;
+
+  // The current season only belongs in history once its final is decided.
+  // Before that, the fallbacks below would crown whoever leads the table —
+  // or, before opening night, whoever ESPN happens to list first.
+  if (year === CURRENT_SEASON) {
+    const finalGame = playoffGames.length > 0
+      ? playoffGames.reduce((latest: any, m: any) =>
+          m.matchupPeriodId > latest.matchupPeriodId ? m : latest)
+      : null;
+    if (finalGame?.winner !== 'HOME' && finalGame?.winner !== 'AWAY') return null;
+  }
 
   if (playoffGames.length > 0) {
     const finalGame = playoffGames.reduce((latest: any, m: any) =>
@@ -145,8 +156,9 @@ export async function getAllHistoricalSeasons(): Promise<HistoricalSeason[]> {
   );
 
   return results
-    .filter((r): r is PromiseFulfilledResult<HistoricalSeason> => r.status === 'fulfilled')
-    .map(r => r.value);
+    .filter((r): r is PromiseFulfilledResult<HistoricalSeason | null> => r.status === 'fulfilled')
+    .map(r => r.value)
+    .filter((s): s is HistoricalSeason => s !== null);
 }
 
 export { HISTORY_YEARS };

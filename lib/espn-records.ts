@@ -353,7 +353,11 @@ export async function getAllRecords(): Promise<RecordsData> {
   for (const r of results) {
     if (r.status === 'fulfilled') {
       allMatchups.push(...r.value.matchups);
-      summaries.push(r.value.summary);
+      // A season nobody has played yet (the new one, before opening night)
+      // would count as a season for every owner and a 0–0 record.
+      if (r.value.summary.teams.some(t => t.wins + t.losses > 0)) {
+        summaries.push(r.value.summary);
+      }
     }
   }
 

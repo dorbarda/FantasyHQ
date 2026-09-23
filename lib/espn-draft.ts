@@ -219,7 +219,10 @@ export async function getDraftBoard(year: number): Promise<DraftBoardData> {
     teamInfo[t.id] = { ownerName, teamName: t.name || `Team ${t.id}` };
   }
 
-  const rawPicks: any[] = data.draftDetail?.picks || [];
+  // Before the draft ESPN already lists every slot, with playerId -1. Keep
+  // only real picks, so an upcoming draft reads as "not yet held" instead of
+  // a board full of "Player -1".
+  const rawPicks: any[] = (data.draftDetail?.picks || []).filter((p: any) => p.playerId > 0);
 
   if (rawPicks.length === 0) {
     return {

@@ -3,7 +3,7 @@
  * Run with: npx tsx scripts/build-snapshots.mts
  *
  * Calls the heavy ESPN loaders from lib/ and writes their output to
- * data/snapshots/<name>.json as { generatedAt, data }. The espn-snapshot
+ * data/snapshots/<name>.json as { generatedAt, season, data }. The espn-snapshot
  * GitHub Action runs this nightly and commits the results, so the
  * analytical pages read fresh snapshots instead of fanning out live ESPN
  * calls on every request.
@@ -96,6 +96,16 @@ try {
   process.exit(1);
 }
 
+function isUnchanged(file: string, data: unknown): boolean {
+  try {
+    const existing = JSON.parse(readFileSync(file, 'utf-8'));
+    return existing.season === CURRENT_SEASON &&
+      JSON.stringify(existing.data) === JSON.stringify(data);
+  } catch {
+    return false; // missing or unreadable — write it
+  }
+}
+
 const failures: string[] = [];
 const pending: string[] = [];
 
@@ -110,8 +120,15 @@ for (const [name, load, looksValid, optional] of jobs) {
       console.warn(`⏳ ${name}: no data for this season yet — existing snapshot left untouched`);
       continue;
     }
-    const payload = { generatedAt: new Date().toISOString(), data };
-    writeFileSync(resolve(OUT_DIR, `${name}.json`), JSON.stringify(payload) + '\n');
+    const file = resolve(OUT_DIR, `${name}.json`);
+    // Same data as last night → leave the file alone. Rewriting it only to
+    // bump generatedAt makes a commit, and every commit redeploys Vercel.
+    if (isUnchanged(file, data)) {
+      console.log(`➖ ${name}: unchanged`);
+      continue;
+    }
+    const payload = { generatedAt: new Date().toISOString(), season: CURRENT_SEASON, data };
+    writeFileSync(file, JSON.stringify(payload) + '\n');
     console.log(`✅ ${name} (${((Date.now() - started) / 1000).toFixed(1)}s)`);
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);

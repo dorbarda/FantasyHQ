@@ -10,6 +10,7 @@ import {
   isPlayableHere,
   pickClips,
   toHighlight,
+  decodeEntities,
   type YoutubeVideo,
   type Performer,
 } from '../youtube';
@@ -128,5 +129,11 @@ describe('isPlayableHere', () => {
     expect(isPlayableHere({ ...ok, status: { embeddable: true, privacyStatus: 'unlisted' } })).toBe(false);
     expect(isPlayableHere({ ...ok, contentDetails: { regionRestriction: { blocked: ['IL'] } } })).toBe(false);
     expect(isPlayableHere({ ...ok, contentDetails: { regionRestriction: { allowed: ['US'] } } })).toBe(false);
+  });
+});
+
+describe('decodeEntities', () => {
+  it('unescapes search titles so name matching still works', () => {
+    expect(decodeEntities('Jokić &amp; Murray | &quot;clutch&quot; &#39;26')).toBe('Jokić & Murray | "clutch" \'26');
   });
 });

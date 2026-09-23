@@ -29,6 +29,11 @@ Fixed on `claude/friendly-dirac-jlin7m`:
   on the current season once drafted. Pre-draft slots (`playerId -1`) no
   longer render as "Player -1".
 
+- Highlight clips never worked: every nightly call got 403 "Missing
+  mandatory HTTP Headers" because we sent `x-api-key`. Highlightly wants
+  `x-rapidapi-key` (checked live 2026-09-23). The response shape is still
+  unverified — confirm on the first run with games (from ~Oct 21).
+
 After merging: run the `ESPN snapshot` Action once by hand so records.json
 is rebuilt without the empty season.
 

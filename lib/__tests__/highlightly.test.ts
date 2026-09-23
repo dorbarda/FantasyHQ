@@ -9,6 +9,7 @@ import {
   getHighlightsForDates,
   hasHighlightlyKey,
   HighlightlyError,
+  headers,
 } from '../highlightly';
 
 const GOOD = {
@@ -212,5 +213,33 @@ describe('hasHighlightlyKey', () => {
     expect(hasHighlightlyKey()).toBe(false);
     process.env.HIGHLIGHTLY_API_KEY = 'set-later';
     expect(hasHighlightlyKey()).toBe(true);
+  });
+});
+
+describe('auth headers', () => {
+  const realKey = process.env.HIGHLIGHTLY_API_KEY;
+  const realHost = process.env.HIGHLIGHTLY_API_HOST;
+  afterEach(() => {
+    if (realKey === undefined) delete process.env.HIGHLIGHTLY_API_KEY;
+    else process.env.HIGHLIGHTLY_API_KEY = realKey;
+    if (realHost === undefined) delete process.env.HIGHLIGHTLY_API_HOST;
+    else process.env.HIGHLIGHTLY_API_HOST = realHost;
+  });
+
+  // Sending x-api-key got every nightly request refused with 403 "Missing
+  // mandatory HTTP Headers" — Highlightly's own host wants x-rapidapi-key.
+  it('sends the key as x-rapidapi-key on the direct host', () => {
+    process.env.HIGHLIGHTLY_API_KEY = 'k';
+    delete process.env.HIGHLIGHTLY_API_HOST;
+    const h = headers();
+    expect(h['x-rapidapi-key']).toBe('k');
+    expect(h).not.toHaveProperty('x-api-key');
+    expect(h).not.toHaveProperty('x-rapidapi-host');
+  });
+
+  it('adds the host header for RapidAPI', () => {
+    process.env.HIGHLIGHTLY_API_KEY = 'k';
+    process.env.HIGHLIGHTLY_API_HOST = 'basketball-highlights-api.p.rapidapi.com';
+    expect(headers()['x-rapidapi-host']).toBe('basketball-highlights-api.p.rapidapi.com');
   });
 });

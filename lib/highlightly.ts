@@ -16,8 +16,8 @@
  *
  * ── Shape confidence ─────────────────────────────────────────────────────
  * The environment this was written in cannot reach Highlightly, so the base
- * URL, header name and response shape all come from their documentation
- * rather than a live call. The parser therefore accepts several plausible
+ * URL and response shape come from their documentation rather than a live
+ * call (the header name has since been checked — see headers()). The parser therefore accepts several plausible
  * shapes and returns [] instead of throwing. Run `npm run probe-sources`
  * (with HIGHLIGHTLY_API_KEY set) to see the real response and confirm.
  */
@@ -142,13 +142,16 @@ export function usableHighlights(raw: any, date: string, limit = 6): Highlight[]
 
 // ─── Fetching ────────────────────────────────────────────────────────────────
 
-function headers(): Record<string, string> {
+/**
+ * Highlightly takes the key as `x-rapidapi-key` even on its own host.
+ * Verified 2026-09-23: `x-api-key` gets 403 "Missing mandatory HTTP Headers";
+ * `x-rapidapi-key` gets the key checked. RapidAPI also wants the host header.
+ */
+export function headers(): Record<string, string> {
   const key = apiKey() as string;
   const host = apiHost();
-  if (host.includes('rapidapi.com')) {
-    return { 'x-rapidapi-key': key, 'x-rapidapi-host': host, Accept: 'application/json' };
-  }
-  return { 'x-api-key': key, Accept: 'application/json' };
+  const base = { 'x-rapidapi-key': key, Accept: 'application/json' };
+  return host.includes('rapidapi.com') ? { ...base, 'x-rapidapi-host': host } : base;
 }
 
 /** The API refused us — as opposed to answering with no clips. */

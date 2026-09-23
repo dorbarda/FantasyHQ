@@ -8,9 +8,10 @@
  *   2. a video for each from the official NBA YouTube channel
  *
  * Point SEASON at a season that has those days (2026 = the 2025-26 season).
- * Needs ESPN_S2, SWID, LEAGUE_ID and YOUTUBE_API_KEY. Uses roughly one quota
- * unit per 50 NBA uploads since the earliest date — well under the free
- * 10,000 a day even for months back.
+ * Needs ESPN_S2, SWID, LEAGUE_ID and YOUTUBE_API_KEY. Dates within 30 days
+ * page the uploads list (~1 quota unit per 50 videos); older dates use search
+ * instead, 2 searches per performer at 100 units each (~2,000 for the default
+ * 10 performers, of the free 10,000 a day).
  */
 const missing = ['ESPN_S2', 'SWID', 'LEAGUE_ID', 'YOUTUBE_API_KEY'].filter(k => !process.env[k]);
 if (missing.length) {
@@ -27,7 +28,7 @@ if (dates.length === 0) {
 // Import after env is in place — the ESPN client reads it at load.
 const { getTopPerformers } = await import('../lib/espn');
 const { getScheduleSeason, buildDateIndex, PRO_TEAM_ABBREV } = await import('../lib/espn-schedule');
-const { getNbaUploadsSince, filterPlayableHere, pickClips, isFullGameHighlights } = await import('../lib/youtube');
+const { getNbaUploadsSince, searchNbaChannel, filterPlayableHere, pickClips, isFullGameHighlights, TEAM_NICKNAME } = await import('../lib/youtube');
 const { CURRENT_SEASON_LABEL } = await import('../lib/season');
 
 console.log(`Season ${CURRENT_SEASON_LABEL} · dates ${dates.join(', ')}\n`);
@@ -52,10 +53,27 @@ for (const p of top) {
 }
 if (top.length === 0) console.log('   none — were there games on these dates in this season?');
 
-// Step 2 — videos
-const uploads = await getNbaUploadsSince(dates[0]);
+// Step 2 — videos. Recent dates page the uploads list like the nightly job;
+// older ones search instead, since paging months back is slow and YouTube
+// starts failing that deep (seen: HTTP 503 after ~30 s).
+const daysBack = (Date.now() - Date.parse(`${dates[0]}T00:00:00Z`)) / 86_400_000;
+let uploads: Awaited<ReturnType<typeof getNbaUploadsSince>>;
+if (daysBack <= 30) {
+  uploads = await getNbaUploadsSince(dates[0]);
+  console.log(`\nStep 2 — NBA channel uploads since ${dates[0]}: ${uploads.length}`);
+} else {
+  const seen = new Map<string, (typeof uploads)[number]>();
+  for (const p of top) {
+    const to = new Date(Date.parse(`${p.date}T00:00:00Z`) + 86_400_000).toISOString().slice(0, 10);
+    const team = TEAM_NICKNAME[PRO_TEAM_ABBREV[p.proTeamId] ?? ''] ?? '';
+    for (const q of [p.playerName, `${team} full game highlights`]) {
+      for (const v of await searchNbaChannel(q, p.date, to)) seen.set(v.id, v);
+    }
+  }
+  uploads = [...seen.values()];
+  console.log(`\nStep 2 — searched the NBA channel (${top.length * 2} searches): ${uploads.length} candidate videos`);
+}
 const playable = await filterPlayableHere(uploads.map(v => v.id));
-console.log(`\nStep 2 — NBA channel uploads since ${dates[0]}: ${uploads.length}`);
 console.log(`   full-game highlights: ${uploads.filter(v => isFullGameHighlights(v.title)).length}`);
 console.log(`   playable embedded in Israel: ${playable.size} of ${uploads.length}`);
 

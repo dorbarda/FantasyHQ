@@ -56,7 +56,7 @@ export const TEAM_NICKNAME: Record<string, string> = {
 export function normalize(s: string): string {
   return s
     .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
+    .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .replace(/[^a-z0-9 ]+/g, ' ')
     .replace(/\s+/g, ' ')
@@ -196,15 +196,55 @@ export function toHighlight(p: { performer: Performer; video: YoutubeVideo; kind
 
 export class YoutubeError extends Error {}
 
+const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+
+/** One API call. A 5xx ("backendError") is usually momentary, so retry it twice. */
 async function get(path: string, params: Record<string, string>): Promise<any> {
   const qs = new URLSearchParams({ ...params, key: process.env.YOUTUBE_API_KEY as string });
-  const res = await fetch(`${API}/${path}?${qs}`);
-  if (!res.ok) {
+  for (let attempt = 0; ; attempt++) {
+    const res = await fetch(`${API}/${path}?${qs}`);
+    if (res.ok) return res.json();
+    if (res.status >= 500 && attempt < 2) {
+      await sleep(1000 * 2 ** attempt);
+      continue;
+    }
     let detail = '';
     try { detail = (await res.text()).slice(0, 300).replace(/\s+/g, ' ').trim(); } catch { /* none */ }
     throw new YoutubeError(`YouTube ${path} HTTP ${res.status}${detail ? ` — ${detail}` : ''}`);
   }
-  return res.json();
+}
+
+/** search.list returns titles HTML-escaped ("Jokić &amp; …"); playlistItems doesn't. */
+export function decodeEntities(s: string): string {
+  return s
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&#x27;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>');
+}
+
+/** Official NBA channel id, for search. */
+const NBA_CHANNEL_ID = 'UCWJ2lWNubArHWmf3FIHbfcQ';
+
+/**
+ * Search the NBA channel between two days. 100 quota units per call, so it's
+ * for looking far back (the check script), where paging the whole uploads
+ * list would take hundreds of pages — and YouTube starts failing that deep.
+ */
+export async function searchNbaChannel(q: string, fromDate: string, toDate: string): Promise<YoutubeVideo[]> {
+  const data = await get('search', {
+    part: 'snippet',
+    channelId: NBA_CHANNEL_ID,
+    q,
+    type: 'video',
+    maxResults: '10',
+    publishedAfter: `${fromDate}T00:00:00Z`,
+    publishedBefore: `${toDate}T23:59:59Z`,
+  });
+  return ((data.items ?? []) as any[])
+    .filter(i => i?.id?.videoId && i?.snippet?.publishedAt)
+    .map(i => ({ id: i.id.videoId, title: decodeEntities(String(i.snippet.title ?? '')), publishedAt: i.snippet.publishedAt }));
 }
 
 /**

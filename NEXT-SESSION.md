@@ -34,6 +34,14 @@ Fixed on `claude/friendly-dirac-jlin7m`:
   `x-rapidapi-key` (checked live 2026-09-23). The response shape is still
   unverified — confirm on the first run with games (from ~Oct 21).
 
+- Highlightly's free plan returns 0 NBA clips (Highlights check run,
+  2026-09-23: "Some results might be hidden with FREE tier"). Recap
+  highlights now come from YouTube in two steps: top fantasy games on our
+  rosters each day → that player's clip on the official NBA channel, else
+  his game's full highlights. Only clips that play embedded in Israel are
+  kept, old weeks keep their clips, max 8 per recap. Needs the
+  `YOUTUBE_API_KEY` secret; verify with Actions → Highlights check.
+
 After merging: run the `ESPN snapshot` Action once by hand so records.json
 is rebuilt without the empty season.
 

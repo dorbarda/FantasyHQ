@@ -60,6 +60,10 @@ export interface Highlight {
   date: string;
   /** Free-text description of the match, when the API supplies one. */
   match: string;
+  /** Set on clips picked for a top fantasy performance (lib/youtube.ts). */
+  player?: string;
+  ownerName?: string;
+  fantasyPoints?: number;
 }
 
 /** Clips grouped by the day they belong to. */

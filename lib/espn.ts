@@ -825,6 +825,56 @@ export async function getPlayoffDepth(): Promise<MatchupDepthData> {
   return buildDepthData((m: any) => m.playoffTierType && m.playoffTierType !== 'NONE');
 }
 
+// ─── TOP PERFORMERS (for recap highlights) ───────────────────────────────────
+
+/** ESPN basketball lineup slots that don't score: bench (12) and IR (13). */
+const NON_SCORING_SLOTS = new Set([12, 13]);
+
+export interface DayPerformer {
+  date: string;
+  playerName: string;
+  proTeamId: number;
+  fantasyPoints: number;
+  ownerName: string;
+}
+
+/**
+ * The best fantasy games on the league's rosters, per day — only players in a
+ * scoring lineup slot, so the points actually counted for their owner.
+ * One roster fetch per day, the same call the depth pages make.
+ */
+export async function getTopPerformers(
+  days: Array<{ date: string; scoringPeriodId: number }>,
+  perDay = 5
+): Promise<DayPerformer[]> {
+  const out: DayPerformer[] = [];
+
+  for (const { date, scoringPeriodId } of days) {
+    const data = await espnFetch(`?view=mRoster&view=mTeam&scoringPeriodId=${scoringPeriodId}`, undefined, true);
+    const memberMap = buildMemberMap(data.members || []);
+    const dayList: DayPerformer[] = [];
+
+    for (const team of (data.teams || []) as any[]) {
+      const ownerName = resolveOwnerName(team.name || '', team.owners || [], memberMap);
+      for (const entry of (team.roster?.entries || []) as any[]) {
+        if (NON_SCORING_SLOTS.has(entry.lineupSlotId)) continue;
+        const p = entry.playerPoolEntry?.player;
+        if (!p?.fullName) continue;
+        const dayStat = (p.stats || []).find(
+          (st: any) => st.statSourceId === 0 && st.scoringPeriodId === scoringPeriodId
+        );
+        const fantasyPoints = Math.round((dayStat?.appliedTotal || 0) * 10) / 10;
+        if (fantasyPoints <= 0) continue;
+        dayList.push({ date, playerName: p.fullName, proTeamId: p.proTeamId, fantasyPoints, ownerName });
+      }
+    }
+
+    dayList.sort((a, b) => b.fantasyPoints - a.fantasyPoints);
+    out.push(...dayList.slice(0, perDay));
+  }
+  return out;
+}
+
 // ─── TRANSACTIONS ─────────────────────────────────────────────────────────────
 
 export async function getTransactions(): Promise<TransactionsData> {

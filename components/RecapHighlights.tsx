@@ -3,10 +3,10 @@ import type { Highlight } from '@/lib/highlightly';
 /**
  * Highlight clips for the recap week.
  *
- * Only clips that Highlightly marked BOTH embeddable and verified reach here —
- * lib/highlightly.ts drops the rest before they're ever stored. Renders
- * nothing at all when there are none, so the recap is unchanged on weeks with
- * no usable video.
+ * Clips come from the official NBA YouTube channel, picked for the week's best
+ * fantasy games on our rosters (lib/highlights-data.ts), and only ones that
+ * play embedded in Israel are stored. Renders nothing at all when there are
+ * none, so the recap is unchanged on weeks with no usable video.
  */
 export default function RecapHighlights({ clips }: { clips: Highlight[] }) {
   if (clips.length === 0) return null;
@@ -33,7 +33,16 @@ export default function RecapHighlights({ clips }: { clips: Highlight[] }) {
               />
             </div>
             <figcaption className="px-3.5 py-2.5">
-              <p className="text-[13px] font-medium text-foreground leading-snug">
+              {clip.player && (
+                <p className="text-[13px] font-semibold text-foreground leading-snug">
+                  {clip.player}
+                  {clip.fantasyPoints !== undefined && (
+                    <span className="text-secondary font-medium"> · {clip.fantasyPoints} fantasy pts</span>
+                  )}
+                  {clip.ownerName && <span className="text-muted font-normal"> · {clip.ownerName}</span>}
+                </p>
+              )}
+              <p className={clip.player ? 'text-[12px] text-secondary leading-snug mt-0.5' : 'text-[13px] font-medium text-foreground leading-snug'}>
                 {clip.title}
               </p>
               <p className="text-[11px] text-muted mt-1">

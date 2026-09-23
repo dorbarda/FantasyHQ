@@ -1,15 +1,20 @@
-name: Highlightly check
+name: Highlights check
 
-# Manual test: asks Highlightly about past game days and reports how many
-# clips the weekly recap would actually show on our plan. Uses the same
-# HIGHLIGHTLY_API_KEY secret as the nightly snapshot. Changes nothing.
+# Manual test of the recap highlights on past days — writes nothing.
+#  • YouTube step: runs the real pipeline (top fantasy games on our rosters →
+#    NBA channel videos) against last season. Needs the YOUTUBE_API_KEY secret.
+#  • Highlightly step: kept for reference; its free plan returns no NBA clips.
 
 on:
   workflow_dispatch:
     inputs:
       dates:
         description: 'Past dates with NBA games, comma-separated (YYYY-MM-DD)'
-        default: '2026-03-10,2026-04-15'
+        default: '2026-04-08,2026-04-10'
+        required: true
+      season:
+        description: 'ESPN season those dates belong to (ending year)'
+        default: '2026'
         required: true
 
 jobs:
@@ -24,7 +29,18 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - name: Check highlights
+      - name: YouTube highlights
+        run: npx tsx scripts/check-youtube-highlights.mts "$DATES"
+        env:
+          DATES: ${{ inputs.dates }}
+          SEASON: ${{ inputs.season }}
+          ESPN_S2: ${{ secrets.ESPN_S2 }}
+          SWID: ${{ secrets.SWID }}
+          LEAGUE_ID: ${{ secrets.LEAGUE_ID }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+      - name: Highlightly
+        if: always()
+        continue-on-error: true
         run: npx tsx scripts/check-highlights.mts "$DATES"
         env:
           DATES: ${{ inputs.dates }}

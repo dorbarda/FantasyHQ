@@ -1,4 +1,5 @@
 import type { Highlight } from '@/lib/highlightly';
+import HighlightPlayer from './HighlightPlayer';
 
 /**
  * Highlight clips for the recap week.
@@ -8,6 +9,16 @@ import type { Highlight } from '@/lib/highlightly';
  * play embedded in Israel are stored. Renders nothing at all when there are
  * none, so the recap is unchanged on weeks with no usable video.
  */
+/** "2026-04-08" → "Apr 8" */
+function shortDate(date: string): string {
+  const d = new Date(`${date}T12:00:00Z`);
+  return isNaN(d.getTime()) ? date : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+}
+
+function sourceLabel(source: string): string {
+  return source === 'nba on youtube' ? 'NBA on YouTube' : `via ${source}`;
+}
+
 export default function RecapHighlights({ clips }: { clips: Highlight[] }) {
   if (clips.length === 0) return null;
 
@@ -22,15 +33,7 @@ export default function RecapHighlights({ clips }: { clips: Highlight[] }) {
             className="bg-surface border border-border rounded-xl overflow-hidden"
           >
             <div className="relative w-full" style={{ aspectRatio: '16 / 9' }}>
-              <iframe
-                src={clip.embedUrl}
-                title={clip.title}
-                loading="lazy"
-                allow="accelerometer; encrypted-media; picture-in-picture; fullscreen"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allowFullScreen
-                className="absolute inset-0 w-full h-full border-0"
-              />
+              <HighlightPlayer embedUrl={clip.embedUrl} title={clip.title} />
             </div>
             <figcaption className="px-3.5 py-2.5">
               {clip.player && (
@@ -47,8 +50,8 @@ export default function RecapHighlights({ clips }: { clips: Highlight[] }) {
               </p>
               <p className="text-[11px] text-muted mt-1">
                 {clip.match ? `${clip.match} · ` : ''}
-                {clip.date}
-                {clip.source !== 'unknown' ? ` · via ${clip.source}` : ''}
+                {shortDate(clip.date)}
+                {clip.source !== 'unknown' ? ` · ${sourceLabel(clip.source)}` : ''}
               </p>
             </figcaption>
           </figure>

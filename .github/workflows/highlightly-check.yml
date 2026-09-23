@@ -1,0 +1,32 @@
+name: Highlightly check
+
+# Manual test: asks Highlightly about past game days and reports how many
+# clips the weekly recap would actually show on our plan. Uses the same
+# HIGHLIGHTLY_API_KEY secret as the nightly snapshot. Changes nothing.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dates:
+        description: 'Past dates with NBA games, comma-separated (YYYY-MM-DD)'
+        default: '2026-03-10,2026-04-15'
+        required: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Check highlights
+        run: npx tsx scripts/check-highlights.mts "$DATES"
+        env:
+          DATES: ${{ inputs.dates }}
+          HIGHLIGHTLY_API_KEY: ${{ secrets.HIGHLIGHTLY_API_KEY }}
+          HIGHLIGHTLY_API_HOST: ${{ vars.HIGHLIGHTLY_API_HOST }}

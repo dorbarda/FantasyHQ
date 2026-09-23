@@ -5,33 +5,42 @@ a fresh chat with no history should be able to read it and continue.
 
 ---
 
-## 0. Where things stand
+## 0. Where things stand (updated 2026-09-23)
 
-**Branch:** `claude/nba-fantasy-review-ri3x0e` — **6 commits ahead of `main`,
-not merged, no PR open.** Nothing on this branch is live yet.
+Everything from the design pass, recap, schedule grid and season switch is
+**merged to `main` and live**. `SEASON=2027` is set on Vercel and in the
+Action, and the ESPN league for 2026-27 answers (week 1 matchups load).
 
-```
-29203c4  Visual refresh: meaningful colour, real avatars, a type scale
-fd77f30  Fix mobile layout issues across the site
-65d31b6  Migrate to design tokens and add dark mode
-d2250e0  Fix mobile horizontal scrolling across the site
-f9920cd  Add draft prep page for the off-season
-34f309d  Add new-season switch: season config and per-year playoff data
-```
+### 2026-27 readiness check (2026-09-23)
 
-Everything is green: `npm run lint`, `./node_modules/.bin/tsc --noEmit`,
-`npm test` (34 tests), `npm run build`.
+Fixed on `claude/friendly-dirac-jlin7m`:
+- Last season's weeks showed as "2026-27" (recap, home teaser, analysis,
+  depth, transactions). Snapshots now carry a `season` tag and
+  single-season ones from another season are ignored.
+- History listed an unplayed 2026-27 with a fake champion; Records showed
+  "Worst Season Record 0–0 2026-27" and counted 2026-27 as a season played.
+  The current season now joins history only once its final is decided, and
+  a season with no games is left out of records.
+- Nightly Action committed every day even when only the timestamp changed
+  (one needless Vercel redeploy per day). Unchanged snapshots are now skipped.
+- Standings said "Live · Week 17" before opening night → "Pre-season".
+- Draft page picked its default year by calendar year, so after the October
+  draft it would keep showing last season's board until January. It now opens
+  on the current season once drafted. Pre-draft slots (`playerId -1`) no
+  longer render as "Player -1".
 
-**Already live on `main`** (merged earlier): Next 15 / React 19 upgrade,
-scoring tests + CI, nightly ESPN snapshot pipeline, secured admin endpoint,
-`main` branch rename. See `ROADMAP.md` for the full ledger.
+After merging: run the `ESPN snapshot` Action once by hand so records.json
+is rebuilt without the empty season.
 
-### Step 0 — the first thing to do
-
-Open a PR for the branch and merge it, or the design work stays invisible:
-https://github.com/dorbarda/FantasyHQ/compare/main...claude/nba-fantasy-review-ri3x0e
-
----
+Still open — needs Dor:
+- `data/rules.json` looks out of date (says 9-cat, 15 rounds, weeks 22-24
+  playoffs; the league scores points and ESPN shows 13 rounds). Validate.
+- `data/draft-prep.json`: draft date and order still empty. ESPN already
+  lists a 2026-27 draft order — confirm before copying it in.
+- Playoffs page hardcodes "Play-In April 14–17 · Playoffs begin April 18"
+  (2026 dates). Update when the NBA publishes 2027 dates.
+- Teams/Records list "fake 23" and "Dor Gelless & the monkey comeback" as
+  separate franchises — decide whether to hide or merge them.
 
 ## 1. Task A — Weekly recap  *(agreed priority #1)*
 

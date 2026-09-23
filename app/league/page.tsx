@@ -9,7 +9,6 @@ export const revalidate = 1800;
 export default async function LeaguePage() {
   let standings: StandingEntry[] = standingsJson as StandingEntry[];
   let bracket: PlayoffBracketData | null = null;
-  let week = 17;
 
   const espnResult = await Promise.allSettled([
     hasEspnCredentials()
@@ -24,9 +23,10 @@ export default async function LeaguePage() {
   if (result.status === 'fulfilled' && result.value) {
     standings = result.value.standings;
     bracket = result.value.bracket;
-    const played = Math.max(...standings.map((s) => s.wins + s.losses));
-    week = played > 0 ? played : week;
   }
+
+  const played = Math.max(0, ...standings.map((s) => s.wins + s.losses));
+  const week: number | null = played > 0 ? played : null; // null = pre-season
 
   const isPlayoffs = bracket?.isPlayoffs ?? false;
 
@@ -43,7 +43,9 @@ export default async function LeaguePage() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-positive-bright opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-positive-bright" />
               </span>
-              <span className="text-[12px] font-semibold text-positive-bright">Live · Week {week}</span>
+              <span className="text-[12px] font-semibold text-positive-bright">
+                {week === null ? 'Pre-season' : `Live · Week ${week}`}
+              </span>
             </div>
           </div>
           <StandingsTable standings={standings} />

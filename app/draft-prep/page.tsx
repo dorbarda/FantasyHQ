@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import prepJson from '@/data/draft-prep.json';
 import { seasonLabel } from '@/lib/season';
+import { getProjectionRows } from '@/lib/espn-projections';
+import ProjectionsTable from '@/components/ProjectionsTable';
 
 export const revalidate = 3600;
 
@@ -160,7 +162,8 @@ function ScoutingGrid() {
 
 // ─── Page ────────────────────────────────────────────────────────────────────
 
-export default function DraftPrepPage() {
+export default async function DraftPrepPage() {
+  const projections = await getProjectionRows(prep.season);
   return (
     <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
       <div className="mb-6">
@@ -176,6 +179,13 @@ export default function DraftPrepPage() {
         <CountdownCard />
         <DraftOrderCard />
         <NotesCard />
+        {projections.length > 0 && (
+          <ProjectionsTable
+            rows={projections}
+            lastLabel={seasonLabel(prep.season - 1)}
+            nextLabel={seasonLabel(prep.season)}
+          />
+        )}
         <ScoutingGrid />
       </div>
     </div>

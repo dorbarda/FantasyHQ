@@ -1,7 +1,18 @@
 {
   "season": 2027,
-  "draftDate": null,
+  "draftDate": "2026-10-17T21:30:00+03:00",
   "location": "",
-  "draftOrder": [],
+  "draftOrder": [
+    "Ilay Mendel",
+    "Yoav Coracos",
+    "Amir Ben Izhak",
+    "Dor Barda",
+    "Nir Zele",
+    "Yotam Goldin",
+    "Dor Gelless",
+    "Omer Rosenberg",
+    "Yuval Halevy",
+    "Barak Miller"
+  ],
   "notes": []
 }

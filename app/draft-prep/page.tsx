@@ -175,10 +175,12 @@ export default async function DraftPrepPage() {
         </p>
       </div>
 
-      <div className="flex flex-col gap-4 max-w-2xl">
-        <CountdownCard />
-        <DraftOrderCard />
-        <NotesCard />
+      <div className="flex flex-col gap-4 max-w-5xl">
+        <div className="flex flex-col gap-4 max-w-2xl">
+          <CountdownCard />
+          <DraftOrderCard />
+          <NotesCard />
+        </div>
         {projections.length > 0 && (
           <ProjectionsTable
             rows={projections}
@@ -186,7 +188,9 @@ export default async function DraftPrepPage() {
             nextLabel={seasonLabel(prep.season)}
           />
         )}
-        <ScoutingGrid />
+        <div className="max-w-2xl">
+          <ScoutingGrid />
+        </div>
       </div>
     </div>
   );

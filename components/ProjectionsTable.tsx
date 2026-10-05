@@ -42,7 +42,7 @@ const playerCol: Col = {
   render: r => (
     <>
       <span className="text-[13px] font-semibold text-foreground">{r.name}</span>
-      <span className="text-[11px] text-muted ml-2">{r.position} · {r.proTeam}</span>
+      <span className="text-[11px] text-muted ml-2 whitespace-nowrap">{r.position} · {r.proTeam}</span>
     </>
   ),
 };
@@ -140,10 +140,10 @@ export default function ProjectionsTable({ rows, lastLabel, nextLabel }: Props) 
       </div>
 
       <div className="overflow-x-auto max-h-[640px] overflow-y-auto">
-        <table className="w-full min-w-[780px]">
+        <table className="w-full min-w-[560px]">
           <thead className="sticky top-0 bg-surface">
             <tr className="border-b border-border">
-              <th className="pl-5 pr-2 py-2 w-8" />
+              <th className="pl-4 pr-1 py-2 w-8" />
               {cols.map(c => {
                 const active = sort?.key === c.key;
                 return (
@@ -151,7 +151,7 @@ export default function ProjectionsTable({ rows, lastLabel, nextLabel }: Props) 
                     key={c.key}
                     onClick={() => clickHeader(c)}
                     aria-sort={active ? (sort!.dir === 'asc' ? 'ascending' : 'descending') : 'none'}
-                    className={`px-3 py-2 text-[11px] font-black uppercase tracking-wider whitespace-nowrap cursor-pointer select-none hover:text-foreground ${
+                    className={`px-2 py-2 text-[10px] leading-tight align-bottom font-black uppercase tracking-wide cursor-pointer select-none hover:text-foreground ${
                       c.align === 'left' ? 'text-left' : 'text-right'
                     } ${active ? 'text-accent' : 'text-muted'}`}
                   >
@@ -165,12 +165,12 @@ export default function ProjectionsTable({ rows, lastLabel, nextLabel }: Props) 
           <tbody className="divide-y divide-surface-secondary">
             {visible.map((r, i) => (
               <tr key={r.playerId}>
-                <td className="pl-5 pr-2 py-2 text-[12px] text-muted tabular-nums">{i + 1}</td>
+                <td className="pl-4 pr-1 py-2 text-[12px] text-muted tabular-nums">{i + 1}</td>
                 {cols.map(c => (
                   <td
                     key={c.key}
-                    className={`px-3 py-2 text-[13px] text-foreground ${
-                      c.align === 'left' ? 'text-left whitespace-nowrap' : 'text-right tabular-nums'
+                    className={`px-2 py-2 text-[13px] text-foreground ${
+                      c.align === 'left' ? 'text-left' : 'text-right tabular-nums'
                     }`}
                   >
                     {c.render(r)}

@@ -33,9 +33,17 @@ function fmtRank(rank: number | null, pool: number): string {
   return rank > pool ? `>${pool}` : `#${rank}`;
 }
 
+function median(values: number[]): number {
+  if (values.length === 0) return 0;
+  const s = [...values].sort((a, b) => a - b);
+  const mid = s.length >> 1;
+  return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
+}
+
 function fmtDelta(n: number | null): string {
   if (n == null) return '—';
-  return `${n > 0 ? '+' : ''}${n}`;
+  const r = Math.round(n * 10) / 10;
+  return `${r > 0 ? '+' : ''}${r}`;
 }
 
 function deltaColor(n: number | null): string {
@@ -109,10 +117,18 @@ export default function DraftValueAnalysis({ data }: Props) {
   for (const pick of picks) grid.set(`${pick.round}-${pick.draftSlot}`, pick);
 
   // Draft IQ per pick = pick number − final rank (positive = finished better than drafted).
-  // Manager IQ = sum over rounds 1..SCORE_ROUNDS, every pick weighted equally.
+  // Manager IQ = sum over rounds 1..SCORE_ROUNDS (every pick weighted equally) of
+  // (pick IQ − that round's median IQ across all teams), i.e. vs. a typical pick.
   const scored = picks.filter(p => p.round <= SCORE_ROUNDS && p.result != null);
+  const roundMedian = new Map<number, number>();
+  for (let r = 1; r <= SCORE_ROUNDS; r++) {
+    roundMedian.set(r, median(scored.filter(p => p.round === r).map(p => p.result as number)));
+  }
   const iq = new Map<number, number>();
-  for (const p of scored) iq.set(p.teamId, (iq.get(p.teamId) ?? 0) + (p.result as number));
+  for (const p of scored) {
+    const vs = (p.result as number) - (roundMedian.get(p.round) ?? 0);
+    iq.set(p.teamId, (iq.get(p.teamId) ?? 0) + vs);
+  }
 
   const teamById = new Map(teams.map(t => [t.teamId, t]));
   const ownerOf = (teamId: number) => firstName(teamById.get(teamId)?.ownerName ?? '—');
@@ -139,8 +155,8 @@ export default function DraftValueAnalysis({ data }: Props) {
   const statBoxes: StatBox[] = [
     { label: 'Best Pick', name: gem?.playerName ?? '—', sub: pickSub(gem), accent: 'text-positive-bright' },
     { label: 'Biggest Bust', name: bust?.playerName ?? '—', sub: pickSub(bust), accent: 'text-negative-bright' },
-    { label: 'Highest Draft IQ', name: bestMgr != null ? ownerOf(bestMgr) : '—', sub: bestMgr != null ? `${fmtDelta(iq.get(bestMgr) ?? 0)} total` : '', accent: 'text-info-bright' },
-    { label: 'Lowest Draft IQ', name: worstMgr != null ? ownerOf(worstMgr) : '—', sub: worstMgr != null ? `${fmtDelta(iq.get(worstMgr) ?? 0)} total` : '', accent: 'text-warning-bright' },
+    { label: 'Highest Draft IQ', name: bestMgr != null ? ownerOf(bestMgr) : '—', sub: bestMgr != null ? `${fmtDelta(iq.get(bestMgr) ?? 0)} vs round median` : '', accent: 'text-info-bright' },
+    { label: 'Lowest Draft IQ', name: worstMgr != null ? ownerOf(worstMgr) : '—', sub: worstMgr != null ? `${fmtDelta(iq.get(worstMgr) ?? 0)} vs round median` : '', accent: 'text-warning-bright' },
   ];
 
   const picksByDraftPos = [...picks].sort((a, b) => a.overallPick - b.overallPick);
@@ -177,7 +193,7 @@ export default function DraftValueAnalysis({ data }: Props) {
                     <th key={t.teamId} style={{ width: CELL_W, minWidth: CELL_W }} className="px-2 py-2 border-l border-border text-left">
                       <div className="flex items-baseline justify-between gap-2">
                         <p className="text-[11px] font-semibold text-foreground truncate">{firstName(t.ownerName)}</p>
-                        <span className={`text-[13px] font-bold tabular-nums ${deltaColor(score)}`} title={`Draft IQ, rounds 1–${SCORE_ROUNDS}`}>
+                        <span className={`text-[13px] font-bold tabular-nums ${deltaColor(score)}`} title={`Draft IQ vs round median, rounds 1–${SCORE_ROUNDS}`}>
                           {fmtDelta(score)}
                         </span>
                       </div>
@@ -208,7 +224,7 @@ export default function DraftValueAnalysis({ data }: Props) {
         </div>
         <div className="flex flex-wrap gap-x-4 gap-y-1 px-4 py-3 border-t border-border bg-surface-secondary text-[11px] text-muted">
           <span><b>Draft IQ</b> = pick number − final rank (rank among all league players by {data.rankBasis === 'perGame' ? 'FP per game' : 'total FP'}). Positive = finished better than drafted.</span>
-          <span>Number next to each manager = total IQ of rounds 1–{SCORE_ROUNDS}.</span>
+          <span>Number next to each manager = IQ vs the round median, summed over rounds 1–{SCORE_ROUNDS}: each pick&apos;s IQ minus the median IQ of all picks in that round. Positive = better than a typical pick.</span>
           <span>A+ ≥ +20 · A ≥ +10 · B ≥ +4 · C within ±3 · D ≥ −10 · F worse</span>
         </div>
       </div>

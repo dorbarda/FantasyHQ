@@ -49,18 +49,6 @@ export default function DraftYearTabs({ years, currentYear, view }: DraftYearTab
       >
         Player History
       </button>
-
-      {/* Value Analysis tab */}
-      <button
-        onClick={() => router.push(`/draft?year=${currentYear}&view=value`)}
-        className={`px-3 py-1.5 rounded text-[13px] font-medium transition-colors ${
-          view === 'value'
-            ? 'bg-panel-border text-white'
-            : 'bg-surface border border-border text-muted hover:bg-surface hover:text-foreground'
-        }`}
-      >
-        Value Analysis
-      </button>
     </div>
   );
 }

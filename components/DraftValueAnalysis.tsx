@@ -6,6 +6,9 @@ interface Props {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
+/** Manager scores and highlight cards only count these rounds (late picks are noise). */
+const SCORE_ROUNDS = 10;
+
 const GRADE_STYLES: Record<DraftGrade, string> = {
   'A+': 'bg-positive-bright text-white',
   'A':  'bg-positive-bright/20 text-positive-bright',
@@ -33,9 +36,14 @@ function fmtRank(rank: number | null, pool: number): string {
   return rank > pool ? `>${pool}` : `#${rank}`;
 }
 
+function round1(n: number): number {
+  return Math.round(n * 10) / 10;
+}
+
 function fmtDelta(n: number | null): string {
   if (n == null) return '—';
-  return `${n > 0 ? '+' : ''}${n}`;
+  const r = round1(n);
+  return `${r > 0 ? '+' : ''}${r}`;
 }
 
 function deltaColor(n: number | null): string {
@@ -101,13 +109,35 @@ export default function DraftValueAnalysis({ data }: Props) {
   const grid = new Map<string, DraftPick>();
   for (const pick of picks) grid.set(`${pick.round}-${pick.draftSlot}`, pick);
 
-  // Per-manager totals. Draft IQ = sum of (projected rank − pick);
-  // Results = sum of (pick − final rank). Picks without a number are skipped.
+  // Per-manager scores, rounds 1..SCORE_ROUNDS only, every pick weighted equally.
+  // Draft IQ = sum of decision (projected rank − pick); Results = sum of result
+  // (pick − final rank). "vs avg" subtracts the round's average across all teams
+  // from each pick first, so a manager is measured against the league, not zero.
+  const scored = picks.filter(p => p.round <= SCORE_ROUNDS);
+  const roundAvg = (round: number, key: 'decision' | 'result'): number => {
+    const vals = scored.filter(p => p.round === round && p[key] != null).map(p => p[key] as number);
+    return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+  };
+  const avgDecision = new Map<number, number>();
+  const avgResult = new Map<number, number>();
+  for (let r = 1; r <= SCORE_ROUNDS; r++) {
+    avgDecision.set(r, roundAvg(r, 'decision'));
+    avgResult.set(r, roundAvg(r, 'result'));
+  }
+  const add = (m: Map<number, number>, id: number, v: number) => m.set(id, (m.get(id) ?? 0) + v);
   const iq = new Map<number, number>();
+  const iqVsAvg = new Map<number, number>();
   const results = new Map<number, number>();
-  for (const pick of picks) {
-    if (pick.decision != null) iq.set(pick.teamId, (iq.get(pick.teamId) ?? 0) + pick.decision);
-    if (pick.result != null) results.set(pick.teamId, (results.get(pick.teamId) ?? 0) + pick.result);
+  const resultsVsAvg = new Map<number, number>();
+  for (const pick of scored) {
+    if (pick.decision != null) {
+      add(iq, pick.teamId, pick.decision);
+      add(iqVsAvg, pick.teamId, pick.decision - (avgDecision.get(pick.round) ?? 0));
+    }
+    if (pick.result != null) {
+      add(results, pick.teamId, pick.result);
+      add(resultsVsAvg, pick.teamId, pick.result - (avgResult.get(pick.round) ?? 0));
+    }
   }
 
   const teamById = new Map(teams.map(t => [t.teamId, t]));
@@ -124,13 +154,13 @@ export default function DraftValueAnalysis({ data }: Props) {
     return best;
   };
 
-  const steal  = extreme(picks, p => p.decision, 'max');
-  const reach  = extreme(picks, p => p.decision, 'min');
-  const gem    = extreme(picks, p => p.result, 'max');
-  const bust   = extreme(picks, p => p.result, 'min');
+  const steal  = extreme(scored, p => p.decision, 'max');
+  const reach  = extreme(scored, p => p.decision, 'min');
+  const gem    = extreme(scored, p => p.result, 'max');
+  const bust   = extreme(scored, p => p.result, 'min');
   const teamIds = teams.map(t => t.teamId);
-  const bestIQ  = extreme(teamIds, id => iq.get(id) ?? null, 'max');
-  const worstIQ = extreme(teamIds, id => iq.get(id) ?? null, 'min');
+  const bestIQ  = extreme(teamIds, id => iqVsAvg.get(id) ?? null, 'max');
+  const worstIQ = extreme(teamIds, id => iqVsAvg.get(id) ?? null, 'min');
 
   const pickSub = (p: DraftPick | null, v: number | null) =>
     p && v != null ? `${ownerOf(p.teamId)} · pick #${p.overallPick} · ${fmtDelta(v)}` : '';
@@ -140,8 +170,8 @@ export default function DraftValueAnalysis({ data }: Props) {
     statBoxes.push(
       { label: 'Biggest Steal', name: steal?.playerName ?? '—', sub: pickSub(steal, steal?.decision ?? null), accent: 'text-positive-bright' },
       { label: 'Biggest Reach', name: reach?.playerName ?? '—', sub: pickSub(reach, reach?.decision ?? null), accent: 'text-negative-bright' },
-      { label: 'Smartest Drafter', name: bestIQ != null ? ownerOf(bestIQ) : '—', sub: bestIQ != null ? `${fmtDelta(iq.get(bestIQ) ?? 0)} Draft IQ` : '', accent: 'text-info-bright' },
-      { label: 'Worst Draft IQ', name: worstIQ != null ? ownerOf(worstIQ) : '—', sub: worstIQ != null ? `${fmtDelta(iq.get(worstIQ) ?? 0)} Draft IQ` : '', accent: 'text-warning-bright' },
+      { label: 'Smartest Drafter', name: bestIQ != null ? ownerOf(bestIQ) : '—', sub: bestIQ != null ? `${fmtDelta(round1(iqVsAvg.get(bestIQ) ?? 0))} vs round avg` : '', accent: 'text-info-bright' },
+      { label: 'Lowest Draft IQ', name: worstIQ != null ? ownerOf(worstIQ) : '—', sub: worstIQ != null ? `${fmtDelta(round1(iqVsAvg.get(worstIQ) ?? 0))} vs round avg` : '', accent: 'text-warning-bright' },
     );
   }
   if (hasStats) {
@@ -152,7 +182,7 @@ export default function DraftValueAnalysis({ data }: Props) {
   }
 
   const leaderboard = [...teams].sort(
-    (a, b) => (iq.get(b.teamId) ?? -Infinity) - (iq.get(a.teamId) ?? -Infinity),
+    (a, b) => (iqVsAvg.get(b.teamId) ?? -Infinity) - (iqVsAvg.get(a.teamId) ?? -Infinity),
   );
   const picksByDraftPos = [...picks].sort((a, b) => a.overallPick - b.overallPick);
 
@@ -187,7 +217,8 @@ export default function DraftValueAnalysis({ data }: Props) {
         <div className="px-4 py-3 border-b border-border bg-surface-secondary">
           <p className="text-[13px] font-semibold text-foreground">Manager Scores</p>
           <p className="text-[11px] text-secondary mt-0.5">
-            Draft IQ = sum of (ESPN projected rank − pick) · Results = sum of (pick − final rank) · positive = good
+            Rounds 1–{SCORE_ROUNDS} only, every pick weighted equally · Draft IQ = sum of (projected rank − pick) ·
+            Results = sum of (pick − final rank) · &quot;vs avg&quot; = compared to the round average across all teams · sorted by Draft IQ vs avg
           </p>
         </div>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -195,29 +226,30 @@ export default function DraftValueAnalysis({ data }: Props) {
             <tr className="border-b border-border bg-surface-secondary">
               <th className="px-4 py-2 text-left text-[10px] font-semibold uppercase tracking-widest text-muted">Manager</th>
               {hasProjections && <th className="px-4 py-2 text-center text-[10px] font-semibold uppercase tracking-widest text-muted">Draft IQ</th>}
+              {hasProjections && <th className="px-4 py-2 text-center text-[10px] font-semibold uppercase tracking-widest text-muted">IQ vs avg</th>}
               {hasStats && <th className="px-4 py-2 text-center text-[10px] font-semibold uppercase tracking-widest text-muted">Results</th>}
+              {hasStats && <th className="px-4 py-2 text-center text-[10px] font-semibold uppercase tracking-widest text-muted">Results vs avg</th>}
             </tr>
           </thead>
           <tbody>
             {leaderboard.map(t => {
-              const a = iq.get(t.teamId) ?? null;
-              const b = results.get(t.teamId) ?? null;
+              const cells: [boolean, number | null][] = [
+                [hasProjections, iq.get(t.teamId) ?? null],
+                [hasProjections, iqVsAvg.get(t.teamId) ?? null],
+                [hasStats, results.get(t.teamId) ?? null],
+                [hasStats, resultsVsAvg.get(t.teamId) ?? null],
+              ];
               return (
                 <tr key={t.teamId} className="border-b border-border last:border-0">
                   <td className="px-4 py-2">
                     <p className="text-[12px] font-semibold text-foreground">{firstName(t.ownerName)}</p>
                     <p className="text-[10px] text-secondary">{t.teamName}</p>
                   </td>
-                  {hasProjections && (
-                    <td className="px-4 py-2 text-center">
-                      <span className={`text-[13px] font-bold tabular-nums ${deltaColor(a)}`}>{fmtDelta(a)}</span>
+                  {cells.map(([show, v], i) => show && (
+                    <td key={i} className="px-4 py-2 text-center">
+                      <span className={`text-[13px] font-bold tabular-nums ${deltaColor(v)}`}>{fmtDelta(v)}</span>
                     </td>
-                  )}
-                  {hasStats && (
-                    <td className="px-4 py-2 text-center">
-                      <span className={`text-[13px] font-bold tabular-nums ${deltaColor(b)}`}>{fmtDelta(b)}</span>
-                    </td>
-                  )}
+                  ))}
                 </tr>
               );
             })}

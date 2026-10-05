@@ -175,7 +175,7 @@ export default async function DraftPrepPage() {
         </p>
       </div>
 
-      <div className="flex flex-col gap-4 max-w-5xl">
+      <div className="flex flex-col gap-4 w-full">
         <div className="flex flex-col gap-4 max-w-2xl">
           <CountdownCard />
           <DraftOrderCard />

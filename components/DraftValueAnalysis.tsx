@@ -4,10 +4,10 @@ interface Props {
   data: DraftBoardData;
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-/** Manager scores and highlight cards only count these rounds (late picks are noise). */
+/** Manager IQ and highlight cards only count these rounds (late picks are noise). */
 const SCORE_ROUNDS = 10;
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const GRADE_STYLES: Record<DraftGrade, string> = {
   'A+': 'bg-positive-bright text-white',
@@ -20,13 +20,10 @@ const GRADE_STYLES: Record<DraftGrade, string> = {
   '?':  'bg-tertiary/10 text-muted',
 };
 
-function GradeBadge({ grade, label }: { grade: DraftGrade; label: string }) {
+function GradeBadge({ grade }: { grade: DraftGrade }) {
   return (
-    <span className="inline-flex items-center gap-1">
-      <span className="text-[9px] uppercase tracking-wide text-secondary">{label}</span>
-      <span className={`inline-block text-[10px] font-bold px-1.5 py-0.5 rounded leading-none ${GRADE_STYLES[grade]}`}>
-        {grade}
-      </span>
+    <span className={`inline-block text-[10px] font-bold px-1.5 py-0.5 rounded leading-none ${GRADE_STYLES[grade]}`}>
+      {grade}
     </span>
   );
 }
@@ -36,14 +33,9 @@ function fmtRank(rank: number | null, pool: number): string {
   return rank > pool ? `>${pool}` : `#${rank}`;
 }
 
-function round1(n: number): number {
-  return Math.round(n * 10) / 10;
-}
-
 function fmtDelta(n: number | null): string {
   if (n == null) return '—';
-  const r = round1(n);
-  return `${r > 0 ? '+' : ''}${r}`;
+  return `${n > 0 ? '+' : ''}${n}`;
 }
 
 function deltaColor(n: number | null): string {
@@ -76,9 +68,7 @@ function StatCard({ box }: { box: StatBox }) {
 
 // ─── Grid cell ────────────────────────────────────────────────────────────────
 
-function PickCell({ pick, pool, hasStats, hasProjections }: {
-  pick: DraftPick; pool: number; hasStats: boolean; hasProjections: boolean;
-}) {
+function PickCell({ pick, pool }: { pick: DraftPick; pool: number }) {
   const isINJ = pick.grade === 'INJ';
   return (
     <div className="h-full flex flex-col justify-between gap-0.5">
@@ -89,13 +79,11 @@ function PickCell({ pick, pool, hasStats, hasProjections }: {
         <p className="text-[10px] text-secondary truncate">{pick.position} · {pick.proTeam}</p>
       </div>
       <p className="text-[10px] text-muted tabular-nums">
-        {hasProjections && <>Proj {fmtRank(pick.projRank, pool)} · </>}
-        Pick #{pick.overallPick}
-        {hasStats && <> · End {isINJ ? 'DNP' : fmtRank(pick.actualRank, pool)}</>}
+        Pick #{pick.overallPick} → {isINJ ? 'DNP' : `Finished ${fmtRank(pick.actualRank, pool)}`}
       </p>
       <div className="flex items-center justify-between gap-1">
-        {hasProjections && <GradeBadge grade={pick.decisionGrade} label="Pick" />}
-        {hasStats && <GradeBadge grade={pick.grade} label="Result" />}
+        <span className={`text-[11px] font-bold tabular-nums ${deltaColor(pick.result)}`}>{fmtDelta(pick.result)}</span>
+        <GradeBadge grade={pick.grade} />
       </div>
     </div>
   );
@@ -104,86 +92,57 @@ function PickCell({ pick, pool, hasStats, hasProjections }: {
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 export default function DraftValueAnalysis({ data }: Props) {
-  const { teams, picks, rounds, hasStats, hasProjections, poolSize } = data;
+  const { teams, picks, rounds, hasStats, poolSize } = data;
+
+  if (!hasStats) {
+    return (
+      <div className="border border-border rounded-lg px-6 py-10 text-center bg-surface">
+        <p className="text-[15px] font-bold text-foreground">Season hasn&apos;t started</p>
+        <p className="text-[13px] text-muted mt-1">
+          Draft IQ appears once players have played games and can be ranked.
+        </p>
+      </div>
+    );
+  }
 
   const grid = new Map<string, DraftPick>();
   for (const pick of picks) grid.set(`${pick.round}-${pick.draftSlot}`, pick);
 
-  // Per-manager scores, rounds 1..SCORE_ROUNDS only, every pick weighted equally.
-  // Draft IQ = sum of decision (projected rank − pick); Results = sum of result
-  // (pick − final rank). "vs avg" subtracts the round's average across all teams
-  // from each pick first, so a manager is measured against the league, not zero.
-  const scored = picks.filter(p => p.round <= SCORE_ROUNDS);
-  const roundAvg = (round: number, key: 'decision' | 'result'): number => {
-    const vals = scored.filter(p => p.round === round && p[key] != null).map(p => p[key] as number);
-    return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
-  };
-  const avgDecision = new Map<number, number>();
-  const avgResult = new Map<number, number>();
-  for (let r = 1; r <= SCORE_ROUNDS; r++) {
-    avgDecision.set(r, roundAvg(r, 'decision'));
-    avgResult.set(r, roundAvg(r, 'result'));
-  }
-  const add = (m: Map<number, number>, id: number, v: number) => m.set(id, (m.get(id) ?? 0) + v);
+  // Draft IQ per pick = pick number − final rank (positive = finished better than drafted).
+  // Manager IQ = sum over rounds 1..SCORE_ROUNDS, every pick weighted equally.
+  const scored = picks.filter(p => p.round <= SCORE_ROUNDS && p.result != null);
   const iq = new Map<number, number>();
-  const iqVsAvg = new Map<number, number>();
-  const results = new Map<number, number>();
-  const resultsVsAvg = new Map<number, number>();
-  for (const pick of scored) {
-    if (pick.decision != null) {
-      add(iq, pick.teamId, pick.decision);
-      add(iqVsAvg, pick.teamId, pick.decision - (avgDecision.get(pick.round) ?? 0));
-    }
-    if (pick.result != null) {
-      add(results, pick.teamId, pick.result);
-      add(resultsVsAvg, pick.teamId, pick.result - (avgResult.get(pick.round) ?? 0));
-    }
-  }
+  for (const p of scored) iq.set(p.teamId, (iq.get(p.teamId) ?? 0) + (p.result as number));
 
   const teamById = new Map(teams.map(t => [t.teamId, t]));
   const ownerOf = (teamId: number) => firstName(teamById.get(teamId)?.ownerName ?? '—');
 
-  const extreme = <T,>(items: T[], value: (x: T) => number | null, dir: 'max' | 'min'): T | null => {
+  const extreme = <T,>(items: T[], value: (x: T) => number, dir: 'max' | 'min'): T | null => {
     let best: T | null = null;
     let bestVal = dir === 'max' ? -Infinity : Infinity;
     for (const it of items) {
       const v = value(it);
-      if (v == null) continue;
       if (dir === 'max' ? v > bestVal : v < bestVal) { best = it; bestVal = v; }
     }
     return best;
   };
 
-  const steal  = extreme(scored, p => p.decision, 'max');
-  const reach  = extreme(scored, p => p.decision, 'min');
-  const gem    = extreme(scored, p => p.result, 'max');
-  const bust   = extreme(scored, p => p.result, 'min');
-  const teamIds = teams.map(t => t.teamId);
-  const bestIQ  = extreme(teamIds, id => iqVsAvg.get(id) ?? null, 'max');
-  const worstIQ = extreme(teamIds, id => iqVsAvg.get(id) ?? null, 'min');
+  const gem  = extreme(scored, p => p.result as number, 'max');
+  const bust = extreme(scored, p => p.result as number, 'min');
+  const teamIds = teams.map(t => t.teamId).filter(id => iq.has(id));
+  const bestMgr  = extreme(teamIds, id => iq.get(id) as number, 'max');
+  const worstMgr = extreme(teamIds, id => iq.get(id) as number, 'min');
 
-  const pickSub = (p: DraftPick | null, v: number | null) =>
-    p && v != null ? `${ownerOf(p.teamId)} · pick #${p.overallPick} · ${fmtDelta(v)}` : '';
+  const pickSub = (p: DraftPick | null) =>
+    p ? `${ownerOf(p.teamId)} · pick #${p.overallPick} → finished ${fmtRank(p.actualRank, poolSize)} · ${fmtDelta(p.result)}` : '';
 
-  const statBoxes: StatBox[] = [];
-  if (hasProjections) {
-    statBoxes.push(
-      { label: 'Biggest Steal', name: steal?.playerName ?? '—', sub: pickSub(steal, steal?.decision ?? null), accent: 'text-positive-bright' },
-      { label: 'Biggest Reach', name: reach?.playerName ?? '—', sub: pickSub(reach, reach?.decision ?? null), accent: 'text-negative-bright' },
-      { label: 'Smartest Drafter', name: bestIQ != null ? ownerOf(bestIQ) : '—', sub: bestIQ != null ? `${fmtDelta(round1(iqVsAvg.get(bestIQ) ?? 0))} vs round avg` : '', accent: 'text-info-bright' },
-      { label: 'Lowest Draft IQ', name: worstIQ != null ? ownerOf(worstIQ) : '—', sub: worstIQ != null ? `${fmtDelta(round1(iqVsAvg.get(worstIQ) ?? 0))} vs round avg` : '', accent: 'text-warning-bright' },
-    );
-  }
-  if (hasStats) {
-    statBoxes.push(
-      { label: 'Best Pick (Result)', name: gem?.playerName ?? '—', sub: pickSub(gem, gem?.result ?? null), accent: 'text-positive-bright' },
-      { label: 'Biggest Bust', name: bust?.playerName ?? '—', sub: pickSub(bust, bust?.result ?? null), accent: 'text-negative-bright' },
-    );
-  }
+  const statBoxes: StatBox[] = [
+    { label: 'Best Pick', name: gem?.playerName ?? '—', sub: pickSub(gem), accent: 'text-positive-bright' },
+    { label: 'Biggest Bust', name: bust?.playerName ?? '—', sub: pickSub(bust), accent: 'text-negative-bright' },
+    { label: 'Highest Draft IQ', name: bestMgr != null ? ownerOf(bestMgr) : '—', sub: bestMgr != null ? `${fmtDelta(iq.get(bestMgr) ?? 0)} total` : '', accent: 'text-info-bright' },
+    { label: 'Lowest Draft IQ', name: worstMgr != null ? ownerOf(worstMgr) : '—', sub: worstMgr != null ? `${fmtDelta(iq.get(worstMgr) ?? 0)} total` : '', accent: 'text-warning-bright' },
+  ];
 
-  const leaderboard = [...teams].sort(
-    (a, b) => (iqVsAvg.get(b.teamId) ?? -Infinity) - (iqVsAvg.get(a.teamId) ?? -Infinity),
-  );
   const picksByDraftPos = [...picks].sort((a, b) => a.overallPick - b.overallPick);
 
   const CELL_W = 150;
@@ -191,70 +150,16 @@ export default function DraftValueAnalysis({ data }: Props) {
 
   return (
     <div className="space-y-5">
-      {/* Status notes */}
       {data.inProgress && (
         <p className="text-[12px] text-warning-bright font-medium">
           Season in progress — through {data.gamesPlayed} games. Final ranks are by fantasy points per game
           (players with fewer than {Math.max(1, Math.round(data.gamesPlayed * 0.25))} games are not ranked).
         </p>
       )}
-      {!hasStats && hasProjections && (
-        <p className="text-[12px] text-muted">Season hasn&apos;t started — only the draft decision scores are available.</p>
-      )}
-      {!hasProjections && (
-        <p className="text-[12px] text-warning-bright font-medium">ESPN projections unavailable for this season — draft decision scores can&apos;t be calculated.</p>
-      )}
 
       {/* ── Stat cards ── */}
-      {statBoxes.length > 0 && (
-        <div className="flex flex-wrap gap-3">
-          {statBoxes.map(box => <StatCard key={box.label} box={box} />)}
-        </div>
-      )}
-
-      {/* ── Manager leaderboard ── */}
-      <div className="border border-border rounded-lg overflow-hidden bg-surface">
-        <div className="px-4 py-3 border-b border-border bg-surface-secondary">
-          <p className="text-[13px] font-semibold text-foreground">Manager Scores</p>
-          <p className="text-[11px] text-secondary mt-0.5">
-            Rounds 1–{SCORE_ROUNDS} only, every pick weighted equally · Draft IQ = sum of (projected rank − pick) ·
-            Results = sum of (pick − final rank) · &quot;vs avg&quot; = compared to the round average across all teams · sorted by Draft IQ vs avg
-          </p>
-        </div>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr className="border-b border-border bg-surface-secondary">
-              <th className="px-4 py-2 text-left text-[10px] font-semibold uppercase tracking-widest text-muted">Manager</th>
-              {hasProjections && <th className="px-4 py-2 text-center text-[10px] font-semibold uppercase tracking-widest text-muted">Draft IQ</th>}
-              {hasProjections && <th className="px-4 py-2 text-center text-[10px] font-semibold uppercase tracking-widest text-muted">IQ vs avg</th>}
-              {hasStats && <th className="px-4 py-2 text-center text-[10px] font-semibold uppercase tracking-widest text-muted">Results</th>}
-              {hasStats && <th className="px-4 py-2 text-center text-[10px] font-semibold uppercase tracking-widest text-muted">Results vs avg</th>}
-            </tr>
-          </thead>
-          <tbody>
-            {leaderboard.map(t => {
-              const cells: [boolean, number | null][] = [
-                [hasProjections, iq.get(t.teamId) ?? null],
-                [hasProjections, iqVsAvg.get(t.teamId) ?? null],
-                [hasStats, results.get(t.teamId) ?? null],
-                [hasStats, resultsVsAvg.get(t.teamId) ?? null],
-              ];
-              return (
-                <tr key={t.teamId} className="border-b border-border last:border-0">
-                  <td className="px-4 py-2">
-                    <p className="text-[12px] font-semibold text-foreground">{firstName(t.ownerName)}</p>
-                    <p className="text-[10px] text-secondary">{t.teamName}</p>
-                  </td>
-                  {cells.map(([show, v], i) => show && (
-                    <td key={i} className="px-4 py-2 text-center">
-                      <span className={`text-[13px] font-bold tabular-nums ${deltaColor(v)}`}>{fmtDelta(v)}</span>
-                    </td>
-                  ))}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+      <div className="flex flex-wrap gap-3">
+        {statBoxes.map(box => <StatCard key={box.label} box={box} />)}
       </div>
 
       {/* ── Board grid ── */}
@@ -266,12 +171,20 @@ export default function DraftValueAnalysis({ data }: Props) {
                 <th className="sticky left-0 bg-surface-secondary w-[56px] px-2 py-2 text-left">
                   <span className="text-[10px] font-semibold uppercase tracking-widest text-muted">Rd</span>
                 </th>
-                {teams.map(t => (
-                  <th key={t.teamId} style={{ width: CELL_W, minWidth: CELL_W }} className="px-2 py-2 border-l border-border text-left">
-                    <p className="text-[11px] font-semibold text-foreground truncate">{firstName(t.ownerName)}</p>
-                    <p className="text-[10px] text-secondary truncate">{t.teamName}</p>
-                  </th>
-                ))}
+                {teams.map(t => {
+                  const score = iq.get(t.teamId) ?? null;
+                  return (
+                    <th key={t.teamId} style={{ width: CELL_W, minWidth: CELL_W }} className="px-2 py-2 border-l border-border text-left">
+                      <div className="flex items-baseline justify-between gap-2">
+                        <p className="text-[11px] font-semibold text-foreground truncate">{firstName(t.ownerName)}</p>
+                        <span className={`text-[13px] font-bold tabular-nums ${deltaColor(score)}`} title={`Draft IQ, rounds 1–${SCORE_ROUNDS}`}>
+                          {fmtDelta(score)}
+                        </span>
+                      </div>
+                      <p className="text-[10px] text-secondary truncate">{t.teamName}</p>
+                    </th>
+                  );
+                })}
               </tr>
             </thead>
             <tbody>
@@ -283,10 +196,8 @@ export default function DraftValueAnalysis({ data }: Props) {
                   {teams.map(t => {
                     const pick = grid.get(`${round}-${t.draftSlot}`);
                     return (
-                      <td key={t.teamId} style={{ width: CELL_W, minWidth: CELL_W }} className="px-2 py-1.5 border-l border-border align-top h-[84px]">
-                        {pick
-                          ? <PickCell pick={pick} pool={poolSize} hasStats={hasStats} hasProjections={hasProjections} />
-                          : <span className="text-[10px] text-border">—</span>}
+                      <td key={t.teamId} style={{ width: CELL_W, minWidth: CELL_W }} className="px-2 py-1.5 border-l border-border align-top h-[78px]">
+                        {pick ? <PickCell pick={pick} pool={poolSize} /> : <span className="text-[10px] text-border">—</span>}
                       </td>
                     );
                   })}
@@ -296,10 +207,8 @@ export default function DraftValueAnalysis({ data }: Props) {
           </table>
         </div>
         <div className="flex flex-wrap gap-x-4 gap-y-1 px-4 py-3 border-t border-border bg-surface-secondary text-[11px] text-muted">
-          <span><b>Proj</b> = rank by ESPN preseason projection</span>
-          <span><b>Pick</b> = where the manager took the player</span>
-          <span><b>End</b> = final rank by actual season output ({data.rankBasis === 'perGame' ? 'FP per game' : 'total FP'}), all players</span>
-          <span><b>Pick grade</b> = projected rank vs. pick · <b>Result grade</b> = pick vs. final rank</span>
+          <span><b>Draft IQ</b> = pick number − final rank (rank among all league players by {data.rankBasis === 'perGame' ? 'FP per game' : 'total FP'}). Positive = finished better than drafted.</span>
+          <span>Number next to each manager = total IQ of rounds 1–{SCORE_ROUNDS}.</span>
           <span>A+ ≥ +20 · A ≥ +10 · B ≥ +4 · C within ±3 · D ≥ −10 · F worse</span>
         </div>
       </div>
@@ -308,20 +217,16 @@ export default function DraftValueAnalysis({ data }: Props) {
       <div className="border border-border rounded-lg overflow-hidden bg-surface">
         <div className="px-4 py-3 border-b border-border bg-surface-secondary">
           <p className="text-[13px] font-semibold text-foreground">Every Pick</p>
-          <p className="text-[11px] text-secondary mt-0.5">
-            Decision = projected rank − pick · Result = pick − final rank · ranks are among all league players
-          </p>
+          <p className="text-[11px] text-secondary mt-0.5">Draft IQ = pick number − final rank</p>
         </div>
         <div className="overflow-x-auto">
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr className="border-b border-border bg-surface-secondary text-[10px] font-semibold uppercase tracking-widest text-muted">
                 <th className="px-4 py-2 text-left">Player</th>
-                {hasProjections && <th className="px-3 py-2 text-center">Proj rank</th>}
                 <th className="px-3 py-2 text-center">Pick</th>
-                {hasStats && <th className="px-3 py-2 text-center">Final rank</th>}
-                {hasProjections && <th className="px-3 py-2 text-center">Decision</th>}
-                {hasStats && <th className="px-3 py-2 text-center">Result</th>}
+                <th className="px-3 py-2 text-center">Final rank</th>
+                <th className="px-3 py-2 text-center">Draft IQ</th>
               </tr>
             </thead>
             <tbody>
@@ -333,21 +238,11 @@ export default function DraftValueAnalysis({ data }: Props) {
                       <p className={`text-[12px] font-semibold ${isINJ ? 'text-secondary line-through' : 'text-foreground'}`}>{pick.playerName}</p>
                       <p className="text-[10px] text-secondary">{pick.position} · {pick.proTeam} · {firstName(pick.ownerName)}</p>
                     </td>
-                    {hasProjections && (
-                      <td className="px-3 py-2 text-center text-[12px] tabular-nums text-muted">{fmtRank(pick.projRank, poolSize)}</td>
-                    )}
                     <td className="px-3 py-2 text-center text-[12px] font-semibold tabular-nums text-muted">#{pick.overallPick}</td>
-                    {hasStats && (
-                      <td className="px-3 py-2 text-center text-[12px] tabular-nums text-muted">
-                        {isINJ ? 'DNP' : fmtRank(pick.actualRank, poolSize)}
-                      </td>
-                    )}
-                    {hasProjections && (
-                      <td className={`px-3 py-2 text-center text-[12px] font-semibold tabular-nums ${deltaColor(pick.decision)}`}>{fmtDelta(pick.decision)}</td>
-                    )}
-                    {hasStats && (
-                      <td className={`px-3 py-2 text-center text-[12px] font-semibold tabular-nums ${deltaColor(pick.result)}`}>{fmtDelta(pick.result)}</td>
-                    )}
+                    <td className="px-3 py-2 text-center text-[12px] tabular-nums text-muted">
+                      {isINJ ? 'DNP' : fmtRank(pick.actualRank, poolSize)}
+                    </td>
+                    <td className={`px-3 py-2 text-center text-[12px] font-semibold tabular-nums ${deltaColor(pick.result)}`}>{fmtDelta(pick.result)}</td>
                   </tr>
                 );
               })}

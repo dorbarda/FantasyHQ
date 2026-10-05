@@ -59,7 +59,7 @@ export default async function DraftPage({ searchParams: searchParamsPromise }: P
         <p className="type-page-subtitle mt-1">
           {isHistory
             ? 'Search a player to see their full draft history'
-            : 'Did each manager pick wisely? ESPN projected rank vs. draft pick vs. final rank'}
+            : 'Draft IQ: where each player was picked vs. where he finished the season'}
         </p>
       </div>
 

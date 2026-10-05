@@ -1,8 +1,7 @@
 import { hasEspnCredentials } from '@/lib/espn';
-import { getDraftBoard, getTopPlayersFP, DRAFT_YEARS, AllPlayerFP } from '@/lib/espn-draft';
+import { getDraftBoard, DRAFT_YEARS } from '@/lib/espn-draft';
 import { CURRENT_SEASON, FIRST_SEASON } from '@/lib/season';
 import { DraftBoardData } from '@/lib/types';
-import DraftBoard from '@/components/DraftBoard';
 import DraftYearTabs from '@/components/DraftYearTabs';
 import PlayerHistoryTab from '@/components/PlayerHistoryTab';
 import DraftValueAnalysis from '@/components/DraftValueAnalysis';
@@ -30,13 +29,11 @@ export default async function DraftPage({ searchParams: searchParamsPromise }: P
   }
 
   const isHistory = searchParams.view === 'history';
-  const isValueAnalysis = searchParams.view === 'value';
   const requestedYear = parseInt(searchParams.year ?? '');
   const explicitYear = DRAFT_YEARS.includes(requestedYear);
   let year = explicitYear ? requestedYear : LATEST_YEAR;
 
   let data: DraftBoardData | null = null;
-  let topPlayers: AllPlayerFP[] = [];
   let error = false;
 
   if (!isHistory) {
@@ -48,7 +45,6 @@ export default async function DraftPage({ searchParams: searchParamsPromise }: P
         year = FALLBACK_YEAR;
         data = await getDraftBoard(year);
       }
-      if (isValueAnalysis) topPlayers = await getTopPlayersFP(year, 130);
     } catch (err) {
       console.error('Draft board fetch failed:', err);
       error = true;
@@ -63,9 +59,7 @@ export default async function DraftPage({ searchParams: searchParamsPromise }: P
         <p className="type-page-subtitle mt-1">
           {isHistory
             ? 'Search a player to see their full draft history'
-            : isValueAnalysis
-            ? 'How each pick compared to the round benchmark'
-            : 'Pick grades based on season rank vs. draft position'}
+            : 'Did each manager pick wisely? ESPN projected rank vs. draft pick vs. final rank'}
         </p>
       </div>
 
@@ -95,16 +89,9 @@ export default async function DraftPage({ searchParams: searchParamsPromise }: P
             <>
               <div className="flex items-center gap-4 mb-4 text-[13px] text-muted">
                 <span>{data.rounds} rounds · {data.picks.length} picks · {data.teams.length} teams</span>
-                {!data.hasStats && (
-                  <span className="text-warning-bright font-medium">Season in progress — grades pending</span>
-                )}
               </div>
 
-              {isValueAnalysis ? (
-                <DraftValueAnalysis data={data} topPlayers={topPlayers} />
-              ) : (
-                <DraftBoard data={data} />
-              )}
+              <DraftValueAnalysis data={data} />
             </>
           )}
         </>

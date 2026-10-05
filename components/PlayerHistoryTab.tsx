@@ -4,7 +4,7 @@ import { useState, useTransition, useCallback } from 'react';
 import { searchPlayerHistory, PlayerHistoryResult, PlayerSeasonData } from '@/app/draft/actions';
 import type { DraftGrade } from '@/lib/types';
 
-// ─── Grade badge (mirrors DraftBoard) ────────────────────────────────────────
+// ─── Grade badge (mirrors DraftValueAnalysis) ────────────────────────────────
 
 const GRADE_STYLES: Record<DraftGrade, string> = {
   'A+': 'bg-positive-bright text-white',

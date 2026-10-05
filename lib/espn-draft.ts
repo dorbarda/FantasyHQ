@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { DraftBoardData, DraftPick, DraftTeamSlot, DraftGrade } from './types';
-import { computeFP, getGP, extractSeasonStats } from './scoring';
 import { ALL_SEASONS, CURRENT_SEASON } from './season';
 
 const ESPN_S2   = process.env.ESPN_S2;
@@ -43,155 +42,114 @@ async function espnGet(year: number, params: string, extraHeaders?: Record<strin
 
 // ─── Player data ──────────────────────────────────────────────────────────────
 
-interface PlayerData {
+// ESPN stat-row ids: 00YYYY = actual season totals, 10YYYY = preseason projection.
+// Both carry `appliedTotal` (fantasy points under THIS league's scoring) and
+// stat 42 = games played — so we use ESPN's own total, never recompute it.
+interface PlayerRow {
+  id: number;
   name: string;
   position: string;
   proTeam: string;
   fp: number;
-  pts: number;
   gp: number;
+  projFp: number;
+  projGp: number;
 }
 
-function extractStats(player: any): { fp: number; pts: number; gp: number } {
-  const s = extractSeasonStats(player.stats || []);
-  return {
-    fp:  computeFP(s),
-    pts: Math.round((s['0'] || 0) * 10) / 10,
-    gp:  getGP(s),
-  };
-}
+/** Players ranked beyond this count are shown as "outside" (e.g. >200). */
+const POOL_SIZE = 200;
+/** Extra players fetched so re-sorting (per-game) still fills POOL_SIZE. */
+const POOL_FETCH = 250;
 
-function playerMeta(p: any): PlayerData {
+function playerRow(p: any, year: number): PlayerRow {
+  const byId = (id: string) => (p.stats || []).find((s: any) => s.id === id);
+  const actual = byId(`00${year}`);
+  const proj = byId(`10${year}`);
+  const round1 = (n: number) => Math.round(n * 10) / 10;
   return {
+    id:       p.id as number,
     name:     p.fullName || `Player ${p.id}`,
     position: POS_MAP[p.defaultPositionId || 5] || '—',
     proTeam:  PRO_TEAMS[p.proTeamId] || '—',
-    ...extractStats(p),
+    fp:       round1(actual?.appliedTotal ?? 0),
+    gp:       actual?.stats?.['42'] ?? 0,
+    projFp:   round1(proj?.appliedTotal ?? 0),
+    projGp:   proj?.stats?.['42'] ?? 0,
   };
 }
 
-async function fetchPlayerData(year: number, draftedIds: number[]): Promise<Map<number, PlayerData>> {
-  const map = new Map<number, PlayerData>();
-
-  // ── Strategy 1: mRoster — proven endpoint, same one used by getPlayers/getStatsData ──
-  try {
-    const data = await espnGet(year, '?view=mRoster&view=mTeam');
-    for (const team of (data.teams || []) as any[]) {
-      for (const entry of (team.roster?.entries || []) as any[]) {
-        const p = entry.playerPoolEntry?.player;
-        if (!p) continue;
-        map.set(p.id as number, playerMeta(p));
-      }
-    }
-  } catch (e) {
-    console.error(`[draft] mRoster failed year=${year}:`, e);
-  }
-
-  // ── Strategy 2: kona full-season fetch — authoritative stats for ALL drafted players ──
-  // Runs unconditionally (not just for missing IDs) because mRoster for historical seasons
-  // often returns empty or partial stats arrays; kona with the year-scoped filter is the
-  // reliable source.  value:25 covers any NBA season length; additionalValue requests the
-  // full-season aggregate bucket so appliedStatTotal reflects the complete season.
-  try {
-    const filter = JSON.stringify({
-      players: {
-        limit: 300,
-        sortAppliedStatTotal: { sortAsc: false, sortPriority: 1, value: `00${year}` },
-        filterStatsForTopScoringPeriodIds: { value: 25, additionalValue: [`00${year}`] },
-      },
-    });
-    const data = await espnGet(year, '?view=kona_player_info', { 'x-fantasy-filter': filter });
-    const draftedSet = new Set(draftedIds);
-    for (const entry of (data.players || []) as any[]) {
-      const player = entry.playerPoolEntry?.player;
-      if (!player || !draftedSet.has(player.id as number)) continue;
-      const konaStats = extractStats(player);
-      const existing = map.get(player.id as number);
-      if (existing) {
-        // Override only the stat fields; keep name/position/proTeam from mRoster
-        map.set(player.id as number, { ...existing, fp: konaStats.fp, pts: konaStats.pts, gp: konaStats.gp });
-      } else {
-        map.set(player.id as number, playerMeta(player));
-      }
-    }
-  } catch (e) {
-    console.error(`[draft] kona full-season failed year=${year}:`, e);
-  }
-
-  // ── Strategy 3: ESPN public athlete API — no auth needed, resolves retired/cut players ──
-  const stillMissing = draftedIds.filter(id => !map.has(id));
-  if (stillMissing.length > 0) {
-    const CONCURRENCY = 10;
-    for (let i = 0; i < stillMissing.length; i += CONCURRENCY) {
-      const batch = stillMissing.slice(i, i + CONCURRENCY);
-      await Promise.allSettled(
-        batch.map(async (playerId) => {
-          try {
-            const res = await fetch(
-              `https://site.api.espn.com/apis/common/v3/sports/basketball/nba/athletes/${playerId}`,
-              { next: { revalidate: 86400 } }
-            );
-            if (!res.ok) return;
-            const d = await res.json();
-            const a = d.athlete;
-            if (!a) return;
-            map.set(playerId, {
-              name:     a.displayName || a.fullName || `Player ${playerId}`,
-              position: a.position?.abbreviation || '—',
-              proTeam:  a.team?.abbreviation || '—',
-              fp: 0, pts: 0, gp: 0,
-            });
-          } catch { /* silently skip unresolvable IDs */ }
-        })
-      );
-    }
-  }
-
-  return map;
+function playerFilter(year: number, players: Record<string, unknown>) {
+  return JSON.stringify({
+    players: {
+      ...players,
+      filterStatsForTopScoringPeriodIds: { value: 5, additionalValue: [`00${year}`, `10${year}`] },
+    },
+  });
 }
 
-// ─── Top players across whole league (including undrafted) ────────────────────
-
-export interface AllPlayerFP {
-  playerId: number;
-  name: string;
-  position: string;
-  proTeam: string;
-  fp: number;
-}
-
-export async function getTopPlayersFP(year: number, limit = 130): Promise<AllPlayerFP[]> {
+async function fetchPlayers(year: number, players: Record<string, unknown>): Promise<PlayerRow[]> {
   try {
-    // Fetch extra to account for players with fp=0 in the result set
-    const fetchLimit = Math.ceil(limit * 1.5);
-    const filter = JSON.stringify({
-      players: {
-        limit: fetchLimit,
-        sortAppliedStatTotal: { sortAsc: false, sortPriority: 1, value: `00${year}` },
-        filterStatsForTopScoringPeriodIds: { value: 25, additionalValue: [`00${year}`] },
-      },
+    const data = await espnGet(year, '?view=kona_player_info', {
+      'x-fantasy-filter': playerFilter(year, players),
     });
-    const data = await espnGet(year, '?view=kona_player_info', { 'x-fantasy-filter': filter });
-    const results: AllPlayerFP[] = [];
-    for (const entry of (data.players || []) as any[]) {
-      const p = entry.playerPoolEntry?.player;
-      if (!p) continue;
-      const meta = playerMeta(p);
-      if (meta.fp <= 0) continue;
-      results.push({ playerId: p.id as number, name: meta.name, position: meta.position, proTeam: meta.proTeam, fp: meta.fp });
-      if (results.length >= limit) break;
-    }
-    return results; // already sorted fp desc by kona
+    return ((data.players || []) as any[])
+      .map(e => e.player)
+      .filter(Boolean)
+      .map(p => playerRow(p, year));
   } catch (e) {
-    console.error(`[draft] getTopPlayersFP failed year=${year}:`, e);
+    console.error(`[draft] player fetch failed year=${year}:`, e);
     return [];
   }
 }
 
-// ─── Grade ────────────────────────────────────────────────────────────────────
+/** Top players league-wide (drafted or not), sorted by actual or projected total. */
+function fetchPool(year: number, source: 'actual' | 'proj') {
+  return fetchPlayers(year, {
+    limit: POOL_FETCH,
+    sortAppliedStatTotal: {
+      sortAsc: false,
+      sortPriority: 1,
+      value: `${source === 'actual' ? '00' : '10'}${year}`,
+    },
+  });
+}
 
-function computeGrade(fp: number, pts: number, delta: number): DraftGrade {
-  if (pts === 0 && fp === 0) return 'INJ';
+/** Exactly the drafted players, so every pick has stats even if they rank outside the pool. */
+function fetchDrafted(year: number, ids: number[]) {
+  return fetchPlayers(year, { filterIds: { value: ids } });
+}
+
+interface SeasonStatus {
+  started: boolean;
+  complete: boolean;
+}
+
+async function getSeasonStatus(year: number): Promise<SeasonStatus> {
+  try {
+    const data = await espnGet(year, '?view=mStatus');
+    const latest = data.status?.latestScoringPeriod ?? 0;
+    const final = data.status?.finalScoringPeriod ?? 0;
+    return { started: latest > 0, complete: latest > 0 && latest >= final };
+  } catch (e) {
+    console.error(`[draft] mStatus failed year=${year}:`, e);
+    return { started: false, complete: false };
+  }
+}
+
+// ─── Ranking & grades ─────────────────────────────────────────────────────────
+
+/** Rank players 1..POOL_SIZE by `value` (highest first). Players with no value are left out. */
+function rankPlayers(rows: PlayerRow[], value: (r: PlayerRow) => number | null): Map<number, number> {
+  const ranked = rows
+    .map(r => ({ id: r.id, v: value(r) }))
+    .filter((x): x is { id: number; v: number } => x.v != null && x.v > 0)
+    .sort((a, b) => b.v - a.v)
+    .slice(0, POOL_SIZE);
+  return new Map(ranked.map((x, i) => [x.id, i + 1]));
+}
+
+// Positive delta = better than expected. Same bands for decision and result.
+function gradeDelta(delta: number): DraftGrade {
   if (delta >= 20) return 'A+';
   if (delta >= 10) return 'A';
   if (delta >= 4)  return 'B';
@@ -227,7 +185,9 @@ export async function getDraftBoard(year: number): Promise<DraftBoardData> {
   if (rawPicks.length === 0) {
     return {
       year, seasonLabel: seasonLabel(year),
-      teams: [], picks: [], rounds: 0, hasStats: false,
+      teams: [], picks: [], rounds: 0,
+      hasStats: false, hasProjections: false, inProgress: false,
+      gamesPlayed: 0, rankBasis: 'total', poolSize: POOL_SIZE,
     };
   }
 
@@ -239,29 +199,55 @@ export async function getDraftBoard(year: number): Promise<DraftBoardData> {
     }
   }
 
-  // 3. Fetch player names + season stats
+  // 3. Season status + player data (actual & projected) in parallel
   const playerIds = Array.from(new Set(rawPicks.map((p: any) => p.playerId as number)));
-  const playerData = await fetchPlayerData(year, playerIds);
-  const hasStats = playerData.size > 0 &&
-    Array.from(playerData.values()).some(pd => pd.fp > 0);
+  const [status, actualPool, projPool, drafted] = await Promise.all([
+    getSeasonStatus(year),
+    fetchPool(year, 'actual'),
+    fetchPool(year, 'proj'),
+    fetchDrafted(year, playerIds),
+  ]);
 
-  // 4. Rank drafted players by fp (stable: players with same fp get same rank)
-  const fpByPlayer: [number, number][] = playerIds.map(id => [id, playerData.get(id)?.fp ?? 0]);
-  fpByPlayer.sort((a, b) => b[1] - a[1]);
-  const rankMap = new Map<number, number>();
-  fpByPlayer.forEach(([id], i) => rankMap.set(id, i + 1));
+  const draftedById = new Map(drafted.map(r => [r.id, r]));
+  // Fall back to the pools if the filterIds query came back short.
+  for (const r of [...actualPool, ...projPool]) {
+    if (playerIds.includes(r.id) && !draftedById.has(r.id)) draftedById.set(r.id, r);
+  }
+
+  const hasStats = actualPool.some(r => r.fp > 0);
+  const hasProjections = projPool.some(r => r.projFp > 0);
+  const inProgress = hasStats && !status.complete;
+  const rankBasis: 'total' | 'perGame' = inProgress ? 'perGame' : 'total';
+
+  // "Through N games": the most games any top player has played so far.
+  const gamesPlayed = actualPool.reduce((m, r) => Math.max(m, r.gp), 0);
+  // In-season, ignore tiny samples so one 60-point game can't rank #1 per game.
+  const minGP = inProgress ? Math.max(1, Math.round(gamesPlayed * 0.25)) : 1;
+
+  // 4. Ranks among ALL players (drafted or not)
+  const actualValue = (r: PlayerRow) =>
+    r.gp < minGP ? null : rankBasis === 'perGame' ? r.fp / r.gp : r.fp;
+  const projValue = (r: PlayerRow) =>
+    rankBasis === 'perGame' ? (r.projGp > 0 ? r.projFp / r.projGp : null) : r.projFp;
+  const actualRanks = hasStats ? rankPlayers(actualPool, actualValue) : new Map<number, number>();
+  const projRanks = hasProjections ? rankPlayers(projPool, projValue) : new Map<number, number>();
+  const outside = POOL_SIZE + 1; // anything not in the top POOL_SIZE
 
   const numTeams = Object.keys(draftSlotMap).length;
 
   // 5. Build picks
   const picks: DraftPick[] = rawPicks.map((p: any) => {
-    const pd = playerData.get(p.playerId);
+    const pd = draftedById.get(p.playerId);
     const overallPick: number = p.overallPickNumber || (p.roundId - 1) * numTeams + p.roundPickNumber;
-    const seasonRank = hasStats ? (rankMap.get(p.playerId) ?? playerIds.length) : 0;
-    const delta = overallPick - seasonRank;
-    const grade: DraftGrade = hasStats
-      ? computeGrade(pd?.fp ?? 0, pd?.pts ?? 0, delta)
-      : '?';
+
+    const projRank = hasProjections && (pd?.projFp ?? 0) > 0
+      ? (projRanks.get(p.playerId) ?? outside) : null;
+    const didNotPlay = hasStats && (pd?.gp ?? 0) === 0;
+    const actualRank = hasStats && !didNotPlay
+      ? (actualRanks.get(p.playerId) ?? outside) : null;
+
+    const decision = projRank != null ? projRank - overallPick : null;
+    const result = actualRank != null ? overallPick - actualRank : null;
 
     return {
       overallPick,
@@ -274,12 +260,16 @@ export async function getDraftBoard(year: number): Promise<DraftBoardData> {
       playerName: pd?.name ?? `Player ${p.playerId}`,
       position:   pd?.position ?? '—',
       proTeam:    pd?.proTeam ?? '—',
-      fp:  pd?.fp  ?? 0,
-      pts: pd?.pts ?? 0,
-      gp:  pd?.gp  ?? 0,
-      seasonRank,
-      delta,
-      grade,
+      fp:      pd?.fp ?? 0,
+      gp:      pd?.gp ?? 0,
+      projFp:  pd?.projFp ?? 0,
+      projGp:  pd?.projGp ?? 0,
+      projRank,
+      actualRank,
+      decision,
+      result,
+      decisionGrade: decision != null ? gradeDelta(decision) : '?',
+      grade: !hasStats ? '?' : didNotPlay ? 'INJ' : gradeDelta(result as number),
     };
   });
 
@@ -305,6 +295,11 @@ export async function getDraftBoard(year: number): Promise<DraftBoardData> {
     picks,
     rounds,
     hasStats,
+    hasProjections,
+    inProgress,
+    gamesPlayed,
+    rankBasis,
+    poolSize: POOL_SIZE,
   };
 }
 

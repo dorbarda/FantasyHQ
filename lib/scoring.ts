@@ -18,9 +18,12 @@
  *   17 = 3PM  (Three Pointers Made)
  *   38 = TD   (Triple Doubles)
  *   39 = QD   (Quadruple Doubles) — ESPN stat ID assumed, not verified against a live payload
- *   40 = GP×30 (Games Played encoded as GP×30 — NOT a scoring stat, used for GP calc only)
- *   41 = TF   (Technical Fouls)
- *   42 = EJ   (Ejections)
+ *   40 = MIN  (Minutes played — NOT a scoring stat)
+ *   42 = GP   (Games played — NOT a scoring stat; verified against live payloads, 41 mirrors it)
+ *
+ * Stats 41/42 were once treated as technical fouls / ejections (-2 / -5 per game),
+ * which knocked 7 pts per game played off every player. ESPN's own appliedTotal
+ * matches the table below without them.
  */
 
 /** Maps ESPN stat ID → our league's point multiplier */
@@ -38,8 +41,6 @@ export const SCORING: Readonly<Record<string, number>> = {
   '17':  1,   // 3PM   ×1
   '38':  5,   // TD    ×5
   '39': 100,  // QD    ×100
-  '41': -2,   // TF    ×-2
-  '42': -5,   // EJ    ×-5
 };
 
 /** Human-readable label for each ESPN stat ID (for display / debugging) */
@@ -57,9 +58,8 @@ export const STAT_LABELS: Readonly<Record<string, string>> = {
   '17': '3PM',
   '38': 'TD',
   '39': 'QD',
-  '40': 'GP×30',
-  '41': 'TF',
-  '42': 'EJ',
+  '40': 'MIN',
+  '42': 'GP',
 };
 
 /**
@@ -75,12 +75,9 @@ export function computeFP(stats: Record<string, number>): number {
   return Math.round(total * 10) / 10;
 }
 
-/**
- * Extract games played from a raw ESPN stats map.
- * ESPN encodes GP as GP×30 in stat ID 40.
- */
+/** Extract games played from a raw ESPN season-totals stats map (stat ID 42). */
 export function getGP(stats: Record<string, number>): number {
-  return Math.round((stats['40'] || 0) / 30);
+  return Math.round(stats['42'] || 0);
 }
 
 /**

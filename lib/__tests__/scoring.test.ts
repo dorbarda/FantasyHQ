@@ -9,7 +9,6 @@ describe('computeFP', () => {
     expect(computeFP({ '3': 5 })).toBe(10);       // AST ×2
     expect(computeFP({ '11': 4 })).toBe(-8);      // TO ×-2
     expect(computeFP({ '39': 1 })).toBe(100);     // QD ×100
-    expect(computeFP({ '42': 1 })).toBe(-5);      // EJ ×-5
   });
 
   it('nets shooting efficiency: FGM×2 − FGA, FTM − FTA', () => {
@@ -28,8 +27,8 @@ describe('computeFP', () => {
     expect(computeFP(line)).toBe(25 + 10 + 14 + 8 + 4 - 6 + 18 - 18 + 4 - 5 + 3);
   });
 
-  it('ignores stat IDs outside the scoring table (e.g. GP encoding)', () => {
-    expect(computeFP({ '40': 300, '99': 50 })).toBe(0);
+  it('ignores stat IDs outside the scoring table (minutes, GP)', () => {
+    expect(computeFP({ '40': 300, '41': 70, '42': 70, '99': 50 })).toBe(0);
   });
 
   it('rounds to one decimal', () => {
@@ -40,15 +39,17 @@ describe('computeFP', () => {
     expect(computeFP({})).toBe(0);
   });
 
-  it('GP encoding stat (40) is not part of the scoring table', () => {
+  it('minutes (40) and games played (41/42) are not part of the scoring table', () => {
     expect(SCORING['40']).toBeUndefined();
+    expect(SCORING['41']).toBeUndefined();
+    expect(SCORING['42']).toBeUndefined();
   });
 });
 
 describe('getGP', () => {
-  it('decodes GP from the GP×30 encoding', () => {
-    expect(getGP({ '40': 2460 })).toBe(82);
-    expect(getGP({ '40': 30 })).toBe(1);
+  it('reads GP from stat 42', () => {
+    expect(getGP({ '42': 70, '40': 2575 })).toBe(70);
+    expect(getGP({ '42': 1 })).toBe(1);
   });
 
   it('returns 0 when the stat is missing', () => {
@@ -98,7 +99,7 @@ describe('extractPerGameStats', () => {
 
   it('falls back to season totals divided by GP', () => {
     const stats = extractPerGameStats([
-      { statSourceId: 0, statSplitTypeId: 0, scoringPeriodId: 0, stats: { '0': 820, '40': 1230 } }, // 41 GP
+      { statSourceId: 0, statSplitTypeId: 0, scoringPeriodId: 0, stats: { '0': 820, '42': 41 } }, // 41 GP
     ]);
     expect(stats['0']).toBe(20);
   });

@@ -328,14 +328,18 @@ export interface DraftPick {
   ownerName: string;
   playerId: number;
   playerName: string;
-  position: string;      // G / F / C
+  position: string;      // PG / SG / SF / PF / C / G / F
   proTeam: string;
-  fp: number;            // season fantasy points (pts + reb*1.2 + ast*1.5 + tpm*3)
-  pts: number;
-  gp: number;            // games played (minutes / 30 proxy)
-  seasonRank: number;    // rank among all drafted players by fp
-  delta: number;         // overallPick - seasonRank (positive = outperformed)
-  grade: DraftGrade;
+  fp: number;            // season fantasy points (ESPN appliedTotal)
+  gp: number;            // games played
+  projFp: number;        // ESPN preseason projected fantasy points
+  projGp: number;        // ESPN preseason projected games
+  projRank: number | null;   // rank by ESPN projection among ALL players (null = no projection)
+  actualRank: number | null; // rank by actual season output among ALL players (null = did not play / unranked)
+  decision: number | null;   // projRank - overallPick  (positive = got a bargain, negative = reached)
+  result: number | null;     // overallPick - actualRank (positive = paid off, negative = bust)
+  decisionGrade: DraftGrade; // grade of `decision`
+  grade: DraftGrade;         // grade of `result`
 }
 
 export interface DraftTeamSlot {
@@ -351,7 +355,12 @@ export interface DraftBoardData {
   teams: DraftTeamSlot[]; // sorted by draftSlot asc
   picks: DraftPick[];
   rounds: number;
-  hasStats: boolean;      // false if player stats fetch failed
+  hasStats: boolean;        // false before the season starts (no actual results yet)
+  hasProjections: boolean;  // false if ESPN projections could not be loaded
+  inProgress: boolean;      // season started but not finished
+  gamesPlayed: number;      // "through N games" — most games played by any top player so far
+  rankBasis: 'total' | 'perGame'; // finished seasons rank by total FP, in-progress by FP per game
+  poolSize: number;         // number of players ranked (ranks beyond this show as "outside")
 }
 
 // ─── Transactions ─────────────────────────────────────────────────────────────

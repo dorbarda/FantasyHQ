@@ -140,7 +140,7 @@ export default function ProjectionsTable({ rows, lastLabel, nextLabel }: Props) 
       </div>
 
       <div className="overflow-x-auto max-h-[640px] overflow-y-auto">
-        <table className="w-full min-w-[560px]">
+        <table className="w-full min-w-[640px]">
           <thead className="sticky top-0 bg-surface">
             <tr className="border-b border-border">
               <th className="pl-4 pr-1 py-2 w-8" />

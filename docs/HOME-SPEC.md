@@ -59,5 +59,6 @@ fetches clips uploaded late. If nothing changed it makes no commit.
 
 ## 5. Open / to verify
 
-- Daily team totals are computed by us (sum of starters). Compare with ESPN
-  on the first game night (~Oct 21) to confirm they match.
+- ~~Daily team totals are computed by us (sum of starters).~~ Verified
+  2026-10-06 against ESPN's own `pointsByScoringPeriod`: 40 team-days from
+  2025-26, 0 mismatches.

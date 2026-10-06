@@ -50,7 +50,11 @@ is rebuilt without the empty season.
 Home redesigned as "last night": top 5 players, manager / worst manager of
 the night, closest matchup, last night's clips. Spec: `docs/HOME-SPEC.md`.
 New `nightly` snapshot; Action now runs 06:00 UTC (+ 09:00 catch-up).
-**Verify on the first game night (~Oct 21):** our daily team totals match ESPN.
+Daily team totals verified against ESPN (40 team-days, 0 mismatches).
+
+Depth fix (same day): starter-games no longer count bench/IR players who
+played. 2025-26 depth snapshot rebuilt — 61 of 180 team-weeks changed
+(7,619 → 7,531 games); scores unchanged; some Grinder/Sniper winners moved.
 
 Still open — needs Dor:
 - `data/rules.json` looks out of date (says 9-cat, 15 rounds, weeks 22-24

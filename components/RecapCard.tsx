@@ -26,7 +26,7 @@ function detailOf(award: Award, w: AwardWinner): string {
     case 'grinder':
       return `${w.value} starter games used`;
     case 'sniper':
-      return `${w.teamScore?.toFixed(1)} points`;
+      return `pts per game · ${w.teamScore?.toFixed(1)} points`;
     case 'hotPickup':
       return w.proTeam ? `${w.proTeam} · added ${w.value}×` : `Added ${w.value}×`;
   }

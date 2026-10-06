@@ -130,7 +130,7 @@ const META: Record<AwardId, { name: string; rtl: boolean; gloss: string }> = {
   noLuck:      { name: 'לאילי אין מזל', rtl: true,  gloss: 'Unluckiest loss' },
   slotzki:     { name: 'פרס הסלוצקי',   rtl: true,  gloss: 'Luckiest win' },
   grinder:     { name: 'עשה ברדה',      rtl: true,  gloss: 'Most starter games' },
-  sniper:      { name: 'Sniper',         rtl: false, gloss: 'Best points per slot' },
+  sniper:      { name: 'Sniper',         rtl: false, gloss: 'Best points per game' },
   hotPickup:   { name: 'Hot Pickup',     rtl: false, gloss: 'Most added player' },
 };
 
@@ -209,9 +209,12 @@ export function computeWeeklyRecap(
   awards.push(award('grinder',
     bestOf(wk, r => r.totalPlayers).map(r => toWinner(r, r.totalPlayers, 'count'))));
 
-  // Sniper — best points per starter game.
+  // Sniper — best points per starter game (plain score ÷ games, decided
+  // 2026-10-06; it used to rank by score ÷ games², which mostly rewarded
+  // using few games). Ranked unrounded, shown to 1 decimal.
+  const perGame = (r: MatchupDepthRow) => (r.totalPlayers > 0 ? r.teamScore / r.totalPlayers : 0);
   awards.push(award('sniper',
-    bestOf(wk, r => r.efficiency).map(r => toWinner(r, r.efficiency, 'decimal'))));
+    bestOf(wk, perGame).map(r => toWinner(r, Math.round(perGame(r) * 10) / 10, 'score'))));
 
   // Hot Pickup — needs per-week adds, which the transactions snapshot only
   // gains after the change in docs/RECAP-SPEC.md §4. Absent until then.

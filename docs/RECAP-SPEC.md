@@ -59,7 +59,8 @@ not translate, "correct", or reinterpret them.
 6. **עשה ברדה** *(The Grinder)* — most starter-games used (`totalPlayers`).
    The streaming award: who actually worked the waiver wire and filled every
    slot.
-7. **Sniper** — best `efficiency` (points per starter-game): most output per
+7. **Sniper** — best points per starter-game (`teamScore ÷ totalPlayers`;
+   *not* `efficiency`, which is score ÷ games² — changed 2026-10-06): most output per
    roster slot used. Deliberately the counterpoint to Grinder — one rewards
    volume, the other rewards precision.
 

@@ -154,8 +154,20 @@ describe('עשה ברדה (most starter games)', () => {
   });
 });
 
-describe('Sniper (best points per slot)', () => {
-  it('picks the highest efficiency, not the highest score', () => {
+describe('Sniper (best points per game)', () => {
+  it('ranks by plain points per game, not score ÷ games²', () => {
+    const rows = [
+      // Ann: 1200 / 40 = 30.0 per game. Cal: 580 / 20 = 29.0 — fewer games
+      // must not be rewarded on its own (score ÷ games² would pick Cal).
+      ...pair('Ann', 1200, 'Ben', 900, { totalPlayers: 40 }),
+      ...pair('Cal', 580, 'Dan', 500, { totalPlayers: 20 }),
+    ];
+    const [w] = winnersOf(computeWeeklyRecap(rows, 1), 'sniper');
+    expect(w.ownerName).toBe('Ann');
+    expect(w.value).toBe(30);
+  });
+
+  it('picks the best points per game, not the highest score', () => {
     const rows = [
       // Ann scores more in total but uses far more slots to do it.
       ...pair('Ann', 200, 'Ben', 100, { totalPlayers: 60 }),
@@ -333,7 +345,7 @@ describe('week 18 of 2025-26 (golden)', () => {
     expect(w.value).toBe(50);
   });
 
-  it('Sniper — Omer Rosenberg had the best points per slot', () => {
+  it('Sniper — Omer Rosenberg had the best points per game', () => {
     const [w] = winnersOf(recap, 'sniper');
     expect(w.ownerName).toBe('Omer Rosenberg');
   });

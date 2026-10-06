@@ -45,6 +45,17 @@ Fixed on `claude/friendly-dirac-jlin7m`:
 After merging: run the `ESPN snapshot` Action once by hand so records.json
 is rebuilt without the empty season.
 
+### Home page = daily recap (2026-10-06)
+
+Home redesigned as "last night": top 5 players, manager / worst manager of
+the night, closest matchup, last night's clips. Spec: `docs/HOME-SPEC.md`.
+New `nightly` snapshot; Action now runs 06:00 UTC (+ 09:00 catch-up).
+Daily team totals verified against ESPN (40 team-days, 0 mismatches).
+
+Depth fix (same day): starter-games no longer count bench/IR players who
+played. 2025-26 depth snapshot rebuilt — 61 of 180 team-weeks changed
+(7,619 → 7,531 games); scores unchanged; some Grinder/Sniper winners moved.
+
 Still open — needs Dor:
 - `data/rules.json` looks out of date (says 9-cat, 15 rounds, weeks 22-24
   playoffs; the league scores points and ESPN shows 13 rounds). Validate.

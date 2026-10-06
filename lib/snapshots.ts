@@ -29,7 +29,8 @@ export type SnapshotName =
   | 'matchup-depth'
   | 'playoff-depth'
   | 'schedule'
-  | 'highlights';
+  | 'highlights'
+  | 'nightly';
 
 /**
  * Snapshots that hold ONE season's data. After a rollover the nightly job
@@ -45,6 +46,7 @@ const SEASON_SCOPED: ReadonlySet<SnapshotName> = new Set<SnapshotName>([
   'playoff-depth',
   'schedule',
   'highlights',
+  'nightly',
 ]);
 
 export function readSnapshot<T>(name: SnapshotName): SnapshotFile<T> | null {

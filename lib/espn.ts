@@ -11,6 +11,7 @@ import type {
 import { computeFP, extractSeasonStats, extractPerGameStats } from './scoring';
 
 import { CURRENT_SEASON } from './season';
+import { NON_SCORING_SLOTS, countStartersOnDay } from './lineup';
 
 const ESPN_S2 = process.env.ESPN_S2;
 const SWID = process.env.SWID;
@@ -742,24 +743,6 @@ async function buildDepthData(
     }
   });
 
-  const MAX_PLAYERS_PER_DAY = 10; // a fantasy team can only start 10 players/day
-
-  function countPlayersOnDay(entries: any[], scoringPeriodId: number): number {
-    let count = 0;
-    for (const entry of entries) {
-      const p = entry.playerPoolEntry?.player;
-      if (!p) continue;
-      const stats: any[] = p.stats || [];
-      const dayStat = stats.find(
-        (s: any) => s.statSourceId === 0 && s.scoringPeriodId === scoringPeriodId
-      );
-      if (dayStat && (dayStat.appliedTotal > 0 || (dayStat.stats?.['0'] || 0) > 0 || (dayStat.stats?.['40'] || 0) > 0)) {
-        count++;
-      }
-    }
-    return Math.min(count, MAX_PLAYERS_PER_DAY);
-  }
-
   const rows: MatchupDepthRow[] = [];
 
   for (const m of completed) {
@@ -773,10 +756,10 @@ async function buildDepthData(
       const meta = teamMeta[mySide.teamId] || { name: '?', owner: '?' };
       const oppMeta = teamMeta[oppSide?.teamId] || { name: '?', owner: '?' };
 
-      // Count players for each day using that day's own roster fetch
+      // Starters who played each day (bench/IR excluded), from that day's own roster fetch
       const dailyPlayers = scoringPeriods.map(sp => {
         const entries = periodDayMap[m.matchupPeriodId]?.[sp]?.[mySide.teamId] || [];
-        return countPlayersOnDay(entries, sp);
+        return countStartersOnDay(entries, sp);
       });
       const totalPlayers = dailyPlayers.reduce((s, n) => s + n, 0);
 
@@ -828,8 +811,6 @@ export async function getPlayoffDepth(): Promise<MatchupDepthData> {
 // ─── TOP PERFORMERS (for recap highlights) ───────────────────────────────────
 
 /** ESPN basketball lineup slots that don't score: bench (12) and IR (13). */
-const NON_SCORING_SLOTS = new Set([12, 13]);
-
 export interface DayPerformer {
   date: string;
   playerName: string;
@@ -873,6 +854,38 @@ export async function getTopPerformers(
     out.push(...dayList.slice(0, perDay));
   }
   return out;
+}
+
+export interface NightLineupTeam {
+  teamName: string;
+  ownerName: string;
+  starters: Array<{ playerName: string; proTeamId: number; fantasyPoints: number; played: boolean }>;
+}
+
+/**
+ * Every team's starters for one day, with that day's fantasy points — the raw
+ * input for the home page's daily recap (lib/nightly.ts). Bench and IR are
+ * left out: they don't score for their owner.
+ */
+export async function getNightLineups(scoringPeriodId: number): Promise<NightLineupTeam[]> {
+  const data = await espnFetch(`?view=mRoster&view=mTeam&scoringPeriodId=${scoringPeriodId}`, undefined, true);
+  const memberMap = buildMemberMap(data.members || []);
+
+  return ((data.teams || []) as any[]).map(team => ({
+    teamName: team.name || '',
+    ownerName: resolveOwnerName(team.name || '', team.owners || [], memberMap),
+    starters: ((team.roster?.entries || []) as any[])
+      .filter(entry => !NON_SCORING_SLOTS.has(entry.lineupSlotId) && entry.playerPoolEntry?.player?.fullName)
+      .map(entry => {
+        const p = entry.playerPoolEntry.player;
+        const dayStat = (p.stats || []).find(
+          (st: any) => st.statSourceId === 0 && st.scoringPeriodId === scoringPeriodId
+        );
+        const fantasyPoints = dayStat?.appliedTotal || 0;
+        const minutes = dayStat?.stats?.['40'] || 0;
+        return { playerName: p.fullName, proTeamId: p.proTeamId, fantasyPoints, played: minutes > 0 || fantasyPoints !== 0 };
+      }),
+  }));
 }
 
 // ─── TRANSACTIONS ─────────────────────────────────────────────────────────────

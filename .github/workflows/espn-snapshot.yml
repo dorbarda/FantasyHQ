@@ -1,12 +1,15 @@
 name: ESPN snapshot
 
-# Nightly refresh of data/snapshots/*.json. Runs after all NBA games finish
-# (09:00 UTC = noon Israel). The commit triggers a Vercel redeploy, so the
+# Nightly refresh of data/snapshots/*.json. Main run 06:00 UTC = 08:00 Israel
+# winter time (09:00 summer), for the home page's daily recap. The 09:00 UTC
+# run is a catch-up: a late West Coast game can still be on at 06:00, and that
+# run fixes its numbers and picks up late clips (no commit if nothing changed). The commit triggers a Vercel redeploy, so the
 # analytical pages rebuild on fresh data every morning. A red run means the
 # ESPN cookies expired — GitHub emails the repo owner on workflow failure.
 
 on:
   schedule:
+    - cron: '0 6 * * *'
     - cron: '0 9 * * *'
   workflow_dispatch:
 

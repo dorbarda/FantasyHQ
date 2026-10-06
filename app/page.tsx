@@ -1,19 +1,35 @@
-import Link from 'next/link';
 import Image from 'next/image';
-import { hasEspnCredentials, getMatchups, getStandings, getPlayoffBracket } from '@/lib/espn';
+import { hasEspnCredentials, getMatchups } from '@/lib/espn';
 import matchupsJson from '@/data/matchups.json';
-import standingsJson from '@/data/standings.json';
-import { loadCurrentPlayoffs } from '@/lib/playoffs';
-import { computeAllScores } from '@/lib/playoff-scoring';
-import type { Matchup, MatchupsData, StandingEntry, PlayoffBracketData, BracketMatchup } from '@/lib/types';
-import ScoreStrip from '@/components/ScoreStrip';
+import type { Matchup, MatchupsData } from '@/lib/types';
 import OwnerAvatar from '@/components/OwnerAvatar';
-import RecapTeaser from '@/components/RecapTeaser';
-import { computeWeeklyRecap, latestRecapWeek } from '@/lib/recap';
-import { CURRENT_SEASON, CURRENT_SEASON_DISPLAY } from '@/lib/season';
-import { loadRecapRows, loadAddsForWeek } from '@/lib/recap-data';
+import RecapHighlights from '@/components/RecapHighlights';
+import { CURRENT_SEASON_DISPLAY } from '@/lib/season';
+import { loadNightlyRecap } from '@/lib/nightly-data';
+import { loadHighlightsForDates } from '@/lib/highlights-data';
+import {
+  managerOfTheNight,
+  worstManagerOfTheNight,
+  topPlayers,
+  type ManagerAward,
+  type NightPlayer,
+} from '@/lib/nightly';
 
 export const revalidate = 1800;
+
+/**
+ * Home — the daily recap: what happened last night. Spec: docs/HOME-SPEC.md.
+ * Everything except the closest matchup reads the nightly snapshots, so the
+ * page renders without waiting on ESPN or YouTube.
+ */
+
+/** "2026-10-20" → "Tue, Oct 20" */
+function nightLabel(date: string): string {
+  const d = new Date(`${date}T12:00:00Z`);
+  return isNaN(d.getTime())
+    ? date
+    : d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' });
+}
 
 // ─── Closest matchup ──────────────────────────────────────────────────────────
 
@@ -23,108 +39,6 @@ function findClosestMatchup(matchups: Matchup[]): Matchup {
     const closestDiff = Math.abs(closest.home.actualScore - closest.away.actualScore);
     return diff < closestDiff ? m : closest;
   });
-}
-
-// ─── Semi-Finals Card ─────────────────────────────────────────────────────────
-
-function SemiFinalsCard({ matchups }: { matchups: BracketMatchup[] }) {
-  return (
-    <div className="rounded-2xl overflow-hidden bg-panel text-white">
-      {/* Header */}
-      <div className="flex items-center justify-between px-5 py-3 border-b border-white/10">
-        <div className="flex items-center gap-2">
-          <svg viewBox="0 0 16 16" fill="none" className="w-3.5 h-3.5 shrink-0">
-            <path d="M8 2l1.8 4H14l-3.6 2.6 1.4 4.4L8 10.5 4.2 13 5.6 8.6 2 6h4.2z" fill="#C8956C"/>
-          </svg>
-          <span className="text-[12px] font-semibold text-accent uppercase tracking-wider">
-            Playoffs · Semi-Finals
-          </span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="relative flex h-1.5 w-1.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
-            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-accent" />
-          </span>
-          <span className="text-[11px] font-semibold text-accent">In Progress</span>
-        </div>
-      </div>
-
-      {/* Matchups */}
-      <div className="divide-y divide-white/5">
-        {matchups.map((m, idx) => {
-          const { home, away, winner } = m;
-          const homeWon = winner === 'home';
-          const awayWon = winner === 'away';
-          const ongoing = winner === null;
-          const homeLeading = ongoing && away !== null && home.score > away.score;
-          const awayLeading = ongoing && away !== null && away.score > home.score;
-
-          return (
-            <div key={m.id} className="px-5 py-4">
-              {/* Matchup label */}
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-panel-text-muted mb-3">
-                Matchup {idx + 1}
-              </p>
-
-              <div className="grid grid-cols-[1fr_auto_1fr] gap-2 items-stretch">
-                {(
-                  [
-                    { team: home, won: homeWon, leading: homeLeading, lost: awayWon },
-                    away ? { team: away, won: awayWon, leading: awayLeading, lost: homeWon } : null,
-                  ].filter(Boolean) as { team: import('@/lib/types').BracketTeam; won: boolean; leading: boolean; lost: boolean }[]
-                ).map(({ team, won, leading, lost }, ti) => (
-                  <>
-                    {ti === 1 && (
-                      <div key="vs" className="flex items-center justify-center px-1">
-                        <span className="text-[11px] font-bold text-panel-text">VS</span>
-                      </div>
-                    )}
-                    <div
-                      key={team.teamId}
-                      className={`flex flex-col items-center gap-2 rounded-xl px-3 py-4 text-center transition-colors ${
-                        won ? 'bg-positive/10 border border-positive/20' : lost ? 'opacity-40 bg-white/3' : leading ? 'bg-white/5' : 'bg-white/3'
-                      }`}
-                    >
-                      <span className="text-[10px] font-bold text-panel-text-muted">#{team.seed}</span>
-                      <OwnerAvatar ownerName={team.ownerName} teamName={team.teamName} size={56} />
-                      <div className="min-w-0 w-full">
-                        <p className={`text-[13px] font-bold leading-tight truncate ${won ? 'text-positive' : 'text-white'}`}>
-                          {team.ownerName}
-                        </p>
-                        <p className="text-[10px] text-panel-text-muted truncate">{team.teamName}</p>
-                      </div>
-                      <p className={`text-[28px] font-bold tabular-nums leading-none ${
-                        won ? 'text-positive' : leading ? 'text-white' : 'text-panel-text-muted'
-                      }`}>
-                        {team.score > 0 ? team.score.toFixed(1) : '—'}
-                      </p>
-                      {won && (
-                        <span className="text-[9px] font-bold bg-positive/20 text-positive border border-positive/30 rounded px-2 py-0.5">ADV</span>
-                      )}
-                      {leading && team.score > 0 && (
-                        <span className="text-[9px] font-bold bg-accent/20 text-accent border border-accent/30 rounded px-2 py-0.5">LEAD</span>
-                      )}
-                      {!won && team.playersRemainingToday > 0 && (
-                        <span className="text-[9px] font-medium text-panel-text-muted">
-                          {team.playersRemainingToday} starter game{team.playersRemainingToday !== 1 ? 's' : ''} left
-                        </span>
-                      )}
-                    </div>
-                  </>
-                ))}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="px-5 py-3 border-t border-white/5">
-        <Link href="/league" className="text-[12px] font-medium text-accent hover:text-accent-hover transition-colors inline-flex items-center min-h-[24px]">
-          View full bracket →
-        </Link>
-      </div>
-    </div>
-  );
 }
 
 // ─── Closest Matchup Hero Card ────────────────────────────────────────────────
@@ -230,326 +144,139 @@ function ClosestMatchupCard({ matchup, week }: { matchup: Matchup; week: number 
   );
 }
 
-// ─── Weekly Score Cards (Statmuse-style) ─────────────────────────────────────
+// ─── Top players of the night ─────────────────────────────────────────────────
 
-/**
- * Matchup cards share one surface and let *state* carry the colour, so the
- * grid reads as a system: a live game is accented and forward, a finished
- * one recedes, an upcoming one is quiet. (These used to be six decorative
- * fills applied by list position, which meant nothing.)
- */
-function cardStateStyle(m: Matchup) {
-  if (m.isLive)  return { ring: 'border-accent', label: 'Live',     labelClass: 'text-accent' };
-  if (m.isFinal) return { ring: 'border-panel-border', label: 'Final', labelClass: 'text-panel-text-muted' };
-  return { ring: 'border-panel-border/60', label: 'Upcoming', labelClass: 'text-panel-text-muted' };
-}
-
-function WeekScoreCards({ matchups, closestId, week }: { matchups: Matchup[]; closestId: string; week: number }) {
-  const others = matchups.filter((m) => m.id !== closestId);
-
+function TopPlayersCard({ players }: { players: NightPlayer[] }) {
   return (
-    <div>
-      <div className="flex items-center justify-between mb-3">
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-muted">
-          All Matchups · Week {week}
-        </p>
-        <Link href="/matchups" className="text-[12px] font-medium text-accent-text hover:text-accent transition-colors inline-flex items-center min-h-[24px]">
-          See all →
-        </Link>
+    <section className="bg-surface border border-border rounded-2xl overflow-hidden">
+      <div className="px-5 py-3 border-b border-border">
+        <p className="type-section-label">Top {players.length} players of the night</p>
       </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {others.map((m) => {
-          const state = cardStateStyle(m);
-          const homeLeading = m.home.actualScore >= m.away.actualScore;
-          const hasScores = m.home.actualScore > 0 || m.away.actualScore > 0;
-
-          return (
-            <div
-              key={m.id}
-              className={`rounded-xl border bg-panel p-4 flex flex-col gap-3 ${state.ring} ${m.isLive ? 'border-2' : ''}`}
-            >
-              {/* Status */}
-              <div className="flex items-center gap-1.5">
-                {m.isLive && (
-                  <span className="relative flex h-1.5 w-1.5 mr-0.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-positive opacity-75" />
-                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-positive" />
-                  </span>
-                )}
-                <span className={`text-[10px] font-semibold uppercase tracking-wider ${state.labelClass}`}>
-                  {state.label}
-                </span>
-              </div>
-
-              {/* Teams + Scores — 2 side-by-side boxes */}
-              <div className="grid grid-cols-[1fr_auto_1fr] gap-2 items-stretch">
-                {[m.home, m.away].map((team, ti) => {
-                  const isLeading = hasScores && (ti === 0 ? homeLeading : !homeLeading);
-                  return (
-                    <>
-                      {ti === 1 && (
-                        <div key="vs" className="flex items-center justify-center">
-                          <span className="text-[10px] font-bold text-white/20">VS</span>
-                        </div>
-                      )}
-                      <div key={team.teamId} className={`flex flex-col items-center gap-1.5 rounded-lg p-3 text-center ${isLeading ? 'bg-white/8' : 'bg-white/3'}`}>
-                        <OwnerAvatar ownerName={team.ownerName} teamName={team.teamName} size={48} />
-                        <p className={`text-[12px] font-bold leading-tight truncate w-full ${isLeading ? 'text-white' : 'text-white/60'}`}>
-                          {team.ownerName}
-                        </p>
-                        <p className="text-[9px] text-white/30 truncate w-full">{team.teamName}</p>
-                        <p className={`text-[24px] font-bold tabular-nums leading-none ${isLeading ? 'text-white' : 'text-white/40'}`}>
-                          {hasScores ? team.actualScore.toFixed(1) : '—'}
-                        </p>
-                        {!m.isFinal && team.playersRemainingToday > 0 && (
-                          <p className="text-[9px] text-white/40">
-                            {team.playersRemainingToday} left
-                          </p>
-                        )}
-                      </div>
-                    </>
-                  );
-                })}
-              </div>
-
-              {/* H2H record */}
-              {m.h2h && (
-                <p className="text-[10px] text-white/25 border-t border-white/10 pt-2 mt-1">
-                  H2H: {m.home.ownerName} {m.h2h.homeWins}–{m.h2h.awayWins} {m.away.ownerName}
-                </p>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-// ─── Standings Panel ──────────────────────────────────────────────────────────
-
-function HomeStandingsPanel({ standings }: { standings: StandingEntry[] }) {
-  const top = standings.slice(0, 8);
-
-  return (
-    <div className="bg-surface rounded-xl border border-border overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-        <p className="text-[13px] font-bold text-foreground">Standings</p>
-        <Link href="/league" className="text-[12px] font-medium text-accent-text hover:text-accent transition-colors inline-flex items-center min-h-[24px]">
-          Full table →
-        </Link>
-      </div>
-
-      <div className="divide-y divide-surface-secondary">
-        {top.map((entry) => {
-          const isTop3 = entry.rank <= 3;
-          const rankColor = entry.rank === 1 ? 'var(--gold-text)' : entry.rank === 2 ? 'var(--silver-text)' : entry.rank === 3 ? 'var(--bronze-text)' : 'var(--foreground-muted)';
-
-          return (
-            <div key={entry.teamId} className="flex items-center gap-3 px-4 py-2.5 hover:bg-background transition-colors">
-              <span
-                className="text-[12px] font-bold w-5 text-center shrink-0 tabular-nums"
-                style={{ color: rankColor }}
-              >
-                {entry.rank}
-              </span>
-              <OwnerAvatar ownerName={entry.ownerName} teamName={entry.teamName} size={28} />
-              <div className="flex-1 min-w-0">
-                <p className={`text-[13px] font-semibold leading-tight truncate ${isTop3 ? 'text-foreground' : 'text-foreground-strong'}`}>
-                  {entry.ownerName}
-                </p>
-                <p className="text-[10px] text-muted truncate">{entry.teamName}</p>
-              </div>
-              <div className="text-right shrink-0">
-                <p className="text-[12px] font-bold tabular-nums text-foreground">
-                  {entry.wins}–{entry.losses}
-                </p>
-                <p className="text-[10px] text-muted tabular-nums">
-                  {entry.points.toFixed(0)} pts
-                </p>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-// ─── Playoff Leaderboard Preview ─────────────────────────────────────────────
-
-function PlayoffLeaderboardPreview() {
-  const { bets: allBets, results } = loadCurrentPlayoffs();
-  if (allBets.length === 0) return null;
-
-  const scores = computeAllScores(allBets, results);
-  const rankColors = ['var(--gold-text)', 'var(--silver-text)', 'var(--bronze-text)'];
-
-  return (
-    <div className="bg-surface rounded-xl border border-border overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-        <div>
-          <p className="text-[13px] font-bold text-foreground">Playoffs Picks</p>
-          <p className="text-[10px] text-muted">NBA {CURRENT_SEASON} · Play-In</p>
-        </div>
-        <Link href="/nba-playoffs" className="text-[12px] font-medium text-accent-text hover:text-accent transition-colors inline-flex items-center min-h-[24px]">
-          Full table →
-        </Link>
-      </div>
-      <div className="divide-y divide-surface-secondary">
-        {scores.map((s, i) => (
-          <div key={s.ownerName} className="flex items-center gap-3 px-4 py-2 hover:bg-background transition-colors">
-            <span
-              className="text-[12px] font-bold w-5 text-center shrink-0 tabular-nums"
-              style={{ color: rankColors[i] ?? 'var(--foreground-muted)' }}
-            >
+      <ol>
+        {players.map((p, i) => (
+          <li
+            key={`${p.playerName}-${p.ownerName}`}
+            className="flex items-center gap-3 px-5 py-3 border-b border-border last:border-b-0"
+          >
+            <span className={`w-5 text-[15px] font-bold tabular-nums ${i === 0 ? 'text-accent' : 'text-muted'}`}>
               {i + 1}
             </span>
-            <p className="flex-1 text-[13px] font-semibold text-foreground truncate">
-              {s.ownerName.split(' ')[0]}
-            </p>
-            <span className="text-[14px] font-bold tabular-nums text-foreground">{s.total}</span>
-          </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[15px] font-semibold text-foreground truncate">
+                {p.playerName}
+                {p.proTeam && <span className="text-[12px] font-medium text-muted"> · {p.proTeam}</span>}
+              </p>
+              <div className="flex items-center gap-1.5 mt-0.5 min-w-0">
+                <OwnerAvatar ownerName={p.ownerName} teamName={p.teamName} size={16} />
+                <span className="text-[12px] text-secondary truncate">{p.ownerName}</span>
+              </div>
+            </div>
+            <div className="text-right shrink-0">
+              <p className="text-[20px] font-bold tabular-nums text-foreground leading-none">{p.fantasyPoints.toFixed(1)}</p>
+              <p className="text-[10px] text-muted uppercase tracking-wider mt-1">FPts</p>
+            </div>
+          </li>
         ))}
-      </div>
-    </div>
+      </ol>
+    </section>
   );
 }
 
-// ─── Quick Links ──────────────────────────────────────────────────────────────
+// ─── Best / worst manager ─────────────────────────────────────────────────────
 
-const QUICK_LINKS = [
-  { href: '/draft',     label: 'Draft',    emoji: '📋' },
-  { href: '/league',    label: 'Standings', emoji: '📊' },
-  { href: '/records',   label: 'Records',  emoji: '🏆' },
-  { href: '/nba',       label: 'NBA Live', emoji: '🏀' },
-  { href: '/analysis',  label: 'Analysis', emoji: '🔬' },
-  { href: '/history',   label: 'History',  emoji: '📖' },
-];
-
-function HomeQuickLinks() {
+function ManagerCard({ award, kind }: { award: ManagerAward; kind: 'best' | 'worst' }) {
+  const best = kind === 'best';
   return (
-    <div className="bg-surface rounded-xl border border-border p-4">
-      <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-3">
-        Quick Links
+    <section
+      className={`rounded-2xl border p-5 ${best ? 'bg-positive-surface border-border' : 'bg-negative-surface border-border'}`}
+    >
+      <p className={`text-[12px] font-semibold uppercase tracking-wider ${best ? 'text-positive-text' : 'text-negative-text'}`}>
+        {best ? '🏆 Manager of the night' : '💩 Worst manager of the night'}
       </p>
-      <div className="grid grid-cols-3 gap-2">
-        {QUICK_LINKS.map(({ href, label, emoji }) => (
-          <Link
-            key={href}
-            href={href}
-            className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-surface-secondary transition-colors text-center group"
-          >
-            <span className="text-[18px]">{emoji}</span>
-            <span className="text-[11px] font-medium text-secondary group-hover:text-foreground transition-colors">
-              {label}
-            </span>
-          </Link>
-        ))}
+      <div className="flex items-center gap-3 mt-3">
+        <OwnerAvatar ownerName={award.ownerName} teamName={award.teamName} size={44} />
+        <div className="min-w-0">
+          <p className="text-[17px] font-bold text-foreground truncate">{award.ownerName}</p>
+          <p className="text-[12px] text-secondary truncate">{award.teamName}</p>
+        </div>
       </div>
-    </div>
+      <div className="flex items-end gap-5 mt-4">
+        <div>
+          <p className={`tabular-nums font-bold leading-none ${best ? 'text-[32px] text-foreground' : 'text-[22px] text-secondary'}`}>
+            {award.points.toFixed(1)}
+          </p>
+          <p className="text-[11px] text-muted mt-1">points</p>
+        </div>
+        <div>
+          <p className={`tabular-nums font-bold leading-none ${best ? 'text-[22px] text-secondary' : 'text-[32px] text-foreground'}`}>
+            {award.perPlayer.toFixed(1)}
+          </p>
+          <p className="text-[11px] text-muted mt-1">per player</p>
+        </div>
+        <div>
+          <p className="text-[22px] tabular-nums font-bold leading-none text-secondary">{award.playersPlayed}</p>
+          <p className="text-[11px] text-muted mt-1">played</p>
+        </div>
+      </div>
+    </section>
   );
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function HomePage() {
-  // Fetch data
   let matchupsData: MatchupsData = matchupsJson as MatchupsData;
-  let standings: StandingEntry[] = standingsJson as StandingEntry[];
-  let bracket: PlayoffBracketData | null = null;
-
   if (hasEspnCredentials()) {
-    const [matchupsResult, standingsResult, bracketResult] = await Promise.allSettled([
-      getMatchups(),
-      getStandings(),
-      getPlayoffBracket(),
-    ]);
-    if (matchupsResult.status === 'fulfilled') matchupsData = matchupsResult.value;
-    if (standingsResult.status === 'fulfilled') standings = standingsResult.value;
-    if (bracketResult.status === 'fulfilled') bracket = bracketResult.value;
+    try {
+      matchupsData = await getMatchups();
+    } catch {
+      /* keep the bundled fallback */
+    }
   }
-
-  // Last completed week's recap for the teaser; absent before week 1 finishes.
-  const recapRows = await loadRecapRows();
-  const recapWeek = latestRecapWeek(recapRows);
-  const recap = recapWeek === null
-    ? null
-    : computeWeeklyRecap(recapRows, recapWeek, { addsThisWeek: loadAddsForWeek(recapWeek) });
-
   const { matchups, week } = matchupsData;
   const closestMatchup = matchups.length > 0 ? findClosestMatchup(matchups) : null;
 
-  // Semi-final matchups: winners bracket, current round only
-  const semiFinals: BracketMatchup[] = bracket?.isPlayoffs
-    ? bracket.winners.filter((m) => m.isCurrentRound)
-    : [];
+  const night = loadNightlyRecap();
+  const players = night ? topPlayers(night.players) : [];
+  const best = night ? managerOfTheNight(night.teams) : null;
+  const worst = night ? worstManagerOfTheNight(night.teams) : null;
+  const clips = night ? loadHighlightsForDates([night.date]) : [];
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Score strip */}
-      {matchups.length > 0 && (
-        <ScoreStrip
-          matchups={matchups}
-          week={week}
-          closestMatchupId={closestMatchup?.id ?? ''}
-        />
-      )}
-
-      {/* Logo + title */}
-      <div className="px-6 pt-6 pb-4">
+      {/* Header */}
+      <div className="px-4 sm:px-6 pt-6 pb-4">
         <div className="flex items-center gap-4">
-          <Image
-            src="/logo.png"
-            alt="Fantasy HQ"
-            width={160}
-            height={60}
-            className="object-contain"
-            priority
-          />
-          <div className="hidden sm:block h-8 w-px bg-border" />
-          <div className="hidden sm:block">
-            <p className="text-[13px] font-medium text-secondary">Season {CURRENT_SEASON_DISPLAY}</p>
-            <p className="text-[12px] text-muted">Private NBA Fantasy League</p>
+          <Image src="/logo.png" alt="Fantasy HQ" width={160} height={60} className="object-contain" priority />
+          <div className="h-8 w-px bg-border" />
+          <div>
+            <p className="text-[13px] font-semibold text-foreground">
+              {night ? `Last night · ${nightLabel(night.date)}` : 'Daily recap'}
+            </p>
+            <p className="text-[12px] text-muted">Season {CURRENT_SEASON_DISPLAY}</p>
           </div>
         </div>
       </div>
 
-      {/* Main grid */}
-      <div className="px-6 pb-8 grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-6 max-w-[1400px]">
-
-        {/* Left column */}
-        <div className="space-y-6">
-          {/* Semi-finals (shown when playoffs are active) */}
-          {semiFinals.length > 0 && (
-            <SemiFinalsCard matchups={semiFinals} />
-          )}
-
-          {closestMatchup ? (
-            <ClosestMatchupCard matchup={closestMatchup} week={week} />
-          ) : (
-            <div className="rounded-2xl bg-panel p-8 text-center">
-              <p className="text-secondary">No matchup data available.</p>
+      <div className="px-4 sm:px-6 pb-8 max-w-[1100px] space-y-6">
+        {night ? (
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
+            {players.length > 0 && <TopPlayersCard players={players} />}
+            <div className="space-y-4">
+              {best && <ManagerCard award={best} kind="best" />}
+              {worst && <ManagerCard award={worst} kind="worst" />}
             </div>
-          )}
+          </div>
+        ) : (
+          <div className="rounded-2xl bg-surface border border-border p-8 text-center">
+            <p className="text-[15px] font-semibold text-foreground">No games yet this season</p>
+            <p className="text-[13px] text-secondary mt-1">The daily recap starts the morning after opening night.</p>
+          </div>
+        )}
 
-          {matchups.length > 1 && closestMatchup && (
-            <WeekScoreCards
-              matchups={matchups}
-              closestId={closestMatchup.id}
-              week={week}
-            />
-          )}
-        </div>
+        {closestMatchup && <ClosestMatchupCard matchup={closestMatchup} week={week} />}
 
-        {/* Right column */}
-        <div className="space-y-4">
-          {recap && <RecapTeaser recap={recap} />}
-          <HomeStandingsPanel standings={standings} />
-          <PlayoffLeaderboardPreview />
-          <HomeQuickLinks />
-        </div>
+        <RecapHighlights clips={clips} />
       </div>
     </div>
   );

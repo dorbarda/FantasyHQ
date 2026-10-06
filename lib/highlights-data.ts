@@ -46,7 +46,7 @@ function recentDates(days: number, now = new Date()): string[] {
 }
 
 /** The last N completed days that belong to this season, with their ESPN scoring period. */
-function recentScoringDays(schedule: ScheduleSeason, days: number) {
+export function recentScoringDays(schedule: ScheduleSeason, days: number) {
   const index = buildDateIndex(schedule.schedules);
   if (!index.anchor) return [];
   const anchorMs = Date.parse(`${index.anchor}T00:00:00Z`);

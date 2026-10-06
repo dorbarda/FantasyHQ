@@ -875,6 +875,38 @@ export async function getTopPerformers(
   return out;
 }
 
+export interface NightLineupTeam {
+  teamName: string;
+  ownerName: string;
+  starters: Array<{ playerName: string; proTeamId: number; fantasyPoints: number; played: boolean }>;
+}
+
+/**
+ * Every team's starters for one day, with that day's fantasy points — the raw
+ * input for the home page's daily recap (lib/nightly.ts). Bench and IR are
+ * left out: they don't score for their owner.
+ */
+export async function getNightLineups(scoringPeriodId: number): Promise<NightLineupTeam[]> {
+  const data = await espnFetch(`?view=mRoster&view=mTeam&scoringPeriodId=${scoringPeriodId}`, undefined, true);
+  const memberMap = buildMemberMap(data.members || []);
+
+  return ((data.teams || []) as any[]).map(team => ({
+    teamName: team.name || '',
+    ownerName: resolveOwnerName(team.name || '', team.owners || [], memberMap),
+    starters: ((team.roster?.entries || []) as any[])
+      .filter(entry => !NON_SCORING_SLOTS.has(entry.lineupSlotId) && entry.playerPoolEntry?.player?.fullName)
+      .map(entry => {
+        const p = entry.playerPoolEntry.player;
+        const dayStat = (p.stats || []).find(
+          (st: any) => st.statSourceId === 0 && st.scoringPeriodId === scoringPeriodId
+        );
+        const fantasyPoints = dayStat?.appliedTotal || 0;
+        const minutes = dayStat?.stats?.['40'] || 0;
+        return { playerName: p.fullName, proTeamId: p.proTeamId, fantasyPoints, played: minutes > 0 || fantasyPoints !== 0 };
+      }),
+  }));
+}
+
 // ─── TRANSACTIONS ─────────────────────────────────────────────────────────────
 
 export async function getTransactions(): Promise<TransactionsData> {

@@ -45,6 +45,13 @@ Fixed on `claude/friendly-dirac-jlin7m`:
 After merging: run the `ESPN snapshot` Action once by hand so records.json
 is rebuilt without the empty season.
 
+### Home page = daily recap (2026-10-06)
+
+Home redesigned as "last night": top 5 players, manager / worst manager of
+the night, closest matchup, last night's clips. Spec: `docs/HOME-SPEC.md`.
+New `nightly` snapshot; Action now runs 06:00 UTC (+ 09:00 catch-up).
+**Verify on the first game night (~Oct 21):** our daily team totals match ESPN.
+
 Still open — needs Dor:
 - `data/rules.json` looks out of date (says 9-cat, 15 rounds, weeks 22-24
   playoffs; the league scores points and ESPN shows 13 rounds). Validate.

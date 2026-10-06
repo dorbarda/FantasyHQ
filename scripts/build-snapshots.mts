@@ -42,6 +42,7 @@ const { getStatsData, getTransactions, getMatchupDepth, getPlayoffDepth, checkEs
 const { getAllRecords } = await import('../lib/espn-records');
 const { getScheduleSeason } = await import('../lib/espn-schedule');
 const { buildHighlightsSnapshot } = await import('../lib/highlights-data');
+const { buildNightlySnapshot } = await import('../lib/nightly-data');
 const { getAllHistoricalSeasons } = await import('../lib/espn-history');
 
 // Some loaders (records, history) swallow per-season fetch errors and return
@@ -69,6 +70,9 @@ const jobs: Array<[string, () => Promise<unknown>, (d: any) => boolean, boolean?
   // NBA schedule grid — season-static, so one nightly write keeps /schedule
   // working (and fast) all week even when the cookies expire.
   ['schedule', getScheduleSeason, d => d.schedules?.length > 0 && d.weekCount > 0],
+  // Home page daily recap — reads the schedule snapshot above, so it runs after it.
+  // Null on a day without games: the file keeps the last game night.
+  ['nightly', buildNightlySnapshot, d => d !== null && d.teams?.length > 0],
   // Highlight clips for the recap — optional, and skipped entirely without a key.
   ['highlights', buildHighlightsSnapshot, d => Object.keys(d ?? {}).length > 0, true],
 ];

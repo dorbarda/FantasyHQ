@@ -1,5 +1,6 @@
 import { hasEspnCredentials, getMatchupDepth, getStatsData } from '@/lib/espn';
 import { readSnapshot } from '@/lib/snapshots';
+import { CURRENT_SEASON_DISPLAY } from '@/lib/season';
 import type { MatchupDepthRow, MatchupDepthData } from '@/lib/types';
 import { StatsData } from '@/lib/types';
 import statsJson from '@/data/stats.json';
@@ -37,8 +38,10 @@ function computeAnalytics(rows: MatchupDepthRow[]): {
   powerRankings: PowerRankings;
   scatterPoints: ScatterPoint[];
   luckEntries: LuckDeltaEntry[];
-} {
+} | null {
   const completedRows = rows.filter(r => r.won !== null);
+  // Week 1 still in progress — nothing to analyze yet.
+  if (completedRows.length === 0) return null;
 
   // Group by team
   const byTeam: Record<string, MatchupDepthRow[]> = {};
@@ -199,11 +202,24 @@ export default async function AnalysisPage() {
     }
   }
 
-  if (error || !result) {
+  // Category ranks are all ties until a game is played — don't chart them.
+  const hasCategoryData = statsData.matchesPlayed > 0 && statsData.categoryStandings.length > 0;
+
+  if (!result) {
     return (
       <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
         <h1 className="type-page-title text-foreground mb-2">Analysis</h1>
-        {statsData.categoryStandings.length > 0 ? (
+        {error ? (
+          <p className="type-page-subtitle mt-1">Could not load data — try again later.</p>
+        ) : (
+          <section className="bg-surface-secondary border border-border rounded-xl px-4 py-6 mt-4 text-center">
+            <p className="text-[15px] font-bold text-foreground">Season starts soon</p>
+            <p className="text-[12px] text-secondary mt-1">
+              Analysis appears once the first week of the {CURRENT_SEASON_DISPLAY} season is complete.
+            </p>
+          </section>
+        )}
+        {hasCategoryData && (
           <section className="bg-surface-secondary border border-border rounded-xl px-4 py-4 mt-4">
             <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-1">
               Category Standings
@@ -213,8 +229,6 @@ export default async function AnalysisPage() {
             </p>
             <CategoryRadarChartClient standings={statsData.categoryStandings} />
           </section>
-        ) : (
-          <p className="type-page-subtitle mt-1">Could not load data — try again later.</p>
         )}
       </div>
     );
@@ -293,7 +307,7 @@ export default async function AnalysisPage() {
       </section>
 
       {/* Category Standings Radar */}
-      {statsData.categoryStandings.length > 0 && (
+      {hasCategoryData && (
         <section className="bg-surface-secondary border border-border rounded-xl px-4 py-4 mb-6">
           <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-1">
             Category Standings

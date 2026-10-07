@@ -27,7 +27,7 @@ export default function LuckDeltaChart({ entries }: Props) {
   const sorted = [...entries].sort((a, b) => b.luckDelta - a.luckDelta);
 
   return (
-    <ResponsiveContainer width="100%" height={260}>
+    <ResponsiveContainer width="100%" height={300}>
       <BarChart
         data={sorted}
         layout="vertical"
@@ -44,8 +44,9 @@ export default function LuckDeltaChart({ entries }: Props) {
         <YAxis
           type="category"
           dataKey="ownerName"
-          width={72}
-          tick={{ fill: 'var(--foreground-muted)', fontSize: 12 }}
+          width={110}
+          interval={0}
+          tick={{ fill: 'var(--foreground-muted)', fontSize: 11 }}
           axisLine={false}
           tickLine={false}
         />

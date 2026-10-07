@@ -18,10 +18,6 @@ export interface TeamAnalytics {
   avgScorePP: number;
   expectedWins: number;
   luckDelta: number;
-  depthAdvWins: number;
-  depthAdvTotal: number;
-  depthDisadvWins: number;
-  depthDisadvTotal: number;
 }
 
 type SortKey = 'record' | 'avgScore' | 'bestWeek' | 'worstWeek' | 'consistency' | 'avgPlayers' | 'avgScorePP' | 'luck';

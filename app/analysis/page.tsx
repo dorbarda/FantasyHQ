@@ -5,10 +5,11 @@ import { StatsData } from '@/lib/types';
 import statsJson from '@/data/stats.json';
 import AnalysisTable, { type TeamAnalytics } from '@/components/AnalysisTable';
 import WeeklyHighlights, { type WeeklyScoreEntry } from '@/components/WeeklyHighlights';
-import WeeklyTrendChart, { type WeeklyTrendEntry } from '@/components/WeeklyTrendChart';
 import EfficiencyScatterChart, { type ScatterPoint } from '@/components/EfficiencyScatterChart';
 import LuckDeltaChart, { type LuckDeltaEntry } from '@/components/LuckDeltaChart';
 import CategoryRadarChartClient from '@/components/CategoryRadarChartClient';
+import PowerRankingsTable from '@/components/PowerRankingsTable';
+import { computePowerRankings, type PowerRankings } from '@/lib/power-rankings';
 
 export const revalidate = 1800;
 
@@ -33,7 +34,7 @@ function computeAnalytics(rows: MatchupDepthRow[]): {
   bottomScores: WeeklyScoreEntry[];
   biggestBlowouts: WeeklyScoreEntry[];
   leagueSummary: { totalWeeks: number; avgLeagueScore: number; highScore: number; lowScore: number };
-  weeklyTrend: WeeklyTrendEntry[];
+  powerRankings: PowerRankings;
   scatterPoints: ScatterPoint[];
   luckEntries: LuckDeltaEntry[];
 } {
@@ -81,22 +82,6 @@ function computeAnalytics(rows: MatchupDepthRow[]): {
     const bestRow = tRows.reduce((b: MatchupDepthRow, r: MatchupDepthRow) => r.teamScore > b.teamScore ? r : b, tRows[0]);
     const worstRow = tRows.reduce((w: MatchupDepthRow, r: MatchupDepthRow) => r.teamScore < w.teamScore ? r : w, tRows[0]);
 
-    // Depth advantage: weeks where you started more total players than opponent
-    let depthAdvWins = 0, depthAdvTotal = 0, depthDisadvWins = 0, depthDisadvTotal = 0;
-    for (const r of tRows) {
-      const oppRow = completedRows.find(
-        (or: MatchupDepthRow) => or.matchupPeriod === r.matchupPeriod && or.ownerName === r.opponentName
-      );
-      if (!oppRow) continue;
-      if (r.totalPlayers > oppRow.totalPlayers) {
-        depthAdvTotal++;
-        if (r.won) depthAdvWins++;
-      } else if (r.totalPlayers < oppRow.totalPlayers) {
-        depthDisadvTotal++;
-        if (r.won) depthDisadvWins++;
-      }
-    }
-
     const expectedWins = expectedWinsMap[teamId] ?? 0;
 
     teams.push({
@@ -115,10 +100,6 @@ function computeAnalytics(rows: MatchupDepthRow[]): {
       avgScorePP: avg(spps),
       expectedWins,
       luckDelta: wins - expectedWins,
-      depthAdvWins,
-      depthAdvTotal,
-      depthDisadvWins,
-      depthDisadvTotal,
     });
   }
 
@@ -147,14 +128,6 @@ function computeAnalytics(rows: MatchupDepthRow[]): {
   const allScores = completedRows.map(r => r.teamScore);
 
   // Chart data
-  const weeklyTrend: WeeklyTrendEntry[] = completedRows
-    .filter(r => r.scorePP > 0 && isFinite(r.scorePP))
-    .map(r => ({
-      ownerName: r.ownerName,
-      week: r.matchupPeriod,
-      scorePP: r.scorePP,
-    }));
-
   const scatterPoints: ScatterPoint[] = teams.map(t => ({
     ownerName: t.ownerName,
     avgScore: t.avgScore,
@@ -180,7 +153,7 @@ function computeAnalytics(rows: MatchupDepthRow[]): {
       highScore: Math.max(...allScores),
       lowScore: Math.min(...allScores),
     },
-    weeklyTrend,
+    powerRankings: computePowerRankings(rows),
     scatterPoints,
     luckEntries,
   };
@@ -247,9 +220,9 @@ export default async function AnalysisPage() {
     );
   }
 
-  const { teams, topScores, bottomScores, biggestBlowouts, leagueSummary, weeklyTrend, scatterPoints, luckEntries } = result;
+  const { teams, topScores, bottomScores, biggestBlowouts, leagueSummary, powerRankings, scatterPoints, luckEntries } = result;
 
-  // Depth insight cards
+  // Insight cards
   const mostPlayers = [...teams].sort((a, b) => b.avgPlayers - a.avgPlayers)[0];
   const mostConsistent = [...teams].sort((a, b) => a.scoreStdDev - b.scoreStdDev)[0];
   const luckiest = [...teams].sort((a, b) => b.luckDelta - a.luckDelta)[0];
@@ -264,19 +237,6 @@ export default async function AnalysisPage() {
           {leagueSummary.totalWeeks} week{leagueSummary.totalWeeks !== 1 ? 's' : ''} · avg {leagueSummary.avgLeagueScore.toFixed(1)} pts/team · season high {leagueSummary.highScore.toFixed(1)}
         </p>
       </div>
-
-      {/* Category Standings Radar */}
-      {statsData.categoryStandings.length > 0 && (
-        <section className="bg-surface-secondary border border-border rounded-xl px-4 py-4 mb-6">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-1">
-            Category Standings
-          </p>
-          <p className="text-[11px] text-secondary mb-4">
-            Rank percentile per category — 100 = league leader
-          </p>
-          <CategoryRadarChartClient standings={statsData.categoryStandings} />
-        </section>
-      )}
 
       {/* Insight cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
@@ -298,15 +258,15 @@ export default async function AnalysisPage() {
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Weekly score/player trend */}
+        {/* Power rankings — last 3 weeks */}
         <section className="bg-surface-secondary border border-border rounded-xl px-4 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-1">
-            Score / Player — Weekly Trend
+            Power Rankings — Last 3 Weeks
           </p>
           <p className="text-[11px] text-secondary mb-4">
-            Normalizes for matchup length — longer weeks have more players
+            Who is hot right now — points per player started, and the change from the 3 weeks before
           </p>
-          <WeeklyTrendChart entries={weeklyTrend} />
+          <PowerRankingsTable data={powerRankings} />
         </section>
 
         {/* Luck delta */}
@@ -331,6 +291,19 @@ export default async function AnalysisPage() {
         </p>
         <EfficiencyScatterChart points={scatterPoints} />
       </section>
+
+      {/* Category Standings Radar */}
+      {statsData.categoryStandings.length > 0 && (
+        <section className="bg-surface-secondary border border-border rounded-xl px-4 py-4 mb-6">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-1">
+            Category Standings
+          </p>
+          <p className="text-[11px] text-secondary mb-4">
+            Rank percentile per category — 100 = league leader
+          </p>
+          <CategoryRadarChartClient standings={statsData.categoryStandings} />
+        </section>
+      )}
 
       <div className="border-b border-border mb-6" />
 
@@ -368,72 +341,6 @@ export default async function AnalysisPage() {
         />
       </section>
 
-      <div className="border-b border-border mb-6" />
-
-      {/* Depth analysis table */}
-      <section>
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-3">
-          Depth Advantage
-        </p>
-        <p className="text-[12px] text-secondary mb-3">
-          Win rate when starting more players than your opponent vs. fewer players
-        </p>
-        <div className="overflow-x-auto rounded-xl border border-border">
-          <table className="w-full text-sm">
-            <thead className="border-b border-border bg-surface-secondary">
-              <tr>
-                <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-muted">Team</th>
-                <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-muted">More Players</th>
-                <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-muted">Fewer Players</th>
-                <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-muted">Depth Matters?</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...teams].sort((a, b) => {
-                const aPct = a.depthAdvTotal > 0 ? a.depthAdvWins / a.depthAdvTotal : 0;
-                const bPct = b.depthAdvTotal > 0 ? b.depthAdvWins / b.depthAdvTotal : 0;
-                return bPct - aPct;
-              }).map(t => {
-                const advPct = t.depthAdvTotal > 0 ? t.depthAdvWins / t.depthAdvTotal : null;
-                const disadvPct = t.depthDisadvTotal > 0 ? t.depthDisadvWins / t.depthDisadvTotal : null;
-                const delta = advPct !== null && disadvPct !== null ? advPct - disadvPct : null;
-                return (
-                  <tr key={t.teamId} className="border-b border-border/50 last:border-0 hover:bg-surface-secondary/60">
-                    <td className="px-3 py-2.5">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[13px] font-semibold text-foreground">{t.ownerName}</span>
-                      </div>
-                    </td>
-                    <td className="px-3 py-2.5">
-                      {advPct !== null ? (
-                        <span className="text-[13px] font-mono" style={{ color: advPct >= 0.6 ? '#34D399' : advPct >= 0.4 ? '#94A3B8' : '#F87171' }}>
-                          {(advPct * 100).toFixed(0)}%
-                        </span>
-                      ) : <span className="text-secondary">—</span>}
-                      <span className="ml-1.5 text-[11px] text-secondary">({t.depthAdvWins}/{t.depthAdvTotal})</span>
-                    </td>
-                    <td className="px-3 py-2.5">
-                      {disadvPct !== null ? (
-                        <span className="text-[13px] font-mono" style={{ color: disadvPct >= 0.5 ? '#34D399' : disadvPct >= 0.3 ? '#94A3B8' : '#F87171' }}>
-                          {(disadvPct * 100).toFixed(0)}%
-                        </span>
-                      ) : <span className="text-secondary">—</span>}
-                      <span className="ml-1.5 text-[11px] text-secondary">({t.depthDisadvWins}/{t.depthDisadvTotal})</span>
-                    </td>
-                    <td className="px-3 py-2.5">
-                      {delta !== null ? (
-                        <span className={`text-[12px] font-medium ${delta > 0.15 ? 'text-positive-bright' : delta < -0.1 ? 'text-negative-bright' : 'text-muted'}`}>
-                          {delta > 0.15 ? 'Yes — depth wins' : delta < -0.1 ? 'No — talent wins' : 'Neutral'}
-                        </span>
-                      ) : <span className="text-secondary">—</span>}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </section>
     </div>
   );
 }

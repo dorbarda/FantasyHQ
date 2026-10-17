@@ -336,7 +336,7 @@ export interface DraftPick {
   projGp: number;        // ESPN preseason projected games
   projRank: number | null;   // rank by ESPN projection among ALL players (null = no projection)
   actualRank: number | null; // rank by actual season output among ALL players (null = did not play / unranked)
-  decision: number | null;   // projRank - overallPick  (positive = got a bargain, negative = reached)
+  decision: number | null;   // overallPick - projRank  (positive = got a bargain, negative = reached)
   result: number | null;     // overallPick - actualRank (positive = paid off, negative = bust)
   decisionGrade: DraftGrade; // grade of `decision`
   grade: DraftGrade;         // grade of `result`

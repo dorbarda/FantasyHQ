@@ -136,6 +136,18 @@ async function getSeasonStatus(year: number): Promise<SeasonStatus> {
   }
 }
 
+/** ESPN's own "draft finished" flag; null when ESPN can't be reached. */
+export async function isDraftComplete(year: number): Promise<boolean | null> {
+  if (!ESPN_S2 || !SWID || !LEAGUE_ID) return null;
+  try {
+    const data = await espnGet(year, '?view=mDraftDetail');
+    return data.draftDetail?.drafted === true;
+  } catch (e) {
+    console.error(`[draft] mDraftDetail failed year=${year}:`, e);
+    return null;
+  }
+}
+
 // ─── Ranking & grades ─────────────────────────────────────────────────────────
 
 /** Rank players 1..POOL_SIZE by `value` (highest first). Players with no value are left out. */
@@ -246,7 +258,7 @@ export async function getDraftBoard(year: number): Promise<DraftBoardData> {
     const actualRank = hasStats && !didNotPlay
       ? (actualRanks.get(p.playerId) ?? outside) : null;
 
-    const decision = projRank != null ? projRank - overallPick : null;
+    const decision = projRank != null ? overallPick - projRank : null;
     const result = actualRank != null ? overallPick - actualRank : null;
 
     return {

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import prepJson from '@/data/draft-prep.json';
 import { seasonLabel } from '@/lib/season';
 import { getProjectionRows } from '@/lib/espn-projections';
+import { isDraftComplete } from '@/lib/espn-draft';
 import ProjectionsTable from '@/components/ProjectionsTable';
 
 export const revalidate = 3600;
@@ -18,7 +19,7 @@ const prep = prepJson as DraftPrep;
 
 // ─── Countdown card ──────────────────────────────────────────────────────────
 
-function CountdownCard() {
+function CountdownCard({ drafted }: { drafted: boolean | null }) {
   if (!prep.draftDate) {
     return (
       <div className="rounded-2xl overflow-hidden bg-panel text-white px-6 py-8 text-center">
@@ -34,6 +35,28 @@ function CountdownCard() {
   }
 
   const draftDate = new Date(prep.draftDate);
+  // Trust ESPN's flag; without it, assume a live draft is over a few hours after it starts.
+  const isDone = drafted ?? Date.now() > draftDate.getTime() + 6 * 3_600_000;
+  if (isDone) {
+    return (
+      <div className="rounded-2xl overflow-hidden bg-panel text-white px-6 py-8 text-center">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-accent mb-2">
+          Draft Night
+        </p>
+        <p className="text-[24px] font-black">The draft is done ✅</p>
+        <p className="text-[13px] text-muted mt-2">
+          {draftDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'Asia/Jerusalem' })}
+        </p>
+        <Link
+          href={`/draft?year=${prep.season}`}
+          className="inline-block mt-4 rounded-lg bg-accent hover:bg-accent-hover px-4 py-2 text-[13px] font-bold text-white transition-colors"
+        >
+          See the {seasonLabel(prep.season)} draft board →
+        </Link>
+      </div>
+    );
+  }
+
   const daysLeft = Math.max(0, Math.ceil((draftDate.getTime() - Date.now()) / 86_400_000));
   const dateLabel = draftDate.toLocaleDateString('en-US', {
     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
@@ -163,7 +186,10 @@ function ScoutingGrid() {
 // ─── Page ────────────────────────────────────────────────────────────────────
 
 export default async function DraftPrepPage() {
-  const projections = await getProjectionRows(prep.season);
+  const [projections, drafted] = await Promise.all([
+    getProjectionRows(prep.season),
+    isDraftComplete(prep.season),
+  ]);
   return (
     <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
       <div className="mb-6">
@@ -177,7 +203,7 @@ export default async function DraftPrepPage() {
 
       <div className="flex flex-col gap-4 w-full">
         <div className="flex flex-col gap-4 max-w-2xl">
-          <CountdownCard />
+          <CountdownCard drafted={drafted} />
           <DraftOrderCard />
           <NotesCard />
         </div>

@@ -59,7 +59,9 @@ export default async function DraftPage({ searchParams: searchParamsPromise }: P
         <p className="type-page-subtitle mt-1">
           {isHistory
             ? 'Search a player to see their full draft history'
-            : 'Draft IQ: where each player was picked vs. where he finished the season'}
+            : data && data.picks.length > 0 && !data.hasStats
+              ? 'Draft Value: where each player was picked vs. where ESPN projected him'
+              : 'Draft IQ: where each player was picked vs. where he finished the season'}
         </p>
       </div>
 

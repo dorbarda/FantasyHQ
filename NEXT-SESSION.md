@@ -56,11 +56,19 @@ Depth fix (same day): starter-games no longer count bench/IR players who
 played. 2025-26 depth snapshot rebuilt — 61 of 180 team-weeks changed
 (7,619 → 7,531 games); scores unchanged; some Grinder/Sniper winners moved.
 
+### Draft night (2026-10-17)
+
+Draft done on ESPN: 13 rounds, 130 picks, snake, order matched
+`data/draft-prep.json`. The 2026-27 board now shows every pick graded vs.
+ESPN's preseason projected rank ("Draft Value") until games are played, then
+switches to Draft IQ vs. final rank. Fixed the sign of `DraftPick.decision`
+(was backwards: reaches showed as steals). Draft Prep's countdown becomes a
+"draft is done" link once ESPN reports `drafted: true`. `rules.json` draft
+section corrected to 13 rounds / 130 picks / 120-second clock (ESPN settings).
+
 Still open — needs Dor:
-- `data/rules.json` looks out of date (says 9-cat, 15 rounds, weeks 22-24
-  playoffs; the league scores points and ESPN shows 13 rounds). Validate.
-- `data/draft-prep.json`: draft date and order still empty. ESPN already
-  lists a 2026-27 draft order — confirm before copying it in.
+- `data/rules.json` still looks out of date (says 9-cat, weeks 22-24
+  playoffs; the league scores points). Draft section is fixed. Validate the rest.
 - Playoffs page hardcodes "Play-In April 14–17 · Playoffs begin April 18"
   (2026 dates). Update when the NBA publishes 2027 dates.
 - Teams/Records list "fake 23" and "Dor Gelless & the monkey comeback" as

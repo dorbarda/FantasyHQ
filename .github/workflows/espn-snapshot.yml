@@ -1,20 +1,44 @@
 name: ESPN snapshot
 
-# Nightly refresh of data/snapshots/*.json. Main run 06:00 UTC = 08:00 Israel
-# winter time (09:00 summer), for the home page's daily recap. The 09:00 UTC
-# run is a catch-up: a late West Coast game can still be on at 06:00, and that
-# run fixes its numbers and picks up late clips (no commit if nothing changed). The commit triggers a Vercel redeploy, so the
-# analytical pages rebuild on fresh data every morning. A red run means the
-# ESPN cookies expired — GitHub emails the repo owner on workflow failure.
+# Nightly refresh of data/snapshots/*.json, twice a day in Israel time:
+#   06:00 — so the home page's daily recap and clips are there when people wake up
+#   09:00 — catch-up: a late West Coast game can still be on at 06:00; this run
+#           fixes its numbers and picks up late clips (no commit if nothing changed)
+# GitHub cron is UTC only, so both the winter (UTC+2) and summer (UTC+3) times
+# are scheduled and the first step skips the pair that doesn't match today's
+# Israel offset. The commit triggers a Vercel redeploy, so the analytical pages
+# rebuild on fresh data every morning. A red run means the ESPN cookies
+# expired — GitHub emails the repo owner on workflow failure.
 
 on:
   schedule:
-    - cron: '0 6 * * *'
-    - cron: '0 9 * * *'
+    - cron: '0 4 * * *' # 06:00 Israel winter
+    - cron: '0 7 * * *' # 09:00 Israel winter
+    - cron: '0 3 * * *' # 06:00 Israel summer
+    - cron: '0 6 * * *' # 09:00 Israel summer
   workflow_dispatch:
 
 jobs:
+  # Manual runs always go ahead; scheduled ones only at today's Israel times.
+  clock:
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.check.outputs.run }}
+    steps:
+      - id: check
+        env:
+          SCHEDULE: ${{ github.event.schedule }}
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ]; then echo "run=true" >> "$GITHUB_OUTPUT"; exit 0; fi
+          if [ "$(TZ=Asia/Jerusalem date +%z)" = "+0300" ]; then wanted="0 3 * * *|0 6 * * *"; else wanted="0 4 * * *|0 7 * * *"; fi
+          case "|$wanted|" in
+            *"|$SCHEDULE|"*) echo "run=true" >> "$GITHUB_OUTPUT" ;;
+            *) echo "Not 06:00/09:00 in Israel today, skipping."; echo "run=false" >> "$GITHUB_OUTPUT" ;;
+          esac
+
   snapshot:
+    needs: clock
+    if: needs.clock.outputs.run == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write

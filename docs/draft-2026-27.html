@@ -1,0 +1,466 @@
+<title>Draft Night 2026-27</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a draft-room scoreboard. One narrow column, sections stacked like broadcast segments; charts in a 2x2 grid on wide screens. */
+:root {
+  --bg: #f3f5f8;
+  --panel: #ffffff;
+  --ink: #0e1726;
+  --ink-2: #4a5568;
+  --ink-3: #7b8597;
+  --line: #dde2ea;
+  --grid: #e9edf2;
+  --accent: #d9541e;       /* ball orange: used sparingly */
+  --accent-soft: #fbe6dc;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a;
+  --pos: #16824a; --neg: #c2362f;
+  --muted-line: #b9c1cd;
+  --f-display: "Saira Condensed", "Arial Narrow", sans-serif;
+  --f-body: "IBM Plex Sans", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0c121c; --panel: #141c29; --ink: #eef1f6; --ink-2: #b4bccb; --ink-3: #828c9e;
+  --line: #263142; --grid: #1d2735; --accent: #f07a45; --accent-soft: #3a2218;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --pos: #45c27f; --neg: #ef6b63; --muted-line: #3a4659;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0c121c; --panel: #141c29; --ink: #eef1f6; --ink-2: #b4bccb; --ink-3: #828c9e;
+  --line: #263142; --grid: #1d2735; --accent: #f07a45; --accent-soft: #3a2218;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --pos: #45c27f; --neg: #ef6b63; --muted-line: #3a4659;
+  color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-block: 28px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 44px; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 800; text-wrap: balance; margin: 0; letter-spacing: .01em; }
+h1 { font-size: clamp(44px, 9vw, 84px); line-height: .92; text-transform: uppercase; }
+h2 { font-size: 30px; text-transform: uppercase; line-height: 1.05; }
+h3 { font-size: 19px; font-weight: 600; text-transform: uppercase; letter-spacing: .03em; }
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+.lede { color: var(--ink-2); max-width: 62ch; margin: 0; }
+.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+section { display: grid; gap: 16px; min-width: 0; }
+.sec-head { display: grid; gap: 6px; }
+.note { font-size: 13px; color: var(--ink-3); margin: 0; max-width: 70ch; }
+
+/* hero */
+.hero { display: grid; gap: 18px; }
+.ticker { display: flex; flex-wrap: wrap; gap: 8px 28px; border-top: 3px solid var(--ink); padding-top: 12px; }
+.ticker div { display: grid; }
+.ticker b { font-family: var(--f-display); font-size: 34px; line-height: 1; }
+.ticker span { font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em; }
+
+/* awards */
+.awards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+.award { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 14px; display: grid; gap: 8px; align-content: start; }
+.award .k { font-family: var(--f-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-3); }
+.award .who { display: flex; align-items: center; gap: 10px; }
+.award .who img { width: 36px; height: 36px; border-radius: 50%; flex: none; }
+.award .who b { display: block; font-size: 15px; line-height: 1.2; }
+.award .who small { color: var(--ink-3); font-size: 12px; }
+.award .v { font-family: var(--f-display); font-size: 26px; line-height: 1; }
+.award .d { font-size: 13px; color: var(--ink-2); }
+
+/* leaderboards */
+.boards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 470px), 1fr)); gap: 14px; }
+.board { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 16px; display: grid; gap: 10px; min-width: 0; }
+.board header { display: grid; gap: 2px; }
+.board header p { margin: 0; font-size: 13px; color: var(--ink-3); }
+.bars { display: grid; gap: 4px; }
+.bar-row { display: grid; grid-template-columns: 18px 24px minmax(0, 9.5em) 1fr; align-items: center; gap: 8px; font-size: 13px; padding: 2px 0; border-radius: 4px; }
+.bar-row:hover { background: var(--grid); }
+.bar-row .rk { color: var(--ink-3); text-align: right; font-family: var(--f-mono); font-size: 12px; }
+.bar-row img { width: 24px; height: 24px; border-radius: 50%; }
+.bar-row .nm { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.track { position: relative; height: 18px; display: flex; align-items: center; }
+.fill { height: 12px; border-radius: 0 4px 4px 0; background: var(--ink-3); min-width: 2px; }
+.bar-row.top .fill { background: var(--accent); }
+.track .val { font-family: var(--f-mono); font-size: 12px; margin-left: 6px; color: var(--ink); white-space: nowrap; }
+.div-track { position: relative; height: 18px; }
+.div-track .zero { position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--ink-3); }
+.div-track .fill { position: absolute; top: 3px; }
+.div-track .fill.pos { background: var(--pos); left: 50%; border-radius: 0 4px 4px 0; }
+.div-track .fill.neg { background: var(--neg); border-radius: 4px 0 0 4px; }
+.div-track .val { position: absolute; top: 0; font-family: var(--f-mono); font-size: 12px; }
+
+/* line chart */
+.chart-card { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 16px; display: grid; gap: 12px; min-width: 0; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.seg button { font: 500 13px var(--f-body); background: transparent; color: var(--ink-2); border: 0; padding: 6px 12px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 500 12px var(--f-body); display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--panel); color: var(--ink-2); border-radius: 999px; padding: 3px 10px 3px 3px; cursor: pointer; }
+.chip img { width: 20px; height: 20px; border-radius: 50%; }
+.chip .sw { width: 10px; height: 10px; border-radius: 50%; display: none; }
+.chip[aria-pressed="true"] { color: var(--ink); border-color: var(--ink-3); }
+.chip[aria-pressed="true"] .sw { display: inline-block; }
+button:focus-visible, th:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.svg-wrap { position: relative; overflow-x: auto; }
+.svg-wrap svg { display: block; width: 100%; min-width: 560px; height: auto; }
+.svg-wrap text { font-family: var(--f-mono); font-size: 11px; fill: var(--ink-3); }
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); border-radius: 6px; padding: 8px 10px; font-size: 12px; line-height: 1.45; min-width: 180px; max-width: 280px; z-index: 5; box-shadow: 0 4px 14px rgba(0,0,0,.18); }
+.tip b { font-family: var(--f-display); font-size: 15px; letter-spacing: .02em; }
+.tip .r { display: flex; justify-content: space-between; gap: 12px; }
+.tip .sw { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
+
+/* steals / reaches */
+.duo { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 14px; }
+.list { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 16px; display: grid; gap: 4px; min-width: 0; }
+.list h3 { margin-bottom: 6px; }
+.li { display: grid; grid-template-columns: 44px 1fr auto; gap: 10px; align-items: center; padding: 6px 0; border-top: 1px solid var(--grid); font-size: 13px; }
+.li:first-of-type { border-top: 0; }
+.li .pk { font-family: var(--f-mono); font-size: 12px; color: var(--ink-3); }
+.li .pl b { font-weight: 600; }
+.li .pl small { display: block; color: var(--ink-3); font-size: 12px; }
+.delta { font-family: var(--f-mono); font-size: 13px; font-weight: 500; padding: 2px 8px; border-radius: 4px; white-space: nowrap; }
+.delta.pos { color: var(--pos); background: color-mix(in srgb, var(--pos) 14%, transparent); }
+.delta.neg { color: var(--neg); background: color-mix(in srgb, var(--neg) 14%, transparent); }
+
+/* table */
+.tbl-wrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
+table { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 13px; }
+th, td { padding: 9px 10px; text-align: right; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+th { font: 500 11px var(--f-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); cursor: pointer; user-select: none; position: sticky; top: 0; background: var(--panel); }
+th[aria-sort="descending"]::after { content: " ▼"; color: var(--accent); }
+th[aria-sort="ascending"]::after { content: " ▲"; color: var(--accent); }
+th:first-child, td:first-child { text-align: left; }
+td.num { font-family: var(--f-mono); }
+td .rk { color: var(--ink-3); font-size: 11px; margin-left: 4px; }
+td .rk.r1 { color: var(--accent); font-weight: 500; }
+.tm { display: flex; align-items: center; gap: 8px; }
+.tm img { width: 26px; height: 26px; border-radius: 50%; }
+.tm small { display: block; color: var(--ink-3); font-size: 11px; }
+tbody tr:hover { background: var(--grid); }
+
+/* rosters */
+.rosters { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 14px; }
+.roster { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 14px; display: grid; gap: 10px; min-width: 0; }
+.roster header { display: flex; gap: 10px; align-items: center; }
+.roster header img { width: 44px; height: 44px; border-radius: 50%; }
+.roster header b { font-family: var(--f-display); font-size: 20px; line-height: 1.05; display: block; }
+.roster header small { color: var(--ink-3); font-size: 12px; }
+.roster .sum { display: flex; gap: 14px; font-size: 12px; color: var(--ink-3); border-block: 1px solid var(--grid); padding-block: 6px; flex-wrap: wrap; }
+.roster .sum b { color: var(--ink); font-family: var(--f-mono); font-weight: 500; }
+.pr { display: grid; grid-template-columns: 28px 1fr auto auto; gap: 8px; align-items: center; font-size: 13px; padding: 2px 0; }
+.pr .rd { font-family: var(--f-mono); font-size: 11px; color: var(--ink-3); }
+.pr .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pr .nm small { color: var(--ink-3); font-size: 11px; margin-left: 4px; }
+.pr .a { font-family: var(--f-mono); font-size: 12px; }
+.pr .delta { font-size: 11px; padding: 0 5px; min-width: 38px; text-align: center; }
+.pr .delta.zero { color: var(--ink-3); }
+.inj { font: 500 9px var(--f-mono); color: var(--neg); border: 1px solid currentColor; border-radius: 3px; padding: 0 3px; margin-left: 4px; vertical-align: 1px; }
+.bench { opacity: .55; }
+.bench-label { font-size: 11px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em; margin-top: 2px; }
+footer { border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 8px; }
+footer p { margin: 0; font-size: 13px; color: var(--ink-3); max-width: 75ch; }
+@media (prefers-reduced-motion: no-preference) { .fill { transition: width .4s ease; } }
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">Fantasy HQ · Draft Recap · 2026-27</div>
+    <h1>Draft Night,<br>By The Numbers</h1>
+    <p class="lede">Ten managers, 130 picks, one snake draft. Here is how every team's first ten picks stack up on ESPN's preseason projections, before a single game is played.</p>
+    <div class="ticker" id="ticker"></div>
+  </header>
+
+  <section>
+    <div class="sec-head"><div class="eyebrow">The Awards</div><h2>Who Won Draft Night?</h2></div>
+    <div class="awards" id="awards"></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><div class="eyebrow">Leaderboards · Top 10 picks per team</div><h2>Four Ways To Rank A Draft</h2>
+      <p class="note">Every number below uses only each team's picks from rounds 1–10. Hover a row for details.</p></div>
+    <div class="boards" id="boards"></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><div class="eyebrow">Round by round</div><h2>Projected Avg Per Round</h2>
+      <p class="lede">The projected fantasy points per game of the player each team took in every round. Pick up to three teams to compare. Switch to "vs. round average" to see who beat the room in each round.</p></div>
+    <div class="chart-card">
+      <div class="controls">
+        <div class="seg" role="group" aria-label="Chart mode">
+          <button id="m-raw" aria-pressed="true">Avg FPG</button>
+          <button id="m-diff" aria-pressed="false">vs. round average</button>
+        </div>
+        <div class="seg" role="group" aria-label="Rounds">
+          <button id="r-10" aria-pressed="true">Rounds 1–10</button>
+          <button id="r-13" aria-pressed="false">All 13</button>
+        </div>
+      </div>
+      <div class="chips" id="chips"></div>
+      <div class="svg-wrap" id="line-wrap"><svg id="line" viewBox="0 0 960 380" role="img" aria-label="Projected average fantasy points per game by draft round"></svg><div class="tip" id="tip" hidden></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><div class="eyebrow">Value vs. ESPN rank</div><h2>Steals &amp; Reaches</h2>
+      <p class="note">Value = pick number minus ESPN's preseason rank. +25 means the player went 25 picks later than ESPN ranked him. Rounds 1–10 only.</p></div>
+    <div class="duo">
+      <div class="list" id="steals"><h3>Biggest steals</h3></div>
+      <div class="list" id="reaches"><h3>Biggest reaches</h3></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><div class="eyebrow">The full scorecard</div><h2>Every Team, Every Stat</h2>
+      <p class="note">Click a column to sort. Small number = rank among the 10 teams.</p></div>
+    <div class="tbl-wrap"><table id="tbl"><thead><tr>
+      <th data-k="team" aria-sort="none" tabindex="0">Team</th>
+      <th data-k="slot" aria-sort="none" tabindex="0">Slot</th>
+      <th data-k="fp" aria-sort="descending" tabindex="0">Proj. points</th>
+      <th data-k="avg" aria-sort="none" tabindex="0">Avg FPG</th>
+      <th data-k="gp" aria-sort="none" tabindex="0">Proj. GP</th>
+      <th data-k="val" aria-sort="none" tabindex="0">Value</th>
+      <th data-k="adp" aria-sort="none" tabindex="0">vs. ADP</th>
+      <th data-k="fp13" aria-sort="none" tabindex="0">All 13: points</th>
+    </tr></thead><tbody></tbody></table></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><div class="eyebrow">The rosters</div><h2>Who Took Who</h2>
+      <p class="note">Ordered by draft slot. Each row: round, player, projected avg FPG, value vs. ESPN rank. Rounds 11–13 are shown faded and are not counted in the stats.</p></div>
+    <div class="rosters" id="rosters"></div>
+  </section>
+
+  <footer>
+    <p><b>Source.</b> ESPN Fantasy league data and ESPN's 2026-27 preseason projections under our league's points scoring, pulled 18 Oct 2026, the day after the draft. Projections change daily, so these numbers are a snapshot.</p>
+    <p><b>How it is counted.</b> Proj. points = sum of each player's projected season total. Avg FPG = simple average of the ten players' projected points per game. Proj. GP = sum of projected games played. Value = sum of (pick number − ESPN rank); positive means the team got players later than ESPN ranked them. vs. ADP = the same idea against ESPN's average draft position across all leagues.</p>
+  </footer>
+</div>
+
+<script>
+const RAW = {"teams":[{"id":5,"name":"King Ozniyon","owner":"Ilay Mendel","slot":1,"logo":"data:image/webp;base64,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"},{"id":1,"name":"Team Mamba Forever","owner":"Yoav Coracos","slot":2,"logo":"data:image/webp;base64,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"},{"id":6,"name":"Libi’s Legacy","owner":"Amir Ben Izhak","slot":3,"logo":"data:image/webp;base64,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"},{"id":4,"name":"Nordau Peaky Blinder","owner":"Dor Barda","slot":4,"logo":"data:image/webp;base64,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"},{"id":10,"name":"Slotzki","owner":"Nir Zele","slot":5,"logo":"data:image/webp;base64,UklGRp4FAABXRUJQVlA4WAoAAAAQAAAAXwAAPwAAQUxQSPIBAAABkINtkyFbvTi4tm3bNiLbtm3bNqIb2bYZ2TaOrano7lRX/dGNImICzH+E3sLtx45pW6FQBg+oPPNeJhMl/Hp7bUW9YET5jjn077A9nSpnRuNZRoEn/741tSCW4m9cEJHzoBmU0Y47ondNkWwg1nuFgAxLY6FlHhwTmT6Wg1H2DTHPgDGfuK9nApHjAduvSiAaRrEltwMxgfgHQ/DmOGNhIID8PffdieeLbwVgcSrZ/FgcQNNIK5fTA8j92MoiA9C700ZEQwSm3mcLx9JD8LR+yhbX0YBcw3YiI4oxXH+bG5Qt4nicFT4YRd/zHMttYKa/yHKmsAG6luNOWYN0OENaHwN1gOMuvgWWKeQ+vDqWPsnuflfEknVruOPmZ1ksJrRWvxWRgYXVAmMylR4TG5hzrV+LHDi8xcbc+J1AblPjbo8r4YWQocnmt6nEm/ZuQ7106jIOOB9JNsNOtvXoyjo9kWy/ahaix19x5p0Esh92tFt2JcU3fnNIZuK1tl4NDR6R4N/DffKqPyPR4d3EZT1Jwh8Xk9Y3SRrNFJbhLIl/mFNW7TB5sS1kTSSFM0V592s44JeU+Y6G+1kkFXit4XV+ScU+aXhfSFLRjxreFZRU8K2Gt6KKf9bwrbSkZrEa4ppLGk0qR0naomOboJCzOk4FswBWUDgghgMAAHAQAJ0BKmAAQAA+kUCaSaWjoiEpWSpYsBIJYgDS3A/J8lihUbaDnbtOm3nWusMVgvrFrO5XFPerW9DMef7+iX+bOYfN470MIF5p9QZOvHwJk7FxTI/HTwkjyFKvwMNG+dOcIiVTSZNDUD+Pfv1sTohBqYQ/TazVpnU8ZHN8lNvDrJFwSfo38R8P5KPMAP79NnBV+8cQmbSo1fEH/b43TTJ/1l/yrAHmecl5c+3v++N2vcyHRmceIplshFuORvop2YUK4acwbQ4EkFTMZXi5XLoukTViVf2jy6mdaek31aYQ3mb2SHy6+yxRNgkNZBfoutx3eDMIME/5ifZdQ2keKXECIfSzvKaLsu8gnJr9y37HztJcx5/Hct9Q8BAZQT6V4wyAlKRdgkIprxkwnfjRas4PDlIuJ3wv/cyXOJJEjYKvDuAw87L7jVV1fmUCwO3Wlr+NnENL8G4K4VnT6qohjGhA7V2FU3nBAmeOOgx6PNFJduhTm77mdraVzW34zn3R/4K+///jwBsIHL/WDRcMI1iwq2fmWLZ5Jgh6nJnFeNKAxmdehiv0n1XMZBS6E9H3hPgqmTxHGaML/8bUKoWZwW40e6ffwLFQJ3a0HSLTRGtZaidVaoJzr+X5UN079nwMXLC1mUctV7yXAcSUWBn6B9Zldadz7gpeXRKBV8x6BzJaogf1EnllWZjr8bpodCp2zgvLwJY2Lqes0Ng4VY7skUpv/0NwyrfpEt0fvapZfaL939NXB9t6Ar2bIzTy+VLag34KSBSZkxZp/dHOc/wV2p8FR02evIdGiRX3vrYYeCQM7fwSX/pyxF7828VvtEmsA+/m7P1Zgjr4fTgwDUhXX6XNJ5v/SL/9DvBhVbHe/FLTdEbVpOfsCMJyKw6Gz8FnKI0cWFif7y4X1Cgoir3i6y5FvcxYaCvfgzIZua5MHwWchvL3uFpSioAZlg0/4Oijr4pC/8KhNQD/ZMGAgv9Z8o2Azj4AXVfjxSwCsgR+L2LjSaP9L+eFpEiJ6Mt3vwoh5UZK4qVrJhrIL4B0/9CxC38Aa/4CStnl0fv8ezyF0v/C9UDta/hEAlKq35bZe+H9WRkQVHH5aizSpWbeQyZGo5IPlm2Jzmnb3zJXvWr0kFeQXe+yr8+e+uPogyP2uPUkEYQR1sU90gfyIfSbM1Bx0eTy4PJmfWoAXbIPuZgs8fxgc72UAAAA"},{"id":2,"name":"PlottKe","owner":"Yotam Goldin","slot":6,"logo":"data:image/webp;base64,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"},{"id":8,"name":"Flint Tropics 70's Show","owner":"Dor Gelless","slot":7,"logo":"data:image/webp;base64,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"},{"id":9,"name":"Inglourious Basterds","owner":"Omer Rosenberg","slot":8,"logo":"data:image/webp;base64,UklGRq4FAABXRUJQVlA4WAoAAAAQAAAANQAAXwAAQUxQSMIBAAABkHRtk2k7fW0rtqfJyLZ+QNZWx7adjGzbtm3bxsi2d9V1V9UZBYOImAD1BzK2QHSotKCk0oMP39y3ftaESTVi5SQN3XMd83xyqG8RIbHzfMw37EkTkTHgBxp+sIMFxPV+h8avO4bwlb+GhG9a8VV9RoHHkrjSDiHptQJc1T7QfGnGZf+kwWlBTCOReFUokwtES4KZNBJvDmPygGhUEJNF1Vcx1/1MA+24Ct2m+VCDq8AumnuVuMZ8pvkxN4RpABJPC2Kq94WovWIu/ojmUx2uiK00V9K4VA8gmRfMVvE2ELxtpdiDKl8x+9A6nE+pJWa3M5TEHmbbI0RUeWni91Qiw+eaXCwiQ3UxmaOEdjeZLaVngAw1WSghpZnucM/kSS+3ZRpPuQGnvoKPxgDfzw6tFESVUGfCfWR8PKV+EkWJzoc/IvOnY93LBJlUuwooEO40yldwCesiCr3plQjJLbTOgnu/UOyv+4saRiilUsa+QeHvZxRU6ct9lL+p8ILfGID+ml8YkID/bYQ884B85gK5ASJADsjTdmzLsi2vTdu2bdq0aaNzep7Wuk1Ordu0adNGa91Ga92mjfYc17Ft21b/2QRWUDggxgMAAHASAJ0BKjYAYAA+kT6YSaWjIiEtUzrYsBIJZADCdEJ7ty/PS8ix2EM5uDfMBjwsgUHuTGezONWV4DUvIS+wXiPl2vKyVP0q0yW0BHPkYudB8dJ532mcI5y31l9awVU9uupJI2lhxV+vJw39cwUtS0AFCqhMbSIO5xkHstNHYhw/uftZuXUswdu6hHEiDK3+LsTCOlx5m0inf9adUAD+/zm9XYgE9vI7rBmKioXR6ms7Qar0nCX6HQaAApLBfoDed++t+87AodCSVUzTts8eoWOrTgkmLa4ic1nWOeXSQe/e4LeJRGvTvia3TL9VKbO0DRdNmcdDcODHue9Yxn6XWZzDX/GoOI7go+lqickdu1lLi5p/HbomM3+1wArZYjD9TrAcSVGGM5GlMRfgytiBRBL20Hvcg7oUlaMOHanuXibrBbtIT2cpJsuFgveFEsjhePOylHZV/9/1iQPFjpBRQr0ee8jSlPPMOqgEg/twIyxixcr2AXXHM4/bR+Qee8UliveEOPuc4mFu3nVBY+RHjBrom5MIyjpz/pSJk16mm9dgp9Jcv5m2PW61QeX7uN1OQ+dduU0/S6Tjr0gEC0mkR/lu4YASauAlkWTmL+XRNfFurk7BJy+LlZMx5SeenId6QN0M2UH+EaDiwCrzFpfH9s65RZLQb2LxtZveTu69b//hDwm6LhtlDk8qx4I2vy9XQ+fUsDlurs18oeKnKoLTEV9rUUbS91ys1rHIKM+s/RqjswTEvuJqRn/3UbxZyIChtpt83lmnuIPdJ9BGWSMEr8JUnRBYq1gI8iMzFICbY/cRnSziMxokcQ3Yk2cE2vqiDqsedUdO4xf5wJBlHttDLvjb5RTEurNCv4LQY6grEhKta1Zcl0Um8cocazvGxGDCCSkKEvfO4u+BExiVVTfewhwm8yg3ZAlCR5b6/D66uQtzrWxtkHqM6D+8jdMzyGp6rDTVmzaTqXKlN3INO4uf/qb9n9wNqrumeSsOFJCP/Jr+n/2Owdxekila8UCuDoLVhKWJVkk+pwsfgevEhM11qKLGCHMf87mYU99cYwB6nLvSX4iCb7OFua2hPlC0RngXyQ53DHVa1W+EohG6i20m5/7CmxsO+11mM7UljyVTVuBbk2+zBYWOjTKFChiSEDsQkCj4TIGYwFPBn+81woC+5ch7aOk4Csl/VmLH/zBx9WzSP9qsd0EHfdYDjSVArC2adIwK97/AwdaIarrbOdRKG3V4fDvOPvUQ8t6OirzMZrNAQjKkMksqQyT/LUJk6BM4SXt7AAAAAA=="},{"id":11,"name":"League's American Problem","owner":"Yuval Halevy","slot":9,"logo":"data:image/webp;base64,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"},{"id":3,"name":"Team Miller","owner":"Barak Miller","slot":10,"logo":"data:image/webp;base64,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"}],"picks":[[1,1,5,"Nikola Jokic","C","DEN",4838,67.19,72,1,1.4,""],[2,1,1,"Luka Doncic","PG","LAL",4123,60.63,68,3,3.6,""],[3,1,6,"Victor Wembanyama","C","SAS",4054,60.51,67,4,3.1,""],[4,1,4,"Shai Gilgeous-Alexander","PG","OKC",4320,56.84,76,2,3,""],[5,1,10,"Giannis Antetokounmpo","PF","MIA",3856,57.55,67,5,5.8,""],[6,1,2,"Cade Cunningham","PG","DET",3481,50.45,69,7,8.1,""],[7,1,8,"Jalen Johnson","PF","ATL",3599,49.99,72,6,8.7,""],[8,1,9,"Jayson Tatum","PF","BOS",3367,48.1,70,9,9,""],[9,1,11,"Anthony Edwards","SG","MIN",3402,47.25,72,8,7.3,""],[10,1,3,"Donovan Mitchell","SG","CLE",3300,46.48,71,10,11.3,""],[11,2,3,"Domantas Sabonis","C","SAC",3222,46.7,69,12,18.4,""],[12,2,11,"Tyrese Maxey","PG","PHI",3204,45.13,71,13,13.5,""],[13,2,9,"Cooper Flagg","SF","DAL",3266,45.36,72,11,10.9,""],[14,2,8,"Scottie Barnes","SF","TOR",3145,43.68,72,17,17,""],[15,2,2,"Tyrese Haliburton","PG","IND",3112,48.63,64,21,19.5,""],[16,2,10,"Jalen Brunson","PG","NYK",3156,43.83,72,15,15.1,""],[17,2,4,"LaMelo Ball","PG","MIN",3157,46.43,68,14,16,""],[18,2,6,"Trae Young","PG","WAS",3149,44.35,71,16,23.2,""],[19,2,1,"Alperen Sengun","C","HOU",3097,43.01,72,22,24.3,""],[20,2,5,"Josh Giddey","PG","CHI",3139,46.16,68,18,23.9,""],[21,3,5,"Deni Avdija","SF","POR",2907,40.38,72,30,34,""],[22,3,1,"Devin Booker","PG","PHX",3113,43.24,72,20,23.3,""],[23,3,6,"Amen Thompson","SF","HOU",3117,39.96,78,19,21.4,""],[24,3,4,"Kevin Durant","PF","HOU",3089,42.9,72,23,21.5,""],[25,3,10,"Karl-Anthony Towns","C","NYK",3086,44.09,70,24,21.8,""],[26,3,2,"Kawhi Leonard","SF","TOR",2882,45.75,63,33,30.2,""],[27,3,8,"James Harden","PG","CLE",3072,42.08,73,25,29.5,""],[28,3,9,"Jamal Murray","PG","DEN",3031,43.93,69,28,31.1,""],[29,3,11,"Jalen Duren","C","DET",3039,42.21,72,27,31.1,""],[30,3,3,"Stephen Curry","PG","GSW",2841,43.05,66,37,30.1,""],[31,4,3,"Pascal Siakam","PF","IND",3042,41.11,74,26,30.7,""],[32,4,11,"Jaylen Brown","SF","PHI",2741,38.61,71,41,34.2,""],[33,4,9,"Evan Mobley","PF","CLE",2860,43.33,66,35,36.2,""],[34,4,8,"Bam Adebayo","C","MIA",2893,39.63,73,32,30.1,"DTD"],[35,4,2,"Jalen Williams","PF","OKC",2867,40.96,70,34,37.7,""],[36,4,10,"Anthony Davis","C","WAS",3023,49.56,61,29,31.2,""],[37,4,4,"Austin Reaves","SG","LAL",2903,43.33,67,31,32.3,""],[38,4,6,"Derrick White","SG","BOS",2850,37.01,77,36,40.7,""],[39,4,1,"LeBron James","SF","PHI",2719,42.48,64,42,39.8,""],[40,4,5,"De'Aaron Fox","PG","SAS",2709,38.15,71,43,54.1,""],[41,5,5,"Nickeil Alexander-Walker","SG","ATL",2690,34.05,79,47,55.2,""],[42,5,1,"Paolo Banchero","PF","ORL",2691,39,69,46,42,""],[43,5,6,"Lauri Markkanen","PF","UTA",2667,38.65,69,51,54.2,""],[44,5,4,"Kyrie Irving","PG","DAL",2608,44.2,59,55,54.6,""],[45,5,10,"Desmond Bane","SG","ORL",2754,38.25,72,39,48.1,""],[46,5,2,"Julius Randle","PF","BKN",2667,37.04,72,50,59.5,""],[47,5,8,"Kon Knueppel","SF","CHA",2743,35.17,78,40,43.7,"DTD"],[48,5,9,"Stephon Castle","PG","SAS",2654,36.86,72,53,52.2,""],[49,5,11,"Dyson Daniels","SG","ATL",2674,35.65,75,49,59.5,""],[50,5,3,"Zion Williamson","PF","NOP",2558,39.97,64,57,64,""],[51,6,3,"Damian Lillard","PG","POR",2510,38.62,65,61,69.3,""],[52,6,11,"Caleb Wilson","SF","CHI",2478,34.9,71,66,73,""],[53,6,9,"Franz Wagner","SF","ORL",2550,38.64,66,58,67,"DTD"],[54,6,8,"Michael Porter Jr.","SF","BKN",2686,38.93,69,48,52.7,""],[55,6,2,"Trey Murphy III","SF","NOP",2499,36.75,68,64,70.7,""],[56,6,10,"Darius Garland","PG","LAC",2786,40.38,69,38,49.1,""],[57,6,4,"Jarrett Allen","C","CLE",2617,36.86,71,54,65.8,""],[58,6,6,"Dejounte Murray","SG","NOP",2655,39.04,68,52,69.9,"DTD"],[59,6,1,"Tyler Herro","SG","MIL",2600,38.81,67,56,65.1,""],[60,6,5,"Mikal Bridges","SF","NYK",2693,32.84,82,45,53.3,""],[61,7,5,"Keyonte George","PG","UTA",2500,36.76,68,63,73.5,""],[62,7,1,"Brandon Miller","SF","CHA",2544,37.41,68,60,66.2,""],[63,7,6,"Naz Reid","C","CHA",2699,35.51,76,44,49.7,""],[64,7,4,"Walker Kessler","C","LAL",2471,38.61,64,69,75.6,""],[65,7,10,"Chet Holmgren","C","OKC",2466,37.94,65,71,65,"DTD"],[66,7,2,"Donovan Clingan","C","POR",2472,33.86,73,68,78.1,""],[67,7,8,"Ivica Zubac","C","IND",2447,35.46,69,73,85.6,""],[68,7,9,"VJ Edgecombe","SG","PHI",2426,33.69,72,77,79.2,""],[69,7,11,"Onyeka Okongwu","C","ATL",2506,34.81,72,62,77,""],[70,7,3,"Norman Powell","SG","CHI",2482,35.97,69,65,80.6,""],[71,8,3,"Joel Embiid","C","PHI",2449,45.35,54,72,68.7,""],[72,8,11,"Alex Sarr","C","WAS",2416,36.61,66,78,88.6,""],[73,8,9,"Jaren Jackson Jr.","C","UTA",2363,38.11,62,84,85.2,""],[74,8,8,"Matas Buzelis","SF","CHI",2408,32.54,74,79,88.9,""],[75,8,2,"Ty Jerome","SG","MEM",2547,39.8,64,59,78.2,""],[76,8,10,"Ja Morant","PG","POR",2440,37.54,65,74,78.3,""],[77,8,4,"Miles Bridges","SF","PHX",2408,33.92,71,80,94.5,""],[78,8,6,"Dylan Harper","PG","SAS",2323,32.26,72,85,80.1,""],[79,8,1,"Cameron Boozer","PF","MEM",2472,34.33,72,67,74,""],[80,8,5,"DeMar DeRozan","SF","DEN",2297,29.83,77,87,99.5,""],[81,9,5,"Immanuel Quickley","PG","TOR",2270,34.92,65,92,106.3,""],[82,9,1,"Payton Pritchard","PG","BOS",2272,31.56,72,90,98,""],[83,9,6,"OG Anunoby","SF","NYK",2250,33.09,68,93,85.2,""],[84,9,4,"Kel'el Ware","C","MIL",2432,33.78,72,76,90.8,""],[85,9,10,"Jalen Green","SG","PHX",2270,32.43,70,91,99.3,""],[86,9,2,"Coby White","PG","CHA",2366,32.86,72,83,100.5,"DTD"],[87,9,8,"Nikola Vucevic","C","ORL",2174,30.19,72,101,117.1,""],[88,9,9,"CJ McCollum","SG","ATL",2368,32.44,73,82,97.9,""],[89,9,11,"Ryan Rollins","SG","MIL",2198,31.86,69,97,108.5,""],[90,9,3,"Josh Hart","SF","NYK",2245,33.01,68,94,101.1,"DTD"],[91,10,3,"Jaden McDaniels","SF","MIN",2200,29.73,74,96,98.4,""],[92,10,11,"Brandin Podziemski","SG","GSW",2436,30.84,79,75,92,""],[93,10,9,"AJ Dybantsa","SF","WAS",2370,32.92,72,81,77.5,"DTD"],[94,10,8,"Darryn Peterson","SG","UTA",2122,29.07,73,108,109,""],[95,10,2,"Rudy Gobert","C","MIN",2470,34.31,72,70,78.9,""],[96,10,10,"Paul George","SF","BOS",2116,38.47,55,109,103.1,""],[97,10,4,"Fred VanVleet","PG","HOU",2273,33.43,68,89,103.8,"DTD"],[98,10,6,"Ausar Thompson","SF","DET",2156,30.8,70,103,102.3,""],[99,10,1,"Derik Queen","C","NOP",2317,30.49,76,86,100.9,""],[100,10,5,"Jabari Smith Jr.","PF","HOU",2018,27.64,73,121,121.6,""],[101,11,5,"Kevin Porter Jr.","SG","MIL",2179,33.02,66,100,116.2,""],[102,11,1,"RJ Barrett","SF","TOR",2149,32.56,66,104,111.8,""],[103,11,6,"Zach LaVine","SG","SAC",1953,32.02,61,130,125.4,""],[104,11,4,"Zach Edey","C","MEM",2056,33.16,62,118,118.8,""],[105,11,10,"Darius Acuff Jr.","PG","SAC",2219,30.4,73,95,104.5,""],[106,11,2,"Nic Claxton","C","CHI",2090,30.29,69,112,127.3,"DTD"],[107,11,8,"Reed Sheppard","SG","HOU",2274,29.92,76,88,104.9,""],[108,11,9,"Andrew Wiggins","SF","MIA",2146,32.03,67,105,116.1,""],[109,11,11,"Ayo Dosunmu","SG","MIN",2186,30.36,72,98,115.9,""],[110,11,3,"Cason Wallace","SG","OKC",1833,24.12,76,146,137.6,"DTD"],[111,12,3,"Brandon Ingram","SF","LAC",2116,38.47,55,110,116.8,"O"],[112,12,11,"John Collins","PF","DET",2161,31.78,68,102,113.9,""],[113,12,9,"Quentin Grimes","SG","LAL",2052,28.11,73,119,130.1,""],[114,12,8,"Dillon Brooks","SF","PHX",1854,26.87,69,140,132.4,""],[115,12,2,"Day'Ron Sharpe","C","BKN",1865,27.03,69,139,138.2,""],[116,12,10,"Tobias Harris","PF","SAS",2135,30.07,71,106,122.8,"DTD"],[117,12,4,"Jimmy Butler III","SF","GSW",1512,38.77,39,207,137.9,"O"],[118,12,6,"Myles Turner","C","MIL",2017,28.41,71,122,127.3,""],[119,12,1,"Egor Demin","PG","BKN",2133,30.04,71,107,122.1,""],[120,12,5,"Kyshawn George","SG","WAS",1990,30.15,66,127,134.1,""],[121,13,5,"Peyton Watson","SF","CLE",2077,29.25,71,117,125.8,""],[122,13,1,"Aaron Gordon","PF","DEN",1908,28.91,66,136,131.2,""],[123,13,6,"Kristaps Porzingis","C","GSW",2180,36.95,59,99,114.1,"O"],[124,13,4,"Yaxel Lendeborg","SF","GSW",1668,23.49,71,173,126.5,""],[125,13,10,"Jeremiah Fears","SG","NOP",2102,27.3,77,111,123.3,""],[126,13,2,"Cedric Coward","SF","MEM",2052,29.74,69,120,128.5,""],[127,13,8,"Ace Bailey","SF","UTA",1926,26.75,72,133,131.4,""],[128,13,9,"Jalen Suggs","PG","ORL",1804,29.1,62,151,136.7,""],[129,13,11,"Keegan Murray","PF","SAC",2079,29.28,71,116,124.6,""],[130,13,3,"Tre Jones","PG","CHI",1752,25.76,68,158,141.2,""]]};
+const TEAMS = RAW.teams;
+const T = Object.fromEntries(TEAMS.map(t => [t.id, t]));
+const PICKS = RAW.picks.map(a => ({ pick: a[0], round: a[1], teamId: a[2], name: a[3], pos: a[4], nba: a[5], fp: a[6], avg: a[7], gp: a[8], rank: a[9], adp: a[10], inj: a[11] }));
+PICKS.forEach(p => { p.val = p.pick - p.rank; p.adpv = p.pick - p.adp; });
+const TOP = PICKS.filter(p => p.round <= 10);
+const f1 = n => n.toFixed(1);
+const fInt = n => Math.round(n).toLocaleString('en-US');
+const sgn = (n, d = 0) => (n > 0 ? '+' : n < 0 ? '−' : '±') + Math.abs(n).toFixed(d);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+// ── team summaries
+const S = TEAMS.map(t => {
+  const ps = TOP.filter(p => p.teamId === t.id).sort((a, b) => a.round - b.round);
+  const all = PICKS.filter(p => p.teamId === t.id);
+  const sum = (arr, k) => arr.reduce((s, p) => s + p[k], 0);
+  const nbaCount = {}; ps.forEach(p => nbaCount[p.nba] = (nbaCount[p.nba] || 0) + 1);
+  return { ...t, ps, all, fp: sum(ps, 'fp'), avg: sum(ps, 'avg') / ps.length, gp: sum(ps, 'gp'), val: sum(ps, 'val'), adp: sum(ps, 'adpv'),
+    fp13: sum(all, 'fp'), inj: ps.filter(p => p.inj).length,
+    best: [...ps].sort((a, b) => b.val - a.val)[0], nbaCount };
+});
+const rankOf = (k, asc = false) => { const s = [...S].sort((a, b) => asc ? a[k] - b[k] : b[k] - a[k]); const m = {}; s.forEach((t, i) => m[t.id] = i + 1); return m; };
+const R = { fp: rankOf('fp'), avg: rankOf('avg'), gp: rankOf('gp'), val: rankOf('val'), adp: rankOf('adp'), fp13: rankOf('fp13'), slot: rankOf('slot', true) };
+const byKey = (k, asc) => [...S].sort((a, b) => asc ? a[k] - b[k] : b[k] - a[k]);
+const img = (t, cls = '') => `<img src="${t.logo}" alt="" ${cls}>`;
+
+// ── ticker
+(() => {
+  const leagueAvg = TOP.reduce((s, p) => s + p.avg, 0) / TOP.length;
+  const spread = byKey('fp')[0].fp - byKey('fp').at(-1).fp;
+  const items = [['130', 'picks'], ['13', 'rounds'], [f1(leagueAvg), 'avg FPG, top-10 picks'], [fInt(spread), 'pts between #1 and #10']];
+  document.getElementById('ticker').innerHTML = items.map(([b, s]) => `<div><b>${b}</b><span>${s}</span></div>`).join('');
+})();
+
+// ── awards
+(() => {
+  const top = k => byKey(k)[0];
+  const steal = [...TOP].sort((a, b) => b.val - a.val)[0];
+  const reach = [...TOP].sort((a, b) => a.val - b.val)[0];
+  const late = [...TOP].filter(p => p.round >= 6).sort((a, b) => b.avg - a.avg)[0];
+  const stack = S.flatMap(t => Object.entries(t.nbaCount).map(([nba, n]) => ({ t, nba, n }))).sort((a, b) => b.n - a.n);
+  const maxStack = stack[0].n;
+  const stackers = stack.filter(s => s.n === maxStack);
+  const injMax = Math.max(...S.map(t => t.inj));
+  const injT = S.filter(t => t.inj === injMax);
+  const cards = [
+    ['Projected points champ', top('fp'), fInt(top('fp').fp), `projected points from the top 10 picks, ${fInt(top('fp').fp - byKey('fp')[1].fp)} ahead of #2`],
+    ['Best per-game roster', top('avg'), f1(top('avg').avg) + ' FPG', `highest average projected points per game`],
+    ['Iron Man award', top('gp'), fInt(top('gp').gp) + ' GP', `most projected games played: the most reliable roster`],
+    ['Best value drafter', top('val'), sgn(top('val').val), `picks after ESPN rank, summed over 10 picks`],
+    ['Steal of the draft', T[steal.teamId], sgn(steal.val), `${steal.name} at pick ${steal.pick}, ESPN rank ${steal.rank}`],
+    ['Biggest reach', T[reach.teamId], sgn(reach.val), `${reach.name} at pick ${reach.pick}, ESPN rank ${reach.rank}`],
+    ['Best late find (R6–10)', T[late.teamId], f1(late.avg) + ' FPG', `${late.name}, round ${late.round}, pick ${late.pick}`],
+    ['Fewest games', byKey('gp', true)[0], fInt(byKey('gp', true)[0].gp) + ' GP', `lowest projected games played. Depth will matter.`],
+  ];
+  document.getElementById('awards').innerHTML = cards.map(([k, t, v, d]) => `
+    <div class="award"><div class="k">${k}</div>
+      <div class="who">${img(t)}<div><b>${esc(t.owner)}</b><small>${esc(t.name)}</small></div></div>
+      <div class="v num">${v}</div><div class="d">${esc(d)}</div></div>`).join('');
+})();
+
+// ── leaderboards
+(() => {
+  const boards = [
+    { k: 'fp', title: 'Projected points', sub: 'Sum of projected season totals', fmt: fInt, min: 0.9 },
+    { k: 'avg', title: 'Avg FPG', sub: 'Average projected points per game', fmt: f1, min: 0.85 },
+    { k: 'gp', title: 'Projected games played', sub: 'Sum of projected GP, higher = fewer missed games', fmt: fInt, min: 0.9 },
+    { k: 'val', title: 'Draft value vs. ESPN rank', sub: 'Sum of pick − ESPN rank. Right = got players later than ranked', fmt: v => sgn(v), div: true },
+  ];
+  const el = document.getElementById('boards');
+  el.innerHTML = boards.map(b => {
+    const rows = byKey(b.k);
+    const max = Math.max(...rows.map(r => r[b.k]));
+    const lo = Math.min(...rows.map(r => r[b.k])) * b.min;
+    const absMax = Math.max(...rows.map(r => Math.abs(r[b.k])));
+    return `<div class="board"><header><h3>${b.title}</h3><p>${b.sub}</p></header><div class="bars">` + rows.map((t, i) => {
+      const v = t[b.k];
+      const tip = `${esc(t.owner)} · ${esc(t.name)} — Points ${fInt(t.fp)} (#${R.fp[t.id]}), Avg ${f1(t.avg)} (#${R.avg[t.id]}), GP ${t.gp} (#${R.gp[t.id]}), Value ${sgn(t.val)} (#${R.val[t.id]})`;
+      let bar;
+      if (b.div) {
+        const w = Math.abs(v) / absMax * 40;
+        bar = `<div class="div-track"><div class="zero"></div><div class="fill ${v >= 0 ? 'pos' : 'neg'}" style="width:${w}%;${v < 0 ? `left:${50 - w}%` : ''}"></div>
+          <span class="val" style="${v >= 0 ? `left:calc(${50 + w}% + 6px)` : `right:calc(${50 + w}% + 6px)`}">${b.fmt(v)}</span></div>`;
+      } else {
+        const w = 8 + (v - lo) / (max - lo) * 72;
+        bar = `<div class="track"><div class="fill" style="width:${w}%"></div><span class="val">${b.fmt(v)}</span></div>`;
+      }
+      return `<div class="bar-row ${i === 0 ? 'top' : ''}" title="${tip}"><span class="rk">${i + 1}</span>${img(t)}<span class="nm">${esc(t.owner)}</span>${bar}</div>`;
+    }).join('') + `</div></div>`;
+  }).join('');
+  const n = document.createElement('p'); n.className = 'note';
+  n.textContent = 'Bars for points, avg and GP start near the lowest team, not at zero, so the gaps are visible. The teams are closer than the bars suggest.';
+  el.after(n);
+})();
+
+// ── line chart
+(() => {
+  const svg = document.getElementById('line'), wrap = document.getElementById('line-wrap'), tip = document.getElementById('tip');
+  const chipsEl = document.getElementById('chips');
+  const SLOTS = ['--s1', '--s2', '--s3'];
+  const state = { mode: 'raw', rounds: 10, sel: [byKey('fp')[0].id, byKey('avg')[0].id].filter((v, i, a) => a.indexOf(v) === i) };
+  const roundAvg = r => { const ps = PICKS.filter(p => p.round === r); return ps.reduce((s, p) => s + p.avg, 0) / ps.length; };
+  const RA = {}; for (let r = 1; r <= 13; r++) RA[r] = roundAvg(r);
+  const pickAt = (tid, r) => PICKS.find(p => p.teamId === tid && p.round === r);
+  const color = tid => { const i = state.sel.indexOf(tid); return i < 0 ? null : getComputedStyle(document.documentElement).getPropertyValue(SLOTS[i]).trim(); };
+
+  chipsEl.innerHTML = [...TEAMS].sort((a, b) => a.slot - b.slot).map(t => `<button class="chip" data-id="${t.id}" aria-pressed="false"><img src="${t.logo}" alt=""><span class="sw"></span>${esc(t.owner)}</button>`).join('');
+  chipsEl.addEventListener('click', e => {
+    const c = e.target.closest('.chip'); if (!c) return;
+    const id = +c.dataset.id, i = state.sel.indexOf(id);
+    if (i >= 0) state.sel.splice(i, 1); else { if (state.sel.length >= 3) state.sel.shift(); state.sel.push(id); }
+    draw();
+  });
+  const seg = (a, b, key, va, vb) => {
+    const A = document.getElementById(a), B = document.getElementById(b);
+    A.onclick = () => { state[key] = va; draw(); }; B.onclick = () => { state[key] = vb; draw(); };
+    return () => { A.setAttribute('aria-pressed', state[key] === va); B.setAttribute('aria-pressed', state[key] === vb); };
+  };
+  const syncM = seg('m-raw', 'm-diff', 'mode', 'raw', 'diff');
+  const syncR = seg('r-10', 'r-13', 'rounds', 10, 13);
+
+  const W = 960, H = 380, m = { l: 48, r: 150, t: 16, b: 40 };
+  let geo = null;
+  function draw() {
+    syncM(); syncR();
+    chipsEl.querySelectorAll('.chip').forEach(c => {
+      const col = color(+c.dataset.id); c.setAttribute('aria-pressed', !!col); c.querySelector('.sw').style.background = col || 'transparent';
+    });
+    const N = state.rounds, rounds = Array.from({ length: N }, (_, i) => i + 1);
+    const val = (tid, r) => { const p = pickAt(tid, r); return state.mode === 'raw' ? p.avg : p.avg - RA[r]; };
+    let vals = TEAMS.flatMap(t => rounds.map(r => val(t.id, r)));
+    let lo = Math.min(...vals), hi = Math.max(...vals);
+    const step = state.mode === 'raw' ? 10 : 5;
+    lo = Math.floor(lo / step) * step; hi = Math.ceil(hi / step) * step;
+    if (state.mode === 'raw') lo = Math.min(lo, 20);
+    const x = r => m.l + (r - 1) / (N - 1) * (W - m.l - m.r);
+    const y = v => m.t + (hi - v) / (hi - lo) * (H - m.t - m.b);
+    geo = { x, N, rounds, val };
+    let g = '';
+    for (let v = lo; v <= hi + 1e-9; v += step) {
+      const zero = state.mode === 'diff' && v === 0;
+      g += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(${zero ? '--ink-3' : '--grid'})" stroke-width="1"/>`;
+      g += `<text x="${m.l - 8}" y="${y(v) + 4}" text-anchor="end">${state.mode === 'diff' && v > 0 ? '+' : ''}${v}</text>`;
+    }
+    rounds.forEach(r => g += `<text x="${x(r)}" y="${H - m.b + 18}" text-anchor="middle">R${r}</text>`);
+    g += `<text x="${(m.l + W - m.r) / 2}" y="${H - 4}" text-anchor="middle">Draft round</text>`;
+    if (N === 13) g += `<line x1="${(x(10) + x(11)) / 2}" x2="${(x(10) + x(11)) / 2}" y1="${m.t}" y2="${H - m.b}" stroke="var(--line)" stroke-dasharray="3 3"/><text x="${(x(10) + x(11)) / 2 + 6}" y="${m.t + 10}">bench rounds →</text>`;
+    const path = tid => rounds.map((r, i) => `${i ? 'L' : 'M'}${x(r).toFixed(1)},${y(val(tid, r)).toFixed(1)}`).join('');
+    TEAMS.filter(t => !state.sel.includes(t.id)).forEach(t => g += `<path d="${path(t.id)}" fill="none" stroke="var(--muted-line)" stroke-width="1.25"/>`);
+    if (state.mode === 'raw') g += `<path d="${rounds.map((r, i) => `${i ? 'L' : 'M'}${x(r)},${y(RA[r])}`).join('')}" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="5 4"/>`;
+    // end labels (avoid collisions)
+    const labels = [];
+    if (state.mode === 'raw') labels.push({ y: y(RA[N]), txt: 'League avg', col: 'var(--ink)' });
+    state.sel.forEach(tid => {
+      const c = color(tid);
+      g += `<path d="${path(tid)}" fill="none" stroke="${c}" stroke-width="2.5" stroke-linejoin="round"/>`;
+      rounds.forEach(r => g += `<circle cx="${x(r)}" cy="${y(val(tid, r))}" r="4" fill="${c}" stroke="var(--panel)" stroke-width="2"/>`);
+      labels.push({ y: y(val(tid, N)), txt: T[tid].owner, col: c });
+    });
+    labels.sort((a, b) => a.y - b.y);
+    for (let i = 1; i < labels.length; i++) if (labels[i].y - labels[i - 1].y < 14) labels[i].y = labels[i - 1].y + 14;
+    labels.forEach(l => g += `<text x="${W - m.r + 10}" y="${l.y + 4}" style="fill:${l.col};font-family:var(--f-body);font-size:12px;font-weight:600">${esc(l.txt)}</text>`);
+    g += `<line id="xh" y1="${m.t}" y2="${H - m.b}" stroke="var(--ink-3)" stroke-width="1" visibility="hidden"/>`;
+    g += `<rect x="${m.l - 20}" y="${m.t}" width="${W - m.l - m.r + 40}" height="${H - m.t - m.b}" fill="transparent" id="hit"/>`;
+    svg.innerHTML = g;
+  }
+  svg.addEventListener('mousemove', e => {
+    if (!geo) return;
+    const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+    const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+    let r = Math.round((p.x - m.l) / ((W - m.l - m.r) / (geo.N - 1))) + 1;
+    if (r < 1 || r > geo.N) { tip.hidden = true; return; }
+    const xh = svg.querySelector('#xh'); xh.setAttribute('x1', geo.x(r)); xh.setAttribute('x2', geo.x(r)); xh.setAttribute('visibility', 'visible');
+    const ids = state.sel.length ? state.sel : [];
+    const rows = ids.map(tid => { const pk = pickAt(tid, r); return `<div class="r"><span><span class="sw" style="background:${color(tid)}"></span>${esc(T[tid].owner)}</span><span class="num">${f1(pk.avg)}</span></div><div style="opacity:.75;margin:0 0 4px 13px">${esc(pk.name)} · #${pk.pick}</div>`; }).join('');
+    const best = TEAMS.map(t => pickAt(t.id, r)).sort((a, b) => b.avg - a.avg)[0];
+    tip.innerHTML = `<b>Round ${r}</b><div class="r"><span>Round average</span><span class="num">${f1(RA[r])}</span></div>${rows}<div style="opacity:.75;border-top:1px solid rgba(127,127,127,.4);margin-top:4px;padding-top:4px">Best this round: ${esc(best.name)} (${esc(T[best.teamId].owner)}, ${f1(best.avg)})</div>`;
+    tip.hidden = false;
+    const wr = wrap.getBoundingClientRect();
+    let left = e.clientX - wr.left + wrap.scrollLeft + 14;
+    if (left + 280 > wrap.scrollLeft + wr.width) left = e.clientX - wr.left + wrap.scrollLeft - 14 - tip.offsetWidth;
+    tip.style.left = left + 'px'; tip.style.top = Math.max(0, e.clientY - wr.top - 20) + 'px';
+  });
+  svg.addEventListener('mouseleave', () => { tip.hidden = true; const xh = svg.querySelector('#xh'); if (xh) xh.setAttribute('visibility', 'hidden'); });
+  draw();
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw);
+  new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+})();
+
+// ── steals & reaches
+(() => {
+  const row = p => `<div class="li"><span class="pk">#${p.pick}</span><span class="pl"><b>${esc(p.name)}</b><small>${esc(T[p.teamId].owner)} · R${p.round} · ESPN rank ${p.rank} · ADP ${f1(p.adp)}</small></span><span class="delta ${p.val > 0 ? 'pos' : 'neg'}">${sgn(p.val)}</span></div>`;
+  const s = [...TOP].sort((a, b) => b.val - a.val || a.pick - b.pick).slice(0, 6);
+  const r = [...TOP].sort((a, b) => a.val - b.val || a.pick - b.pick).slice(0, 6);
+  document.getElementById('steals').insertAdjacentHTML('beforeend', s.map(row).join(''));
+  document.getElementById('reaches').insertAdjacentHTML('beforeend', r.map(row).join(''));
+})();
+
+// ── table
+(() => {
+  const tbody = document.querySelector('#tbl tbody');
+  let sortK = 'fp', asc = false;
+  const cell = (t, k, txt) => `<td class="num">${txt}<span class="rk ${R[k][t.id] === 1 ? 'r1' : ''}">${R[k][t.id]}</span></td>`;
+  function render() {
+    const rows = [...S].sort((a, b) => sortK === 'team' ? a.owner.localeCompare(b.owner) * (asc ? 1 : -1) : (asc ? a[sortK] - b[sortK] : b[sortK] - a[sortK]));
+    tbody.innerHTML = rows.map(t => `<tr><td><div class="tm">${img(t)}<div>${esc(t.owner)}<small>${esc(t.name)}</small></div></div></td>
+      <td class="num">${t.slot}</td>${cell(t, 'fp', fInt(t.fp))}${cell(t, 'avg', f1(t.avg))}${cell(t, 'gp', t.gp)}${cell(t, 'val', sgn(t.val))}${cell(t, 'adp', sgn(t.adp, 1))}${cell(t, 'fp13', fInt(t.fp13))}</tr>`).join('');
+    document.querySelectorAll('#tbl th').forEach(th => th.setAttribute('aria-sort', th.dataset.k === sortK ? (asc ? 'ascending' : 'descending') : 'none'));
+  }
+  document.querySelectorAll('#tbl th').forEach(th => {
+    const go = () => { const k = th.dataset.k; if (k === sortK) asc = !asc; else { sortK = k; asc = k === 'slot' || k === 'team'; } render(); };
+    th.onclick = go; th.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } };
+  });
+  render();
+})();
+
+// ── rosters
+(() => {
+  const pr = (p, bench) => `<div class="pr ${bench ? 'bench' : ''}"><span class="rd">R${p.round}</span><span class="nm">${esc(p.name)}<small>${p.pos} · ${p.nba}</small>${p.inj ? `<span class="inj" title="${p.inj === 'O' ? 'Out' : 'Day-to-day'}">${p.inj}</span>` : ''}</span><span class="a">${f1(p.avg)}</span><span class="delta ${p.val > 0 ? 'pos' : p.val < 0 ? 'neg' : 'zero'}">${sgn(p.val)}</span></div>`;
+  document.getElementById('rosters').innerHTML = [...S].sort((a, b) => a.slot - b.slot).map(t => {
+    const bench = t.all.filter(p => p.round > 10).sort((a, b) => a.round - b.round);
+    return `<div class="roster"><header>${img(t)}<div><b>${esc(t.owner)}</b><small>${esc(t.name)} · pick ${t.slot}</small></div></header>
+      <div class="sum"><span>Pts <b>${fInt(t.fp)}</b></span><span>Avg <b>${f1(t.avg)}</b></span><span>GP <b>${t.gp}</b></span><span>Value <b>${sgn(t.val)}</b></span></div>
+      ${t.ps.map(p => pr(p)).join('')}<div class="bench-label">Rounds 11–13</div>${bench.map(p => pr(p, true)).join('')}</div>`;
+  }).join('');
+})();
+</script>

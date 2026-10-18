@@ -50,12 +50,14 @@ A night with no games is not written, so the file keeps the last game night.
 
 ## 4. Schedule
 
-Nightly Action moves from 09:00 UTC to **06:00 UTC = 08:00 Israel winter
-time** (09:00 until clocks change on Oct 25, 2026).
+Nightly Action runs twice a day, at **06:00 and 09:00 Israel time**, all
+year (changed 2026-10-18). GitHub cron is UTC only, so both the winter
+(04:00/07:00 UTC) and summer (03:00/06:00 UTC) times are scheduled and a
+small first job skips the pair that doesn't match the day's Israel offset.
 
-A second run at 09:00 UTC stays as a catch-up: a late West Coast game can
-still be in progress at 06:00 UTC, and that run fixes the numbers and
-fetches clips uploaded late. If nothing changed it makes no commit.
+06:00 is so people wake up to the recap and clips. 09:00 is a catch-up: a
+late West Coast game can still be on at 06:00, and that run fixes the
+numbers and fetches clips uploaded late. If nothing changed it makes no commit.
 
 ## 5. Open / to verify
 

@@ -7,8 +7,6 @@ import RecapHighlights from '@/components/RecapHighlights';
 import { CURRENT_SEASON_DISPLAY } from '@/lib/season';
 import { loadNightlyRecap } from '@/lib/nightly-data';
 import { loadHighlightsForDates } from '@/lib/highlights-data';
-import { embedUrlFor } from '@/lib/youtube';
-import type { Highlight } from '@/lib/highlightly';
 import {
   managerOfTheNight,
   worstManagerOfTheNight,
@@ -224,17 +222,6 @@ function ManagerCard({ award, kind }: { award: ManagerAward; kind: 'best' | 'wor
   );
 }
 
-// TEMP: a real NBA YouTube clip (embeddable, checked 2026-10-18), shown only
-// while there are no real clips. Delete this and its use below after opening night.
-const TEST_CLIP: Highlight = {
-  id: 'test-GmFlYMeFpAc',
-  title: 'Anthony Edwards & LaMelo Ball Looked DYNAMIC during Preseason! (test clip)',
-  embedUrl: embedUrlFor('GmFlYMeFpAc'),
-  source: 'nba on youtube',
-  date: '2026-10-18',
-  match: 'Preseason',
-};
-
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function HomePage() {
@@ -253,10 +240,7 @@ export default async function HomePage() {
   const players = night ? topPlayers(night.players) : [];
   const best = night ? managerOfTheNight(night.teams) : null;
   const worst = night ? worstManagerOfTheNight(night.teams) : null;
-  const nightClips = night ? loadHighlightsForDates([night.date]) : [];
-  // TEMP: test clip so the video player can be checked before opening night.
-  // Remove once real clips arrive.
-  const clips: Highlight[] = nightClips.length > 0 ? nightClips : [TEST_CLIP];
+  const clips = night ? loadHighlightsForDates([night.date]) : [];
 
   return (
     <div className="min-h-screen bg-background">

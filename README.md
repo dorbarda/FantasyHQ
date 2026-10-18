@@ -55,7 +55,7 @@ and rendering the whole site under `SEASON=2027`.
 ### Nightly snapshots
 
 The `espn-snapshot` GitHub Action runs `scripts/build-snapshots.mts` every
-night (09:00 UTC), calls the heavy ESPN loaders, and commits the results to
+morning (06:00 and 09:00 Israel time), calls the heavy ESPN loaders, and commits the results to
 `data/snapshots/*.json` — which triggers a Vercel redeploy on fresh data.
 The analytical pages (records, history, transactions, matchup depth,
 analysis) prefer these snapshots over live ESPN calls, so they stay fast and

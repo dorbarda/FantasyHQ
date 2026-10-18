@@ -172,7 +172,6 @@ const NAV_GROUPS = [
       { href: '/matchup-depth', label: 'Depth',       Icon: DepthIcon    },
       { href: '/recap',         label: 'Recap',       Icon: RecapIcon    },
       { href: '/draft',         label: 'Draft',       Icon: DraftIcon    },
-      { href: '/draft-prep',    label: 'Draft Prep',  Icon: DraftIcon    },
       { href: '/teams',         label: 'Teams',       Icon: TeamsIcon    },
     ],
   },

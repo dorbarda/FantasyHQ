@@ -47,7 +47,7 @@ function TeamSide({ team, isWinning, isLive, isFinal }: {
         )}
         {(isLive || (!isFinal && !isLive)) && team.playersRemainingToday > 0 && (
           <p className="text-[10px] text-positive-bright mt-0.5">
-            {team.playersRemainingToday} left today
+            {team.playersRemainingToday} game{team.playersRemainingToday !== 1 ? 's' : ''} left
           </p>
         )}
       </div>

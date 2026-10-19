@@ -123,3 +123,17 @@ describe('fillActuals', () => {
     expect(p.matchups[0].actual).toEqual({ home: 1, away: 2 });
   });
 });
+
+describe('projectTeam — games left', () => {
+  it("counts only games not started, and a starter who already played keeps his spot", () => {
+    // Day 1: C1–C4 fill C + 3 UTIL. C1 and C2 already played → only C3, C4 count; C5 still doesn't fit.
+    const team = { id: 1, name: 'T', roster: { entries: [
+      player('C1', 50, 2, CENTER), player('C2', 40, 2, CENTER), player('C3', 30, 2, CENTER),
+      player('C4', 20, 2, CENTER), player('C5', 10, 2, CENTER),
+    ] } };
+    const done = new Set(['C1', 'C2']);
+    const t = projectTeam(team, [1], schedules, SEASON, 1, p => done.has(p.fullName));
+    expect(t.games).toBe(2);
+    expect(t.gamesLostToLineupLimit).toBe(1);
+  });
+});

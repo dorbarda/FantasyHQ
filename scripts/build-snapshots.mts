@@ -44,6 +44,7 @@ const { getScheduleSeason } = await import('../lib/espn-schedule');
 const { buildHighlightsSnapshot } = await import('../lib/highlights-data');
 const { buildNightlySnapshot } = await import('../lib/nightly-data');
 const { getAllHistoricalSeasons } = await import('../lib/espn-history');
+const { buildPlayerTrendsSnapshot } = await import('../lib/player-trends-data');
 
 // Some loaders (records, history) swallow per-season fetch errors and return
 // empty structures, so a dead cookie would silently overwrite good snapshots
@@ -73,6 +74,10 @@ const jobs: Array<[string, () => Promise<unknown>, (d: any) => boolean, boolean?
   // Home page daily recap — reads the schedule snapshot above, so it runs after it.
   // Null on a day without games: the file keeps the last game night.
   ['nightly', buildNightlySnapshot, d => d !== null && d.teams?.length > 0],
+  // Home page side column: last-30 leaders, surprises/busts vs. the preseason
+  // projection (frozen into data/projections on its first run). Null before
+  // opening night.
+  ['player-trends', buildPlayerTrendsSnapshot, d => d !== null && d.players?.length > 0],
   // Highlight clips for the recap — optional, and skipped entirely without a key.
   ['highlights', buildHighlightsSnapshot, d => Object.keys(d ?? {}).length > 0, true],
 ];

@@ -1106,3 +1106,58 @@ export async function getRules(): Promise<RulesData> {
 export async function getLeagueRosters(): Promise<any> {
   return espnFetch('?view=mTeam&view=mRoster&view=mMatchup');
 }
+
+// ─── PLAYER POOL (home page trends) ───────────────────────────────────────────
+
+export interface PoolPlayer {
+  playerId: number;
+  name: string;
+  proTeam: string;
+  ownerName: string | null;
+  seasonPts: number;
+  gp: number;
+  last30Pts: number;
+  projPts: number;
+}
+
+/**
+ * Every NBA player ESPN knows, with this league's fantasy points: season total
+ * (00YYYY), last 30 days (03YYYY) and ESPN's season projection (10YYYY).
+ * All three are ESPN's own `appliedTotal`, never recomputed.
+ */
+export async function getPlayerPool(): Promise<PoolPlayer[]> {
+  const ids = { total: `00${SEASON}`, last30: `03${SEASON}`, proj: `10${SEASON}` };
+  const [teamData, poolData] = await Promise.all([
+    espnFetch('?view=mTeam', undefined, true),
+    espnFetch('?view=kona_player_info', {
+      'x-fantasy-filter': JSON.stringify({
+        players: {
+          limit: 2000,
+          sortAppliedStatTotal: { sortAsc: false, sortPriority: 1, value: ids.proj },
+          filterStatsForTopScoringPeriodIds: { value: 5, additionalValue: Object.values(ids) },
+        },
+      }),
+    }, true),
+  ]);
+
+  const memberMap = buildMemberMap(teamData.members || []);
+  const ownerByTeamId = new Map<number, string>(
+    ((teamData.teams || []) as any[]).map(t => [t.id, resolveOwnerName(t.name || '', t.owners || [], memberMap)])
+  );
+
+  return ((poolData.players || []) as any[]).flatMap(entry => {
+    const p = entry.player;
+    if (!p) return [];
+    const stat = (id: string) => (p.stats || []).find((s: any) => s.id === id);
+    return [{
+      playerId: p.id as number,
+      name: p.fullName || `Player ${p.id}`,
+      proTeam: PRO_TEAMS[p.proTeamId] || '',
+      ownerName: ownerByTeamId.get(entry.onTeamId) ?? null,
+      seasonPts: r1(stat(ids.total)?.appliedTotal ?? 0),
+      gp: stat(ids.total)?.stats?.['42'] ?? 0,
+      last30Pts: r1(stat(ids.last30)?.appliedTotal ?? 0),
+      projPts: r1(stat(ids.proj)?.appliedTotal ?? 0),
+    }];
+  });
+}

@@ -64,3 +64,19 @@ numbers and fetches clips uploaded late. If nothing changed it makes no commit.
 - ~~Daily team totals are computed by us (sum of starters).~~ Verified
   2026-10-06 against ESPN's own `pointsByScoringPeriod`: 40 team-days from
   2025-26, 0 mismatches.
+
+## 5. Side column — player trends (added 2026-10-19)
+
+Three cards to the right of the recap (below it on narrow screens).
+
+| Card | Definition |
+| --- | --- |
+| Top 5 · last 30 days | ESPN's last-30-days fantasy points (stat row `03YYYY`). Until day 30 of the season this equals the season total. |
+| Surprises & busts | Gain = preseason projected rank − current rank, both by **total points** among all NBA players. Surprises: biggest gain, current top 100 only. Busts: biggest drop, projected top 100 only (injured players count — zero points is a bust). Equal points share a rank. |
+| Power rankings · top 3 | Same as Analysis (points per player started, last 3 completed weeks). |
+
+The preseason projection is frozen once into
+`data/projections/<season>/preseason-ranks.json` on the first nightly run
+(ESPN keeps updating its projection in-season). Data: new nightly snapshot
+`player-trends`, built by `lib/player-trends-data.ts`; logic in
+`lib/player-trends.ts` (tested). Refreshes with the 06:00/09:00 runs, not live.

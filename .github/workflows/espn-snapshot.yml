@@ -83,5 +83,8 @@ jobs:
             echo "No snapshot changes."
           else
             git commit -m "chore: nightly ESPN data snapshot [skip ci]"
+            # main can move while this job runs (a PR merged meanwhile) — only
+            # this bot touches these data files, so rebasing onto it is safe.
+            git pull --rebase origin main
             git push
           fi

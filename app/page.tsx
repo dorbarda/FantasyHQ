@@ -4,9 +4,16 @@ import matchupsJson from '@/data/matchups.json';
 import type { Matchup, MatchupsData } from '@/lib/types';
 import OwnerAvatar from '@/components/OwnerAvatar';
 import RecapHighlights from '@/components/RecapHighlights';
+import HomeTrends from '@/components/HomeTrends';
+import { weekRange } from '@/components/PowerRankingsTable';
 import { CURRENT_SEASON_DISPLAY } from '@/lib/season';
 import { loadNightlyRecap } from '@/lib/nightly-data';
 import { loadHighlightsForDates } from '@/lib/highlights-data';
+import { loadPlayerTrends } from '@/lib/player-trends-data';
+import { hasSeasonStarted, topLast30, surprises, busts } from '@/lib/player-trends';
+import { readSnapshot } from '@/lib/snapshots';
+import { computePowerRankings } from '@/lib/power-rankings';
+import type { MatchupDepthData } from '@/lib/types';
 import {
   managerOfTheNight,
   worstManagerOfTheNight,
@@ -242,6 +249,12 @@ export default async function HomePage() {
   const worst = night ? worstManagerOfTheNight(night.teams) : null;
   const clips = night ? loadHighlightsForDates([night.date]) : [];
 
+  // Side column — all from nightly snapshots.
+  const trends = loadPlayerTrends();
+  const trendsLive = trends && hasSeasonStarted(trends) ? trends.players : null;
+  const depth = readSnapshot<MatchupDepthData>('matchup-depth');
+  const power = depth ? computePowerRankings(depth.data.rows) : null;
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -258,25 +271,34 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <div className="px-4 sm:px-6 pb-8 max-w-[1100px] space-y-6">
-        {night ? (
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
-            {players.length > 0 && <TopPlayersCard players={players} />}
-            <div className="space-y-4">
-              {best && <ManagerCard award={best} kind="best" />}
-              {worst && <ManagerCard award={worst} kind="worst" />}
+      <div className="px-4 sm:px-6 pb-8 max-w-[1480px] grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_340px] gap-6 items-start">
+        <div className="min-w-0 space-y-6">
+          {night ? (
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
+              {players.length > 0 && <TopPlayersCard players={players} />}
+              <div className="space-y-4">
+                {best && <ManagerCard award={best} kind="best" />}
+                {worst && <ManagerCard award={worst} kind="worst" />}
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="rounded-2xl bg-surface border border-border p-8 text-center">
-            <p className="text-[15px] font-semibold text-foreground">No games yet this season</p>
-            <p className="text-[13px] text-secondary mt-1">The daily recap starts the morning after opening night.</p>
-          </div>
-        )}
+          ) : (
+            <div className="rounded-2xl bg-surface border border-border p-8 text-center">
+              <p className="text-[15px] font-semibold text-foreground">No games yet this season</p>
+              <p className="text-[13px] text-secondary mt-1">The daily recap starts the morning after opening night.</p>
+            </div>
+          )}
 
-        {closestMatchup && <ClosestMatchupCard matchup={closestMatchup} week={week} />}
+          {closestMatchup && <ClosestMatchupCard matchup={closestMatchup} week={week} />}
 
-        <RecapHighlights clips={clips} />
+          <RecapHighlights clips={clips} />
+        </div>
+
+        <HomeTrends
+          last30={trendsLive ? topLast30(trendsLive) : null}
+          movers={trendsLive ? { surprises: surprises(trendsLive), busts: busts(trendsLive) } : null}
+          power={power ? power.entries.slice(0, 3) : []}
+          powerWeeks={power && power.recentWeeks.length > 0 ? weekRange(power.recentWeeks) : null}
+        />
       </div>
     </div>
   );

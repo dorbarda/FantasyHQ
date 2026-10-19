@@ -1,6 +1,6 @@
 import type { PowerRankings, PowerRankingEntry } from '@/lib/power-rankings';
 
-function weekRange(weeks: number[]): string {
+export function weekRange(weeks: number[]): string {
   if (!weeks.length) return '';
   return weeks.length === 1 ? `Wk ${weeks[0]}` : `Wk ${weeks[0]}–${weeks[weeks.length - 1]}`;
 }

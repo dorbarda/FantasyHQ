@@ -93,6 +93,12 @@ export function projectTeam(
   schedules: ProTeamSchedule[],
   season: number,
   week: number,
+  /**
+   * Games-left mode: true for a player whose game that day has already
+   * started. A starter who played keeps his lineup spot but his game no
+   * longer counts; a bench player who played is simply done for the day.
+   */
+  hasPlayed?: (player: any, scoringPeriodId: number) => boolean,
 ): TeamProjection {
   const playsOn = new Map<number, Set<number>>();
   const abbrev = new Map<number, string>();
@@ -105,6 +111,8 @@ export function projectTeam(
     const p = entry.playerPoolEntry?.player || {};
     const slots: number[] = p.eligibleSlots || [];
     return {
+      raw: p,
+      starter: entry.lineupSlotId !== 12 && entry.lineupSlotId !== IR_SLOT,
       name: p.fullName || 'Unknown',
       pos: POSITION[slots.find(s => s in POSITION) ?? -1] ?? '',
       nba: abbrev.get(p.proTeamId) ?? '',
@@ -120,15 +128,16 @@ export function projectTeam(
 
   let lost = 0;
   for (const sp of scoringPeriods) {
-    const playing = players
-      .filter((p: any) => !p.onIR && playsOn.get(p.proTeamId)?.has(sp))
+    const withGame = players.filter((p: any) => !p.onIR && playsOn.get(p.proTeamId)?.has(sp));
+    const played = new Set(hasPlayed ? withGame.filter((p: any) => hasPlayed(p.raw, sp)) : []);
+    const starting: typeof players = withGame.filter((p: any) => played.has(p) && p.starter);
+    const playing = withGame
+      .filter((p: any) => !played.has(p))
       .sort((a: any, b: any) => b.avg - a.avg);
-    const starting: typeof players = [];
     for (const p of playing) {
-      if (allFit([...starting, p].map((x: any) => x.eligible))) starting.push(p);
+      if (allFit([...starting, p].map((x: any) => x.eligible))) { starting.push(p); p.games++; }
       else lost++;
     }
-    for (const p of starting) p.games++;
   }
 
   const roster: ProjectedPlayer[] = players.map((p: any) => ({

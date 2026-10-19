@@ -45,5 +45,8 @@ jobs:
             echo "Nothing new to commit."
           else
             git commit -m "chore: freeze week projections [skip ci]"
+            # main can move while this job runs (a PR merged meanwhile) — only
+            # this bot touches these data files, so rebasing onto it is safe.
+            git pull --rebase origin main
             git push
           fi

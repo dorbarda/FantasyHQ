@@ -151,8 +151,11 @@ export default function MatchupDetail({ matchup, projection, notes, isPreview, o
         ) : (
           <>
             {/* Key numbers — whole points here so both fit on a phone; the header has the decimals */}
-            <div className="grid grid-cols-3 gap-2 mt-5">
+            <div className={`grid ${isLive ? 'grid-cols-2 sm:grid-cols-4' : 'grid-cols-3'} gap-2 mt-5`}>
               <Tile label="Games" left={projection.home.games} right={projection.away.games} />
+              {isLive && (
+                <Tile label="Games left" left={home.playersRemainingToday} right={away.playersRemainingToday} />
+              )}
               <Tile label="Projected" left={projection.home.projectedPoints} right={projection.away.projectedPoints} format={n => Math.round(n).toString()} />
               <Tile label="Injuries" left={projection.home.injuries.length} right={projection.away.injuries.length} higherWins={false} />
             </div>

@@ -24,6 +24,7 @@ export interface MatchupTeam {
   actualScore: number;
   wins: number;
   losses: number;
+  /** Startable games left this matchup week (name kept from the old "today" counter). */
   playersRemainingToday: number;
 }
 

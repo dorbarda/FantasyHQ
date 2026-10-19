@@ -11,7 +11,10 @@ import type {
 import { computeFP, extractSeasonStats, extractPerGameStats } from './scoring';
 
 import { CURRENT_SEASON } from './season';
-import { NON_SCORING_SLOTS, countStartersOnDay } from './lineup';
+import { NON_SCORING_SLOTS, countStartersOnDay, dayStatLine } from './lineup';
+import { loadScheduleSeason } from './schedule-data';
+import { weeksOf } from './espn-schedule';
+import { projectTeam } from './week-projections';
 
 const ESPN_S2 = process.env.ESPN_S2;
 const SWID = process.env.SWID;
@@ -100,41 +103,25 @@ function rankValues<T>(
 
 // ─── SHARED HELPERS ──────────────────────────────────────────────────────────
 
-function buildRosterMap(teams: any[]): Record<number, any[]> {
-  const map: Record<number, any[]> = {};
-  for (const t of teams) map[t.id] = t.roster?.entries || [];
-  return map;
-}
-
-// Count remaining starter-game slots in the matchup week using ESPN projected stats.
-// statSourceId=1 means ESPN has projected this player to play on that scoring period day.
-// For today: skip if they've already scored actual points.
-// For future days: count if projection exists with appliedTotal > 0.
-function countRemainingGames(
-  teamId: number,
-  rosterMap: Record<number, any[]>,
-  currentScoringPeriod: number,
-  matchupEndScoringPeriod: number,
-): number {
-  let count = 0;
-  for (const entry of rosterMap[teamId] || []) {
-    if ((entry.lineupSlotId ?? 9) >= 9) continue; // bench / IR
-    const p = entry.playerPoolEntry?.player;
-    if (!p) continue;
-    const stats: any[] = p.stats || [];
-
-    for (let sp = currentScoringPeriod; sp <= matchupEndScoringPeriod; sp++) {
-      // Skip today if the player already scored actual points
-      if (sp === currentScoringPeriod) {
-        const actual = stats.find((s: any) => s.statSourceId === 0 && s.scoringPeriodId === sp);
-        if (actual && actual.appliedTotal > 0) continue;
-      }
-      // Count if ESPN has a projection (game scheduled) for this day
-      const proj = stats.find((s: any) => s.statSourceId === 1 && s.scoringPeriodId === sp);
-      if (proj && proj.appliedTotal > 0) count++;
-    }
-  }
-  return count;
+/**
+ * Startable games each team still has this matchup week — same rules as the
+ * frozen projections (IR out, 10 starting spots incl. 3 UTIL, highest averages
+ * start). Days come from the NBA schedule, so the week's real length is used
+ * (week 1 is 6 days). Today counts only games not started yet; starters who
+ * already played still hold their spot.
+ */
+async function makeGamesLeft(teams: any[], matchupPeriod: number, currentScoringPeriod: number) {
+  const season = await loadScheduleSeason();
+  const days = season ? (weeksOf(season)[matchupPeriod] ?? []) : [];
+  const remaining = days.filter(sp => sp >= currentScoringPeriod);
+  const byId = new Map(teams.map(t => [t.id, t]));
+  const hasPlayed = (player: any, sp: number) =>
+    sp === currentScoringPeriod && !!dayStatLine({ playerPoolEntry: { player } }, sp);
+  return (teamId: number): number => {
+    const team = byId.get(teamId);
+    if (!team || !season || remaining.length === 0) return 0;
+    return projectTeam(team, remaining, season.schedules, CURRENT_SEASON, matchupPeriod, hasPlayed).games;
+  };
 }
 
 // ─── STANDINGS ───────────────────────────────────────────────────────────────
@@ -212,7 +199,6 @@ export async function getMatchups(targetWeek?: number): Promise<MatchupsData> {
       losses: record.losses || 0,
     };
   }
-  const rosterMap = buildRosterMap(teams);
 
   // H2H records from all completed regular-season matchups.
   // Ghost/automated teams (name contains "fake") are excluded.
@@ -250,17 +236,7 @@ export async function getMatchups(targetWeek?: number): Promise<MatchupsData> {
       (!m.playoffTierType || m.playoffTierType === 'NONE')
   );
 
-  // Derive the end scoring period for the current matchup week.
-  // pointsByScoringPeriod keys tell us which daily SPs belong to this week.
-  // Weeks that haven't finished yet may only have keys for days played so far,
-  // so we take the first known SP and assume a 7-day matchup window.
-  const sampleMatchup = allSchedule.find((m: any) => m.matchupPeriodId === currentMatchupPeriod);
-  const pbsp: Record<string, number> =
-    sampleMatchup?.home?.pointsByScoringPeriod ||
-    sampleMatchup?.away?.pointsByScoringPeriod || {};
-  const knownSPs = Object.keys(pbsp).map(Number).filter(n => !isNaN(n)).sort((a, b) => a - b);
-  const matchupStartScoringPeriod = knownSPs.length > 0 ? knownSPs[0] : currentScoringPeriod;
-  const matchupEndScoringPeriod = matchupStartScoringPeriod + 6; // 7-day matchup
+  const gamesLeft = await makeGamesLeft(teams, currentMatchupPeriod, currentScoringPeriod);
 
   const blankTeam = { teamId: 'unknown', teamName: 'TBD', ownerName: 'TBD', wins: 0, losses: 0 };
 
@@ -289,7 +265,7 @@ export async function getMatchups(targetWeek?: number): Promise<MatchupsData> {
         projectedScore: homeProjected,
         actualScore: homeActual,
         playersRemainingToday: isCurrentWeek && !isFinal
-          ? countRemainingGames(home.teamId, rosterMap, currentScoringPeriod, matchupEndScoringPeriod)
+          ? gamesLeft(home.teamId)
           : 0,
       },
       away: {
@@ -297,7 +273,7 @@ export async function getMatchups(targetWeek?: number): Promise<MatchupsData> {
         projectedScore: awayProjected,
         actualScore: awayActual,
         playersRemainingToday: isCurrentWeek && !isFinal
-          ? countRemainingGames(away.teamId, rosterMap, currentScoringPeriod, matchupEndScoringPeriod)
+          ? gamesLeft(away.teamId)
           : 0,
       },
       isLive,
@@ -549,7 +525,6 @@ export async function getPlayoffBracket(): Promise<PlayoffBracketData> {
   const teams: any[] = data.teams || [];
   const members: any[] = data.members || [];
   const memberMap = buildMemberMap(members);
-  const rosterMap = buildRosterMap(teams);
 
   // Build team info (seed comes from playoffSeed or rank)
   const teamMap: Record<number, { name: string; owner: string; seed: number }> = {};
@@ -577,16 +552,7 @@ export async function getPlayoffBracket(): Promise<PlayoffBracketData> {
     new Set(playoffMatchups.map((m: any) => m.matchupPeriodId as number))
   ).sort((a, b) => a - b);
 
-  // Derive end scoring period for the current playoff matchup (same 7-day logic)
-  const currentPlayoffMatchup = playoffMatchups.find(
-    (m: any) => m.matchupPeriodId === currentMatchupPeriod
-  );
-  const pbsp: Record<string, number> =
-    currentPlayoffMatchup?.home?.pointsByScoringPeriod ||
-    currentPlayoffMatchup?.away?.pointsByScoringPeriod || {};
-  const knownSPs = Object.keys(pbsp).map(Number).filter(n => !isNaN(n)).sort((a, b) => a - b);
-  const matchupStartScoringPeriod = knownSPs.length > 0 ? knownSPs[0] : currentScoringPeriod;
-  const matchupEndScoringPeriod = matchupStartScoringPeriod + 6;
+  const gamesLeft = await makeGamesLeft(teams, currentMatchupPeriod, currentScoringPeriod);
 
   function makeTeam(side: any, id: number, isCurrentAndLive: boolean): BracketTeam {
     const info = teamMap[id] || { name: '?', owner: '?', seed: 0 };
@@ -597,7 +563,7 @@ export async function getPlayoffBracket(): Promise<PlayoffBracketData> {
       score: Math.round((side?.totalPoints || 0) * 10) / 10,
       seed: info.seed,
       playersRemainingToday: isCurrentAndLive
-        ? countRemainingGames(id, rosterMap, currentScoringPeriod, matchupEndScoringPeriod)
+        ? gamesLeft(id)
         : 0,
     };
   }

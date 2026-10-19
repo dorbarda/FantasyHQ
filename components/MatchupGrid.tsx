@@ -9,6 +9,8 @@ import MatchupDetail from './MatchupDetail';
 export interface MatchupDetailData {
   projection: { home: TeamProjection; away: TeamProjection } | null;
   notes: string[];
+  /** Future week: computed from today's rosters, not the frozen file. */
+  isPreview?: boolean;
 }
 
 /** A grid of matchup cards; tapping one opens its detail pop-up. */
@@ -41,6 +43,7 @@ export default function MatchupGrid({ matchups, details }: {
           matchup={open}
           projection={details[open.id]?.projection ?? null}
           notes={details[open.id]?.notes ?? []}
+          isPreview={details[open.id]?.isPreview ?? false}
           onClose={close}
         />
       )}

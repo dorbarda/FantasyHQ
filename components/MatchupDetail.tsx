@@ -11,6 +11,7 @@ interface Props {
   /** Frozen start-of-week numbers, sides matching `matchup`; null if the week wasn't frozen. */
   projection: { home: TeamProjection; away: TeamProjection } | null;
   notes: string[];
+  isPreview: boolean;
   onClose: () => void;
 }
 
@@ -77,7 +78,7 @@ function KeyPlayers({ team }: { team: TeamProjection }) {
   );
 }
 
-export default function MatchupDetail({ matchup, projection, notes, onClose }: Props) {
+export default function MatchupDetail({ matchup, projection, notes, isPreview, onClose }: Props) {
   // Esc closes; the page behind doesn't scroll while the pop-up is open.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -134,6 +135,12 @@ export default function MatchupDetail({ matchup, projection, notes, onClose }: P
         {started && projection && (
           <p className="text-center text-[11px] text-secondary mt-1 tabular-nums">
             Projected at start: {fmt(projection.home.projectedPoints)} – {fmt(projection.away.projectedPoints)}
+          </p>
+        )}
+
+        {isPreview && projection && (
+          <p className="text-center text-[11px] text-warning mt-1">
+            Preview from today&apos;s rosters — saved for real on the Sunday before the week.
           </p>
         )}
 

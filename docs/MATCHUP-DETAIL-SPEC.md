@@ -63,9 +63,9 @@ Total           34       35     → Miller +1
 ### 2.4 Rosters side by side
 Two columns (on phone: tabs "Nordau | Miller"). Grouped Starters → Bench → IR.
 
-Each player row:
+Each player row (layout example, not real data):
 ```
-SGA        PG · OKC   ● ● ● ○ ○ ○   3 g   avg xx.x   ACTIVE
+Player     PG · OKC   ● ○ ● ○ ● ○   3 g   avg xx.x   ACTIVE
 ```
 - Position, NBA team
 - One dot per day: ● plays, ○ no game, ✕ game but lost to lineup limit

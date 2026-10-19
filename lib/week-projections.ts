@@ -183,3 +183,52 @@ export function buildWeekProjection(
 function round1(n: number): number {
   return Math.round(n * 10) / 10;
 }
+
+const STATUS_LABEL: Record<string, string> = { DAY_TO_DAY: 'day-to-day', OUT: 'out', SUSPENSION: 'suspended' };
+
+/**
+ * Up to 3 short notes for the matchup pop-up, most telling first: a games
+ * gap, a team's best player with few games, injuries outside IR, and games
+ * lost to the lineup limit.
+ */
+export function watchNotes(a: TeamProjection, b: TeamProjection): string[] {
+  const notes: string[] = [];
+
+  const gap = a.games - b.games;
+  if (Math.abs(gap) >= 2) {
+    const [more, less] = gap > 0 ? [a, b] : [b, a];
+    notes.push(`${more.teamName} has ${Math.abs(gap)} more games (${more.games} vs ${less.games}).`);
+  }
+  for (const t of [a, b]) {
+    const star = t.keyPlayers[0];
+    if (star && star.games <= 2) {
+      notes.push(`${star.name}, ${t.teamName}'s top player, plays only ${star.games} game${star.games === 1 ? '' : 's'}.`);
+    }
+  }
+  for (const t of [a, b]) {
+    const hurt = t.injuries.filter(i => !i.onIR);
+    if (hurt.length > 0) {
+      notes.push(`${t.teamName}: ${hurt.map(i => `${i.name} (${STATUS_LABEL[i.status] ?? i.status.toLowerCase()})`).join(', ')}.`);
+    }
+  }
+  for (const t of [a, b]) {
+    if (t.gamesLostToLineupLimit > 0) {
+      const n = t.gamesLostToLineupLimit;
+      notes.push(`${t.teamName} loses ${n} game${n === 1 ? '' : 's'} to the 10-player lineup limit.`);
+    }
+  }
+  return notes.slice(0, 3);
+}
+
+/** The frozen projection for a head-to-head pair, sides swapped to match. */
+export function findMatchupProjection(
+  projection: WeekProjection | null,
+  homeTeamId: number,
+  awayTeamId: number,
+): { home: TeamProjection; away: TeamProjection } | null {
+  for (const m of projection?.matchups ?? []) {
+    if (m.home.teamId === homeTeamId && m.away.teamId === awayTeamId) return { home: m.home, away: m.away };
+    if (m.home.teamId === awayTeamId && m.away.teamId === homeTeamId) return { home: m.away, away: m.home };
+  }
+  return null;
+}

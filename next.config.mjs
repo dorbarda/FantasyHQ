@@ -4,7 +4,7 @@ const nextConfig = {
   // (ISR revalidation), which static analysis can't trace — include them
   // in every serverless bundle.
   outputFileTracingIncludes: {
-    '/**': ['./data/snapshots/*.json', './data/playoffs/**/*.json'],
+    '/**': ['./data/snapshots/*.json', './data/playoffs/**/*.json', './data/projections/**/*.json'],
   },
 };
 

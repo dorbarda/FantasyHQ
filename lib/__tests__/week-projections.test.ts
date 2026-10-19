@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { allFit, playerAverage, projectTeam } from '../week-projections';
+import { allFit, playerAverage, projectTeam, watchNotes } from '../week-projections';
 import type { ProTeamSchedule } from '../espn-schedule';
 
 const SEASON = 2027;
@@ -75,5 +75,24 @@ describe('projectTeam', () => {
     expect(t.projectedPoints).toBe(50 * 2 + 40 * 2 + 30 + 20);
     expect(t.keyPlayers.map(p => p.name)).toEqual(['C1', 'C2', 'C3']);
     expect(t.roster.find(p => p.name === 'C5')!.games).toBe(0);
+  });
+});
+
+describe('watchNotes', () => {
+  const base = { teamId: 1, teamName: 'A', games: 30, gamesLostToLineupLimit: 0, projectedPoints: 0, keyPlayers: [], injuries: [], roster: [] };
+  const star = (name: string, games: number) => ({ name, pos: 'C', nba: 'DEN', status: 'ACTIVE', onIR: false, avg: 60, games, projected: 0 });
+
+  it('orders games gap, short-week star, injuries, lineup limit — max 3', () => {
+    const a = { ...base, teamName: 'A', games: 37, gamesLostToLineupLimit: 1, keyPlayers: [star('Jokic', 2)] };
+    const b = { ...base, teamName: 'B', games: 33, injuries: [{ name: 'Curry', status: 'DAY_TO_DAY', onIR: false }, { name: 'Out Guy', status: 'OUT', onIR: true }] };
+    expect(watchNotes(a, b)).toEqual([
+      'A has 4 more games (37 vs 33).',
+      "Jokic, A's top player, plays only 2 games.",
+      'B: Curry (day-to-day).',
+    ]);
+  });
+
+  it('says nothing about a 1-game gap', () => {
+    expect(watchNotes({ ...base, games: 31 }, { ...base, games: 30 })).toEqual([]);
   });
 });

@@ -2,7 +2,14 @@ import Link from 'next/link';
 import { hasEspnCredentials, getMatchups } from '@/lib/espn';
 import matchupsJson from '@/data/matchups.json';
 import { MatchupsData } from '@/lib/types';
-import MatchupCard from '@/components/MatchupCard';
+import MatchupGrid, { type MatchupDetailData } from '@/components/MatchupGrid';
+import { readWeekProjection } from '@/lib/projections-data';
+import { findMatchupProjection, watchNotes } from '@/lib/week-projections';
+
+/** "team4" → 4 */
+function espnId(teamId: string): number {
+  return Number(teamId.replace(/^team/, ''));
+}
 
 export const revalidate = 1800;
 
@@ -25,6 +32,26 @@ export default async function MatchupsPage({
     }
   } else {
     data = matchupsJson as MatchupsData;
+  }
+
+  // Start-of-week numbers frozen on Sunday. Before games start they are the
+  // projection on the cards too — ESPN's live projection is 0 until then.
+  const frozen = readWeekProjection(data.week);
+  const details: Record<string, MatchupDetailData> = {};
+  for (const m of data.matchups) {
+    const projection = findMatchupProjection(frozen, espnId(m.home.teamId), espnId(m.away.teamId));
+    details[m.id] = { projection, notes: projection ? watchNotes(projection.home, projection.away) : [] };
+    if (projection && !m.isLive && !m.isFinal) {
+      m.home.projectedScore = projection.home.projectedPoints;
+      m.away.projectedScore = projection.away.projectedPoints;
+    }
+  }
+  // Battle of the Week = closest projection; recompute now that projections are real.
+  const upcoming = data.matchups.filter(m => !m.isLive && !m.isFinal);
+  if (upcoming.length > 0 && upcoming.length === data.matchups.length) {
+    const gap = (m: typeof upcoming[number]) => Math.abs(m.home.projectedScore - m.away.projectedScore);
+    const closest = upcoming.reduce((a, b) => (gap(b) < gap(a) ? b : a));
+    for (const m of data.matchups) m.isBattleOfWeek = m === closest && gap(closest) > 0;
   }
 
   const isCurrentWeek = data.week === data.currentWeek;
@@ -89,11 +116,7 @@ export default async function MatchupsPage({
           <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-3">
             In Progress
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {liveMatchups.map((matchup) => (
-              <MatchupCard key={matchup.id} matchup={matchup} />
-            ))}
-          </div>
+          <MatchupGrid matchups={liveMatchups} details={details} />
         </section>
       )}
 
@@ -107,11 +130,7 @@ export default async function MatchupsPage({
           <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-3">
             Final
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {finalMatchups.map((matchup) => (
-              <MatchupCard key={matchup.id} matchup={matchup} />
-            ))}
-          </div>
+          <MatchupGrid matchups={finalMatchups} details={details} />
         </section>
       )}
 
@@ -121,11 +140,7 @@ export default async function MatchupsPage({
           <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-3">
             Projected
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {projectedMatchups.map((matchup) => (
-              <MatchupCard key={matchup.id} matchup={matchup} />
-            ))}
-          </div>
+          <MatchupGrid matchups={projectedMatchups} details={details} />
         </section>
       )}
     </div>

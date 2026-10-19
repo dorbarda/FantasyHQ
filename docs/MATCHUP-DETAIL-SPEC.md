@@ -86,5 +86,8 @@ Week 1 (2026-27) was frozen on 2026-10-19, the day before opening night.
 ## 5. Build order
 
 1. ~~Projection logic + Sunday freeze job.~~ Done. Reuse it for suggestions #1–#2.
-2. Pop-up on `/matchups` reading the frozen file + live ESPN scores.
+2. ~~Pop-up on `/matchups` reading the frozen file + live ESPN scores.~~ Done
+   (`components/MatchupGrid.tsx`, `components/MatchupDetail.tsx`). Cards before
+   kick-off now show the frozen projection, and Battle of the Week uses it.
+   Not yet: "Games left" tile, all-time H2H, your team on the left (needs to know who's viewing).
 3. Fill `actual` when a week ends; later the season comparison view.

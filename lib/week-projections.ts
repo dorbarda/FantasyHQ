@@ -232,3 +232,26 @@ export function findMatchupProjection(
   }
   return null;
 }
+
+/**
+ * Write the final scores into a frozen week once ESPN has decided each
+ * matchup. Only empty `actual` fields are filled — frozen numbers never change.
+ * Returns how many matchups were filled.
+ */
+export function fillActuals(projection: WeekProjection, league: any): number {
+  let filled = 0;
+  for (const m of projection.matchups) {
+    if (m.actual) continue;
+    const espn = (league.schedule || []).find((s: any) =>
+      s.matchupPeriodId === projection.week &&
+      ((s.home?.teamId === m.home.teamId && s.away?.teamId === m.away.teamId) ||
+       (s.home?.teamId === m.away.teamId && s.away?.teamId === m.home.teamId)));
+    if (!espn || (espn.winner !== 'HOME' && espn.winner !== 'AWAY' && espn.winner !== 'TIE')) continue;
+    const swapped = espn.home.teamId !== m.home.teamId;
+    const homePts = round1((swapped ? espn.away : espn.home).totalPoints ?? 0);
+    const awayPts = round1((swapped ? espn.home : espn.away).totalPoints ?? 0);
+    m.actual = { home: homePts, away: awayPts };
+    filled++;
+  }
+  return filled;
+}

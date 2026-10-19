@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { allFit, playerAverage, projectTeam, watchNotes } from '../week-projections';
+import { allFit, fillActuals, playerAverage, projectTeam, watchNotes } from '../week-projections';
 import type { ProTeamSchedule } from '../espn-schedule';
 
 const SEASON = 2027;
@@ -94,5 +94,32 @@ describe('watchNotes', () => {
 
   it('says nothing about a 1-game gap', () => {
     expect(watchNotes({ ...base, games: 31 }, { ...base, games: 30 })).toEqual([]);
+  });
+});
+
+describe('fillActuals', () => {
+  const team = (teamId: number) => ({ teamId, teamName: `T${teamId}`, games: 0, gamesLostToLineupLimit: 0, projectedPoints: 0, keyPlayers: [], injuries: [], roster: [] });
+  const week = () => ({
+    season: 2027, week: 1, frozenAt: '', days: [], averageSource: '',
+    matchups: [{ home: team(4), away: team(3), actual: null }, { home: team(1), away: team(6), actual: null }],
+  });
+
+  it('fills decided matchups (sides matched by team) and leaves undecided ones', () => {
+    const p = week();
+    const league = { schedule: [
+      { matchupPeriodId: 1, winner: 'AWAY', home: { teamId: 3, totalPoints: 1200.04 }, away: { teamId: 4, totalPoints: 1250.5 } },
+      { matchupPeriodId: 1, winner: 'UNDECIDED', home: { teamId: 1, totalPoints: 900 }, away: { teamId: 6, totalPoints: 800 } },
+    ] };
+    expect(fillActuals(p, league)).toBe(1);
+    expect(p.matchups[0].actual).toEqual({ home: 1250.5, away: 1200 });
+    expect(p.matchups[1].actual).toBeNull();
+  });
+
+  it('never overwrites a filled result', () => {
+    const p = week();
+    (p.matchups[0] as { actual: unknown }).actual = { home: 1, away: 2 };
+    const league = { schedule: [{ matchupPeriodId: 1, winner: 'HOME', home: { teamId: 4, totalPoints: 9 }, away: { teamId: 3, totalPoints: 8 } }] };
+    expect(fillActuals(p, league)).toBe(0);
+    expect(p.matchups[0].actual).toEqual({ home: 1, away: 2 });
   });
 });

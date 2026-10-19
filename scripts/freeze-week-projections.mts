@@ -1,6 +1,13 @@
 /**
  * Fantasy HQ — freeze next week's matchup projections
- * Run with: npx tsx scripts/freeze-week-projections.mts [--week N] [--force]
+ * Run with: npx tsx scripts/freeze-week-projections.mts [--week N] [--force] [--results-only]
+ *
+ * Two passes:
+ *   1. Results — every frozen week whose matchups ESPN has since decided gets
+ *      its final scores written into `actual` (only empty ones; nothing else
+ *      in the file changes). The daily snapshot Action runs this pass alone
+ *      (--results-only), so a week is filled the morning after it ends.
+ *   2. Freeze — the Sunday Action also freezes the coming week (below).
  *
  * Runs Sunday evening (week-projections Action), before Monday's new matchup
  * week. Writes data/projections/<season>/week-NN.json ONCE: an existing file
@@ -10,7 +17,7 @@
  * Without --week it picks the next week that hasn't started yet.
  * Requires ESPN_S2, SWID, LEAGUE_ID (and SEASON) in the environment or .env.local.
  */
-import { writeFileSync, mkdirSync, readFileSync, existsSync } from 'node:fs';
+import { writeFileSync, mkdirSync, readFileSync, existsSync, readdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -36,9 +43,34 @@ if (!ESPN_S2 || !SWID || !LEAGUE_ID) {
 // Import AFTER env is loaded — these modules read process.env at load time.
 const { CURRENT_SEASON } = await import('../lib/season');
 const { getScheduleSeason, weeksOf, buildDateIndex, nbaDate } = await import('../lib/espn-schedule');
-const { buildWeekProjection } = await import('../lib/week-projections');
+const { buildWeekProjection, fillActuals } = await import('../lib/week-projections');
+
+const url = `https://lm-api-reads.fantasy.espn.com/apis/v3/games/fba/seasons/${CURRENT_SEASON}` +
+  `/segments/0/leagues/${LEAGUE_ID}?view=mTeam&view=mRoster&view=mMatchup`;
+const res = await fetch(url, { headers: { Cookie: `espn_s2=${ESPN_S2}; SWID=${SWID}`, Accept: 'application/json' } });
+if (!res.ok) {
+  console.error(`❌ ESPN API ${res.status} — cookies expired or LEAGUE_ID/SEASON wrong.`);
+  process.exit(1);
+}
+const league = await res.json();
+
+const outDir = resolve(ROOT, 'data', 'projections', String(CURRENT_SEASON));
+
+// ── 1. Results ──────────────────────────────────────────────────────────────
+for (const name of existsSync(outDir) ? readdirSync(outDir).filter(f => /^week-\d+\.json$/.test(f)).sort() : []) {
+  const path = resolve(outDir, name);
+  const frozen = JSON.parse(readFileSync(path, 'utf-8'));
+  const filled = fillActuals(frozen, league);
+  if (filled > 0) {
+    writeFileSync(path, JSON.stringify(frozen, null, 2) + '\n');
+    console.log(`🏁 Week ${frozen.week}: final scores filled for ${filled} matchup${filled === 1 ? '' : 's'}.`);
+  }
+}
 
 const args = process.argv.slice(2);
+if (args.includes('--results-only')) process.exit(0);
+
+// ── 2. Freeze ───────────────────────────────────────────────────────────────
 const force = args.includes('--force');
 const weekArg = args.includes('--week') ? Number(args[args.indexOf('--week') + 1]) : null;
 
@@ -57,21 +89,11 @@ if (!week || !weeks[week]) {
   process.exit(0);
 }
 
-const outDir = resolve(ROOT, 'data', 'projections', String(CURRENT_SEASON));
 const file = resolve(outDir, `week-${String(week).padStart(2, '0')}.json`);
 if (existsSync(file) && !force) {
   console.log(`➖ Week ${week} already frozen — ${file} left untouched.`);
   process.exit(0);
 }
-
-const url = `https://lm-api-reads.fantasy.espn.com/apis/v3/games/fba/seasons/${CURRENT_SEASON}` +
-  `/segments/0/leagues/${LEAGUE_ID}?view=mTeam&view=mRoster&view=mMatchup`;
-const res = await fetch(url, { headers: { Cookie: `espn_s2=${ESPN_S2}; SWID=${SWID}`, Accept: 'application/json' } });
-if (!res.ok) {
-  console.error(`❌ ESPN API ${res.status} — cookies expired or LEAGUE_ID/SEASON wrong.`);
-  process.exit(1);
-}
-const league = await res.json();
 
 const scoringPeriods = weeks[week];
 const days = scoringPeriods.map(sp => index.dateFor(sp)!);

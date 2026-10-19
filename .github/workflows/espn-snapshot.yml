@@ -65,11 +65,20 @@ jobs:
           HIGHLIGHTLY_API_KEY: ${{ secrets.HIGHLIGHTLY_API_KEY }}
           # Preferred source for those clips: the official NBA YouTube channel.
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+      # Final scores into the frozen week projections (week-projections Action
+      # freezes them on Sundays). Only empty results are filled; a no-op most days.
+      - name: Fill week results
+        run: npx tsx scripts/freeze-week-projections.mts --results-only
+        env:
+          ESPN_S2: ${{ secrets.ESPN_S2 }}
+          SWID: ${{ secrets.SWID }}
+          LEAGUE_ID: ${{ secrets.LEAGUE_ID }}
+          SEASON: ${{ vars.SEASON || secrets.SEASON }}
       - name: Commit snapshots
         run: |
           git config user.name "espn-snapshot-bot"
           git config user.email "actions@github.com"
-          git add data/snapshots
+          git add data/snapshots data/projections
           if git diff --cached --quiet; then
             echo "No snapshot changes."
           else

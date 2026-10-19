@@ -90,4 +90,7 @@ Week 1 (2026-27) was frozen on 2026-10-19, the day before opening night.
    (`components/MatchupGrid.tsx`, `components/MatchupDetail.tsx`). Cards before
    kick-off now show the frozen projection, and Battle of the Week uses it.
    Not yet: "Games left" tile, all-time H2H, your team on the left (needs to know who's viewing).
-3. Fill `actual` when a week ends; later the season comparison view.
+3. ~~Fill `actual` when a week ends.~~ Done — the daily snapshot Action runs
+   `freeze-week-projections.mts --results-only` every morning and fills final
+   scores once ESPN decides the week (usually the Monday/Tuesday after).
+4. Later: the season comparison view.

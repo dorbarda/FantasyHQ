@@ -193,7 +193,7 @@ export async function getMatchups(targetWeek?: number): Promise<MatchupsData> {
   const currentScoringPeriod: number =
     data.scoringPeriodId || data.status?.latestScoringPeriod || currentMatchupPeriod;
 
-  const week = Math.min(Math.max(1, targetWeek ?? currentMatchupPeriod), currentMatchupPeriod);
+  const requestedWeek = Math.max(1, targetWeek ?? currentMatchupPeriod);
 
   const teams: any[] = data.teams || [];
   const members: any[] = data.members || [];
@@ -240,6 +240,9 @@ export async function getMatchups(targetWeek?: number): Promise<MatchupsData> {
     ? Math.max(...regularSchedule.map((m: any) => m.matchupPeriodId as number))
     : currentMatchupPeriod;
 
+  // Future weeks are allowed — ESPN already has their pairings — so managers
+  // can preview who they face and how many games each side gets.
+  const week = Math.min(requestedWeek, totalWeeks);
   const isCurrentWeek = week === currentMatchupPeriod;
   const weekMatchups = allSchedule.filter(
     (m: any) =>
@@ -1128,4 +1131,12 @@ export async function getTransactions(): Promise<TransactionsData> {
 export async function getRules(): Promise<RulesData> {
   const { default: data } = await import('@/data/rules.json');
   return data as RulesData;
+}
+
+/**
+ * The raw league with every roster — input for a live week preview
+ * (lib/week-projections.ts) when a week hasn't been frozen yet.
+ */
+export async function getLeagueRosters(): Promise<any> {
+  return espnFetch('?view=mTeam&view=mRoster&view=mMatchup');
 }

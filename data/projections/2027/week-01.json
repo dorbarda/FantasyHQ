@@ -1,0 +1,453 @@
+{
+  "season": 2027,
+  "week": 1,
+  "frozenAt": "2026-10-19T06:52:29Z",
+  "days": [
+    "2026-10-20",
+    "2026-10-21",
+    "2026-10-22",
+    "2026-10-23",
+    "2026-10-24",
+    "2026-10-25"
+  ],
+  "method": "Games: NBA games of rostered players, IR left out, max 10 starters per day (PG,SG,SF,PF,C,G,F,3xUTIL); when more than 10 can play, the highest averages start. Projected points: player average x startable games. Average: 2025-26 fantasy points per game (10+ games), else ESPN's 2026-27 projected average.",
+  "matchups": [
+    {
+      "home": {
+        "teamId": 2,
+        "teamName": "PlottKe",
+        "games": 37,
+        "gamesLostToLineupLimit": 1,
+        "projectedPoints": 1350.5,
+        "injuries": [
+          {
+            "name": "Coby White",
+            "status": "DAY_TO_DAY",
+            "onIR": false
+          },
+          {
+            "name": "Nic Claxton",
+            "status": "DAY_TO_DAY",
+            "onIR": false
+          }
+        ],
+        "keyPlayers": [
+          {
+            "name": "Cade Cunningham",
+            "pos": "PG",
+            "nba": "DET",
+            "games": 3,
+            "avg": 50.4,
+            "projected": 151.2
+          },
+          {
+            "name": "Kawhi Leonard",
+            "pos": "SF",
+            "nba": "TOR",
+            "games": 3,
+            "avg": 48.7,
+            "projected": 146.1
+          },
+          {
+            "name": "Tyrese Haliburton",
+            "pos": "PG",
+            "nba": "IND",
+            "games": 3,
+            "avg": 48.6,
+            "projected": 145.8
+          }
+        ]
+      },
+      "away": {
+        "teamId": 9,
+        "teamName": "Inglourious Basterds",
+        "games": 37,
+        "gamesLostToLineupLimit": 0,
+        "projectedPoints": 1292.9,
+        "injuries": [
+          {
+            "name": "Franz Wagner",
+            "status": "DAY_TO_DAY",
+            "onIR": false
+          },
+          {
+            "name": "AJ Dybantsa",
+            "status": "DAY_TO_DAY",
+            "onIR": false
+          }
+        ],
+        "keyPlayers": [
+          {
+            "name": "VJ Edgecombe",
+            "pos": "SG",
+            "nba": "PHI",
+            "games": 4,
+            "avg": 33.9,
+            "projected": 135.6
+          },
+          {
+            "name": "Cooper Flagg",
+            "pos": "SF",
+            "nba": "DAL",
+            "games": 3,
+            "avg": 39.6,
+            "projected": 118.8
+          },
+          {
+            "name": "Stephon Castle",
+            "pos": "PG",
+            "nba": "SA",
+            "games": 3,
+            "avg": 35.3,
+            "projected": 105.9
+          }
+        ]
+      },
+      "actual": null
+    },
+    {
+      "home": {
+        "teamId": 10,
+        "teamName": "Slotzki",
+        "games": 35,
+        "gamesLostToLineupLimit": 1,
+        "projectedPoints": 1259.5,
+        "injuries": [
+          {
+            "name": "Chet Holmgren",
+            "status": "DAY_TO_DAY",
+            "onIR": false
+          },
+          {
+            "name": "Tobias Harris",
+            "status": "DAY_TO_DAY",
+            "onIR": false
+          }
+        ],
+        "keyPlayers": [
+          {
+            "name": "Giannis Antetokounmpo",
+            "pos": "PF",
+            "nba": "MIA",
+            "games": 3,
+            "avg": 49.3,
+            "projected": 147.9
+          },
+          {
+            "name": "Anthony Davis",
+            "pos": "PF",
+            "nba": "WSH",
+            "games": 3,
+            "avg": 43.4,
+            "projected": 130.2
+          },
+          {
+            "name": "Jalen Brunson",
+            "pos": "PG",
+            "nba": "NY",
+            "games": 3,
+            "avg": 42.1,
+            "projected": 126.3
+          }
+        ]
+      },
+      "away": {
+        "teamId": 5,
+        "teamName": "King Ozniyon",
+        "games": 35,
+        "gamesLostToLineupLimit": 0,
+        "projectedPoints": 1324.3,
+        "injuries": [],
+        "keyPlayers": [
+          {
+            "name": "Nikola Jokic",
+            "pos": "C",
+            "nba": "DEN",
+            "games": 2,
+            "avg": 68.8,
+            "projected": 137.6
+          },
+          {
+            "name": "Josh Giddey",
+            "pos": "PG",
+            "nba": "CHI",
+            "games": 3,
+            "avg": 43.0,
+            "projected": 129.0
+          },
+          {
+            "name": "Kevin Porter Jr.",
+            "pos": "PG",
+            "nba": "MIL",
+            "games": 3,
+            "avg": 42.2,
+            "projected": 126.6
+          }
+        ]
+      },
+      "actual": null
+    },
+    {
+      "home": {
+        "teamId": 8,
+        "teamName": "Flint Tropics 70's Show",
+        "games": 35,
+        "gamesLostToLineupLimit": 2,
+        "projectedPoints": 1243.2,
+        "injuries": [
+          {
+            "name": "Bam Adebayo",
+            "status": "DAY_TO_DAY",
+            "onIR": false
+          },
+          {
+            "name": "Kon Knueppel",
+            "status": "DAY_TO_DAY",
+            "onIR": false
+          }
+        ],
+        "keyPlayers": [
+          {
+            "name": "Jalen Johnson",
+            "pos": "PF",
+            "nba": "ATL",
+            "games": 3,
+            "avg": 49.3,
+            "projected": 147.9
+          },
+          {
+            "name": "Scottie Barnes",
+            "pos": "SG",
+            "nba": "TOR",
+            "games": 3,
+            "avg": 44.1,
+            "projected": 132.3
+          },
+          {
+            "name": "Bam Adebayo",
+            "pos": "PF",
+            "nba": "MIA",
+            "games": 3,
+            "avg": 39.2,
+            "projected": 117.6
+          }
+        ]
+      },
+      "away": {
+        "teamId": 11,
+        "teamName": "League's American Problem",
+        "games": 40,
+        "gamesLostToLineupLimit": 1,
+        "projectedPoints": 1484.8,
+        "injuries": [],
+        "keyPlayers": [
+          {
+            "name": "Tyrese Maxey",
+            "pos": "PG",
+            "nba": "PHI",
+            "games": 4,
+            "avg": 52.0,
+            "projected": 208.0
+          },
+          {
+            "name": "Jaylen Brown",
+            "pos": "SG",
+            "nba": "PHI",
+            "games": 4,
+            "avg": 43.4,
+            "projected": 173.6
+          },
+          {
+            "name": "Anthony Edwards",
+            "pos": "SG",
+            "nba": "MIN",
+            "games": 3,
+            "avg": 45.2,
+            "projected": 135.6
+          }
+        ]
+      },
+      "actual": null
+    },
+    {
+      "home": {
+        "teamId": 4,
+        "teamName": "Nordau Peaky Blinder🚬",
+        "games": 34,
+        "gamesLostToLineupLimit": 0,
+        "projectedPoints": 1271.3,
+        "injuries": [
+          {
+            "name": "Jimmy Butler III",
+            "status": "OUT",
+            "onIR": true
+          }
+        ],
+        "keyPlayers": [
+          {
+            "name": "Shai Gilgeous-Alexander",
+            "pos": "PG",
+            "nba": "OKC",
+            "games": 3,
+            "avg": 55.4,
+            "projected": 166.2
+          },
+          {
+            "name": "Kyrie Irving",
+            "pos": "PG",
+            "nba": "DAL",
+            "games": 3,
+            "avg": 44.2,
+            "projected": 132.6
+          },
+          {
+            "name": "Kevin Durant",
+            "pos": "SF",
+            "nba": "HOU",
+            "games": 3,
+            "avg": 43.6,
+            "projected": 130.8
+          }
+        ]
+      },
+      "away": {
+        "teamId": 3,
+        "teamName": "Team Miller",
+        "games": 35,
+        "gamesLostToLineupLimit": 0,
+        "projectedPoints": 1252.6,
+        "injuries": [
+          {
+            "name": "Stephen Curry",
+            "status": "DAY_TO_DAY",
+            "onIR": false
+          },
+          {
+            "name": "Josh Hart",
+            "status": "DAY_TO_DAY",
+            "onIR": false
+          },
+          {
+            "name": "Cason Wallace",
+            "status": "DAY_TO_DAY",
+            "onIR": false
+          },
+          {
+            "name": "Brandon Ingram",
+            "status": "OUT",
+            "onIR": true
+          }
+        ],
+        "keyPlayers": [
+          {
+            "name": "Joel Embiid",
+            "pos": "C",
+            "nba": "PHI",
+            "games": 4,
+            "avg": 43.5,
+            "projected": 174.0
+          },
+          {
+            "name": "Stephen Curry",
+            "pos": "PG",
+            "nba": "GS",
+            "games": 3,
+            "avg": 42.9,
+            "projected": 128.7
+          },
+          {
+            "name": "Pascal Siakam",
+            "pos": "PF",
+            "nba": "IND",
+            "games": 3,
+            "avg": 38.6,
+            "projected": 115.8
+          }
+        ]
+      },
+      "actual": null
+    },
+    {
+      "home": {
+        "teamId": 1,
+        "teamName": "Team Mamba Forever",
+        "games": 37,
+        "gamesLostToLineupLimit": 0,
+        "projectedPoints": 1355.1,
+        "injuries": [],
+        "keyPlayers": [
+          {
+            "name": "Luka Doncic",
+            "pos": "PG",
+            "nba": "LAL",
+            "games": 3,
+            "avg": 59.2,
+            "projected": 177.6
+          },
+          {
+            "name": "LeBron James",
+            "pos": "SF",
+            "nba": "PHI",
+            "games": 4,
+            "avg": 43.1,
+            "projected": 172.4
+          },
+          {
+            "name": "Alperen Sengun",
+            "pos": "C",
+            "nba": "HOU",
+            "games": 3,
+            "avg": 44.0,
+            "projected": 132.0
+          }
+        ]
+      },
+      "away": {
+        "teamId": 6,
+        "teamName": "Libi’s Legacy",
+        "games": 33,
+        "gamesLostToLineupLimit": 2,
+        "projectedPoints": 1162.2,
+        "injuries": [
+          {
+            "name": "Dejounte Murray",
+            "status": "DAY_TO_DAY",
+            "onIR": false
+          },
+          {
+            "name": "Kristaps Porzingis",
+            "status": "OUT",
+            "onIR": true
+          }
+        ],
+        "keyPlayers": [
+          {
+            "name": "Victor Wembanyama",
+            "pos": "C",
+            "nba": "SA",
+            "games": 3,
+            "avg": 55.4,
+            "projected": 166.2
+          },
+          {
+            "name": "Lauri Markkanen",
+            "pos": "SF",
+            "nba": "UTAH",
+            "games": 3,
+            "avg": 42.0,
+            "projected": 126.0
+          },
+          {
+            "name": "Amen Thompson",
+            "pos": "SG",
+            "nba": "HOU",
+            "games": 3,
+            "avg": 40.4,
+            "projected": 121.2
+          }
+        ]
+      },
+      "actual": null
+    }
+  ]
+}

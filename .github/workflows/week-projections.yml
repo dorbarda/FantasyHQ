@@ -1,0 +1,49 @@
+name: Week projections
+
+# Every Sunday evening (Israel time), freeze the start-of-week projections for
+# the matchup week that begins on Monday: data/projections/<season>/week-NN.json.
+# The file is written once and never overwritten, so after the week we can
+# compare it with the result. Spec: docs/MATCHUP-DETAIL-SPEC.md.
+#   17:00 UTC = 19:00 Israel winter / 20:00 summer
+#   20:00 UTC = catch-up if the first run failed (no-op when the file exists)
+
+on:
+  schedule:
+    - cron: '0 17 * * 0'
+    - cron: '0 20 * * 0'
+  workflow_dispatch:
+    inputs:
+      week:
+        description: 'Week to freeze (empty = next week)'
+        required: false
+
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Freeze projections
+        run: npx tsx scripts/freeze-week-projections.mts ${{ inputs.week && format('--week {0}', inputs.week) || '' }}
+        env:
+          ESPN_S2: ${{ secrets.ESPN_S2 }}
+          SWID: ${{ secrets.SWID }}
+          LEAGUE_ID: ${{ secrets.LEAGUE_ID }}
+          SEASON: ${{ vars.SEASON || secrets.SEASON }}
+      - name: Commit projections
+        run: |
+          git config user.name "espn-snapshot-bot"
+          git config user.email "actions@github.com"
+          git add data/projections
+          if git diff --cached --quiet; then
+            echo "Nothing new to commit."
+          else
+            git commit -m "chore: freeze week projections [skip ci]"
+            git push
+          fi

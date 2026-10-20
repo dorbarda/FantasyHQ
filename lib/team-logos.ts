@@ -15,7 +15,11 @@ const TEAM_LOGO_MAP: Record<string, string> = {
 // Strip emojis and trim so ESPN team names with appended emoji still match
 function normalize(name: string): string {
   // Surrogate pairs cover emojis in \u{10000}-\u{1FFFF}; also strip common symbol ranges
-  return name.replace(/[\uD800-\uDFFF]|[\u2600-\u27FF]|[\uFE00-\uFE0F]/g, '').trim();
+  // Curly apostrophes (ESPN uses \u2019 in "Libi\u2019s Legacy") become straight ones
+  return name
+    .replace(/[\uD800-\uDFFF]|[\u2600-\u27FF]|[\uFE00-\uFE0F]/g, '')
+    .replace(/[\u2018\u2019]/g, "'")
+    .trim();
 }
 
 export function teamLogoSrc(teamName: string): string | null {

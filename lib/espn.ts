@@ -943,9 +943,15 @@ export async function getTransactions(): Promise<TransactionsData> {
   const rawTrades: any[] = [];
 
   for (const tx of transactions) {
-    // Skip truly pending/failed transactions; accept any "executed" variant
+    // Skip anything that didn't go through. ESPN reports lost/invalid waiver
+    // claims as FAILED_<REASON> (e.g. FAILED_INVALIDPLAYERSOURCE), so match
+    // the prefix rather than the bare word; also skip cancelled/vetoed moves.
     const txStatus = (tx.status as string || '').toUpperCase();
-    if (txStatus === 'PENDING' || txStatus === 'FAILED' || txStatus === 'DRAFT' || txStatus === 'PROPOSED') continue;
+    if (
+      txStatus === 'PENDING' || txStatus === 'DRAFT' || txStatus === 'PROPOSED' ||
+      txStatus.startsWith('FAILED') || txStatus.includes('CANCEL') ||
+      txStatus.includes('VETO') || txStatus.includes('REJECT')
+    ) continue;
     const isTrade = (tx.type as string || '').toUpperCase().includes('TRADE');
     if (isTrade) {
       rawTrades.push(tx);

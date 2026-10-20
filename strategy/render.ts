@@ -168,7 +168,7 @@ footer { font-size: .85rem; color: var(--muted); display: grid; gap: 6px; }
         <li><b>Projection</b>: each day, the highest averages that fit the 10 starting spots (PG, SG, SF, PF, C, G, F, 3× UTIL) start. IR and OUT players get no games. Waiver players count only from the day they clear.</li>
         <li><b>Opponent defense</b>: from the last 21 days of game logs, how much guards, forwards and centers score against each NBA team compared with their own average. Limited to ±15%. ${r.defenseSample > 0 ? `Based on ${n0(r.defenseSample)} player-games so far.` : '<b>No games played yet, so every opponent counts as average for now.</b>'}</li>
         <li><b>Win chance</b>: a player's points swing about ±${Math.round(GAME_CV * 100)}% game to game (measured on last season's ESPN logs), plus ±${Math.round(AVERAGE_ERROR * 100)}% for the average itself being off (an assumption). Points already scored are certain.</li>
-        <li><b>Add limit</b>: assumed 1 add per day (ESPN setting "1 acquisition per matchup, per scoring period").</li>
+        <li><b>Add limit</b>: 1 add per day (league rule).</li>
       </ul>
     </details>
   </footer>

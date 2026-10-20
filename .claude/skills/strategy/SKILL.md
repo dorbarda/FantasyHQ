@@ -19,4 +19,4 @@ Private to Dor — never add it to the website (`app/`), and never commit `strat
 
 Dor prefers short, simple English, and exact numbers — if a number is an estimate (projection, win chance), say so; if unsure about a fact, offer to validate it.
 
-Assumptions to remember: max 1 add per day (ESPN `matchupAcquisitionLimit: 1` per scoring period) — ask Dor if this is wrong. Win chance uses game-to-game spread ±46% (measured) and ±15% average error (assumed).
+League rule (confirmed by Dor): max 1 add per day. Win chance uses game-to-game spread ±46% (measured) and ±15% average error (assumed).

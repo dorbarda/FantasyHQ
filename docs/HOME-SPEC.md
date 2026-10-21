@@ -19,7 +19,8 @@ morning. The weekly story stays on `/recap`.
 4. **Worst manager of the night** — lowest **points per player who played**
    (option b). Managers with nobody playing are left out.
 5. **Closest matchup** — the current week's closest head-to-head (live ESPN,
-   same card as before).
+   same card as before). "Proj" = points so far + player average × startable
+   games left (same averages and lineup rules as the matchup projections).
 6. **Highlights** — last night's clips, same cards as `/recap`.
 
 ## 2. Definitions

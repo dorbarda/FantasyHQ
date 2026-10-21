@@ -108,7 +108,8 @@ function rankValues<T>(
  * frozen projections (IR out, 10 starting spots incl. 3 UTIL, highest averages
  * start). Days come from the NBA schedule, so the week's real length is used
  * (week 1 is 6 days). Today counts only games not started yet; starters who
- * already played still hold their spot.
+ * already played still hold their spot. Also returns the points those games
+ * should add (player average × games), for the live projection.
  */
 async function makeGamesLeft(teams: any[], matchupPeriod: number, currentScoringPeriod: number) {
   const season = await loadScheduleSeason();
@@ -117,10 +118,11 @@ async function makeGamesLeft(teams: any[], matchupPeriod: number, currentScoring
   const byId = new Map(teams.map(t => [t.id, t]));
   const hasPlayed = (player: any, sp: number) =>
     sp === currentScoringPeriod && !!dayStatLine({ playerPoolEntry: { player } }, sp);
-  return (teamId: number): number => {
+  return (teamId: number): { games: number; points: number } => {
     const team = byId.get(teamId);
-    if (!team || !season || remaining.length === 0) return 0;
-    return projectTeam(team, remaining, season.schedules, CURRENT_SEASON, matchupPeriod, hasPlayed).games;
+    if (!team || !season || remaining.length === 0) return { games: 0, points: 0 };
+    const p = projectTeam(team, remaining, season.schedules, CURRENT_SEASON, matchupPeriod, hasPlayed);
+    return { games: p.games, points: p.projectedPoints };
   };
 }
 
@@ -248,15 +250,20 @@ export async function getMatchups(targetWeek?: number): Promise<MatchupsData> {
 
     const homeActual   = Math.round((home.totalPoints || 0) * 10) / 10;
     const awayActual   = Math.round((away.totalPoints || 0) * 10) / 10;
-    const homeProjected = Math.round(
-      (home.totalProjectedPointsLive || home.totalPoints || 0) * 10
-    ) / 10;
-    const awayProjected = Math.round(
-      (away.totalProjectedPointsLive || away.totalPoints || 0) * 10
-    ) / 10;
-
     const isFinal = m.winner === 'HOME' || m.winner === 'AWAY';
     const isLive  = isCurrentWeek && !isFinal && (homeActual > 0 || awayActual > 0);
+
+    // Current week: our own projection — points so far + player average ×
+    // startable games left. Other weeks keep ESPN's (the matchups page swaps
+    // in the frozen projection for weeks not started).
+    const homeLeft = isCurrentWeek && !isFinal ? gamesLeft(home.teamId) : { games: 0, points: 0 };
+    const awayLeft = isCurrentWeek && !isFinal ? gamesLeft(away.teamId) : { games: 0, points: 0 };
+    const homeProjected = isCurrentWeek && !isFinal
+      ? r1(homeActual + homeLeft.points)
+      : r1(home.totalProjectedPointsLive || home.totalPoints || 0);
+    const awayProjected = isCurrentWeek && !isFinal
+      ? r1(awayActual + awayLeft.points)
+      : r1(away.totalProjectedPointsLive || away.totalPoints || 0);
 
     return {
       id: `m${idx + 1}`,
@@ -264,17 +271,13 @@ export async function getMatchups(targetWeek?: number): Promise<MatchupsData> {
         ...homeInfo,
         projectedScore: homeProjected,
         actualScore: homeActual,
-        playersRemainingToday: isCurrentWeek && !isFinal
-          ? gamesLeft(home.teamId)
-          : 0,
+        playersRemainingToday: homeLeft.games,
       },
       away: {
         ...awayInfo,
         projectedScore: awayProjected,
         actualScore: awayActual,
-        playersRemainingToday: isCurrentWeek && !isFinal
-          ? gamesLeft(away.teamId)
-          : 0,
+        playersRemainingToday: awayLeft.games,
       },
       isLive,
       isFinal,
@@ -563,7 +566,7 @@ export async function getPlayoffBracket(): Promise<PlayoffBracketData> {
       score: Math.round((side?.totalPoints || 0) * 10) / 10,
       seed: info.seed,
       playersRemainingToday: isCurrentAndLive
-        ? gamesLeft(id)
+        ? gamesLeft(id).games
         : 0,
     };
   }

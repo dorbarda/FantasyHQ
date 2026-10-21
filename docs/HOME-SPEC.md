@@ -50,13 +50,15 @@ A night with no games is not written, so the file keeps the last game night.
 
 ## 4. Schedule
 
-Nightly Action runs twice a day, at **06:00 and 11:00 Israel time**, all
-year (changed 2026-10-18; catch-up moved from 09:00 to 11:00 on 2026-10-21). GitHub cron is UTC only, so both the winter
-(04:00/09:00 UTC) and summer (03:00/08:00 UTC) times are scheduled and a
+Nightly Action runs twice a day, at **05:47 and 10:47 Israel time**, all
+year (changed 2026-10-18; on 2026-10-21 the catch-up moved from 09:00 to
+11:00, and both runs moved to :47 because GitHub starts on-the-hour runs
+hours late). GitHub cron is UTC only, so both the winter
+(03:47/08:47 UTC) and summer (02:47/07:47 UTC) times are scheduled and a
 small first job skips the pair that doesn't match the day's Israel offset.
 
-06:00 is so people wake up to the recap and clips. 11:00 is a catch-up: a
-late West Coast game can still be on at 06:00, and that run fixes the
+05:47 is so people wake up to the recap and clips. 10:47 is a catch-up: a
+late West Coast game can still be on at 05:47, and that run fixes the
 numbers and fetches clips uploaded late. If nothing changed it makes no commit.
 
 ## 5. Open / to verify
@@ -79,4 +81,4 @@ The preseason projection is frozen once into
 `data/projections/<season>/preseason-ranks.json` on the first nightly run
 (ESPN keeps updating its projection in-season). Data: new nightly snapshot
 `player-trends`, built by `lib/player-trends-data.ts`; logic in
-`lib/player-trends.ts` (tested). Refreshes with the 06:00/11:00 runs, not live.
+`lib/player-trends.ts` (tested). Refreshes with the 05:47/10:47 runs, not live.

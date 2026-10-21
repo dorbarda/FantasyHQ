@@ -83,7 +83,39 @@ Action `week-projections.yml` — Sundays 17:00 UTC (19:00/20:00 Israel) + 20:00
 catch-up. Picks the next week that hasn't started; never overwrites.
 Week 1 (2026-27) was frozen on 2026-10-19, the day before opening night.
 
-## 5. Build order
+## 5. Win probability (card chart)
+
+Line chart under each matchup card on `/matchups`, ESPN style: above the
+middle line the left team is favoured, below it the right team. One point per
+finished day; the first point ("Start") is the Sunday frozen projection.
+
+| Term | Meaning |
+| --- | --- |
+| Expected final | Points so far + Σ player average × startable games left. |
+| Spread of one game | `12.1 + 0.079 × player average` fantasy points (standard deviation). Measured on 4,552 player-games of 2025-26 in this league vs. ESPN's preseason average: 12.9 at avg 18, 15.8 at avg 42, 18.5 at avg 58. |
+| Spread of the gap | √(Σ spread² over both teams' games left). |
+| Win % | Normal curve: chance(gap > 0) = Φ((expected A − expected B) ÷ spread of the gap). |
+
+Example, week 1 start: PlottKe 1,401.3 vs Inglourious Basterds 1,345.9,
+37 games each → gap 55.4, spread 129.4 → PlottKe 66.6%.
+
+Not in the model: games a player misses (injury, rest) — the sample only has
+games played — and roster moves later in the week. Both make the real spread a
+little wider than the model.
+
+## 6. Day by day (pop-up table)
+
+Finished days only, days as columns. Two rows per team: **players played**
+(starters with minutes or points that day) and **avg per player** (that day's
+points ÷ players played; "–" when nobody played).
+
+Data for §5–6: `data/projections/{season}/week-{NN}-daily.json`, written every
+morning by `scripts/update-week-daily.mts` (espn-snapshot Action, 05:47 and
+10:47 Israel). A day counts as finished once its UTC date has passed — same rule
+as the home recap. Daily lines are rebuilt every run; the win % of earlier days
+is kept, only the latest day is recomputed (the 10:47 run fixes a late game).
+
+## 7. Build order
 
 1. ~~Projection logic + Sunday freeze job.~~ Done. Reuse it for suggestions #1–#2.
 2. ~~Pop-up on `/matchups` reading the frozen file + live ESPN scores.~~ Done

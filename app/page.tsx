@@ -135,14 +135,14 @@ function ClosestMatchupCard({ matchup, week }: { matchup: Matchup; week: number 
           <div className="text-right flex-1">
             <span className="text-[11px] text-panel-text-muted">Proj </span>
             <span className="text-[12px] font-semibold text-panel-text-muted tabular-nums">
-              {(home.actualScore >= away.actualScore ? leader : trailer).projectedScore.toFixed(1)}
+              {leader.projectedScore.toFixed(1)}
             </span>
           </div>
           <span className="text-[10px] text-panel-text px-3">PROJECTED</span>
           <div className="text-left flex-1">
             <span className="text-[11px] text-panel-text-muted">Proj </span>
             <span className="text-[12px] font-semibold text-panel-text-muted tabular-nums">
-              {(home.actualScore >= away.actualScore ? trailer : leader).projectedScore.toFixed(1)}
+              {trailer.projectedScore.toFixed(1)}
             </span>
           </div>
         </div>

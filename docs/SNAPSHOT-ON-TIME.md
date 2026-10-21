@@ -40,6 +40,13 @@ The GitHub schedule stays as a backup; an extra run with no changes makes no com
 5. Save, then press **Test run**. A good result is status **204** (empty answer).
    Check GitHub → Actions → ESPN snapshot: a new run with event `workflow_dispatch`.
 
+## Before 10 Mar 2028
+
+GitHub says API version `2022-11-28` stops working on 10 Mar 2028 (the
+`Sunset` header in the test-run response). Before then, change the
+`X-GitHub-Api-Version` header to the current version listed at
+https://docs.github.com/en/rest/about-the-rest-api/api-versions.
+
 ## If it fails
 
 | Status | Meaning |

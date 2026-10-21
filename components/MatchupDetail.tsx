@@ -5,6 +5,7 @@ import Image from 'next/image';
 import type { Matchup, MatchupTeam } from '@/lib/types';
 import type { TeamProjection } from '@/lib/week-projections';
 import { teamLogoSrc } from '@/lib/team-logos';
+import { weekdayLabel, type DayLine, type MatchupDaily } from '@/lib/week-daily';
 
 interface Props {
   matchup: Matchup;
@@ -12,6 +13,8 @@ interface Props {
   projection: { home: TeamProjection; away: TeamProjection } | null;
   notes: string[];
   isPreview: boolean;
+  /** Finished days of the week; null or empty hides the table. */
+  daily: MatchupDaily | null;
   onClose: () => void;
 }
 
@@ -78,7 +81,62 @@ function KeyPlayers({ team }: { team: TeamProjection }) {
   );
 }
 
-export default function MatchupDetail({ matchup, projection, notes, isPreview, onClose }: Props) {
+/** Points ÷ players who played that day; a dash when nobody played. */
+function perPlayer(d: DayLine): string {
+  return d.played > 0 ? fmt(d.points / d.played) : '–';
+}
+
+/** One table per matchup: days as columns, two rows per team. Played days only. */
+function DayByDay({ days, leftName, rightName }: {
+  days: MatchupDaily['days'];
+  leftName: string;
+  rightName: string;
+}) {
+  const head = 'px-2 py-1.5 text-right text-[11px] font-semibold text-muted tabular-nums';
+  const cell = 'px-2 py-1.5 text-right text-[13px] tabular-nums text-foreground';
+  const label = 'pl-3 pr-2 py-1.5 text-left text-[12px] text-secondary whitespace-nowrap';
+  const team = (name: string, side: 'left' | 'right') => (
+    <>
+      <tr className="border-t border-border">
+        <th colSpan={days.length + 1} className="pl-3 pr-2 pt-2.5 pb-1 text-left text-[12px] font-semibold text-foreground">
+          <span className="inline-block w-2 h-2 rounded-full mr-1.5 align-middle" style={{ background: `var(--wp-${side})` }} />
+          {name}
+        </th>
+      </tr>
+      <tr>
+        <td className={label}>Players played</td>
+        {days.map(d => <td key={d.date} className={cell}>{d[side].played}</td>)}
+      </tr>
+      <tr>
+        <td className={label}>Avg per player</td>
+        {days.map(d => <td key={d.date} className={cell}>{perPlayer(d[side])}</td>)}
+      </tr>
+    </>
+  );
+  return (
+    <div className="rounded-lg border border-border overflow-x-auto">
+      <table className="w-full border-collapse">
+        <thead className="bg-surface-secondary">
+          <tr>
+            <th className="pl-3 pr-2 py-1.5 text-left text-[11px] font-semibold text-muted">Day</th>
+            {days.map((d, i) => (
+              <th key={d.date} className={head}>
+                <span className="block">{i + 1}</span>
+                <span className="block font-normal">{weekdayLabel(d.date)}</span>
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {team(leftName, 'left')}
+          {team(rightName, 'right')}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+export default function MatchupDetail({ matchup, projection, notes, isPreview, daily, onClose }: Props) {
   // Esc closes; the page behind doesn't scroll while the pop-up is open.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -142,6 +200,13 @@ export default function MatchupDetail({ matchup, projection, notes, isPreview, o
           <p className="text-center text-[11px] text-warning mt-1">
             Preview from today&apos;s rosters — saved for real on the Sunday before the week.
           </p>
+        )}
+
+        {daily && daily.days.length > 0 && (
+          <>
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mt-6 mb-2">Day by day</p>
+            <DayByDay days={daily.days} leftName={home.teamName} rightName={away.teamName} />
+          </>
         )}
 
         {!projection ? (

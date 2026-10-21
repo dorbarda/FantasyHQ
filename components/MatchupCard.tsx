@@ -1,9 +1,13 @@
 import Image from 'next/image';
 import { Matchup } from '@/lib/types';
 import { teamLogoSrc } from '@/lib/team-logos';
+import type { MatchupDaily } from '@/lib/week-daily';
+import WinProbChart from './WinProbChart';
 
 interface MatchupCardProps {
   matchup: Matchup;
+  /** Win probability by day; the chart shows once the week has a point. */
+  daily?: MatchupDaily | null;
 }
 
 function TeamSide({ team, isWinning, isLive, isFinal }: {
@@ -55,7 +59,7 @@ function TeamSide({ team, isWinning, isLive, isFinal }: {
   );
 }
 
-export default function MatchupCard({ matchup }: MatchupCardProps) {
+export default function MatchupCard({ matchup, daily }: MatchupCardProps) {
   const homeWinning = matchup.home.actualScore > matchup.away.actualScore;
   const awayWinning = matchup.away.actualScore > matchup.home.actualScore;
   const h2hTotal = matchup.h2h.homeWins + matchup.h2h.awayWins;
@@ -108,6 +112,10 @@ export default function MatchupCard({ matchup }: MatchupCardProps) {
           isFinal={matchup.isFinal}
         />
       </div>
+
+      {daily && daily.winProb.length > 0 && (
+        <WinProbChart daily={daily} leftName={matchup.home.teamName} rightName={matchup.away.teamName} />
+      )}
 
       {/* H2H footer */}
       {h2hTotal > 0 && (

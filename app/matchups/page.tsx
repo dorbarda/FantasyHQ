@@ -3,7 +3,8 @@ import { hasEspnCredentials, getMatchups } from '@/lib/espn';
 import matchupsJson from '@/data/matchups.json';
 import { MatchupsData } from '@/lib/types';
 import MatchupGrid, { type MatchupDetailData } from '@/components/MatchupGrid';
-import { readWeekProjection, previewWeekProjection } from '@/lib/projections-data';
+import { readWeekProjection, readWeekDaily, previewWeekProjection } from '@/lib/projections-data';
+import { matchupDaily } from '@/lib/week-daily';
 import { findMatchupProjection, watchNotes } from '@/lib/week-projections';
 
 /** "team4" → 4 */
@@ -39,10 +40,16 @@ export default async function MatchupsPage({
   // A future week has no frozen file yet: preview it from today's rosters.
   const isFutureWeek = data.week > data.currentWeek;
   const frozen = readWeekProjection(data.week) ?? (isFutureWeek ? await previewWeekProjection(data.week) : null);
+  const daily = isFutureWeek ? null : readWeekDaily(data.week);
   const details: Record<string, MatchupDetailData> = {};
   for (const m of data.matchups) {
     const projection = findMatchupProjection(frozen, espnId(m.home.teamId), espnId(m.away.teamId));
-    details[m.id] = { projection, notes: projection ? watchNotes(projection.home, projection.away) : [], isPreview: isFutureWeek };
+    details[m.id] = {
+      projection,
+      notes: projection ? watchNotes(projection.home, projection.away) : [],
+      isPreview: isFutureWeek,
+      daily: isFutureWeek ? null : matchupDaily(frozen, daily, espnId(m.home.teamId), espnId(m.away.teamId)),
+    };
     if (projection && !m.isLive && !m.isFinal) {
       m.home.projectedScore = projection.home.projectedPoints;
       m.away.projectedScore = projection.away.projectedPoints;

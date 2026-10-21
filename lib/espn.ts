@@ -829,6 +829,7 @@ export async function getTopPerformers(
 }
 
 export interface NightLineupTeam {
+  teamId: number;
   teamName: string;
   ownerName: string;
   starters: Array<{ playerName: string; proTeamId: number; fantasyPoints: number; played: boolean }>;
@@ -844,6 +845,7 @@ export async function getNightLineups(scoringPeriodId: number): Promise<NightLin
   const memberMap = buildMemberMap(data.members || []);
 
   return ((data.teams || []) as any[]).map(team => ({
+    teamId: team.id,
     teamName: team.name || '',
     ownerName: resolveOwnerName(team.name || '', team.owners || [], memberMap),
     starters: ((team.roster?.entries || []) as any[])

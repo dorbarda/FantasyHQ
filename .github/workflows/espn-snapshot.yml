@@ -76,6 +76,15 @@ jobs:
           SWID: ${{ secrets.SWID }}
           LEAGUE_ID: ${{ secrets.LEAGUE_ID }}
           SEASON: ${{ vars.SEASON || secrets.SEASON }}
+      # Matchups page: daily lines + win probability after each finished day
+      # (data/projections/<season>/week-NN-daily.json).
+      - name: Update week daily
+        run: npx tsx scripts/update-week-daily.mts
+        env:
+          ESPN_S2: ${{ secrets.ESPN_S2 }}
+          SWID: ${{ secrets.SWID }}
+          LEAGUE_ID: ${{ secrets.LEAGUE_ID }}
+          SEASON: ${{ vars.SEASON || secrets.SEASON }}
       - name: Commit snapshots
         run: |
           git config user.name "espn-snapshot-bot"

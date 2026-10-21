@@ -83,6 +83,11 @@
   --gold-text:            #A16207;
   --silver-text:          #64748B;
   --bronze-text:          #92400E;
+
+  /* Win probability chart — left / right team. Same in both themes:
+     passes the dataviz palette checks on the light and dark surfaces. */
+  --wp-left:              #B8763E;
+  --wp-right:             #3B82F6;
 }
 
 :root[data-theme="dark"] {

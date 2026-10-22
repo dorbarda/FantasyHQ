@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Sunday Recap</title>
+<link rel="stylesheet" href="../../../../node_modules/@fontsource/heebo/400.css">
+<link rel="stylesheet" href="../../../../node_modules/@fontsource/heebo/700.css">
+<link rel="stylesheet" href="../../../../node_modules/@fontsource/heebo/900.css">
+<style>
+  :root {
+    --bg: #0B1628; --bg2: #13233D; --line: #1E3050;
+    --text: #F0F4F8; --muted: #94A3B8;
+    --accent: #C8956C; --hot: #FB923C; --win: #34D399; --lose: #F87171;
+    --home: #C8956C; --away: #60A5FA;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--bg); }
+  body { font-family: 'Heebo', sans-serif; color: var(--text); }
+  .scene { position: absolute; inset: 0; padding: 90px 70px 100px; display: flex; flex-direction: column; opacity: 0; }
+  .bg-glow { position: absolute; inset: 0; background:
+      radial-gradient(900px 700px at 50% -10%, rgba(200,149,108,.22), transparent 70%),
+      radial-gradient(800px 600px at 50% 110%, rgba(96,165,250,.14), transparent 70%); }
+  .ltr { direction: ltr; unicode-bidi: isolate; }
+  .el { will-change: transform, opacity; }
+
+  /* intro / outro */
+  .center { justify-content: center; align-items: center; text-align: center; gap: 36px; }
+  .brand { font-size: 54px; font-weight: 700; letter-spacing: 6px; color: var(--accent); }
+  .big { font-size: 150px; font-weight: 900; line-height: 1.02; }
+  .sub { font-size: 58px; font-weight: 700; color: var(--muted); }
+  .hero-logo { width: 360px; height: 360px; border-radius: 64px; object-fit: cover; box-shadow: 0 20px 80px rgba(200,149,108,.35); }
+
+  /* matchup card */
+  .top { display: flex; justify-content: space-between; align-items: center; }
+  .tag { font-size: 46px; font-weight: 900; padding: 14px 36px; border-radius: 999px; background: var(--bg2); border: 3px solid var(--line); }
+  .tag.hot { background: var(--hot); color: #1a0d00; border-color: var(--hot); }
+  .tag.close { border-color: var(--accent); color: var(--accent); }
+  .count { font-size: 38px; color: var(--muted); font-weight: 700; }
+
+  .teams { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 44px; }
+  .team { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px; }
+  .logo { width: 190px; height: 190px; border-radius: 50%; object-fit: cover; border: 6px solid var(--line); background: var(--bg2); }
+  .team.home .logo { border-color: var(--home); }
+  .team.away .logo { border-color: var(--away); }
+  .tname { font-size: 44px; font-weight: 900; line-height: 1.1; min-height: 97px; display: flex; align-items: center; }
+  .owner { font-size: 36px; color: var(--muted); font-weight: 700; }
+  .score { font-size: 124px; font-weight: 900; line-height: 1; margin-top: 8px; font-variant-numeric: tabular-nums; }
+  .gapline { text-align: center; font-size: 46px; font-weight: 700; margin-top: 24px; color: var(--muted); }
+  .gapline b { color: var(--text); font-weight: 900; }
+
+  .rows { margin-top: 36px; background: var(--bg2); border: 3px solid var(--line); border-radius: 36px; padding: 18px 44px; }
+  .row { display: grid; grid-template-columns: 1fr 1.5fr 1fr; align-items: center; padding: 16px 0; border-bottom: 2px solid var(--line); }
+  .row:last-child { border-bottom: 0; }
+  .row .v { font-size: 52px; font-weight: 900; text-align: center; font-variant-numeric: tabular-nums; }
+  .row .l { font-size: 34px; color: var(--muted); font-weight: 700; text-align: center; }
+
+  .keys { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 30px; margin-top: 32px; }
+  .keys h4 { grid-column: 1 / -1; text-align: center; font-size: 38px; color: var(--accent); font-weight: 900; }
+  .klist { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+  .kp { font-size: 32px; font-weight: 700; text-align: center; }
+  .kp small { color: var(--muted); font-size: 28px; font-weight: 400; }
+  .kp .dtd { color: var(--hot); font-size: 26px; }
+  .none { font-size: 32px; color: var(--muted); }
+
+  .prob { margin-top: auto; }
+  .prob .winner { text-align: center; font-size: 46px; font-weight: 900; margin-bottom: 18px; }
+  .prob .winner span { color: var(--win); }
+  .bar { position: relative; height: 84px; border-radius: 999px; overflow: hidden; background: var(--away); display: flex; }
+  .bar .fill { height: 100%; background: var(--home); }
+  .bar .pct { position: absolute; top: 0; bottom: 0; display: flex; align-items: center; font-size: 46px; font-weight: 900; color: #0B1628; }
+  .bar .pct.r { right: 36px; } .bar .pct.l { left: 36px; }
+  .barlabel { text-align: center; font-size: 32px; color: var(--muted); margin-top: 16px; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div id="stage"></div>
+<script>
+/*
+ * Timeline renderer. render(t) draws the frame at t seconds — fully
+ * deterministic, so the Playwright script can step frame by frame.
+ * Data comes from window.RECAP (recap-data.mts output).
+ */
+const D = window.RECAP;
+const INTRO = 3, CARD = 6, OUTRO = 3.5, FADE = 0.35;
+// Video order: most decided first, closest last — builds to the cliffhanger.
+const games = [...D.matchups].reverse();
+const total = INTRO + games.length * CARD + OUTRO;
+window.DURATION = total;
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const logo = src => src ? `../../../../public${src}` : '../../../../public/icon-192.png';
+// Same rule as the site: no 100% / 0% while games are left. Away = 100 − home so the pair sums to 100.
+const pct = (p, gamesLeft, other) => gamesLeft && p > 99 ? '>99%' : gamesLeft && p < 1 ? '<1%'
+  : `${other == null ? Math.round(p) : 100 - Math.round(other)}%`;
+const tag = fav => fav < 65 ? ['צמוד! 🔥', 'hot'] : fav < 85 ? ['פתוח', 'close'] : fav < 97 ? ['יתרון ברור', ''] : ['כמעט גמור', ''];
+const closest = D.matchups[0];
+
+const stage = document.getElementById('stage');
+let html = `
+<section class="scene center" data-start="0" data-end="${INTRO}">
+  <div class="brand el ltr" data-in="0.1">FANTASY HQ</div>
+  <img class="hero-logo el" data-in="0.25" src="../../../../public/icon-maskable-512.png">
+  <div class="big el" data-in="0.45">הלילה<br>האחרון</div>
+  <div class="sub el" data-in="0.8">שבוע ${D.week} · ${games.length} מאצ'אפים · לילה אחד</div>
+</section>`;
+
+games.forEach((m, i) => {
+  const start = INTRO + i * CARD;
+  const [label, cls] = i === games.length - 1 ? ['קרב השבוע 🔥', 'hot'] : tag(m.favoriteWinProb);
+  const side = (s, which) => `
+    <div class="team ${which}">
+      <img class="logo el" data-in="0.15" src="${logo(s.logo)}">
+      <div class="tname el ltr" data-in="0.25">${esc(s.name)}</div>
+      <div class="owner el" data-in="0.3">${esc(s.owner)}</div>
+      <div class="score el" data-in="0.35" data-count="${s.live}">0</div>
+    </div>`;
+  const keys = s => s.keyPlayersTonight.length
+    ? s.keyPlayersTonight.map(p => `<div class="kp ltr">${esc(p.name)} <small>${p.nba} · ${p.avg}</small>${p.status !== 'ACTIVE' ? ` <span class="dtd">(${p.status === 'DAY_TO_DAY' ? 'DTD' : esc(p.status)})</span>` : ''}</div>`).join('')
+    : `<div class="none">אין שחקנים הלילה</div>`;
+  const moves = s => s.movesLeft != null ? s.movesLeft : s.movesUsed;
+  const gapText = m.leader ? `פער: <b>${m.gap}</b> לטובת <b class="ltr">${esc(m.leader)}</b>` : `<b>שוויון מוחלט!</b>`;
+  const left = m.home.playersLeftTonight + m.away.playersLeftTonight > 0;
+  html += `
+<section class="scene" data-start="${start}" data-end="${start + CARD}">
+  <div class="top">
+    <div class="tag ${cls} el" data-in="0.05">${label}</div>
+    <div class="count el ltr" data-in="0.05">${i + 1} / ${games.length}</div>
+  </div>
+  <div class="teams">${side(m.home, 'home')}${side(m.away, 'away')}</div>
+  <div class="gapline el" data-in="1.0">${gapText}</div>
+  <div class="rows el" data-in="1.4">
+    <div class="row"><div class="v">${m.home.playersLeftTonight}</div><div class="l">שחקנים שנשארו הלילה</div><div class="v">${m.away.playersLeftTonight}</div></div>
+    <div class="row"><div class="v">${moves(m.home)}</div><div class="l">${m.home.movesLeft != null ? 'מהלכים שנשארו' : 'מהלכים שנוצלו השבוע'}</div><div class="v">${moves(m.away)}</div></div>
+    <div class="row"><div class="v">${Math.round(m.home.projected)}</div><div class="l">תחזית סיום</div><div class="v">${Math.round(m.away.projected)}</div></div>
+  </div>
+  <div class="keys el" data-in="2.0">
+    <h4>⭐ שחקני מפתח הלילה</h4>
+    <div class="klist">${keys(m.home)}</div>
+    <div class="klist">${keys(m.away)}</div>
+  </div>
+  <div class="prob el" data-in="2.6">
+    <div class="winner">מנצח צפוי: <span class="ltr">${esc(m.projectedWinner)}</span></div>
+    <div class="bar">
+      <div class="fill" data-fill="${m.home.winProb}"></div>
+      <div class="pct r ltr">${pct(m.home.winProb, left)}</div>
+      <div class="pct l ltr">${pct(m.away.winProb, left, m.home.winProb)}</div>
+    </div>
+    <div class="barlabel">סיכוי לנצח</div>
+  </div>
+</section>`;
+});
+
+const outStart = INTRO + games.length * CARD;
+html += `
+<section class="scene center" data-start="${outStart}" data-end="${total + 1}">
+  <div class="big el" data-in="0.1">הכל נקבע<br>הלילה 🔥</div>
+  <div class="sub el ltr" data-in="0.6" style="font-size:48px">${esc(closest.home.name)}<br>vs<br>${esc(closest.away.name)}</div>
+  <div class="sub el ltr" data-in="0.9">${Math.round(closest.home.winProb)}% – ${100 - Math.round(closest.home.winProb)}%</div>
+  <div class="brand el ltr" data-in="1.3">FANTASY HQ</div>
+</section>`;
+stage.innerHTML = html;
+
+const clamp = x => Math.max(0, Math.min(1, x));
+const ease = x => 1 - Math.pow(1 - clamp(x), 3);
+
+window.render = t => {
+  for (const sc of stage.querySelectorAll('.scene')) {
+    const s = +sc.dataset.start, e = +sc.dataset.end, lt = t - s;
+    const vis = t < s || t > e ? 0 : Math.min(clamp(lt / FADE), clamp((e - t) / FADE));
+    sc.style.opacity = vis;
+    if (!vis) continue;
+    for (const el of sc.querySelectorAll('.el')) {
+      const p = ease((lt - +el.dataset.in) / 0.5);
+      el.style.opacity = p;
+      el.style.transform = `translateY(${(1 - p) * 60}px) scale(${0.96 + 0.04 * p})`;
+    }
+    for (const el of sc.querySelectorAll('[data-count]')) {
+      const p = ease((lt - 0.4) / 1.2);
+      el.textContent = Math.round(+el.dataset.count * p);
+    }
+    for (const el of sc.querySelectorAll('[data-fill]')) {
+      const p = ease((lt - 2.8) / 1.4);
+      el.style.width = `${50 + (+el.dataset.fill - 50) * p}%`;
+    }
+  }
+};
+window.render(0);
+</script>
+</body>
+</html>

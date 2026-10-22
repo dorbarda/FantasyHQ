@@ -22,8 +22,9 @@ npx tsx .claude/skills/sunday-recap/recap-data.mts --out recaps/recap.json
 - Uses the site's own projection and win-% code, so numbers match the matchups page.
 
 Fields per team: `live`, `playersLeftTonight`, `keyPlayersTonight` (top 3 by
-average, still to play tonight), `movesUsed` this week, `movesLeft` (null until
-the weekly limit is confirmed), `projected`, `winProb`. Per matchup: `gap`,
+average, still to play tonight), `movesUsed` this week, `movesLeft` (league rule:
+1 move per day of the matchup, so the limit = days in the week — usually 7),
+`projected`, `winProb`. Per matchup: `gap`,
 `leader`, `projectedWinner`, `favoriteWinProb`. Matchups come sorted closest first.
 
 ## 2. Hebrew WhatsApp message
@@ -34,7 +35,7 @@ Per matchup, keep it short:
 ```
 🔥 <team A> (<owner>) <live> – <live> <team B> (<owner>)
 פער: <gap> לטובת <leader>
-שחקנים שנשארו: <n> מול <n> | מהלכים שנוצלו: <n> מול <n>
+שחקנים שנשארו: <n> מול <n> | מהלכים שנשארו: <n> מול <n>
 ⭐ הלילה: <key players, both sides>
 תחזית: <proj> – <proj> → <projected winner> (<win%>)
 ```
@@ -51,9 +52,11 @@ Per matchup, keep it short:
 node .claude/skills/sunday-recap/video/render.mjs recaps/recap.json recaps/week-NN.mp4
 ```
 
-- 1080×1920, 30 fps, ~35 s, H.264 — sends fine on WhatsApp. About 1 minute to render.
-- Order in the video is the reverse of the message: decided first, closest last
-  (the cliffhanger), then an outro on the closest matchup.
+- 1080×1920, 30 fps, ~20–35 s, H.264 — sends fine on WhatsApp. About 1 minute to render.
+- Same order as the message: closest first, biggest blowouts last, then an outro
+  on the closest matchup.
+- Close matchup (underdog ≥ 20%, `CLOSE_MAX_FAV` in the template) → full card with
+  every detail. The rest → compact screens, up to 3 per screen: score, gap, win %.
 - Needs global Playwright + Chromium + ffmpeg (all present in the cloud container)
   and `npm ci` for the Heebo font.
 - Look at 2–3 frames before sending (render one with the template's `render(t)`)

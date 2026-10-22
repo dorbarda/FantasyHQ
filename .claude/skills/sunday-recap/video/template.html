@@ -70,6 +70,21 @@
   .bar .pct { position: absolute; top: 0; bottom: 0; display: flex; align-items: center; font-size: 46px; font-weight: 900; color: #0B1628; }
   .bar .pct.r { right: 36px; } .bar .pct.l { left: 36px; }
   .barlabel { text-align: center; font-size: 32px; color: var(--muted); margin-top: 16px; font-weight: 700; }
+
+  /* decided matchups — compact list */
+  .mini-list { display: flex; flex-direction: column; gap: 40px; margin-top: 70px; }
+  .mini { background: var(--bg2); border: 3px solid var(--line); border-radius: 36px; padding: 34px 36px; }
+  .mteams { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 20px; }
+  .mside { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+  .mlogo { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--line); }
+  .mname { font-size: 34px; font-weight: 900; line-height: 1.1; min-height: 75px; display: flex; align-items: center; }
+  .mscore { font-size: 76px; font-weight: 900; line-height: 1; }
+  .mvs { font-size: 60px; color: var(--muted); font-weight: 900; }
+  .mline { text-align: center; font-size: 32px; color: var(--muted); font-weight: 700; margin-top: 22px; }
+  .mline b { color: var(--text); }
+  .mpct { color: var(--win); font-weight: 900; }
+  .mside.fav .mlogo { border-color: var(--win); }
+  .mside.fav .mscore { color: var(--win); }
 </style>
 </head>
 <body>
@@ -82,10 +97,17 @@
  * Data comes from window.RECAP (recap-data.mts output).
  */
 const D = window.RECAP;
-const INTRO = 3, CARD = 6, OUTRO = 3.5, FADE = 0.35;
-// Video order: most decided first, closest last — builds to the cliffhanger.
-const games = [...D.matchups].reverse();
-const total = INTRO + games.length * CARD + OUTRO;
+const INTRO = 3, CARD = 6, LIST = 5, OUTRO = 3.5, FADE = 0.35;
+// A matchup is "close" while the underdog still has at least this chance.
+// Close ones get a full card; the rest share compact screens, up to PER_LIST each.
+const CLOSE_MAX_FAV = 80, PER_LIST = 3;
+// Order: closest first, biggest blowouts last (recap-data.mts already sorts so).
+const games = D.matchups;
+const close = games.filter(m => m.favoriteWinProb < CLOSE_MAX_FAV);
+const decided = games.filter(m => m.favoriteWinProb >= CLOSE_MAX_FAV);
+const lists = [];
+for (let i = 0; i < decided.length; i += PER_LIST) lists.push(decided.slice(i, i + PER_LIST));
+const total = INTRO + close.length * CARD + lists.length * LIST + OUTRO;
 window.DURATION = total;
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
@@ -93,8 +115,13 @@ const logo = src => src ? `../../../../public${src}` : '../../../../public/icon-
 // Same rule as the site: no 100% / 0% while games are left. Away = 100 − home so the pair sums to 100.
 const pct = (p, gamesLeft, other) => gamesLeft && p > 99 ? '>99%' : gamesLeft && p < 1 ? '<1%'
   : `${other == null ? Math.round(p) : 100 - Math.round(other)}%`;
-const tag = fav => fav < 65 ? ['צמוד! 🔥', 'hot'] : fav < 85 ? ['פתוח', 'close'] : fav < 97 ? ['יתרון ברור', ''] : ['כמעט גמור', ''];
-const closest = D.matchups[0];
+const tag = fav => fav < 65 ? ['צמוד! 🔥', 'hot'] : ['פתוח', 'close'];
+const closest = games[0];
+const playersLeft = m => m.home.playersLeftTonight + m.away.playersLeftTonight > 0;
+const favPct = m => {
+  const homeFav = m.home.winProb >= m.away.winProb;
+  return homeFav ? pct(m.home.winProb, playersLeft(m)) : pct(m.away.winProb, playersLeft(m), m.home.winProb);
+};
 
 const stage = document.getElementById('stage');
 let html = `
@@ -105,9 +132,9 @@ let html = `
   <div class="sub el" data-in="0.8">שבוע ${D.week} · ${games.length} מאצ'אפים · לילה אחד</div>
 </section>`;
 
-games.forEach((m, i) => {
+close.forEach((m, i) => {
   const start = INTRO + i * CARD;
-  const [label, cls] = i === games.length - 1 ? ['קרב השבוע 🔥', 'hot'] : tag(m.favoriteWinProb);
+  const [label, cls] = i === 0 ? ['קרב השבוע 🔥', 'hot'] : tag(m.favoriteWinProb);
   const side = (s, which) => `
     <div class="team ${which}">
       <img class="logo el" data-in="0.15" src="${logo(s.logo)}">
@@ -118,9 +145,8 @@ games.forEach((m, i) => {
   const keys = s => s.keyPlayersTonight.length
     ? s.keyPlayersTonight.map(p => `<div class="kp ltr">${esc(p.name)} <small>${p.nba} · ${p.avg}</small>${p.status !== 'ACTIVE' ? ` <span class="dtd">(${p.status === 'DAY_TO_DAY' ? 'DTD' : esc(p.status)})</span>` : ''}</div>`).join('')
     : `<div class="none">אין שחקנים הלילה</div>`;
-  const moves = s => s.movesLeft != null ? s.movesLeft : s.movesUsed;
   const gapText = m.leader ? `פער: <b>${m.gap}</b> לטובת <b class="ltr">${esc(m.leader)}</b>` : `<b>שוויון מוחלט!</b>`;
-  const left = m.home.playersLeftTonight + m.away.playersLeftTonight > 0;
+  const left = playersLeft(m);
   html += `
 <section class="scene" data-start="${start}" data-end="${start + CARD}">
   <div class="top">
@@ -131,7 +157,7 @@ games.forEach((m, i) => {
   <div class="gapline el" data-in="1.0">${gapText}</div>
   <div class="rows el" data-in="1.4">
     <div class="row"><div class="v">${m.home.playersLeftTonight}</div><div class="l">שחקנים שנשארו הלילה</div><div class="v">${m.away.playersLeftTonight}</div></div>
-    <div class="row"><div class="v">${moves(m.home)}</div><div class="l">${m.home.movesLeft != null ? 'מהלכים שנשארו' : 'מהלכים שנוצלו השבוע'}</div><div class="v">${moves(m.away)}</div></div>
+    <div class="row"><div class="v">${m.home.movesLeft}</div><div class="l">מהלכים שנשארו</div><div class="v">${m.away.movesLeft}</div></div>
     <div class="row"><div class="v">${Math.round(m.home.projected)}</div><div class="l">תחזית סיום</div><div class="v">${Math.round(m.away.projected)}</div></div>
   </div>
   <div class="keys el" data-in="2.0">
@@ -151,7 +177,34 @@ games.forEach((m, i) => {
 </section>`;
 });
 
-const outStart = INTRO + games.length * CARD;
+// Decided matchups: a few per screen, score + gap + projected winner only.
+lists.forEach((group, li) => {
+  const start = INTRO + close.length * CARD + li * LIST;
+  const first = close.length + li * PER_LIST + 1;
+  const range = group.length > 1 ? `${first}–${first + group.length - 1}` : `${first}`;
+  const team = (s, fav) => `
+      <div class="mside${fav ? ' fav' : ''}">
+        <img class="mlogo" src="${logo(s.logo)}">
+        <div class="mname ltr">${esc(s.name)}</div>
+        <div class="mscore">${Math.round(s.live)}</div>
+      </div>`;
+  html += `
+<section class="scene" data-start="${start}" data-end="${start + LIST}">
+  <div class="top">
+    <div class="tag el" data-in="0.05">כמעט גמור ✅</div>
+    <div class="count el ltr" data-in="0.05">${range} / ${games.length}</div>
+  </div>
+  <div class="mini-list">
+    ${group.map((m, j) => `
+    <div class="mini el" data-in="${0.3 + j * 0.45}">
+      <div class="mteams">${team(m.home, m.home.winProb >= m.away.winProb)}<div class="mvs">–</div>${team(m.away, m.away.winProb > m.home.winProb)}</div>
+      <div class="mline">פער <b>${m.gap}</b> · סיכוי לניצחון <span class="mpct ltr">${favPct(m)}</span> ל-<b class="ltr">${esc(m.projectedWinner)}</b></div>
+    </div>`).join('')}
+  </div>
+</section>`;
+});
+
+const outStart = INTRO + close.length * CARD + lists.length * LIST;
 html += `
 <section class="scene center" data-start="${outStart}" data-end="${total + 1}">
   <div class="big el" data-in="0.1">הכל נקבע<br>הלילה 🔥</div>

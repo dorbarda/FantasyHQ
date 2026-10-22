@@ -7,7 +7,7 @@
  *
  *   • live score + gap (ESPN totalPointsLive)
  *   • starters left tonight + key players tonight (games not started yet)
- *   • moves used this week vs. the weekly limit (ESPN settings)
+ *   • moves left this week: 1 move per day of the matchup (week 1 = 6 days)
  *   • projected final score + win % for the rest of the week
  *
  * --as-if-last-night: test mode — treat today as the week's last day
@@ -65,7 +65,9 @@ const index = buildDateIndex(season.schedules);
 const remaining = asIfLastNight ? [today] : weekDays.filter(sp => sp >= today);
 const isLastDay = today === weekDays.at(-1);
 
-const moveLimit: number = league.settings?.acquisitionSettings?.matchupAcquisitionLimit ?? -1;
+// League rule: 1 move per day of the matchup, so the weekly limit is the
+// week's length (usually 7; ESPN: matchupLimitPerScoringPeriod).
+const moveLimit = weekDays.length;
 const members = new Map<string, any>((league.members || []).map((m: any) => [m.id, m]));
 // Same overrides as lib/espn.ts — two owners share a first name.
 const OWNER_LABEL: Record<string, string> = { 'Nordau Peaky Blinder': 'Barda', "Flint Tropics 70's Show": 'Gelless' };
@@ -95,8 +97,7 @@ function side(team: any, espnSide: any) {
       .slice(0, 3)
       .map((p: any) => ({ name: p.name, nba: p.nba, avg: p.avg, status: p.status })),
     movesUsed,
-    // Not shown until the weekly limit is confirmed: ESPN says 1, yet some teams used 2 in week 1.
-    movesLeft: null as number | null,
+    movesLeft: Math.max(0, moveLimit - movesUsed),
     projected: r1(live + rest.projectedPoints),
     variance: remainingVariance(rest.roster),
   };
@@ -113,7 +114,7 @@ const matchups = (league.schedule || [])
       { expected: away.projected, variance: away.variance });
     const leader = home.live >= away.live ? home : away;
     const favorite = pHome >= 0.5 ? home : away;
-    const strip = ({ variance: _v, ...rest }: typeof home) => rest;
+    const strip = ({ variance, ...rest }: typeof home) => (void variance, rest);
     return {
       home: { ...strip(home), winProb: Math.round(pHome * 1000) / 10 },
       away: { ...strip(away), winProb: Math.round((1 - pHome) * 1000) / 10 },

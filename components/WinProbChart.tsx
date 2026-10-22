@@ -12,8 +12,12 @@ import { weekdayLabel, type MatchupDaily } from '@/lib/week-daily';
 const W = 300;
 const H = 72;
 
+/** 0% and 100% only when it's settled — 99.9% is not a sure thing. */
 function pct(p: number) {
-  return `${Math.round(p * 100)}%`;
+  const n = Math.round(p * 100);
+  if (n >= 100 && p < 1) return '>99%';
+  if (n <= 0 && p > 0) return '<1%';
+  return `${n}%`;
 }
 
 export default function WinProbChart({ daily, leftName, rightName }: {

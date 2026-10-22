@@ -1,11 +1,15 @@
 {
   "season": 2027,
   "week": 1,
-  "updatedAt": "2026-10-21T08:08:24.481Z",
+  "updatedAt": "2026-10-22T03:05:55.220Z",
   "days": [
     {
       "date": "2026-10-20",
       "scoringPeriodId": 1
+    },
+    {
+      "date": "2026-10-21",
+      "scoringPeriodId": 2
     }
   ],
   "teams": {
@@ -13,60 +17,100 @@
       {
         "played": 2,
         "points": 61
+      },
+      {
+        "played": 10,
+        "points": 251
       }
     ],
     "2": [
       {
         "played": 2,
         "points": 62
+      },
+      {
+        "played": 10,
+        "points": 353
       }
     ],
     "3": [
       {
         "played": 4,
         "points": 96
+      },
+      {
+        "played": 9,
+        "points": 233
       }
     ],
     "4": [
       {
         "played": 2,
         "points": 86
+      },
+      {
+        "played": 10,
+        "points": 240
       }
     ],
     "5": [
       {
         "played": 3,
         "points": 79
+      },
+      {
+        "played": 7,
+        "points": 240
       }
     ],
     "6": [
       {
         "played": 6,
         "points": 161
+      },
+      {
+        "played": 8,
+        "points": 265
       }
     ],
     "8": [
       {
         "played": 0,
         "points": 0
+      },
+      {
+        "played": 10,
+        "points": 270
       }
     ],
     "9": [
       {
         "played": 3,
         "points": 67
+      },
+      {
+        "played": 8,
+        "points": 205
       }
     ],
     "10": [
       {
         "played": 5,
         "points": 188
+      },
+      {
+        "played": 8,
+        "points": 205
       }
     ],
     "11": [
       {
         "played": 4,
         "points": 167
+      },
+      {
+        "played": 9,
+        "points": 247
       }
     ]
   },
@@ -75,35 +119,40 @@
       "homeTeamId": 2,
       "awayTeamId": 9,
       "homeWinProb": [
-        0.56
+        0.56,
+        0.787
       ]
     },
     {
       "homeTeamId": 10,
       "awayTeamId": 5,
       "homeWinProb": [
-        0.848
+        0.848,
+        0.589
       ]
     },
     {
       "homeTeamId": 8,
       "awayTeamId": 11,
       "homeWinProb": [
-        0.011
+        0.011,
+        0.002
       ]
     },
     {
       "homeTeamId": 4,
       "awayTeamId": 3,
       "homeWinProb": [
-        0.665
+        0.665,
+        0.55
       ]
     },
     {
       "homeTeamId": 1,
       "awayTeamId": 6,
       "homeWinProb": [
-        0.838
+        0.838,
+        0.512
       ]
     }
   ]

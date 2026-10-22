@@ -53,8 +53,9 @@ node .claude/skills/sunday-recap/video/render.mjs recaps/recap.json recaps/week-
 ```
 
 - 1080×1920, 30 fps, ~20–35 s, H.264 — sends fine on WhatsApp. About 1 minute to render.
-- Music: by default an original beat made in code (`music.mjs`, no licence issue) —
-  drums drop with the first card and fade out over the outro. To use the user's
+- Music: by default an original NBA-on-TV style theme made in code (`music.mjs`,
+  no licence issue) — brass fanfare into the first card, full band under the cards,
+  big hit + B♭–C–D ending on the outro. To use the user's
   own track: `--music path/to/song.mp3` (cut to length, faded in/out). Silent: `--no-music`.
   Never download copyrighted music; only use a file the user provides.
 - Same order as the message: closest first, biggest blowouts last, then an outro

@@ -248,8 +248,11 @@ export async function getMatchups(targetWeek?: number): Promise<MatchupsData> {
     const homeInfo = teamMap[home.teamId] || blankTeam;
     const awayInfo = teamMap[away.teamId] || blankTeam;
 
-    const homeActual   = Math.round((home.totalPoints || 0) * 10) / 10;
-    const awayActual   = Math.round((away.totalPoints || 0) * 10) / 10;
+    // Current week: totalPointsLive. totalPoints only counts days ESPN has
+    // closed (overnight US time), so early Israel mornings it misses last night.
+    const points = (side: any) => (isCurrentWeek ? side.totalPointsLive ?? side.totalPoints : side.totalPoints) || 0;
+    const homeActual   = Math.round(points(home) * 10) / 10;
+    const awayActual   = Math.round(points(away) * 10) / 10;
     const isFinal = m.winner === 'HOME' || m.winner === 'AWAY';
     const isLive  = isCurrentWeek && !isFinal && (homeActual > 0 || awayActual > 0);
 

@@ -205,6 +205,8 @@ lists.forEach((group, li) => {
 });
 
 const outStart = INTRO + close.length * CARD + lists.length * LIST;
+// For the music (music.mjs): drums drop with the first card, stop at the outro.
+window.SECTIONS = { dropAt: INTRO, outroAt: outStart };
 html += `
 <section class="scene center" data-start="${outStart}" data-end="${total + 1}">
   <div class="big el" data-in="0.1">הכל נקבע<br>הלילה 🔥</div>

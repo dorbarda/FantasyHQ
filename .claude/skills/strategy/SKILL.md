@@ -12,6 +12,7 @@ Private to Dor — never add it to the website (`app/`), and never commit `strat
 2. Read `strategy/out/report.json` and answer from it. Quote numbers exactly as they are there.
    - `current` / `next`: matchup per week — `final` = actual + projected, `winChance`, `verdict`, `notes`, day by day `sim.days` (`emptySlots` = open starting spots).
    - `pickups.today | tomorrow | restOfWeek | nextWeek`: free agents ranked by projected gain over the rest of that week, with the suggested drop. `stream: true` = he's worse than the drop long term.
+   - `plan`: best use of today's + tomorrow's adds together (1 add per day) — quote this for "what should I do today".
    - `trending`: free agents heating up (last 7 days vs season, ESPN ownership change).
 3. For a "what if" (a specific add/drop), use `rankPickups` / `simulateWeek` from `strategy/engine.ts` in a small tsx snippet rather than estimating by hand.
 4. If asked to refresh the page: publish `strategy/out/strategy.html` with the Artifact tool to

@@ -3,7 +3,7 @@
  * one self-contained HTML file, published as a private claude.ai artifact.
  */
 import {
-  type AgentPlayer, type Calendar, type DayPlan, type MatchupReport, type Pickup,
+  type AgentPlayer, type Calendar, type DayPlan, type MatchupReport, type Pickup, type TwoDayPlan,
   GAME_CV, AVERAGE_ERROR, trendOf, weekday,
 } from './engine';
 
@@ -16,6 +16,7 @@ export interface Report {
   current: MatchupReport | null;
   next: MatchupReport | null;
   pickups: { today: Pickup[]; tomorrow: Pickup[]; restOfWeek: Pickup[]; nextWeek: Pickup[] };
+  plan: TwoDayPlan | null;
   trending: AgentPlayer[];
   roster: AgentPlayer[];
 }
@@ -89,6 +90,7 @@ header { display: flex; flex-wrap: wrap; justify-content: space-between; align-i
 .bar i { display: block; height: 100%; background: var(--good); }
 .advice { font-size: 1.05rem; font-weight: 500; }
 .move { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 8px; padding: 12px 14px; display: grid; gap: 4px; }
+.move hr.split { border: 0; border-top: 1px solid var(--line); margin: 6px 0; width: 100%; }
 .move strong { font-family: var(--display); font-size: 1.3rem; }
 .scroll { overflow-x: auto; }
 table { border-collapse: collapse; width: 100%; font-size: .9rem; }
@@ -125,7 +127,7 @@ footer { font-size: .85rem; color: var(--muted); display: grid; gap: 6px; }
 
   ${r.current ? matchupPanel(r.current, r, 'This week', true) : '<section class="panel"><h2>This week</h2><p>No matchup found.</p></section>'}
 
-  ${move ? `<section class="panel"><h2>Today's move</h2>${move}</section>` : ''}
+  ${move ? `<section class="panel"><h2>Your next moves</h2>${move}</section>` : ''}
 
   <section class="panel" id="free-agents">
     <div><h2>Free agents</h2>
@@ -189,25 +191,35 @@ footer { font-size: .85rem; color: var(--muted); display: grid; gap: 6px; }
 </script>`;
 }
 
-/** The one add to make today, given 1 add per day and this week's verdict. */
+/** Today's and tomorrow's adds (1 per day), chosen together; next week's when this week is lost. */
 function bestMove(r: Report): string | null {
   const c = r.current;
-  const chasing = c && c.verdict.key !== 'longshot';
-  const list = chasing ? r.pickups.restOfWeek : r.pickups.nextWeek;
-  const pick = list.find(p => p.player.freeStatus === 'FREEAGENT') ?? list[0];
-  if (!pick) return '<p>No free agent adds points right now. Keep your add for tomorrow.</p>';
-  const span = chasing ? 'this week' : 'next week';
-  const why = chasing
-    ? `${pick.games} game${pick.games === 1 ? '' : 's'} in your empty spots (${pick.opponents.join(', ')}).`
-    : 'This week looks lost, so the add goes to next week.';
-  const waiver = pick.player.freeStatus === 'WAIVERS'
-    ? ` <span class="tag waiver">on waivers, claim it</span>` : '';
-  return `<div class="move">
-    <span class="eyebrow">Best add · ${span}</span>
+  if (c && c.verdict.key === 'longshot') {
+    const pick = r.pickups.nextWeek.find(p => p.player.freeStatus === 'FREEAGENT') ?? r.pickups.nextWeek[0];
+    if (!pick) return '<p>No free agent helps next week yet. Keep your add.</p>';
+    return `<div class="move">${step('Best add · next week', pick, 'next week')}
+      <span class="muted">This week looks lost, so the add goes to next week.</span></div>`;
+  }
+  const plan = r.plan;
+  if (!plan) return '<p>No free agent adds points this week. Keep your adds.</p>';
+  const parts = [
+    plan.today
+      ? step('Today', plan.today, 'this week')
+      : `<span class="eyebrow">Today</span><strong>No add today</strong><span>${plan.tomorrow?.drop
+        ? `Keep ${esc(plan.tomorrow.drop.name)} for his game tonight, then make tomorrow's move.`
+        : 'Save the add for tomorrow.'}</span>`,
+    plan.tomorrow ? step('Tomorrow', plan.tomorrow, 'this week') : '',
+  ].filter(Boolean);
+  return `<div class="move">${parts.join('<hr class="split">')}
+    <span><b>Together: <span class="gain">${signed(plan.total)} pts</span> this week.</b></span></div>`;
+}
+
+function step(label: string, pick: Pickup, span: string): string {
+  const waiver = pick.player.freeStatus === 'WAIVERS' ? ' <span class="tag waiver">on waivers, claim it</span>' : '';
+  return `<span class="eyebrow">${label}</span>
     <strong>Add ${esc(pick.player.name)}${pick.drop ? `, drop ${esc(pick.drop.name)}` : ''}</strong>${waiver}
-    <span><span class="gain">${signed(pick.gain)} pts</span> projected ${span}. ${esc(why)}</span>
-    ${pick.stream ? '<span class="muted">He\'s a stream: a lower average than the player you drop. Fine for this week, think twice before dropping someone you want back.</span>' : ''}
-  </div>`;
+    <span><span class="gain">${signed(pick.gain)} pts</span> ${span} · ${pick.games} game${pick.games === 1 ? '' : 's'} in your empty spots (${esc(pick.opponents.join(', '))}).</span>
+    ${pick.stream ? '<span class="muted">A stream: lower average than the player you drop.</span>' : ''}`;
 }
 
 function matchupPanel(m: MatchupReport, r: Report, title: string, live: boolean): string {

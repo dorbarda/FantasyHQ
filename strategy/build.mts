@@ -171,6 +171,7 @@ const report: Report = {
     restOfWeek: engine.rankPickups(me.players, freeAgents, remaining, cal, defense, today, 12),
     nextWeek: engine.rankPickups(me.players, faNext, nextDays, cal, defense, -1, 12),
   },
+  plan: engine.planTwoDays(me.players, freeAgents, remaining, cal, defense, today),
   trending: engine.trending(freeAgents),
   roster: me.players,
 };

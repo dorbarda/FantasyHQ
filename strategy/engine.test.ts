@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   type AgentPlayer, buildCalendar, buildDefense, formAverage, NEUTRAL_DEFENSE, normalCdf,
-  parsePlayer, rankPickups, simulateWeek, trending, verdictFor, winChance,
+  parsePlayer, planTwoDays, rankPickups, simulateWeek, trending, verdictFor, winChance,
 } from './engine';
 
 const SEASON = 2027;
@@ -139,6 +139,19 @@ describe('rankPickups', () => {
     const [top] = rankPickups([player(1, 60, 2, C), ...Array.from({ length: 4 }, (_, i) => player(20 + i, 20, 3, C))],
       [fa], [1, 2, 3], cal, NEUTRAL_DEFENSE);
     expect(top.drop?.id).not.toBe(1);
+  });
+});
+
+describe('planTwoDays', () => {
+  it('waits a day instead of dropping a player who plays tonight', () => {
+    // P3 plays day 1 only (team 2). FA plays days 2–3 (team 3).
+    const roster = [player(1, 50, 2, G), player(2, 40, 2, C), player(3, 20, 2, [2, 6, 11])];
+    const fa = player(10, 30, 3, C, { lineupSlotId: undefined, freeStatus: 'FREEAGENT' });
+    const plan = planTwoDays(roster, [fa], [1, 2, 3], cal, NEUTRAL_DEFENSE, 1)!;
+    // Today: +60 − P3's 20 = +40. Tomorrow: +60, P3 already played.
+    expect(plan.today).toBeNull();
+    expect(plan.tomorrow?.player.id).toBe(10);
+    expect(plan.total).toBe(60);
   });
 });
 

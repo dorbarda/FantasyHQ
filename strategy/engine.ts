@@ -500,6 +500,37 @@ export function rankPickups(
   return results.sort((a, b) => b.gain - a.gain).slice(0, limit);
 }
 
+export interface TwoDayPlan { today: Pickup | null; tomorrow: Pickup | null; total: number }
+
+/**
+ * Best use of today's and tomorrow's adds together (1 add per day). One add
+ * alone can mislead: dropping a player who plays tonight wastes his game, so
+ * waiting a day — or using today's add on someone else — can be worth more.
+ * Tries "no add today" and today's top 10, then the best add tomorrow on top
+ * of each. Both gains are over the rest of the same week, so they add up.
+ */
+export function planTwoDays(
+  roster: AgentPlayer[],
+  freeAgents: AgentPlayer[],
+  days: number[],
+  cal: Calendar,
+  defense: Defense,
+  today = -1,
+): TwoDayPlan | null {
+  if (days.length === 0) return null;
+  const firsts: (Pickup | null)[] = [null, ...rankPickups(roster, freeAgents, days, cal, defense, today, 10)];
+  let best: TwoDayPlan | null = null;
+  for (const a of firsts) {
+    const r1 = a ? [...roster.filter(p => p !== a.drop), a.player] : roster;
+    const b = days.length > 1
+      ? rankPickups(r1, freeAgents.filter(f => f !== a?.player), days.slice(1), cal, defense, today, 1)[0] ?? null
+      : null;
+    const total = round1((a?.gain ?? 0) + (b?.gain ?? 0));
+    if (!best || total > best.total) best = { today: a, tomorrow: b, total };
+  }
+  return best && best.total > 0 ? best : null;
+}
+
 /** Free agents getting hot: last 7 days well above their usual, or being added across ESPN. */
 export function trending(freeAgents: AgentPlayer[], limit = 12): AgentPlayer[] {
   const anyGames = freeAgents.some(p => p.l7 > 0);

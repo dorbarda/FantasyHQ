@@ -69,7 +69,13 @@ if (!scheduleSeason) throw new Error('No NBA schedule (snapshot or live).');
 const index = buildDateIndex(scheduleSeason.schedules);
 const weeks = weeksOf(scheduleSeason);
 const cal = engine.buildCalendar(scheduleSeason.schedules, sp => index.dateFor(sp) ?? '');
-const today: number = league.scoringPeriodId ?? league.status?.latestScoringPeriod ?? 1;
+const espnToday: number = league.scoringPeriodId ?? league.status?.latestScoringPeriod ?? 1;
+// ESPN moves to the next day late (it still said Thursday at 09:55 Israel on
+// Fri 2026-10-23, after Thursday's games were over). Once the night's games
+// are done (06:00 UTC) and ESPN's day is in the past, the day to plan is the next one.
+const now = new Date();
+const today = now.getUTCHours() >= 6 && cal.dateFor(espnToday) < now.toISOString().slice(0, 10)
+  ? espnToday + 1 : espnToday;
 
 let currentWeek: number = league.status?.currentMatchupPeriod ?? 1;
 // After the last day of a week, ESPN can still report it as current.

@@ -139,6 +139,11 @@ export function findGameVideo(videos: YoutubeVideo[], proTeam: string, date: str
   }) ?? null;
 }
 
+/** "NBA's Nightly Recap | October 22, 2026" — the NBA's daily all-games video. */
+export function findNightlyRecap(videos: YoutubeVideo[], date: string): YoutubeVideo | null {
+  return videos.find(v => /nightly recap/i.test(v.title) && dateFromTitle(v.title) === date) ?? null;
+}
+
 /**
  * Whether a video can play embedded, for viewers here. Fed with a
  * videos.list item (parts: status, contentDetails).

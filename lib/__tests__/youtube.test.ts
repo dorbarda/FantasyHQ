@@ -7,6 +7,7 @@ import {
   nbaDayOf,
   findPlayerVideo,
   findGameVideo,
+  findNightlyRecap,
   isPlayableHere,
   pickClips,
   toHighlight,
@@ -99,6 +100,16 @@ describe('finding videos', () => {
     expect(findGameVideo(videos, 'SAS', '2026-04-28')?.id).toBe('g1');
     expect(findGameVideo(videos, 'POR', '2026-04-28')?.id).toBe('g1');
     expect(findGameVideo(videos, 'LAL', '2026-04-28')).toBeNull();
+  });
+});
+
+describe('findNightlyRecap', () => {
+  const recap = (day: number) => ({ id: `r${day}`, title: `NBA's Nightly Recap | October ${day}, 2026`, publishedAt: '2026-10-23T06:40:00Z' });
+  it("finds the recap by the date in its title", () => {
+    expect(findNightlyRecap([OTHER, recap(21), recap(22)], '2026-10-22')?.id).toBe('r22');
+  });
+  it('returns null when that night has no recap yet', () => {
+    expect(findNightlyRecap([recap(21)], '2026-10-22')).toBeNull();
   });
 });
 

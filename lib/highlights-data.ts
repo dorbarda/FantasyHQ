@@ -4,8 +4,8 @@
  * Built nightly, in two steps, and committed to data/snapshots/highlights.json:
  *   1. who — the best fantasy games on our league's rosters each day
  *      (lib/espn.ts getTopPerformers)
- *   2. video — that player's clip on the official NBA YouTube channel, else
- *      his game's full highlights (lib/youtube.ts)
+ *   2. video — that player's clip on the official NBA YouTube channel (posted
+ *      after his tip-off), else his game's full highlights (lib/youtube.ts)
  * Pages only ever read the snapshot: a render must never wait on YouTube.
  *
  * Without a YOUTUBE_API_KEY the job falls back to Highlightly, whose free
@@ -63,12 +63,17 @@ async function buildFromYoutube(): Promise<HighlightsByDate> {
 
   // Imported here so a Highlightly-only or page-side import never loads the ESPN client.
   const { getTopPerformers } = await import('./espn');
+  const periodOf = new Map(days.map(d => [d.date, d.scoringPeriodId]));
+  const tipoff = (proTeamId: number, date: string) =>
+    schedule.data.schedules.find(s => s.proTeamId === proTeamId)
+      ?.games.find(g => g.scoringPeriodId === periodOf.get(date))?.dateMs ?? null;
   const performers: Performer[] = (await getTopPerformers(days, PERFORMERS_PER_DAY)).map(p => ({
     date: p.date,
     playerName: p.playerName,
     proTeam: PRO_TEAM_ABBREV[p.proTeamId] ?? '',
     fantasyPoints: p.fantasyPoints,
     ownerName: p.ownerName,
+    tipoffMs: tipoff(p.proTeamId, p.date),
   }));
   if (performers.length === 0) return {};
 

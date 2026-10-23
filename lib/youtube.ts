@@ -109,13 +109,20 @@ function postedAround(v: YoutubeVideo, date: string): boolean {
   return day === date || day === addDays(date, 1);
 }
 
-/** The player's own clip from that night: his full name in the title, not a full-game recap. */
-export function findPlayerVideo(videos: YoutubeVideo[], playerName: string, date: string): YoutubeVideo | null {
+/**
+ * The player's own clip from that night: his full name in the title, not a
+ * full-game recap, posted after his game tipped off. The NBA channel also posts
+ * camp tours and off-court bits with a name in the title; those come out before
+ * the game. No known tip-off → no player clip (the full game is used instead).
+ */
+export function findPlayerVideo(videos: YoutubeVideo[], playerName: string, date: string, tipoffMs: number | null): YoutubeVideo | null {
   const key = nameKey(playerName);
   if (key.split(' ').length < 2) return null; // a lone surname is too ambiguous
+  if (tipoffMs == null) return null;
   return videos.find(v =>
     !isFullGameHighlights(v.title) &&
     postedAround(v, date) &&
+    Date.parse(v.publishedAt) >= tipoffMs &&
     ` ${normalize(v.title)} `.includes(` ${key} `)
   ) ?? null;
 }
@@ -157,10 +164,12 @@ export interface Performer {
   proTeam: string;       // ESPN abbreviation
   fantasyPoints: number;
   ownerName: string;
+  /** Tip-off of his game that day (ms), from the schedule; null if unknown. */
+  tipoffMs: number | null;
 }
 
 /**
- * One clip per performer: his own video if there is one, else his game's.
+ * One clip per performer: his own video if one was posted after tip-off, else his game's.
  * A game video already used by a better performer isn't repeated.
  */
 export function pickClips(performers: Performer[], videos: YoutubeVideo[]): Array<{ performer: Performer; video: YoutubeVideo; kind: 'player' | 'game' }> {
@@ -169,7 +178,7 @@ export function pickClips(performers: Performer[], videos: YoutubeVideo[]): Arra
   const ranked = [...performers].sort((a, b) => b.fantasyPoints - a.fantasyPoints);
 
   for (const performer of ranked) {
-    const own = findPlayerVideo(videos, performer.playerName, performer.date);
+    const own = findPlayerVideo(videos, performer.playerName, performer.date, performer.tipoffMs);
     const video = own && !used.has(own.id) ? own : findGameVideo(videos, performer.proTeam, performer.date);
     if (!video || used.has(video.id)) continue;
     used.add(video.id);

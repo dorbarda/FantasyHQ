@@ -32,8 +32,12 @@ const OTHER: YoutubeVideo = {
   publishedAt: '2026-04-29T02:00:00Z',
 };
 
+// Spurs–Blazers tip-off, before WEMBY and GAME were posted.
+const TIPOFF = Date.parse('2026-04-29T00:30:00Z');
+
 const perf = (over: Partial<Performer>): Performer => ({
-  date: '2026-04-28', playerName: 'Victor Wembanyama', proTeam: 'SAS', fantasyPoints: 70, ownerName: 'Dor Barda', ...over,
+  date: '2026-04-28', playerName: 'Victor Wembanyama', proTeam: 'SAS', fantasyPoints: 70, ownerName: 'Dor Barda',
+  tipoffMs: TIPOFF, ...over,
 });
 
 describe('title parsing', () => {
@@ -63,23 +67,32 @@ describe('finding videos', () => {
   const videos = [OTHER, WEMBY, GAME];
 
   it("finds the player's own clip by full name", () => {
-    expect(findPlayerVideo(videos, 'Victor Wembanyama', '2026-04-28')?.id).toBe('p1');
+    expect(findPlayerVideo(videos, 'Victor Wembanyama', '2026-04-28', TIPOFF)?.id).toBe('p1');
   });
 
   it('ignores accents and a Jr. suffix in the name', () => {
     const v = { id: 'p2', title: 'Nikola Jokić triple-double!', publishedAt: '2026-04-29T03:00:00Z' };
-    expect(findPlayerVideo([v], 'Nikola Jokic', '2026-04-28')?.id).toBe('p2');
+    expect(findPlayerVideo([v], 'Nikola Jokic', '2026-04-28', TIPOFF)?.id).toBe('p2');
     const j = { id: 'p3', title: 'Jaren Jackson blocks everything', publishedAt: '2026-04-29T03:00:00Z' };
-    expect(findPlayerVideo([j], 'Jaren Jackson Jr.', '2026-04-28')?.id).toBe('p3');
+    expect(findPlayerVideo([j], 'Jaren Jackson Jr.', '2026-04-28', TIPOFF)?.id).toBe('p3');
   });
 
   it('does not match a clip from another night', () => {
-    expect(findPlayerVideo(videos, 'Victor Wembanyama', '2026-04-20')).toBeNull();
+    expect(findPlayerVideo(videos, 'Victor Wembanyama', '2026-04-20', TIPOFF)).toBeNull();
+  });
+
+  it('skips a clip posted before tip-off (camp tours, off-court bits)', () => {
+    const v = { id: 'p5', title: 'Victor Wembanyama takes us inside training camp', publishedAt: '2026-04-28T18:00:00Z' };
+    expect(findPlayerVideo([v], 'Victor Wembanyama', '2026-04-28', TIPOFF)).toBeNull();
+  });
+
+  it('takes no player clip when the tip-off is unknown', () => {
+    expect(findPlayerVideo(videos, 'Victor Wembanyama', '2026-04-28', null)).toBeNull();
   });
 
   it('does not match on part of a name', () => {
     const v = { id: 'p4', title: 'Amen Thompson on defense', publishedAt: '2026-04-29T03:00:00Z' };
-    expect(findPlayerVideo([v], 'Ausar Thompson', '2026-04-28')).toBeNull();
+    expect(findPlayerVideo([v], 'Ausar Thompson', '2026-04-28', TIPOFF)).toBeNull();
   });
 
   it("finds the full game of the player's team that night", () => {
@@ -99,6 +112,12 @@ describe('pickClips', () => {
       ['Victor Wembanyama', 'p1', 'player'],
       ['Deni Avdija', 'g1', 'game'],
     ]);
+  });
+
+  it('uses the full game when the only player clip came before tip-off', () => {
+    const early = { ...WEMBY, publishedAt: '2026-04-28T18:00:00Z' };
+    const clips = pickClips([perf({})], [early, GAME]);
+    expect(clips.map(c => [c.video.id, c.kind])).toEqual([['g1', 'game']]);
   });
 
   it('does not repeat a game video for two players from the same game', () => {

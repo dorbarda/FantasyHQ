@@ -5,7 +5,8 @@
  *   1. who — the best fantasy games on our league's rosters each day
  *      (lib/espn.ts getTopPerformers)
  *   2. video — that player's clip on the official NBA YouTube channel (posted
- *      after his tip-off), else his game's full highlights (lib/youtube.ts)
+ *      after his tip-off), else his game's full highlights (lib/youtube.ts);
+ *      a day with fewer than 4 clips also gets the NBA's Nightly Recap
  * Pages only ever read the snapshot: a render must never wait on YouTube.
  *
  * Without a YOUTUBE_API_KEY the job falls back to Highlightly, whose free
@@ -25,6 +26,8 @@ import {
   filterPlayableHere,
   pickClips,
   toHighlight,
+  findNightlyRecap,
+  embedUrlFor,
   type Performer,
 } from './youtube';
 
@@ -32,6 +35,8 @@ import {
 const SNAPSHOT_DAYS = 10;
 /** Top fantasy games per day that we look for a video of. */
 const PERFORMERS_PER_DAY = 5;
+/** Fewer player clips than this on a day → add the NBA's Nightly Recap video. */
+const MIN_CLIPS_PER_DAY = 4;
 /** Clips shown on one recap. */
 export const RECAP_CLIP_LIMIT = 8;
 
@@ -79,10 +84,23 @@ async function buildFromYoutube(): Promise<HighlightsByDate> {
 
   const uploads = await getNbaUploadsSince(days[0].date);
   const playable = await filterPlayableHere(uploads.map(v => v.id));
-  const clips = pickClips(performers, uploads.filter(v => playable.has(v.id)));
+  const videos = uploads.filter(v => playable.has(v.id));
+  const clips = pickClips(performers, videos);
 
   const byDate: HighlightsByDate = {};
   for (const clip of clips) (byDate[clip.performer.date] ??= []).push(toHighlight(clip));
+
+  // A thin day (the NBA hasn't posted player clips yet) gets the all-games
+  // recap as well. No fantasy points, so it sorts after the player clips.
+  for (const { date } of days) {
+    if ((byDate[date]?.length ?? 0) >= MIN_CLIPS_PER_DAY) continue;
+    const recap = findNightlyRecap(videos, date);
+    if (!recap) continue;
+    (byDate[date] ??= []).push({
+      id: recap.id, title: recap.title, embedUrl: embedUrlFor(recap.id),
+      source: 'nba on youtube', date, match: '',
+    });
+  }
   return byDate;
 }
 

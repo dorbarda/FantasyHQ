@@ -39,8 +39,16 @@ console.log(`✅ ${file.teams.length} teams, ${trades} trade ideas, week ${file.
 if (write) {
   const out = resolve(ROOT, 'data', 'trades', String(file.season), `week-${String(file.week).padStart(2, '0')}.json`);
   if (existsSync(out) && !force) {
-    console.error(`❌ ${out} already exists — each week is written once. Use --force only if Dor asked.`);
-    process.exit(1);
+    // A file written before the week began is an early preview (Dor asked for
+    // one on 2026-10-25); the Monday run replaces it with that day's data.
+    const existing = JSON.parse(readFileSync(out, 'utf-8'));
+    const start = input.league.periods.find((p: { matchupPeriod: number }) => p.matchupPeriod === file.week)?.start;
+    const isPreview = !!start && Date.parse(existing.generatedAt) < Date.parse(start);
+    if (!isPreview) {
+      console.error(`❌ ${out} already exists — each week is written once. Use --force only if Dor asked.`);
+      process.exit(1);
+    }
+    console.log(`↻ Replacing the preview written ${existing.generatedAt}, before week ${file.week} began.`);
   }
   mkdirSync(dirname(out), { recursive: true });
   writeFileSync(out, JSON.stringify(file, null, 2) + '\n');

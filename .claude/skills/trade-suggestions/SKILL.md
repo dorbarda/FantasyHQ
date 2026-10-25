@@ -22,7 +22,9 @@ npx tsx .claude/skills/trade-suggestions/trade-data.mts --out trades/input.json 
 - A test on another week: add `--week N`.
 - **Stop and report, write nothing**, if: the fetch fails (cookies expired),
   the trade deadline in the digest header has passed, or
-  `data/trades/<season>/week-NN.json` already exists for this week.
+  `data/trades/<season>/week-NN.json` already exists for this week — unless
+  it was written before the week began (an early preview): then go ahead,
+  `--write` replaces it.
 
 Read **all of** `trades/input.md` before writing anything — one line per
 player, columns explained at the top. `trades/input.json` has the same data.

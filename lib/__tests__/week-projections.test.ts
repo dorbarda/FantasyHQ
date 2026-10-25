@@ -4,7 +4,7 @@ import type { ProTeamSchedule } from '../espn-schedule';
 
 const SEASON = 2027;
 
-function player(name: string, avg: number, proTeamId: number, slots: number[], lineupSlotId = 0, last30 = 0) {
+function player(name: string, avg: number, proTeamId: number, slots: number[], lineupSlotId = 0, last30 = 0, injuryStatus = 'ACTIVE') {
   return {
     lineupSlotId,
     playerPoolEntry: {
@@ -12,7 +12,7 @@ function player(name: string, avg: number, proTeamId: number, slots: number[], l
         fullName: name,
         proTeamId,
         eligibleSlots: slots,
-        injuryStatus: 'ACTIVE',
+        injuryStatus,
         stats: [
           { id: `10${SEASON}`, appliedAverage: avg },
           { id: `03${SEASON}`, appliedAverage: last30 },
@@ -135,5 +135,18 @@ describe('projectTeam — games left', () => {
     const t = projectTeam(team, [1], schedules, SEASON, 1, p => done.has(p.fullName));
     expect(t.games).toBe(2);
     expect(t.gamesLostToLineupLimit).toBe(1);
+  });
+});
+
+describe('projectTeam — OUT players', () => {
+  it('leaves out OUT players and lets the next player take the spot', () => {
+    const team = { id: 1, name: 'T', roster: { entries: [
+      player('Out', 60, 2, CENTER, 0, 0, 'OUT'), player('C1', 50, 2, CENTER), player('C2', 40, 2, CENTER),
+      player('C3', 30, 2, CENTER), player('C4', 20, 2, CENTER), player('DTD', 10, 2, CENTER, 0, 0, 'DAY_TO_DAY'),
+    ] } };
+    const t = projectTeam(team, [1], schedules, SEASON, 1);
+    expect(t.roster.find(p => p.name === 'Out')!.games).toBe(0);
+    expect(t.games).toBe(4); // C1–C4; DTD still doesn't fit
+    expect(t.projectedPoints).toBe(50 + 40 + 30 + 20);
   });
 });

@@ -63,16 +63,20 @@ git-ignored; the file is ~130 KB.
 | --- | --- |
 | Teams | 10, two divisions |
 | Scoring | H2H points |
-| Regular season | weeks 1–18, ends Sun 2027-02-21 |
-| Playoffs | 8 teams. Round 1: Feb 22 – Mar 7 (**2 weeks**). Semis: Mar 8–14. Final: Mar 15–21 |
+| Regular season | weeks 1–18, ends Sun 2027-02-28. Week 18 is **2 weeks** (Feb 15–28, All-Star break) |
+| Playoffs | 8 teams. Round 1: Mar 1–14 (**2 weeks**). Semis: Mar 15–21. Final: Mar 22–28 (confirmed by Dor) |
 | Seeding rule | `TOTAL_POINTS_SCORED` |
-| Trade deadline | Mon 2027-03-08, 12:00 Israel |
+| Trade deadline | ESPN says Mon 2027-03-08; **Dor will change it to Mon 2027-03-01** (playoff start) |
 | Trade review | 24 h, 4 veto votes cancel a trade |
 | Lineup | PG, SG, SF, PF, C, G, F, 3 UTIL · 3 bench · 2 IR (15 players) |
 | Moves | 1 per day of the matchup |
 
-ESPN's `matchupPeriods` maps a fantasy week to calendar weeks; round 1 is
-`19: [19, 20]`. The builder joins them, so playoff game counts are right.
+Two kinds of two-week matchups:
+- **All-Star week** — ESPN joins the calendar week of the break with the next
+  one. `buildWeekMap` in `lib/espn-schedule.ts` now does the same (fixed
+  2026-10-25; checked against 2025-26, where week 17 was 14 days).
+- **Playoff round 1** — ESPN's `matchupPeriods` says `19: [19, 20]`. The
+  trade builder joins those calendar weeks.
 
 ## 4. What Claude writes per team
 
@@ -193,8 +197,8 @@ lib/__tests__/trades.test.ts
 
 ## 9. Open
 
-1. Trade deadline (Mar 8) falls **after** the playoffs start (Feb 22), so
-   trades are allowed during round 1. ESPN default? Change on ESPN if not wanted.
-2. The site's own week map (`lib/espn-schedule.ts` `countMatchupPeriods` /
-   `buildWeekMap`) treats every fantasy week as one calendar week, so from
-   week 19 on the schedule page is off by one week. Not urgent before February.
+1. Re-run the data after Dor moves the ESPN trade deadline to Mar 1 and
+   check `league.tradeDeadline`.
+2. The rest of the site (schedule page, projections) still treats playoff
+   round 1 as one calendar week (`countMatchupPeriods` only keeps the count,
+   not `19: [19, 20]`). Fix before March.

@@ -3,6 +3,7 @@ import {
   parseProTeamSchedules,
   countMatchupPeriods,
   buildWeekMap,
+  allStarBreakStart,
   currentWeekFor,
   weeksOf,
   weekCountOf,
@@ -208,6 +209,40 @@ describe('buildWeekMap', () => {
 
   it('returns nothing when there are no dated games to anchor on', () => {
     expect(buildWeekMap([], 5)).toEqual({});
+  });
+
+  /**
+   * 2026-27 shape: tip-off Tue 20 Oct, a game every day except the All-Star
+   * break, Fri 19 – Wed 24 Feb (days 123-128). ESPN joins Feb 15-21 and
+   * Feb 22-28 into one matchup, so the playoffs start Mon 1 Mar.
+   */
+  const TIP_OFF_2027 = Date.UTC(2026, 9, 20, 23, 0);
+  const withBreak: ProTeamSchedule[] = [{
+    proTeamId: 2,
+    abbrev: 'BOS',
+    games: Array.from({ length: 160 }, (_, i) => i + 1)
+      .filter(sp => sp < 123 || sp > 128)
+      .map(sp => ({ scoringPeriodId: sp, opponentId: 13, isHome: true, dateMs: TIP_OFF_2027 + (sp - 1) * 86_400_000 })),
+  }];
+
+  it('finds the All-Star break', () => {
+    expect(allStarBreakStart(withBreak, 160)).toBe(123);
+  });
+
+  it('joins the All-Star week with the next one, and only that one', () => {
+    const weeks = buildWeekMap(withBreak, 22);
+    expect(weeks[17]).toEqual(Array.from({ length: 7 }, (_, i) => 112 + i));
+    expect(weeks[18]).toEqual(Array.from({ length: 14 }, (_, i) => 119 + i)); // Feb 15 – Feb 28
+    expect(weeks[19][0]).toBe(133); // Mon 1 Mar
+    expect(weeks[22]).toEqual(Array.from({ length: 7 }, (_, i) => 154 + i)); // ends 28 Mar
+  });
+
+  it('ignores a gap early in the season', () => {
+    const sparse: ProTeamSchedule[] = [{
+      proTeamId: 2, abbrev: 'BOS',
+      games: [1, 2, 9].map(sp => ({ scoringPeriodId: sp, opponentId: 13, isHome: true, dateMs: TIP_OFF + (sp - 1) * 86_400_000 })),
+    }];
+    expect(allStarBreakStart(sparse, 9)).toBeNull();
   });
 });
 

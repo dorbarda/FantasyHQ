@@ -266,13 +266,38 @@ export function buildDateIndex(schedules: ProTeamSchedule[]) {
   };
 }
 
+/** Fewest days in a row with no NBA game anywhere that count as the All-Star break. */
+const ALL_STAR_BREAK_MIN_DAYS = 3;
+/** Days after tip-off before a gap can be the break (it falls in mid-February). */
+const ALL_STAR_BREAK_EARLIEST_DAY = 60;
+
+/**
+ * First day of the All-Star break: the longest run of days with no NBA game,
+ * at least ALL_STAR_BREAK_MIN_DAYS long, well into the season. null if none.
+ */
+export function allStarBreakStart(schedules: ProTeamSchedule[], maxScoringPeriod: number): number | null {
+  const gameDays = new Set(schedules.flatMap(t => t.games.map(g => g.scoringPeriodId)));
+  let best: { start: number; length: number } | null = null;
+  let start = 0;
+  for (let sp = ALL_STAR_BREAK_EARLIEST_DAY; sp <= maxScoringPeriod; sp++) {
+    if (!gameDays.has(sp)) {
+      if (start === 0) start = sp;
+      const length = sp - start + 1;
+      if (length >= ALL_STAR_BREAK_MIN_DAYS && (!best || length > best.length)) best = { start, length };
+    } else {
+      start = 0;
+    }
+  }
+  return best?.start ?? null;
+}
+
 /**
  * week → the scoring period ids (days) it covers.
  *
  * ESPN fantasy basketball weeks run Monday to Sunday; week 1 is short whenever
- * the season tips off mid-week. Verified against a played season: this
- * reproduces 6 days for week 1 (Tue 21 Oct → Sun 26 Oct) and 7 for every week
- * after, matching the per-week day counts recorded in the matchup-depth data.
+ * the season tips off mid-week. The week holding the All-Star break is joined
+ * with the next one into a single two-week matchup — the 2025-26 depth data
+ * has week 17 at 14 days, and in 2026-27 it pushes the playoffs to 1 March.
  */
 export function buildWeekMap(
   schedules: ProTeamSchedule[],
@@ -281,13 +306,16 @@ export function buildWeekMap(
   const index = buildDateIndex(schedules);
   if (!index.anchor || weekCount < 1) return {};
 
+  const breakDay = allStarBreakStart(schedules, index.maxScoringPeriod);
   const weeks: Record<number, number[]> = {};
   let week = 1;
   let current: number[] = [];
 
   for (let sp = 1; sp <= index.maxScoringPeriod; sp++) {
     const date = index.dateFor(sp)!;
-    if (current.length > 0 && weekdayOf(date) === 1) {
+    // Skip exactly one Monday: the one right after the break's week began.
+    const joinAllStarWeek = breakDay !== null && current.includes(breakDay) && current.length <= 7;
+    if (current.length > 0 && weekdayOf(date) === 1 && !joinAllStarWeek) {
       weeks[week++] = current;
       current = [];
       if (week > weekCount) return weeks;

@@ -83,7 +83,7 @@ export function allFit(eligible: Set<number>[]): boolean {
 
 /**
  * Project one fantasy team for the week. On each day the players with a game
- * start in order of average, as long as they still fit a slot; the rest are
+ * (not on IR, not OUT) start in order of average, as long as they still fit a slot; the rest are
  * games lost to the lineup limit. (Greedy is optimal here: which sets of
  * players can start together forms a matroid.)
  */
@@ -131,8 +131,9 @@ export function projectTeam(
     const withGame = players.filter((p: any) => !p.onIR && playsOn.get(p.proTeamId)?.has(sp));
     const played = new Set(hasPlayed ? withGame.filter((p: any) => hasPlayed(p.raw, sp)) : []);
     const starting: typeof players = withGame.filter((p: any) => played.has(p) && p.starter);
+    // OUT players don't start; one who already played still holds his spot.
     const playing = withGame
-      .filter((p: any) => !played.has(p))
+      .filter((p: any) => !played.has(p) && p.status !== 'OUT')
       .sort((a: any, b: any) => b.avg - a.avg);
     for (const p of playing) {
       if (allFit([...starting, p].map((x: any) => x.eligible))) { starting.push(p); p.games++; }

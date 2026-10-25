@@ -62,7 +62,7 @@ Up to 3 short notes, built from the numbers above. Examples of the kinds of note
 | Term | Meaning |
 | --- | --- |
 | Week | ESPN matchup period, Monday–Sunday (week 1 = Tue Oct 20 – Sun Oct 25, 6 days). |
-| Startable game | Player not on IR, his NBA team plays that day, and he fits one of the 10 starting spots (PG, SG, SF, PF, C, G, F, 3× UTIL). If more than 10 can play, the highest averages start. |
+| Startable game | Player not on IR and not OUT, his NBA team plays that day, and he fits one of the 10 starting spots (PG, SG, SF, PF, C, G, F, 3× UTIL). If more than 10 can play, the highest averages start. |
 | Average | Weeks 1–4: ESPN's projected fantasy points per game for the season. Week 5 on: actual average over the last 30 days (ESPN projection if the player has no games in that window). |
 | Projected points | Σ player average × startable games. |
 

@@ -211,9 +211,9 @@ const NAV_GROUPS = [
 // Flat list for bottom nav (most important pages only)
 const BOTTOM_NAV = [
   { href: '/',         label: 'Home',     Icon: HomeIcon     },
-  { href: '/league',   label: 'League',   Icon: LeagueIcon   },
   { href: '/matchups', label: 'Matchups', Icon: MatchupsIcon },
-  { href: '/matchup-depth', label: 'Depth', Icon: DepthIcon },
+  { href: '/league',   label: 'League',   Icon: LeagueIcon   },
+  { href: '/trades',   label: 'Trades',   Icon: TradesIcon   },
   { href: '/analysis', label: 'Analysis', Icon: AnalysisIcon },
 ];
 

@@ -181,7 +181,7 @@ lib/__tests__/trades.test.ts
 
 1. [x] `trade-data.mts` + check `input.json` by hand for one team (2026-10-25).
 2. [x] `SKILL.md` + `validate.mts` (`lib/trade-output.ts`, tested); dry run on week 2 passed 2026-10-25 — review with Dor.
-3. [ ] `lib/owner-auth.ts` + pages.
+3. [x] `lib/owner-auth.ts` + `/trades`, `/trades/[owner]` (2026-10-25). Tested in a browser: wrong code, right code, other owner stays locked, commissioner key, lock-out after 5 wrong codes, 390px in both themes. Needs `OWNER_KEYS` on Vercel.
 4. [~] Scheduled task created 2026-10-25 (Mon 10:37 Israel, Opus 5.5, new session each run) — **paused** until the skill is merged to main.
 
 ---

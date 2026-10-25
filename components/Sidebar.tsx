@@ -66,6 +66,14 @@ function RecapIcon() {
   );
 }
 
+function TradesIcon() {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4 shrink-0">
+      <path d="M4 7h11l-3-3M16 13H5l3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
 function AnalysisIcon() {
   return (
     <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4 shrink-0">
@@ -173,6 +181,7 @@ const NAV_GROUPS = [
       { href: '/recap',         label: 'Recap',       Icon: RecapIcon    },
       { href: '/draft',         label: 'Draft',       Icon: DraftIcon    },
       { href: '/teams',         label: 'Teams',       Icon: TeamsIcon    },
+      { href: '/trades',        label: 'Trades',      Icon: TradesIcon   },
     ],
   },
   {

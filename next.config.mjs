@@ -5,6 +5,9 @@ const nextConfig = {
   // in every serverless bundle.
   outputFileTracingIncludes: {
     '/**': ['./data/snapshots/*.json', './data/playoffs/**/*.json', './data/projections/**/*.json'],
+    // Owner-only trade advice: bundled for its own pages, nowhere else.
+    '/trades/**': ['./data/trades/**/*.json'],
+    '/trades': ['./data/trades/**/*.json'],
   },
 };
 

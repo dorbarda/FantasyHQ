@@ -10,9 +10,9 @@ import { spawn, execSync } from 'node:child_process';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const [recapPath, outPath] = process.argv.slice(2);
+const [recapPath, outPath, templateArg] = process.argv.slice(2);
 if (!recapPath || !outPath) {
-  console.error('Usage: node render.mjs <recap.json> <out.mp4>');
+  console.error('Usage: node render.mjs <recap.json> <out.mp4> [template.html]');
   process.exit(1);
 }
 const FPS = 30;
@@ -26,7 +26,8 @@ const { chromium } = await import(pathToFileURL(
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
 await page.addInitScript(`window.RECAP = ${recap};`);
-await page.goto(pathToFileURL(resolve(here, 'template.html')).href);
+// Optional 3rd arg: another template (e.g. week1/template.html).
+await page.goto(pathToFileURL(templateArg ? resolve(templateArg) : resolve(here, 'template.html')).href);
 await page.evaluate(() => document.fonts.ready);
 const duration = await page.evaluate(() => window.DURATION);
 const frames = Math.ceil(duration * FPS);

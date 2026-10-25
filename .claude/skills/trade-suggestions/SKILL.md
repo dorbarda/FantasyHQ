@@ -65,6 +65,23 @@ Trade ideas — up to **3** per team, best first:
 - Spread the ideas: don't send the same star to many teams.
 - Good teams get ideas too — small upgrades for the playoff weeks.
 
+Every trade carries one or more **angles** (shown as chips on the card):
+
+| Angle | When |
+| --- | --- |
+| `sell-high` | you give a player scoring far above his projection |
+| `buy-low` | you get a player scoring far below his projection |
+| `consolidation` | two or three for one better player |
+| `depth` | one for two — fills holes or empty roster spots |
+| `positional-need` | fixes a missing position |
+| `playoff-schedule` | more games in the playoff weeks |
+| `injury-cover` | replaces players who are OUT |
+
+**Say "sell high" and "buy low" in so many words** — the league uses those
+terms. If a trade has `sell-high` or `buy-low`, its `whyForYou` must contain
+"sell high" / "buy low" (or "selling high" / "buying low"); if the text says
+it, the angle must be there. The check enforces both ways.
+
 ## 3. Write the draft
 
 `trades/draft.json`:
@@ -81,7 +98,8 @@ Trade ideas — up to **3** per team, best first:
           "partnerOwner": "Barak Miller",
           "give": [4065648, 4433134],
           "get": [3155942],
-          "whyForYou": "…",
+          "angles": ["sell-high", "consolidation"],
+          "whyForYou": "Sell high on … ",
           "whyTheyAccept": "…"
         }
       ]

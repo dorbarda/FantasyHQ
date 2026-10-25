@@ -24,6 +24,28 @@ export const DIAGNOSIS_FLAGS = [
 ] as const;
 export type DiagnosisFlag = (typeof DIAGNOSIS_FLAGS)[number];
 
+/**
+ * Why a trade makes sense. Shown as chips on the card. "sell-high" and
+ * "buy-low" are the league's own words (Dor, 2026-10-25): when a trade is
+ * one, its prose must say so, and prose that says so must carry the label.
+ */
+export const TRADE_ANGLES = [
+  'sell-high',        // you give a player far above his projection
+  'buy-low',          // you get a player far below his projection
+  'consolidation',    // two (or three) for one better player
+  'depth',            // one for two, filling holes or empty spots
+  'positional-need',  // fixes a missing position
+  'playoff-schedule', // more games in the playoff weeks
+  'injury-cover',     // replaces players who are OUT
+] as const;
+export type TradeAngle = (typeof TRADE_ANGLES)[number];
+
+/** Angles whose words must appear in the prose, and the pattern that finds them. */
+const SPOKEN_ANGLES: [TradeAngle, RegExp][] = [
+  ['sell-high', /sell(ing)?[\s-]+(him |them |it )?high/i],
+  ['buy-low', /buy(ing)?[\s-]+(him |them |it )?low/i],
+];
+
 export const MAX_TRADES = 3;
 export const MAX_PLAYERS_PER_SIDE = 3;
 export const MAX_SUMMARY_CHARS = 700;
@@ -45,6 +67,7 @@ export interface TradeDraft {
       partnerOwner: string;
       give: number[]; // player ids
       get: number[];
+      angles: string[];
       whyForYou: string;
       whyTheyAccept: string;
     }[];
@@ -71,6 +94,7 @@ export interface TradeIdea {
   partnerTeamName: string;
   give: TradePlayerCard[];
   get: TradePlayerCard[];
+  angles: TradeAngle[];
   whyForYou: string;
   whyTheyAccept: string;
   /** Players each side must drop to stay within the roster limit. */
@@ -239,6 +263,16 @@ export function validateTradeDraft(
         if (!t) errors.push(`${at} empty ${label}.`);
         if (t.length > MAX_WHY_CHARS) errors.push(`${at} ${label} is ${t.length} chars (max ${MAX_WHY_CHARS}).`);
       }
+      const angles = Array.isArray(tr.angles) ? tr.angles : [];
+      if (angles.length === 0) errors.push(`${at} needs at least one angle.`);
+      for (const a of angles) {
+        if (!(TRADE_ANGLES as readonly string[]).includes(a)) errors.push(`${at} unknown angle "${a}".`);
+      }
+      for (const [angle, words] of SPOKEN_ANGLES) {
+        const said = words.test(tr.whyForYou ?? '');
+        if (angles.includes(angle) && !said) errors.push(`${at} angle "${angle}" but whyForYou never says "${angle.replace('-', ' ')}".`);
+        if (!angles.includes(angle) && said) errors.push(`${at} whyForYou says "${angle.replace('-', ' ')}" but the angle is missing.`);
+      }
       if (!give || !get) return;
 
       const key = `${partner.owner}|${[...tr.give].sort().join(',')}|${[...tr.get].sort().join(',')}`;
@@ -258,6 +292,7 @@ export function validateTradeDraft(
         partnerTeamName: partner.teamName,
         give: give.map(card),
         get: get.map(card),
+        angles: angles as TradeAngle[],
         whyForYou: tr.whyForYou.trim(),
         whyTheyAccept: tr.whyTheyAccept.trim(),
         dropsNeeded: {

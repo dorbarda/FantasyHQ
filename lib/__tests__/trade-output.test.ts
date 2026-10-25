@@ -40,7 +40,7 @@ const input: TradeInput = {
 };
 
 const okTrade = (partnerOwner: string, give: number[], get: number[]) => ({
-  partnerOwner, give, get, whyForYou: 'Upgrade at guard.', whyTheyAccept: 'They get a star.',
+  partnerOwner, give, get, angles: ['positional-need'], whyForYou: 'Upgrade at guard.', whyTheyAccept: 'They get a star.',
 });
 
 function draft(over: Partial<TradeDraft['teams'][number]> & { owner: string }): TradeDraft['teams'][number] {
@@ -171,6 +171,34 @@ describe('validateTradeDraft', () => {
     const late = run(goodDraft(), new Date('2027-03-02T00:00:00Z'));
     expect(late.errors[0]).toMatch(/deadline .* has passed/);
     expect(run({ ...goodDraft(), week: 3 }).errors).toContain('Draft is for week 3, input is week 2.');
+  });
+});
+
+describe('trade angles', () => {
+  it('requires an angle and rejects unknown ones', () => {
+    const d = goodDraft();
+    d.teams[0].trades[0].angles = [];
+    d.teams[1].trades[0].angles = ['steal'];
+    const { errors } = run(d);
+    expect(errors).toContain('Ann: trade 1: needs at least one angle.');
+    expect(errors).toContain('Bob: trade 1: unknown angle "steal".');
+  });
+
+  it('keeps "sell high" / "buy low" in the prose and the labels in step', () => {
+    const d = goodDraft();
+    d.teams[0].trades[0].angles = ['sell-high'];
+    d.teams[1].trades[0].whyForYou = 'Buy low on a slow starter.';
+    const { errors } = run(d);
+    expect(errors).toContain('Ann: trade 1: angle "sell-high" but whyForYou never says "sell high".');
+    expect(errors).toContain('Bob: trade 1: whyForYou says "buy low" but the angle is missing.');
+  });
+
+  it('accepts the phrases in their natural forms and copies the angles', () => {
+    const d = goodDraft();
+    d.teams[0].trades[0] = { ...d.teams[0].trades[0], angles: ['sell-high', 'buy-low'], whyForYou: 'Selling high on Depth Two and buying him low: Bob Wing.' };
+    const { errors, file } = run(d);
+    expect(errors).toEqual([]);
+    expect(file!.teams[0].trades[0].angles).toEqual(['sell-high', 'buy-low']);
   });
 });
 

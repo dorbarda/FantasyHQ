@@ -10,7 +10,7 @@
  *
  * Pure — no I/O.
  */
-import type { TradeInput, TradeInputPlayer, TradeInputTeam } from './trade-input';
+import { MIN_DAYS_ON_ROSTER, type TradeInput, type TradeInputPlayer, type TradeInputTeam } from './trade-input';
 
 export const DIAGNOSIS_FLAGS = [
   'no-star',        // no player in the league's top tier
@@ -251,6 +251,11 @@ export function validateTradeDraft(
         const missing = ids.filter((_, k) => !players[k]);
         if (missing.length) {
           errors.push(`${at} player id(s) ${missing.join(', ')} not on ${from.owner}'s roster.`);
+          return null;
+        }
+        const pickups = (players as TradeInputPlayer[]).filter(p => !p.tradeable);
+        if (pickups.length) {
+          errors.push(`${at} ${pickups.map(p => p.name).join(', ')} joined ${from.owner}'s roster under ${MIN_DAYS_ON_ROSTER} days ago — pickups can't be traded.`);
           return null;
         }
         return players as TradeInputPlayer[];

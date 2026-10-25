@@ -1,4 +1,8 @@
 import Link from 'next/link';
+import { cookies } from 'next/headers';
+import { notFound } from 'next/navigation';
+import { TRADES_PUBLIC } from '@/lib/trades-launch';
+import { TRADES_COOKIE, ADMIN_SLUG, readSession } from '@/lib/owner-auth';
 import OwnerAvatar from '@/components/OwnerAvatar';
 import { loadLatestTradeWeek } from '@/lib/trades-data';
 import { ownerToSlug } from '@/lib/team-utils';
@@ -13,12 +17,19 @@ function formatDay(iso: string) {
   return new Date(iso).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Asia/Jerusalem' });
 }
 
-export default function TradesPage() {
+export default async function TradesPage() {
+  if (!TRADES_PUBLIC) {
+    const session = readSession((await cookies()).get(TRADES_COOKIE)?.value, process.env.OWNER_KEYS ?? '', Date.now());
+    if (session !== ADMIN_SLUG) notFound();
+  }
   const latest = loadLatestTradeWeek();
 
   return (
     <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6 max-w-3xl">
       <h1 className="type-page-title text-foreground">Trade suggestions</h1>
+      {!TRADES_PUBLIC && (
+        <p className="text-[12px] font-bold uppercase tracking-wider text-warning-text mt-1">Preview — only you can see this</p>
+      )}
       <p className="type-page-subtitle mt-1 mb-5">
         Every Monday Claude reviews each roster and suggests up to three trades to help you make
         the playoffs and win the league. Each page opens only with its owner&apos;s code.

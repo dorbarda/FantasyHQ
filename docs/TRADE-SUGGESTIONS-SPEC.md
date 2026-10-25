@@ -112,6 +112,9 @@ Up to **3** trades per team, best first. Each one:
 - **Never invent a number.** Every number comes from `input.json`. The
   validate step rejects the file if a player or number doesn't match.
 - Only players that are actually on the two rosters right now.
+- **No pickups** (Dor, 2026-10-25): a player on his roster under 7 days is a
+  short-term add that fills a schedule hole. He can't be in a trade idea, on
+  either side. ESPN's `acquisitionDate` per roster entry; the check enforces it.
 - No trade that breaks roster rules (positions, IR).
 - Tone: honest, direct, a bit fun — but useful first.
 
@@ -196,6 +199,11 @@ lib/__tests__/trades.test.ts
    needs a rate limit.
 
 ## 9. Open
+
+0. **Hidden until week 3** (Dor, 2026-10-25). `lib/trades-launch.ts`
+   `TRADES_PUBLIC = false`: no menu links, `/trades` is a 404, owner codes are
+   refused, only `ADMIN_KEY` opens team pages. The Monday task keeps running
+   so Dor can review. Flip to `true` to launch.
 
 1. Re-run the data after Dor moves the ESPN trade deadline to Mar 1 and
    check `league.tradeDeadline`.

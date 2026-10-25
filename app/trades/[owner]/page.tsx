@@ -8,6 +8,7 @@ import { lockTrades } from '../actions';
 import { listTradeWeeks, loadTradeWeek } from '@/lib/trades-data';
 import { ownerToSlug } from '@/lib/team-utils';
 import { TRADES_COOKIE, canView, readSession, ADMIN_SLUG } from '@/lib/owner-auth';
+import { TRADES_PUBLIC } from '@/lib/trades-launch';
 
 // Behind a per-owner passcode: never cache or pre-render.
 export const dynamic = 'force-dynamic';
@@ -44,10 +45,13 @@ export default async function OwnerTradesPage({
         </div>
       </header>
 
-      {!canView(session, slug) ? (
+      {!(TRADES_PUBLIC ? canView(session, slug) : session === ADMIN_SLUG) ? (
         <TradeUnlockForm slug={slug} owner={advice.owner} />
       ) : (
         <div className="flex flex-col gap-4">
+          {!TRADES_PUBLIC && (
+            <p className="text-[12px] font-bold uppercase tracking-wider text-warning-text">Preview — not public yet</p>
+          )}
           <p className="type-section-label">
             Week {file!.week} · seed {advice.seed} · {advice.record.wins}-{advice.record.losses}
             {advice.record.ties > 0 ? `-${advice.record.ties}` : ''} · {advice.pointsFor.toFixed(1)} points for

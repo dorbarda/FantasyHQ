@@ -27,6 +27,8 @@ function player(id: number, proTeamId: number, season: number | null, projected:
   if (season !== null) stats.push({ id: '002027', appliedAverage: season, stats: { '42': 3 } });
   return {
     lineupSlotId: 0,
+    acquisitionType: 'DRAFT',
+    acquisitionDate: Date.UTC(2026, 9, 17),
     playerPoolEntry: {
       player: { id, fullName: `Player ${id}`, proTeamId, eligibleSlots: [0, 5, 11], injuryStatus: 'ACTIVE', stats, ...extra },
     },
@@ -86,6 +88,18 @@ describe('gamesOn', () => {
 });
 
 describe('buildTradeInput', () => {
+  it('marks players on the roster under a week as untradeable pickups', () => {
+    const fresh = structuredClone(league);
+    Object.assign(fresh.teams[0].roster.entries[0], { acquisitionType: 'ADD', acquisitionDate: Date.UTC(2026, 9, 24, 12) });
+    const input = buildTradeInput(fresh, schedules, { season: 2027, today: 1, generatedAt: '2026-10-26T12:00:00.000Z' });
+    const all = input.teams.flatMap(t => t.roster);
+    expect(all.find(p => p.playerId === 10)).toMatchObject({
+      tradeable: false,
+      acquisition: { type: 'ADD', date: '2026-10-24T12:00:00.000Z', daysOnRoster: 2 },
+    });
+    expect(all.find(p => p.playerId === 20)!.tradeable).toBe(true); // drafted 9 days earlier
+  });
+
   it('counts games this week from today, rest of season and per playoff round', () => {
     const input = build(3);
     expect(input.week).toBe(1);

@@ -18,6 +18,13 @@ export interface TradeInputPlayer {
   slot: 'starter' | 'bench' | 'IR';
   injuryStatus: string;
   gamesPlayed: number;
+  /** How he joined this roster (DRAFT, ADD, TRADE…), when, and days since. */
+  acquisition: { type: string; date: string | null; daysOnRoster: number | null };
+  /**
+   * May appear in a trade idea: on this roster at least MIN_DAYS_ON_ROSTER.
+   * Pickups that fill a week's schedule hole come and go (Dor, 2026-10-25).
+   */
+  tradeable: boolean;
   /** Fantasy points per game, ESPN's own appliedAverage. null = no games in that span. */
   avg: {
     season: number | null;
@@ -87,6 +94,9 @@ const POSITION_SLOTS = [0, 1, 2, 3, 4];
 
 const r1 = (n: number) => Math.round(n * 10) / 10;
 
+/** Fewest days on a roster before a player can be part of a trade idea. */
+export const MIN_DAYS_ON_ROSTER = 7;
+
 /**
  * Days of each fantasy matchup period. ESPN's `matchupPeriods` maps a period
  * to the CALENDAR weeks it spans — a playoff round can be two weeks
@@ -131,6 +141,21 @@ function statAverage(player: any, id: string): number | null {
   // Projections carry no games.
   if (!id.startsWith('10') && (!(s.stats?.['42'] > 0) || s.appliedTotal === 0)) return null;
   return r1(s.appliedAverage);
+}
+
+function acquisitionOf(entry: any, generatedAt: string): Pick<TradeInputPlayer, 'acquisition' | 'tradeable'> {
+  const ms = Number(entry.acquisitionDate);
+  const now = Date.parse(generatedAt);
+  const days = ms > 0 && Number.isFinite(now) ? r1((now - ms) / 86_400_000) : null;
+  return {
+    acquisition: {
+      type: String(entry.acquisitionType || 'UNKNOWN'),
+      date: ms > 0 ? new Date(ms).toISOString() : null,
+      daysOnRoster: days,
+    },
+    // No date → can't prove he's a pickup; treat as settled.
+    tradeable: days === null || days >= MIN_DAYS_ON_ROSTER,
+  };
 }
 
 function rankBy(players: TradeInputPlayer[], value: (p: TradeInputPlayer) => number | null): Map<number, number> {
@@ -191,6 +216,7 @@ export function buildTradeInput(
         // The roster entry's own injuryStatus is always NORMAL; the player's is real.
         injuryStatus: p.injuryStatus || 'ACTIVE',
         gamesPlayed: seasonStat?.stats?.['42'] ?? 0,
+        ...acquisitionOf(e, opts.generatedAt),
         avg: {
           season: statAverage(p, `00${season}`),
           last7: statAverage(p, `01${season}`),
@@ -298,6 +324,7 @@ export function formatTradeDigest(input: TradeInput): string {
     '',
     'Player columns: id · name · NBA team · positions · slot · injury · GP · avg season / L7 / L15 / L30 / last season / projected · ' +
       'league rank (season / projected) · games this week / rest of regular season / playoffs [by round]',
+    `⛔ PICKUP = on this roster under ${MIN_DAYS_ON_ROSTER} days — a short-term pickup. Never put him in a trade idea.`,
   ];
   for (const t of input.teams) {
     lines.push(
@@ -310,8 +337,9 @@ export function formatTradeDigest(input: TradeInput): string {
     for (const p of t.roster) {
       const a = p.avg;
       const g = p.games;
+      const pickup = p.tradeable ? '' : `⛔ PICKUP (${p.acquisition.daysOnRoster}d) · `;
       lines.push(
-        `- ${p.playerId} · ${p.name} · ${p.proTeam} · ${p.positions.join('/')} · ${p.slot} · ${p.injuryStatus} · GP ${p.gamesPlayed} · ` +
+        `- ${pickup}${p.playerId} · ${p.name} · ${p.proTeam} · ${p.positions.join('/')} · ${p.slot} · ${p.injuryStatus} · GP ${p.gamesPlayed} · ` +
           `${show(a.season)} / ${show(a.last7)} / ${show(a.last15)} / ${show(a.last30)} / ${show(a.lastSeason)} / ${show(a.projected)} · ` +
           `rank ${show(p.leagueRank)} / ${show(p.projectedRank)} · games ${g.thisWeek} / ${g.restOfRegularSeason} / ${g.playoffs} [${g.playoffsByRound.join(', ')}]`,
       );

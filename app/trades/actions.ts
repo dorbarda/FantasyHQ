@@ -2,8 +2,9 @@
 
 import { cookies, headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';
+import { TRADES_PUBLIC, TRADES_NOT_OPEN } from '@/lib/trades-launch';
 import {
-  TRADES_COOKIE, SESSION_DAYS, parseOwnerKeys, checkCode, makeSession,
+  ADMIN_SLUG, TRADES_COOKIE, SESSION_DAYS, parseOwnerKeys, checkCode, makeSession,
   recordFailure, lockedFor, type AttemptStore,
 } from '@/lib/owner-auth';
 
@@ -27,6 +28,11 @@ export async function unlockTrades(_prev: UnlockState, form: FormData): Promise<
   if (wait > 0) return { error: `Too many tries. Wait ${Math.ceil(wait / 60_000)} min.` };
 
   const who = checkCode(slug, typed, parseOwnerKeys(rawKeys), process.env.ADMIN_KEY);
+  if (!TRADES_PUBLIC && who !== ADMIN_SLUG) {
+    // Same answer for right and wrong owner codes, so nothing leaks before launch.
+    recordFailure(attempts, key, now);
+    return { error: TRADES_NOT_OPEN };
+  }
   if (!who) {
     const locked = recordFailure(attempts, key, now);
     return { error: locked > 0 ? `Too many tries. Wait ${Math.ceil(locked / 60_000)} min.` : 'Wrong code.' };

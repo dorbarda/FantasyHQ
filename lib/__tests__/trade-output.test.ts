@@ -7,6 +7,7 @@ import type { TradeInput, TradeInputPlayer, TradeInputTeam } from '../trade-inpu
 function player(playerId: number, name: string, projected: number, season: number | null = 40): TradeInputPlayer {
   return {
     playerId, name, proTeam: 'BOS', positions: ['PG'], slot: 'starter', injuryStatus: 'ACTIVE', gamesPlayed: 3,
+    acquisition: { type: 'DRAFT', date: '2026-10-17T21:00:00.000Z', daysOnRoster: 8.5 }, tradeable: true,
     avg: { season, last7: season, last15: season, last30: season, lastSeason: 35.5, projected },
     leagueRank: 5, projectedRank: 7,
     games: { thisWeek: 4, restOfRegularSeason: 56, playoffs: 13, playoffsByRound: [7, 3, 3] },
@@ -171,6 +172,18 @@ describe('validateTradeDraft', () => {
     const late = run(goodDraft(), new Date('2027-03-02T00:00:00Z'));
     expect(late.errors[0]).toMatch(/deadline .* has passed/);
     expect(run({ ...goodDraft(), week: 3 }).errors).toContain('Draft is for week 3, input is week 2.');
+  });
+});
+
+describe('pickups', () => {
+  it('rejects a player who joined the roster under a week ago, on either side', () => {
+    const fresh = structuredClone(input);
+    const pickup = fresh.teams[1].roster.find(p => p.playerId === 4)!;
+    pickup.tradeable = false;
+    pickup.acquisition = { type: 'ADD', date: '2026-10-24T06:00:00.000Z', daysOnRoster: 1.1 };
+    const { errors } = validateTradeDraft(fresh, goodDraft(), { generatedAt: 'out', now: new Date('2026-10-26T08:00:00Z') });
+    expect(errors).toContain("Ann: trade 1: Bob Wing joined Bob's roster under 7 days ago — pickups can't be traded.");
+    expect(errors).toContain("Cid: trade 1: Bob Wing joined Bob's roster under 7 days ago — pickups can't be traded.");
   });
 });
 

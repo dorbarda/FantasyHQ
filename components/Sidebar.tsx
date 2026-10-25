@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import ThemeToggle from './ThemeToggle';
+import { TRADES_PUBLIC } from '@/lib/trades-launch';
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
@@ -181,7 +182,7 @@ const NAV_GROUPS = [
       { href: '/recap',         label: 'Recap',       Icon: RecapIcon    },
       { href: '/draft',         label: 'Draft',       Icon: DraftIcon    },
       { href: '/teams',         label: 'Teams',       Icon: TeamsIcon    },
-      { href: '/trades',        label: 'Trades',      Icon: TradesIcon   },
+      ...(TRADES_PUBLIC ? [{ href: '/trades', label: 'Trades', Icon: TradesIcon }] : []),
     ],
   },
   {
@@ -213,7 +214,10 @@ const BOTTOM_NAV = [
   { href: '/',         label: 'Home',     Icon: HomeIcon     },
   { href: '/matchups', label: 'Matchups', Icon: MatchupsIcon },
   { href: '/league',   label: 'League',   Icon: LeagueIcon   },
-  { href: '/trades',   label: 'Trades',   Icon: TradesIcon   },
+  // Depth holds the slot until trade suggestions launch.
+  TRADES_PUBLIC
+    ? { href: '/trades', label: 'Trades', Icon: TradesIcon }
+    : { href: '/matchup-depth', label: 'Depth', Icon: DepthIcon },
   { href: '/analysis', label: 'Analysis', Icon: AnalysisIcon },
 ];
 

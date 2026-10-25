@@ -59,6 +59,10 @@ Diagnosis — pick the flags the data supports (none is fine):
 
 Trade ideas — up to **3** per team, best first:
 - 1–3 players per side. Only players on the two rosters.
+- **No pickups.** A player on his roster under 7 days (marked `⛔ PICKUP` in
+  the digest) is a short-term add that fills a schedule hole for a week —
+  never put him in a trade, on either side. The check rejects it. You may
+  still mention pickups in the diagnosis (e.g. a team that streams a lot).
 - **Realistic.** The partner must clearly gain something too: a position they
   lack, more playoff games, a star for depth (consolidation), or depth for a
   star when they are thin. A trade the other owner would laugh at is useless.

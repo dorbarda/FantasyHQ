@@ -22,10 +22,10 @@ the team and which trades would help it reach the playoffs and win the league.
 ## 2. Weekly flow
 
 ```
-Monday ~08:00 Israel  (after the 06:00 UTC nightly snapshot)
+Monday ~10:00 Israel  (Sunday's late NBA games are final; Monday 00:00 US Pacific)
   scheduled task → new Claude session (Opus 5.5)
     → runs skill  .claude/skills/trade-suggestions/
-        1. npx tsx .claude/skills/trade-suggestions/trade-data.mts --out trades/input.json
+        1. npx tsx .claude/skills/trade-suggestions/trade-data.mts --out trades/input.json   (✅ built)
         2. Claude reads input.json, writes one analysis per team
         3. validate script checks every number and player against input.json
         4. writes data/trades/<season>/week-NN.json, commits, pushes to main
@@ -40,23 +40,39 @@ Monday ~08:00 Israel  (after the 06:00 UTC nightly snapshot)
 
 ---
 
-## 3. Data the skill gets (`input.json`)
+## 3. Data the skill gets (`input.json`) — ✅ built
 
-All from existing snapshots / loaders — no new ESPN endpoints needed for v1.
+`lib/trade-input.ts` (pure, tested in `lib/__tests__/trade-input.test.ts`)
+plus `.claude/skills/trade-suggestions/trade-data.mts` (one live ESPN call:
+`mTeam mRoster mMatchup mSettings`, plus the NBA schedule). `trades/` is
+git-ignored; the file is ~130 KB.
 
-| Need | Source | Status |
+| Field | Per | Source |
 | --- | --- | --- |
-| Rosters (all teams) | `getLeagueRosters()` | ✅ |
-| Player season averages, injury status | `getPlayerPool()` (`kona_player_info`) | ✅ — confirm injury field |
-| Recent form (last weeks) | `player-trends` snapshot | ✅ |
-| Standings, record, points for/against | `getStandings()` | ✅ |
-| Weekly scores, games used | `matchup-depth` snapshot | ✅ |
-| Remaining schedule: games per week, back-to-backs per NBA team | `schedule` snapshot | ✅ |
-| Remaining fantasy opponents | `getMatchups()` / schedule settings | ✅ |
-| Moves used, trade history | `transactions` snapshot | ✅ |
-| Playoff format, trade deadline | league settings (`mSettings`) | ⚠️ confirm field |
+| Record, points for/against, seed, division | team | `teams[].record`, `playoffSeed` |
+| Moves (acquisitions, drops, trades) | team | `transactionCounter` |
+| Regular-season opponents from this week on | team | `schedule` |
+| Positions, lineup slot (starter/bench/IR), injury status | player | roster entry |
+| Avg fantasy points: season, last 7/15/30 days, last season, ESPN projection | player | ESPN `appliedAverage` — never recomputed. No games in the span → `null`, not 0 |
+| League rank by season avg and by projection | player | among all rostered players |
+| NBA games: this week, rest of regular season, playoffs (per round) | player | NBA schedule × fantasy periods |
 
----
+### League settings (read from ESPN `mSettings`, 2026-10-25)
+
+| Setting | Value |
+| --- | --- |
+| Teams | 10, two divisions |
+| Scoring | H2H points |
+| Regular season | weeks 1–18, ends Sun 2027-02-21 |
+| Playoffs | 8 teams. Round 1: Feb 22 – Mar 7 (**2 weeks**). Semis: Mar 8–14. Final: Mar 15–21 |
+| Seeding rule | `TOTAL_POINTS_SCORED` |
+| Trade deadline | Mon 2027-03-08, 12:00 Israel |
+| Trade review | 24 h, 4 veto votes cancel a trade |
+| Lineup | PG, SG, SF, PF, C, G, F, 3 UTIL · 3 bench · 2 IR (15 players) |
+| Moves | 1 per day of the matchup |
+
+ESPN's `matchupPeriods` maps a fantasy week to calendar weeks; round 1 is
+`19: [19, 20]`. The builder joins them, so playoff game counts are right.
 
 ## 4. What Claude writes per team
 
@@ -159,22 +175,26 @@ lib/__tests__/trades.test.ts
 
 ## 7. Build order
 
-1. [ ] `trade-data.mts` + check `input.json` by hand for one team.
+1. [x] `trade-data.mts` + check `input.json` by hand for one team (2026-10-25).
 2. [ ] `SKILL.md` + `validate.mts`; dry run in a session, review output with Dor.
 3. [ ] `lib/owner-auth.ts` + pages.
 4. [ ] Scheduled task (Monday, Opus 5.5, new session each run).
 
 ---
 
-## 8. Open questions (need Dor)
+## 8. Settled (Dor, 2026-10-25)
 
-1. **Privacy of the stored file.** The advice is committed to the repo as
-   JSON. Anyone with access to the GitHub repo can read every team's advice.
-   Fine if only Dor has repo access — otherwise store it somewhere else
-   (e.g. Vercel Blob). Who has access to the repo?
-2. **Trade deadline date** and **playoff weeks** for 2026-27 — read them
-   from ESPN settings, but Dor should confirm the numbers once.
-3. **Should Claude see the advice it gave the other teams?** Yes means it
-   can avoid suggesting the same player to 3 teams; it also means one run
-   sees everyone's plans (fine, it's the same run).
-4. Passcodes — who creates and sends them to the owners? (Suggest: Dor.)
+1. **Repo access:** only Dor — storing the advice as JSON in the repo is fine.
+2. **League settings:** read from ESPN, table in §3.
+3. **Passcodes:** one random 4-character code per owner, generated
+   2026-10-25 and sent to Dor in chat. **Never commit them.** They go into
+   the Vercel env var `OWNER_KEYS` in step 3. Short codes → the login API
+   needs a rate limit.
+
+## 9. Open
+
+1. Trade deadline (Mar 8) falls **after** the playoffs start (Feb 22), so
+   trades are allowed during round 1. ESPN default? Change on ESPN if not wanted.
+2. The site's own week map (`lib/espn-schedule.ts` `countMatchupPeriods` /
+   `buildWeekMap`) treats every fantasy week as one calendar week, so from
+   week 19 on the schedule page is off by one week. Not urgent before February.

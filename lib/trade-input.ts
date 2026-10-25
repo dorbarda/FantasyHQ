@@ -126,9 +126,10 @@ export function gamesOn(schedules: ProTeamSchedule[], days: number[]): Map<numbe
 function statAverage(player: any, id: string): number | null {
   const s = (player.stats || []).find((x: any) => x.id === id);
   if (!s || typeof s.appliedAverage !== 'number') return null;
-  // ESPN reports 0 for a span with no games (e.g. a whole season missed);
-  // that is "no data", not a 0-point average. Projections carry no games.
-  if (!id.startsWith('10') && !(s.stats?.['42'] > 0)) return null;
+  // ESPN reports 0 for a span with no games (e.g. a whole season missed) —
+  // sometimes with 1 game and 0 points. That is "no data", not a 0 average.
+  // Projections carry no games.
+  if (!id.startsWith('10') && (!(s.stats?.['42'] > 0) || s.appliedTotal === 0)) return null;
   return r1(s.appliedAverage);
 }
 
@@ -273,4 +274,48 @@ export function buildTradeInput(
     },
     teams,
   };
+}
+
+// ─── Digest ─────────────────────────────────────────────────────────────────
+
+const show = (n: number | null) => (n === null ? '–' : String(n));
+
+/**
+ * The same input as compact Markdown — one line per player — so Claude can
+ * read all ten rosters at once. Same numbers as the JSON, nothing derived.
+ */
+export function formatTradeDigest(input: TradeInput): string {
+  const l = input.league;
+  const week = l.periods.find(p => p.matchupPeriod === input.week);
+  const lines: string[] = [
+    `# ${l.name} — trade input, week ${input.week} (${week?.start} → ${week?.end})`,
+    '',
+    `Season ${input.season} · ${l.teamCount} teams · ${l.playoffTeams} make the playoffs · ` +
+      `regular season weeks 1–${l.regularSeasonWeeks} · trade deadline ${l.tradeDeadline ?? 'none'} · ` +
+      `${l.vetoVotesRequired} veto votes cancel a trade`,
+    `Lineup: ${Object.entries(l.lineupSlots).map(([k, v]) => `${v} ${k}`).join(', ')}`,
+    `Periods: ${l.periods.map(p => `${p.matchupPeriod}${p.kind === 'playoff' ? 'P' : ''} ${p.start}→${p.end} (${p.days.length}d)`).join(' · ')}`,
+    '',
+    'Player columns: id · name · NBA team · positions · slot · injury · GP · avg season / L7 / L15 / L30 / last season / projected · ' +
+      'league rank (season / projected) · games this week / rest of regular season / playoffs [by round]',
+  ];
+  for (const t of input.teams) {
+    lines.push(
+      '',
+      `## Seed ${t.seed} — ${t.owner} (${t.teamName}), team ${t.teamId}, division ${t.divisionId}`,
+      `Record ${t.record.wins}-${t.record.losses}-${t.record.ties} · PF ${t.pointsFor} · PA ${t.pointsAgainst} · ` +
+        `moves: ${t.moves.acquisitions} adds, ${t.moves.drops} drops, ${t.moves.trades} trades`,
+      `Next opponents: ${t.upcomingOpponents.slice(0, 6).map(o => `w${o.week} ${o.owner}`).join(', ')}`,
+    );
+    for (const p of t.roster) {
+      const a = p.avg;
+      const g = p.games;
+      lines.push(
+        `- ${p.playerId} · ${p.name} · ${p.proTeam} · ${p.positions.join('/')} · ${p.slot} · ${p.injuryStatus} · GP ${p.gamesPlayed} · ` +
+          `${show(a.season)} / ${show(a.last7)} / ${show(a.last15)} / ${show(a.last30)} / ${show(a.lastSeason)} / ${show(a.projected)} · ` +
+          `rank ${show(p.leagueRank)} / ${show(p.projectedRank)} · games ${g.thisWeek} / ${g.restOfRegularSeason} / ${g.playoffs} [${g.playoffsByRound.join(', ')}]`,
+      );
+    }
+  }
+  return lines.join('\n') + '\n';
 }

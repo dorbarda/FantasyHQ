@@ -1,10 +1,11 @@
 /**
  * Weekly trade suggestions — the input Claude reads: every roster, record,
  * schedule and move count, from live ESPN. Spec: docs/TRADE-SUGGESTIONS-SPEC.md.
- * Run with: npx tsx .claude/skills/trade-suggestions/trade-data.mts [--week N] [--out file.json]
+ * Run with: npx tsx .claude/skills/trade-suggestions/trade-data.mts [--week N] [--out file.json] [--digest file.md]
  *
  * --week N: the matchup week to advise for. Default: the week that contains
  * today (on the Monday run, the week that starts that day).
+ * --digest file.md: the same data as compact Markdown, one line per player.
  */
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
@@ -30,12 +31,13 @@ if (!ESPN_S2 || !SWID || !LEAGUE_ID) {
 
 const args = process.argv.slice(2);
 const outFile = args.includes('--out') ? args[args.indexOf('--out') + 1] : null;
+const digestFile = args.includes('--digest') ? args[args.indexOf('--digest') + 1] : null;
 const weekArg = args.includes('--week') ? Number(args[args.indexOf('--week') + 1]) : undefined;
 
 // Import AFTER env is loaded — these modules read process.env at load time.
 const { CURRENT_SEASON } = await import(resolve(ROOT, 'lib/season.ts'));
 const { getScheduleSeason, buildDateIndex, nbaDate } = await import(resolve(ROOT, 'lib/espn-schedule.ts'));
-const { buildTradeInput } = await import(resolve(ROOT, 'lib/trade-input.ts'));
+const { buildTradeInput, formatTradeDigest } = await import(resolve(ROOT, 'lib/trade-input.ts'));
 
 const url = `https://lm-api-reads.fantasy.espn.com/apis/v3/games/fba/seasons/${CURRENT_SEASON}` +
   `/segments/0/leagues/${LEAGUE_ID}?view=mTeam&view=mRoster&view=mMatchup&view=mSettings`;
@@ -70,4 +72,9 @@ if (outFile) {
   console.log(`✅ ${input.teams.length} teams, week ${input.week} → ${outFile}`);
 } else {
   console.log(json);
+}
+if (digestFile) {
+  mkdirSync(dirname(resolve(digestFile)), { recursive: true });
+  writeFileSync(digestFile, formatTradeDigest(input));
+  console.log(`✅ digest → ${digestFile}`);
 }

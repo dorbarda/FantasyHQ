@@ -180,7 +180,7 @@ lib/__tests__/trades.test.ts
 ## 7. Build order
 
 1. [x] `trade-data.mts` + check `input.json` by hand for one team (2026-10-25).
-2. [ ] `SKILL.md` + `validate.mts`; dry run in a session, review output with Dor.
+2. [x] `SKILL.md` + `validate.mts` (`lib/trade-output.ts`, tested); dry run on week 2 passed 2026-10-25 — review with Dor.
 3. [ ] `lib/owner-auth.ts` + pages.
 4. [~] Scheduled task created 2026-10-25 (Mon 10:37 Israel, Opus 5.5, new session each run) — **paused** until the skill is merged to main.
 

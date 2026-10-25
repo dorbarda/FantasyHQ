@@ -22,7 +22,7 @@ the team and which trades would help it reach the playoffs and win the league.
 ## 2. Weekly flow
 
 ```
-Monday ~10:00 Israel  (Sunday's late NBA games are final; Monday 00:00 US Pacific)
+Monday 10:37 Israel  (scheduled task "Weekly trade suggestions"; Sunday NBA games are final)
   scheduled task → new Claude session (Opus 5.5)
     → runs skill  .claude/skills/trade-suggestions/
         1. npx tsx .claude/skills/trade-suggestions/trade-data.mts --out trades/input.json   (✅ built)
@@ -182,7 +182,7 @@ lib/__tests__/trades.test.ts
 1. [x] `trade-data.mts` + check `input.json` by hand for one team (2026-10-25).
 2. [ ] `SKILL.md` + `validate.mts`; dry run in a session, review output with Dor.
 3. [ ] `lib/owner-auth.ts` + pages.
-4. [ ] Scheduled task (Monday, Opus 5.5, new session each run).
+4. [~] Scheduled task created 2026-10-25 (Mon 10:37 Israel, Opus 5.5, new session each run) — **paused** until the skill is merged to main.
 
 ---
 

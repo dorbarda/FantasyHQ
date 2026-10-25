@@ -18,7 +18,12 @@ on:
     - cron: '47 8 * * *' # 10:47 Israel winter
     - cron: '47 2 * * *' # 05:47 Israel summer
     - cron: '47 7 * * *' # 10:47 Israel summer
-  workflow_dispatch:
+  workflow_dispatch: # also the matchups page's "Update ESPN data" button
+
+# One run at a time: a button click during a scheduled run waits for it.
+concurrency:
+  group: espn-snapshot
+  cancel-in-progress: false
 
 jobs:
   # Manual runs always go ahead; scheduled ones only at today's Israel times.

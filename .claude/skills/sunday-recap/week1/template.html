@@ -72,6 +72,9 @@
   .bline.total { font-size: 42px; font-weight: 900; padding: 10px 0; border-bottom: 2px solid var(--line); }
   .bline.total:last-child { border-bottom: 0; border-top: 2px solid var(--line); margin-top: auto; }
   .bline.sum { font-size: 36px; color: var(--muted); }
+  .ppg { font-size: 30px; font-weight: 700; color: var(--muted); line-height: 1.3; }
+  .ppg b { color: var(--hot); font-weight: 900; font-size: 34px; }
+  .ppg small { font-size: 24px; }
   .drivers-h { font-size: 32px; color: var(--accent); font-weight: 900; margin-top: 14px; }
   .drv { display: flex; flex-direction: column; gap: 4px; padding: 14px 0; border-bottom: 1px dashed var(--line); }
   .drv .top2 { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
@@ -197,10 +200,11 @@ games.forEach((m, i) => {
     const b = bridge(s);
     return `
     <div class="col ${which} el" data-in="${d}">
-      <div class="team"><img class="logo slogo" src="${logo(s.logo)}"><div class="tname sname ltr">${esc(s.name)}</div></div>
+      <div class="team"><img class="logo slogo" src="${logo(s.logo)}"><div class="tname sname ltr">${esc(s.name)}</div>
+        <div class="ppg">ממוצע לשחקן עד כה<br><b class="ltr">${(s.live / s.gamesPlayed).toFixed(1)}</b> <small>· ${s.gamesPlayed} משחקים</small></div></div>
       <div class="bline total"><span>תחזית פתיחה</span><span class="n">${b.start}</span></div>
       <div class="bline sum"><span>ביצועי שחקנים</span><span class="n">${sgn(b.perf)}</span></div>
-      <div class="bline sum"><span>משחקים והעברות</span><span class="n">${sgn(b.gms)}</span></div>
+      <div class="bline sum"><span>מספר משחקים (פציעות והעברות)</span><span class="n">${sgn(b.gms)}</span></div>
       <div class="drivers-h">מה הזיז את התחזית</div>
       ${b.top.map(it => `
       <div class="drv"><div class="top2"><span class="who ltr">${esc(it.who)}</span><span class="n">${sgn(it.n)}</span></div><div class="why">${it.why}</div></div>`).join('')}

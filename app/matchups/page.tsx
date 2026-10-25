@@ -3,6 +3,7 @@ import { hasEspnCredentials, getMatchups } from '@/lib/espn';
 import matchupsJson from '@/data/matchups.json';
 import { MatchupsData } from '@/lib/types';
 import MatchupGrid, { type MatchupDetailData } from '@/components/MatchupGrid';
+import SnapshotRefreshButton from '@/components/SnapshotRefreshButton';
 import { readWeekProjection, readWeekDaily, previewWeekProjection } from '@/lib/projections-data';
 import { matchupDaily } from '@/lib/week-daily';
 import { findMatchupProjection, watchNotes } from '@/lib/week-projections';
@@ -81,8 +82,9 @@ export default async function MatchupsPage({
             Week {data.week} · Head-to-Head{isFutureWeek ? ' · Upcoming' : !isCurrentWeek ? ' · Final' : ''}
           </p>
         </div>
+        <div className="flex items-start gap-4">
         {liveMatchups.length > 0 && (
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 mt-2">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-positive-bright opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-positive-bright"></span>
@@ -90,6 +92,8 @@ export default async function MatchupsPage({
             <span className="text-[12px] font-semibold text-positive-bright">Live</span>
           </div>
         )}
+          <SnapshotRefreshButton />
+        </div>
       </div>
 
       {/* Week navigation */}

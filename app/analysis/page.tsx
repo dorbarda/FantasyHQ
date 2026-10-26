@@ -8,7 +8,8 @@ import AnalysisTable, { type TeamAnalytics } from '@/components/AnalysisTable';
 import WeeklyHighlights, { type WeeklyScoreEntry } from '@/components/WeeklyHighlights';
 import EfficiencyScatterChart, { type ScatterPoint } from '@/components/EfficiencyScatterChart';
 import LuckDeltaChart, { type LuckDeltaEntry } from '@/components/LuckDeltaChart';
-import CategoryRadarChartClient from '@/components/CategoryRadarChartClient';
+import CategoryProfileRadar from '@/components/CategoryProfileRadar';
+import { computeCategoryProfile } from '@/lib/category-profile';
 import PowerRankingsTable from '@/components/PowerRankingsTable';
 import { computePowerRankings, type PowerRankings } from '@/lib/power-rankings';
 
@@ -203,7 +204,21 @@ export default async function AnalysisPage() {
   }
 
   // Category ranks are all ties until a game is played — don't chart them.
-  const hasCategoryData = statsData.matchesPlayed > 0 && statsData.categoryStandings.length > 0;
+  const categoryProfile = statsData.matchesPlayed > 0 && statsData.seasonStats.length > 0
+    ? computeCategoryProfile(statsData.seasonStats)
+    : null;
+
+  const categoryProfileSection = categoryProfile && (
+    <section className="bg-surface-secondary border border-border rounded-xl px-4 py-4 mt-4 mb-6">
+      <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-1">
+        Categories
+      </p>
+      <p className="text-[11px] text-secondary mb-4">
+        FG%, FT%, REB, AST, STOCKS, PTS and TO — 100 = league leader
+      </p>
+      <CategoryProfileRadar profile={categoryProfile} />
+    </section>
+  );
 
   if (!result) {
     return (
@@ -219,17 +234,7 @@ export default async function AnalysisPage() {
             </p>
           </section>
         )}
-        {hasCategoryData && (
-          <section className="bg-surface-secondary border border-border rounded-xl px-4 py-4 mt-4">
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-1">
-              Category Standings
-            </p>
-            <p className="text-[11px] text-secondary mb-4">
-              Rank percentile per category — 100 = league leader
-            </p>
-            <CategoryRadarChartClient standings={statsData.categoryStandings} />
-          </section>
-        )}
+        {categoryProfileSection}
       </div>
     );
   }
@@ -306,19 +311,6 @@ export default async function AnalysisPage() {
         <EfficiencyScatterChart points={scatterPoints} />
       </section>
 
-      {/* Category Standings Radar */}
-      {hasCategoryData && (
-        <section className="bg-surface-secondary border border-border rounded-xl px-4 py-4 mb-6">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-1">
-            Category Standings
-          </p>
-          <p className="text-[11px] text-secondary mb-4">
-            Rank percentile per category — 100 = league leader
-          </p>
-          <CategoryRadarChartClient standings={statsData.categoryStandings} />
-        </section>
-      )}
-
       <div className="border-b border-border mb-6" />
 
       {/* Team rankings table */}
@@ -354,6 +346,11 @@ export default async function AnalysisPage() {
           biggestBlowouts={biggestBlowouts}
         />
       </section>
+
+      <div className="border-b border-border mb-6" />
+
+      {/* Categories radar + leaders */}
+      {categoryProfileSection}
 
     </div>
   );

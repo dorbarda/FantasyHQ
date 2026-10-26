@@ -114,6 +114,9 @@ async function fetchSeason(year: number): Promise<{ matchups: SeasonMatchup[]; s
 
     // Skip unplayed matchups
     if (homeScore === 0 && awayScore === 0) continue;
+    // Skip the week still in progress — its live score would count as a
+    // win for whoever leads right now, then flip as the week goes on.
+    if (m.winner === 'UNDECIDED') continue;
     // Skip byes
     if (!home.teamId || !away.teamId) continue;
 

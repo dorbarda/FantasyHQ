@@ -8,7 +8,6 @@ import AnalysisTable, { type TeamAnalytics } from '@/components/AnalysisTable';
 import WeeklyHighlights, { type WeeklyScoreEntry } from '@/components/WeeklyHighlights';
 import EfficiencyScatterChart, { type ScatterPoint } from '@/components/EfficiencyScatterChart';
 import LuckDeltaChart, { type LuckDeltaEntry } from '@/components/LuckDeltaChart';
-import CategoryRadarChartClient from '@/components/CategoryRadarChartClient';
 import CategoryProfileRadar from '@/components/CategoryProfileRadar';
 import { computeCategoryProfile } from '@/lib/category-profile';
 import PowerRankingsTable from '@/components/PowerRankingsTable';
@@ -205,7 +204,6 @@ export default async function AnalysisPage() {
   }
 
   // Category ranks are all ties until a game is played — don't chart them.
-  const hasCategoryData = statsData.matchesPlayed > 0 && statsData.categoryStandings.length > 0;
   const categoryProfile = statsData.matchesPlayed > 0 && statsData.seasonStats.length > 0
     ? computeCategoryProfile(statsData.seasonStats)
     : null;
@@ -234,17 +232,6 @@ export default async function AnalysisPage() {
             <p className="text-[12px] text-secondary mt-1">
               Analysis appears once the first week of the {CURRENT_SEASON_DISPLAY} season is complete.
             </p>
-          </section>
-        )}
-        {hasCategoryData && (
-          <section className="bg-surface-secondary border border-border rounded-xl px-4 py-4 mt-4">
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-1">
-              Category Standings
-            </p>
-            <p className="text-[11px] text-secondary mb-4">
-              Rank percentile per category — 100 = league leader
-            </p>
-            <CategoryRadarChartClient standings={statsData.categoryStandings} />
           </section>
         )}
         {categoryProfileSection}
@@ -323,19 +310,6 @@ export default async function AnalysisPage() {
         </p>
         <EfficiencyScatterChart points={scatterPoints} />
       </section>
-
-      {/* Category Standings Radar */}
-      {hasCategoryData && (
-        <section className="bg-surface-secondary border border-border rounded-xl px-4 py-4 mb-6">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-1">
-            Category Standings
-          </p>
-          <p className="text-[11px] text-secondary mb-4">
-            Rank percentile per category — 100 = league leader
-          </p>
-          <CategoryRadarChartClient standings={statsData.categoryStandings} />
-        </section>
-      )}
 
       <div className="border-b border-border mb-6" />
 

@@ -405,20 +405,29 @@ export async function getStatsData(): Promise<StatsData> {
   const statIds = { pts: '0', blk: '1', stl: '2', ast: '3', reb: '6', to: '11',
     fgm: '13', fga: '14', ftm: '15', fta: '16', tpm: '17', td: '38' }; // 38=TD, not 41 (41=TF)
 
-  // ── Season stats per team (sum current roster season stats) ──
+  // ── Season stats per team ──
+  // team.valuesByStat = the stats that counted for the team this season (the
+  // "Season Stats" table on ESPN's standings page). Summing the current
+  // roster's player totals is only a fallback: it follows traded players,
+  // counts bench games, and early in the season picks last season's rows.
   const seasonStats: SeasonStats[] = teams.map((team: any) => {
     const ownerName = resolveOwnerName(team.name || '', team.owners || [], memberMap);
 
     const totals: Record<string, number> = {};
     Object.values(statIds).forEach(id => { totals[id] = 0; });
 
-    for (const entry of (team.roster?.entries || []) as any[]) {
-      const p = entry.playerPoolEntry?.player;
-      if (!p) continue;
-      const s = extractSeasonStats(p.stats || []);
-      Object.entries(statIds).forEach(([, id]) => {
-        totals[id] += s[id] || 0;
-      });
+    const teamValues: Record<string, number> | undefined = team.valuesByStat;
+    if (teamValues && Object.keys(teamValues).length > 0) {
+      Object.values(statIds).forEach(id => { totals[id] = teamValues[id] || 0; });
+    } else {
+      for (const entry of (team.roster?.entries || []) as any[]) {
+        const p = entry.playerPoolEntry?.player;
+        if (!p) continue;
+        const s = extractSeasonStats(p.stats || []);
+        Object.entries(statIds).forEach(([, id]) => {
+          totals[id] += s[id] || 0;
+        });
+      }
     }
 
     const fgm = Math.round(totals[statIds.fgm]);

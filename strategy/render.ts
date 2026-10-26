@@ -18,6 +18,7 @@ export interface Report {
   pickups: { today: Pickup[]; tomorrow: Pickup[]; restOfWeek: Pickup[]; nextWeek: Pickup[] };
   plan: TwoDayPlan | null;
   alerts: string[];
+  addUsedToday: boolean;
   lastWeek: { week: number; opponent: string; me: number; opp: number; result: 'W' | 'L' | 'T' } | null;
   trending: AgentPlayer[];
   roster: AgentPlayer[];
@@ -208,6 +209,8 @@ function bestMove(r: Report): string | null {
   const parts = [
     plan.today
       ? step('Today', plan.today, 'this week')
+      : r.addUsedToday
+      ? '<span class="eyebrow">Today</span><strong>Today\'s add is done</strong><span>Next move tomorrow.</span>'
       : `<span class="eyebrow">Today</span><strong>No add today</strong><span>${plan.tomorrow?.drop
         ? `Keep ${esc(plan.tomorrow.drop.name)} for his game tonight, then make tomorrow's move.`
         : 'Save the add for tomorrow.'}</span>`,

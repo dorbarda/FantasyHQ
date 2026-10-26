@@ -175,6 +175,12 @@ function lastWeekResult(): Report['lastWeek'] {
   };
 }
 
+// 1 add per day: was one already made today? Same 06:00 UTC day boundary as `today`.
+const todayDate = cal.dateFor(today);
+const addUsedToday = (league.teams.find((t: any) => t.id === MY_TEAM_ID)?.roster?.entries || []).some((e: any) =>
+  e.acquisitionType === 'ADD' && e.acquisitionDate &&
+  new Date(e.acquisitionDate - 6 * 3600_000).toISOString().slice(0, 10) === todayDate);
+
 const report: Report = {
   generatedAt: new Date().toISOString(),
   season: SEASON,
@@ -194,7 +200,8 @@ const report: Report = {
   },
   alerts: irFix.alerts,
   lastWeek: lastWeekResult(),
-  plan: engine.planTwoDays(me.players, freeAgents, remaining, cal, defense, today),
+  addUsedToday,
+  plan: engine.planTwoDays(me.players, freeAgents, remaining, cal, defense, today, addUsedToday),
   trending: engine.trending(freeAgents),
   roster: me.players,
 };

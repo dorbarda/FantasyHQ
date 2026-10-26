@@ -539,9 +539,11 @@ export function planTwoDays(
   cal: Calendar,
   defense: Defense,
   today = -1,
+  /** Today's add is already made (1 per day): only tomorrow's can be planned. */
+  todayUsed = false,
 ): TwoDayPlan | null {
   if (days.length === 0) return null;
-  const firsts: (Pickup | null)[] = [null, ...rankPickups(roster, freeAgents, days, cal, defense, today, 10)];
+  const firsts: (Pickup | null)[] = todayUsed ? [null] : [null, ...rankPickups(roster, freeAgents, days, cal, defense, today, 10)];
   let best: TwoDayPlan | null = null;
   for (const a of firsts) {
     const r1 = a ? [...roster.filter(p => p !== a.drop), a.player] : roster;

@@ -153,6 +153,13 @@ describe('planTwoDays', () => {
     expect(plan.tomorrow?.player.id).toBe(10);
     expect(plan.total).toBe(60);
   });
+  it('plans only tomorrow when today\'s add is used', () => {
+    const roster = [player(1, 50, 2, G), player(2, 40, 2, C), player(3, 10, 2, [2, 6, 11])];
+    const fa = player(10, 30, 1, C, { lineupSlotId: undefined, freeStatus: 'FREEAGENT' });
+    const plan = planTwoDays(roster, [fa], [1, 2, 3], cal, NEUTRAL_DEFENSE, 1, true)!;
+    expect(plan.today).toBeNull();
+    expect(plan.tomorrow?.player.id).toBe(10);
+  });
 });
 
 describe('fixIR', () => {

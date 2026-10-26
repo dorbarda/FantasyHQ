@@ -17,6 +17,8 @@ export interface Report {
   next: MatchupReport | null;
   pickups: { today: Pickup[]; tomorrow: Pickup[]; restOfWeek: Pickup[]; nextWeek: Pickup[] };
   plan: TwoDayPlan | null;
+  alerts: string[];
+  lastWeek: { week: number; opponent: string; me: number; opp: number; result: 'W' | 'L' | 'T' } | null;
   trending: AgentPlayer[];
   roster: AgentPlayer[];
 }
@@ -90,6 +92,7 @@ header { display: flex; flex-wrap: wrap; justify-content: space-between; align-i
 .bar i { display: block; height: 100%; background: var(--good); }
 .advice { font-size: 1.05rem; font-weight: 500; }
 .move { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 8px; padding: 12px 14px; display: grid; gap: 4px; }
+.alert { border-left: 4px solid var(--bad); background: var(--bad-soft); border-radius: 8px; padding: 10px 14px; font-weight: 500; }
 .move hr.split { border: 0; border-top: 1px solid var(--line); margin: 6px 0; width: 100%; }
 .move strong { font-family: var(--display); font-size: 1.3rem; }
 .scroll { overflow-x: auto; }
@@ -122,12 +125,12 @@ footer { font-size: .85rem; color: var(--muted); display: grid; gap: 6px; }
       <div class="eyebrow">${esc(r.team.owner)} · Strategy agent</div>
       <h1>${esc(r.team.name)}</h1>
     </div>
-    <div class="muted">Updated ${esc(israelTime)} (Israel) · ESPN live data</div>
+    <div class="muted">${r.lastWeek ? `Week ${r.lastWeek.week}: ${r.lastWeek.result === 'W' ? 'won' : r.lastWeek.result === 'L' ? 'lost' : 'tied'} ${n1(r.lastWeek.me)} – ${n1(r.lastWeek.opp)} vs ${esc(r.lastWeek.opponent)} · ` : ''}Updated ${esc(israelTime)} (Israel) · ESPN live data</div>
   </header>
 
   ${r.current ? matchupPanel(r.current, r, 'This week', true) : '<section class="panel"><h2>This week</h2><p>No matchup found.</p></section>'}
 
-  ${move ? `<section class="panel"><h2>Your next moves</h2>${move}</section>` : ''}
+  ${move || r.alerts.length ? `<section class="panel"><h2>Your next moves</h2>${r.alerts.map(a => `<div class="alert">${esc(a)}</div>`).join('')}${move ?? ''}</section>` : ''}
 
   <section class="panel" id="free-agents">
     <div><h2>Free agents</h2>

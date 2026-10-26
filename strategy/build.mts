@@ -106,6 +106,8 @@ for (const t of league.teams || []) {
 }
 const me = teams.get(MY_TEAM_ID);
 if (!me) throw new Error(`Team ${MY_TEAM_ID} not in league.`);
+const irFix = engine.fixIR(me.players);
+me.players = irFix.players;
 
 function opponentIn(week: number): { teamId: number; myPts: number; oppPts: number } | null {
   const m = (league.schedule || []).find((s: any) =>
@@ -160,6 +162,19 @@ function playsOn(list: import('./engine').Pickup[], sp: number | undefined) {
     (p.player.availableFromSp === undefined || sp >= p.player.availableFromSp)).slice(0, 8);
 }
 
+/** Final score of the week before the current one, once ESPN has a winner. */
+function lastWeekResult(): Report['lastWeek'] {
+  const m = (league.schedule || []).find((s: any) => s.matchupPeriodId === currentWeek - 1 &&
+    (s.home?.teamId === MY_TEAM_ID || s.away?.teamId === MY_TEAM_ID));
+  if (!m || !m.away || !['HOME', 'AWAY', 'TIE'].includes(m.winner)) return null;
+  const mine = m.home.teamId === MY_TEAM_ID ? m.home : m.away;
+  const theirs = m.home.teamId === MY_TEAM_ID ? m.away : m.home;
+  return {
+    week: currentWeek - 1, opponent: teams.get(theirs.teamId)?.name ?? '', me: mine.totalPoints, opp: theirs.totalPoints,
+    result: m.winner === 'TIE' ? 'T' : (m.winner === 'HOME') === (m.home.teamId === MY_TEAM_ID) ? 'W' : 'L',
+  };
+}
+
 const report: Report = {
   generatedAt: new Date().toISOString(),
   season: SEASON,
@@ -177,6 +192,8 @@ const report: Report = {
     restOfWeek: engine.rankPickups(me.players, freeAgents, remaining, cal, defense, today, 12),
     nextWeek: engine.rankPickups(me.players, faNext, nextDays, cal, defense, -1, 12),
   },
+  alerts: irFix.alerts,
+  lastWeek: lastWeekResult(),
   plan: engine.planTwoDays(me.players, freeAgents, remaining, cal, defense, today),
   trending: engine.trending(freeAgents),
   roster: me.players,

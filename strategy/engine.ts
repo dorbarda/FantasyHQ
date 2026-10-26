@@ -203,6 +203,29 @@ export function buildDefense(logs: GameLog[], cal: Calendar): Defense {
 
 export const NEUTRAL_DEFENSE: Defense = { factor: () => 1, sample: 0 };
 
+/**
+ * A healthy player in an IR slot makes the roster illegal on ESPN, which then
+ * usually blocks adds; an OUT player in the lineup wastes a spot. Pair them:
+ * the projection assumes the swap is made, and the alert tells Dor to make it.
+ */
+export function fixIR(players: AgentPlayer[]): { players: AgentPlayer[]; alerts: string[] } {
+  const alerts: string[] = [];
+  const healthy = players.filter(p => p.onIR && p.status === 'ACTIVE');
+  const out = players.filter(p => !p.onIR && SITTING.has(p.status)).sort((a, b) => b.form - a.form);
+  const swap = new Map<AgentPlayer, AgentPlayer>();
+  for (const h of healthy) {
+    const o = out.shift();
+    if (o) {
+      swap.set(h, { ...h, onIR: false, lineupSlotId: BENCH_SLOT });
+      swap.set(o, { ...o, onIR: true, lineupSlotId: IR_SLOT });
+      alerts.push(`Fix your IR first: move ${o.name} (out) to IR and ${h.name} back to your lineup. ESPN lists ${h.name} as healthy, and while he sits on IR ESPN usually blocks your adds. The numbers below assume you make this swap.`);
+    } else {
+      alerts.push(`${h.name} is healthy but on IR. ESPN usually blocks adds until he's back on the roster, so you may need to drop someone to make room.`);
+    }
+  }
+  return { players: players.map(p => swap.get(p) ?? p), alerts };
+}
+
 // ─── Lineup simulation ───────────────────────────────────────────────────────
 
 /**

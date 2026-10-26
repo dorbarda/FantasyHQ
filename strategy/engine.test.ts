@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   type AgentPlayer, buildCalendar, buildDefense, formAverage, NEUTRAL_DEFENSE, normalCdf,
-  parsePlayer, planTwoDays, rankPickups, simulateWeek, trending, verdictFor, winChance,
+  fixIR, parsePlayer, planTwoDays, rankPickups, simulateWeek, trending, verdictFor, winChance,
 } from './engine';
 
 const SEASON = 2027;
@@ -152,6 +152,21 @@ describe('planTwoDays', () => {
     expect(plan.today).toBeNull();
     expect(plan.tomorrow?.player.id).toBe(10);
     expect(plan.total).toBe(60);
+  });
+});
+
+describe('fixIR', () => {
+  it('swaps a healthy IR player with an OUT starter and says so', () => {
+    const healthy = player(1, 35, 1, G, { onIR: true, lineupSlotId: 13 });
+    const out = player(2, 33, 1, C, { status: 'OUT' });
+    const { players, alerts } = fixIR([healthy, out, player(3, 20, 1, C)]);
+    expect(players[0]).toMatchObject({ onIR: false, lineupSlotId: 12 });
+    expect(players[1]).toMatchObject({ onIR: true, lineupSlotId: 13 });
+    expect(alerts[0]).toContain('move P2 (out) to IR and P1 back');
+  });
+  it('leaves a legal roster alone', () => {
+    const r = [player(1, 35, 1, G, { status: 'OUT', onIR: true }), player(2, 30, 1, C)];
+    expect(fixIR(r)).toEqual({ players: r, alerts: [] });
   });
 });
 

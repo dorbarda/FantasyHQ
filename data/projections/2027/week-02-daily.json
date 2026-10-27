@@ -1,0 +1,110 @@
+{
+  "season": 2027,
+  "week": 2,
+  "updatedAt": "2026-10-27T04:01:15.734Z",
+  "days": [
+    {
+      "date": "2026-10-26",
+      "scoringPeriodId": 7
+    }
+  ],
+  "teams": {
+    "1": [
+      {
+        "played": 8,
+        "points": 331
+      }
+    ],
+    "2": [
+      {
+        "played": 7,
+        "points": 263
+      }
+    ],
+    "3": [
+      {
+        "played": 8,
+        "points": 242
+      }
+    ],
+    "4": [
+      {
+        "played": 10,
+        "points": 310
+      }
+    ],
+    "5": [
+      {
+        "played": 8,
+        "points": 290
+      }
+    ],
+    "6": [
+      {
+        "played": 8,
+        "points": 169
+      }
+    ],
+    "8": [
+      {
+        "played": 9,
+        "points": 291
+      }
+    ],
+    "9": [
+      {
+        "played": 8,
+        "points": 275
+      }
+    ],
+    "10": [
+      {
+        "played": 7,
+        "points": 236
+      }
+    ],
+    "11": [
+      {
+        "played": 9,
+        "points": 292
+      }
+    ]
+  },
+  "matchups": [
+    {
+      "homeTeamId": 5,
+      "awayTeamId": 11,
+      "homeWinProb": [
+        0.604
+      ]
+    },
+    {
+      "homeTeamId": 3,
+      "awayTeamId": 2,
+      "homeWinProb": [
+        0.204
+      ]
+    },
+    {
+      "homeTeamId": 6,
+      "awayTeamId": 9,
+      "homeWinProb": [
+        0.428
+      ]
+    },
+    {
+      "homeTeamId": 4,
+      "awayTeamId": 10,
+      "homeWinProb": [
+        0.905
+      ]
+    },
+    {
+      "homeTeamId": 1,
+      "awayTeamId": 8,
+      "homeWinProb": [
+        0.964
+      ]
+    }
+  ]
+}

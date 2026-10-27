@@ -15,8 +15,8 @@ const SLOT_INSTANCES = Object.entries(STARTING_SLOTS)
 const IR_SLOT = 13;
 const POSITION: Record<number, string> = { 0: 'PG', 1: 'SG', 2: 'SF', 3: 'PF', 4: 'C' };
 
-/** Weeks 1–4 use ESPN's season projection; from week 5 the last 30 days. */
-export const PROJECTION_WEEKS = 4;
+/** Weeks 1–2 use ESPN's season projection; from week 3 the last 15 days. */
+export const PROJECTION_WEEKS = 2;
 
 export interface ProjectedPlayer {
   name: string;
@@ -54,8 +54,8 @@ export interface WeekProjection {
 
 /**
  * The player's fantasy points per game used for this week.
- * Weeks 1–4: ESPN's projected average for the season (stat id `10{season}`).
- * Later: actual average over the last 30 days (`03{season}`), falling back to
+ * Weeks 1–2: ESPN's projected average for the season (stat id `10{season}`).
+ * Later: actual average over the last 15 days (`02{season}`), falling back to
  * the projection for a player with no games in that window.
  */
 export function playerAverage(player: any, season: number, week: number): number {
@@ -63,8 +63,8 @@ export function playerAverage(player: any, season: number, week: number): number
   const byId = (id: string) => stats.find(s => s.id === id);
   const projection = byId(`10${season}`)?.appliedAverage ?? 0;
   if (week <= PROJECTION_WEEKS) return round1(projection);
-  const last30 = byId(`03${season}`)?.appliedAverage ?? 0;
-  return round1(last30 > 0 ? last30 : projection);
+  const last15 = byId(`02${season}`)?.appliedAverage ?? 0;
+  return round1(last15 > 0 ? last15 : projection);
 }
 
 /** Can every player in the list start at once? Bipartite matching onto the slots. */
@@ -185,7 +185,7 @@ export function buildWeekProjection(
     days,
     averageSource: week <= PROJECTION_WEEKS
       ? `ESPN ${season - 1}-${String(season).slice(2)} projected average`
-      : 'Average over the last 30 days (ESPN projection if no games in that window)',
+      : 'Average over the last 15 days (ESPN projection if no games in that window)',
     matchups,
   };
 }

@@ -4,7 +4,7 @@ import type { ProTeamSchedule } from '../espn-schedule';
 
 const SEASON = 2027;
 
-function player(name: string, avg: number, proTeamId: number, slots: number[], lineupSlotId = 0, last30 = 0, injuryStatus = 'ACTIVE') {
+function player(name: string, avg: number, proTeamId: number, slots: number[], lineupSlotId = 0, last15 = 0, injuryStatus = 'ACTIVE') {
   return {
     lineupSlotId,
     playerPoolEntry: {
@@ -15,7 +15,7 @@ function player(name: string, avg: number, proTeamId: number, slots: number[], l
         injuryStatus,
         stats: [
           { id: `10${SEASON}`, appliedAverage: avg },
-          { id: `03${SEASON}`, appliedAverage: last30 },
+          { id: `02${SEASON}`, appliedAverage: last15 },
         ],
       },
     },
@@ -32,11 +32,11 @@ const CENTER = [4, 11, 12]; // C, UTIL, bench
 
 describe('playerAverage', () => {
   const p = player('X', 40, 1, CENTER, 0, 50).playerPoolEntry.player;
-  it('uses the ESPN projection for weeks 1–4', () => {
-    expect(playerAverage(p, SEASON, 4)).toBe(40);
+  it('uses the ESPN projection for weeks 1–2', () => {
+    expect(playerAverage(p, SEASON, 2)).toBe(40);
   });
-  it('uses the last 30 days from week 5', () => {
-    expect(playerAverage(p, SEASON, 5)).toBe(50);
+  it('uses the last 15 days from week 3', () => {
+    expect(playerAverage(p, SEASON, 3)).toBe(50);
   });
   it('falls back to the projection with no recent games', () => {
     const q = player('Y', 40, 1, CENTER).playerPoolEntry.player;

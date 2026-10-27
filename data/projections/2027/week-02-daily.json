@@ -1,7 +1,7 @@
 {
   "season": 2027,
   "week": 2,
-  "updatedAt": "2026-10-27T06:01:03.908Z",
+  "updatedAt": "2026-10-27T09:01:10.248Z",
   "days": [
     {
       "date": "2026-10-26",
@@ -75,21 +75,21 @@
       "homeTeamId": 5,
       "awayTeamId": 11,
       "homeWinProb": [
-        0.623
+        0.362
       ]
     },
     {
       "homeTeamId": 3,
       "awayTeamId": 2,
       "homeWinProb": [
-        0.216
+        0.228
       ]
     },
     {
       "homeTeamId": 6,
       "awayTeamId": 9,
       "homeWinProb": [
-        0.387
+        0.431
       ]
     },
     {

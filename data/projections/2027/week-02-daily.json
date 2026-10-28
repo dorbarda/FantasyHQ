@@ -1,7 +1,7 @@
 {
   "season": 2027,
   "week": 2,
-  "updatedAt": "2026-10-28T06:01:09.418Z",
+  "updatedAt": "2026-10-28T07:11:21.906Z",
   "days": [
     {
       "date": "2026-10-26",
@@ -76,7 +76,7 @@
     "8": [
       {
         "played": 9,
-        "points": 291
+        "points": 285
       },
       {
         "played": 2,
@@ -86,7 +86,7 @@
     "9": [
       {
         "played": 8,
-        "points": 288
+        "points": 292
       },
       {
         "played": 5,
@@ -120,7 +120,7 @@
       "awayTeamId": 11,
       "homeWinProb": [
         0.362,
-        0.683
+        0.491
       ]
     },
     {
@@ -136,7 +136,7 @@
       "awayTeamId": 9,
       "homeWinProb": [
         0.431,
-        0.594
+        0.533
       ]
     },
     {
@@ -152,7 +152,7 @@
       "awayTeamId": 8,
       "homeWinProb": [
         0.943,
-        0.749
+        0.931
       ]
     }
   ]

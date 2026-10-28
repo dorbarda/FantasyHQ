@@ -86,9 +86,9 @@ Week 1 (2026-27) was frozen on 2026-10-19, the day before opening night.
 ## 5. Win probability (card chart)
 
 Line chart under each matchup card on `/matchups`, ESPN style: above the
-middle line the left team is favoured, below it the right team. A big dot per
+middle line the left team is favoured, below it the right team. A dot per
 finished day; the first point ("Start") is the Sunday frozen projection. A
-small dot between them each time a run sees the win % move by 1 point or more
+small diamond between them each time a run sees the win % move by 1 point or more
 (roster moves during the day, injury news); hover shows its Israel time and
 the moves each team made since the dot before (pickup = 1, IR move = 1;
 start/bench swaps don't count — the model already starts the best lineup).

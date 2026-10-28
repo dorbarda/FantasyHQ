@@ -4,8 +4,8 @@ import { useId, useState } from 'react';
 import { weekdayLabel, type MatchupDaily } from '@/lib/week-daily';
 
 /**
- * Win probability through the week: a big dot per finished day (Start = the
- * Sunday projection), small dots for changes during the day (roster moves).
+ * Win probability through the week: a dot per finished day (Start = the
+ * Sunday projection), small diamonds for changes during the day (roster moves).
  * Above the middle line the left team is favoured, below it the right team.
  * Spec: docs/MATCHUP-DETAIL-SPEC.md §5.
  */
@@ -91,20 +91,19 @@ export default function WinProbChart({ daily, leftName, rightName }: {
           )}
           <path d={line} fill="none" stroke="var(--foreground-secondary)" strokeWidth="2" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
         </svg>
-        {/* Dots in HTML so the stretched SVG doesn't squash them. Big = a day, small = a change in between. */}
-        {coords.map(([cx, cy], i) => (
-          <span
-            key={i}
-            className={`absolute rounded-full ring-2 ring-surface ${
-              i === active
-                ? `${points[i].kind === 'day' ? 'w-3 h-3 -ml-1.5 -mt-1.5' : 'w-2 h-2 -ml-1 -mt-1'} bg-foreground z-10`
-                : points[i].kind === 'day'
-                  ? 'w-2.5 h-2.5 -ml-[5px] -mt-[5px] bg-secondary'
-                  : 'w-1.5 h-1.5 -ml-[3px] -mt-[3px] bg-secondary ring-1'
-            }`}
-            style={{ left: `${(cx / W) * 100}%`, top: `${(cy / H) * 100}%` }}
-          />
-        ))}
+        {/* Markers in HTML so the stretched SVG doesn't squash them. Circle = a day, diamond = a change in between. */}
+        {coords.map(([cx, cy], i) => {
+          const day = points[i].kind === 'day';
+          const on = i === active;
+          const size = day ? (on ? 'w-3 h-3 -ml-1.5 -mt-1.5' : 'w-2.5 h-2.5 -ml-[5px] -mt-[5px]') : (on ? 'w-2 h-2 -ml-1 -mt-1' : 'w-1.5 h-1.5 -ml-[3px] -mt-[3px]');
+          return (
+            <span
+              key={i}
+              className={`absolute ring-surface ${size} ${day ? 'rounded-full ring-2' : 'rotate-45 ring-1'} ${on ? 'bg-foreground z-10' : 'bg-secondary'}`}
+              style={{ left: `${(cx / W) * 100}%`, top: `${(cy / H) * 100}%` }}
+            />
+          );
+        })}
       </div>
 
       <div className="flex justify-between mt-1 text-[9px] text-muted tabular-nums">

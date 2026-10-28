@@ -4,9 +4,10 @@ import { useId, useState } from 'react';
 import { weekdayLabel, type MatchupDaily } from '@/lib/week-daily';
 
 /**
- * Win probability through the week, one point per finished day (Start = the
- * Sunday projection). Above the middle line the left team is favoured, below
- * it the right team. Spec: docs/MATCHUP-DETAIL-SPEC.md §5.
+ * Win probability through the week: a big dot per finished day (Start = the
+ * Sunday projection), small dots for changes during the day (roster moves).
+ * Above the middle line the left team is favoured, below it the right team.
+ * Spec: docs/MATCHUP-DETAIL-SPEC.md §5.
  */
 
 const W = 300;
@@ -32,18 +33,22 @@ export default function WinProbChart({ daily, leftName, rightName }: {
 
   // x slots: Start, then every day of the week — the line grows across the week.
   const slots = ['Start', ...daily.weekDays.map(weekdayLabel)];
-  const slotOf = (i: number) => (points[i].date ? daily.weekDays.indexOf(points[i].date!) + 1 : 0);
   const x = (slot: number) => (slots.length > 1 ? (slot / (slots.length - 1)) * W : W / 2);
   const y = (p: number) => (1 - p) * H;
-  const coords = points.map((p, i) => [x(slotOf(i)), y(p.left)] as const);
+  const coords = points.map(p => [x(p.slot), y(p.left)] as const);
 
   const line = coords.map(([cx, cy], i) => `${i ? 'L' : 'M'}${cx},${cy}`).join(' ');
   const area = coords.length > 1
     ? `${line} L${coords[coords.length - 1][0]},${H / 2} L${coords[0][0]},${H / 2} Z`
     : '';
 
-  const shown = points[hover ?? points.length - 1];
+  const active = hover ?? points.length - 1;
+  const shown = points[active];
   const leftFav = shown.left >= 0.5;
+  const moves = shown.moves && [
+    shown.moves.left && `${leftName}: ${shown.moves.left} move${shown.moves.left === 1 ? '' : 's'}`,
+    shown.moves.right && `${rightName}: ${shown.moves.right} move${shown.moves.right === 1 ? '' : 's'}`,
+  ].filter(Boolean).join(' · ');
 
   return (
     <div className="px-4 pt-3 pb-3 border-t border-border">
@@ -62,9 +67,9 @@ export default function WinProbChart({ daily, leftName, rightName }: {
         className="relative"
         onMouseMove={e => {
           const r = e.currentTarget.getBoundingClientRect();
-          const slot = Math.round(((e.clientX - r.left) / r.width) * (slots.length - 1));
+          const px = ((e.clientX - r.left) / r.width) * W;
           let best = 0;
-          points.forEach((_, i) => { if (Math.abs(slotOf(i) - slot) < Math.abs(slotOf(best) - slot)) best = i; });
+          coords.forEach(([cx], i) => { if (Math.abs(cx - px) < Math.abs(coords[best][0] - px)) best = i; });
           setHover(best);
         }}
         onMouseLeave={() => setHover(null)}
@@ -86,12 +91,18 @@ export default function WinProbChart({ daily, leftName, rightName }: {
           )}
           <path d={line} fill="none" stroke="var(--foreground-secondary)" strokeWidth="2" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
         </svg>
-        {/* Dot in HTML so the stretched SVG doesn't squash it. */}
-        {[hover ?? coords.length - 1].map(i => (
+        {/* Dots in HTML so the stretched SVG doesn't squash them. Big = a day, small = a change in between. */}
+        {coords.map(([cx, cy], i) => (
           <span
             key={i}
-            className="absolute w-2.5 h-2.5 -ml-[5px] -mt-[5px] rounded-full bg-foreground ring-2 ring-surface"
-            style={{ left: `${(coords[i][0] / W) * 100}%`, top: `${(coords[i][1] / H) * 100}%` }}
+            className={`absolute rounded-full ring-2 ring-surface ${
+              i === active
+                ? `${points[i].kind === 'day' ? 'w-3 h-3 -ml-1.5 -mt-1.5' : 'w-2 h-2 -ml-1 -mt-1'} bg-foreground z-10`
+                : points[i].kind === 'day'
+                  ? 'w-2.5 h-2.5 -ml-[5px] -mt-[5px] bg-secondary'
+                  : 'w-1.5 h-1.5 -ml-[3px] -mt-[3px] bg-secondary ring-1'
+            }`}
+            style={{ left: `${(cx / W) * 100}%`, top: `${(cy / H) * 100}%` }}
           />
         ))}
       </div>
@@ -99,6 +110,11 @@ export default function WinProbChart({ daily, leftName, rightName }: {
       <div className="flex justify-between mt-1 text-[9px] text-muted tabular-nums">
         {slots.map((s, i) => <span key={i}>{s}</span>)}
       </div>
+
+      {/* Height kept when any dot has moves, so hovering doesn't shift the card. */}
+      {points.some(p => p.moves) && (
+        <p className="h-4 mt-1 text-center text-[10px] text-secondary truncate">{moves || ''}</p>
+      )}
 
       <div className="flex items-center justify-center gap-4 mt-2 text-[10px] text-secondary">
         <span className="flex items-center gap-1 min-w-0"><span className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ background: 'var(--wp-left)' }} /><span className="truncate">{leftName}</span></span>

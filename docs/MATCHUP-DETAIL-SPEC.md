@@ -86,8 +86,12 @@ Week 1 (2026-27) was frozen on 2026-10-19, the day before opening night.
 ## 5. Win probability (card chart)
 
 Line chart under each matchup card on `/matchups`, ESPN style: above the
-middle line the left team is favoured, below it the right team. One point per
-finished day; the first point ("Start") is the Sunday frozen projection.
+middle line the left team is favoured, below it the right team. A big dot per
+finished day; the first point ("Start") is the Sunday frozen projection. A
+small dot between them each time a run sees the win % move by 1 point or more
+(roster moves during the day, injury news); hover shows its Israel time and
+the moves each team made since the dot before (pickup = 1, IR move = 1;
+start/bench swaps don't count — the model already starts the best lineup).
 
 | Term | Meaning |
 | --- | --- |
@@ -109,11 +113,12 @@ Finished days only, days as columns. Two rows per team: **players played**
 (starters with minutes or points that day) and **avg per player** (that day's
 points ÷ players played; "–" when nobody played).
 
-Data for §5–6: `data/projections/{season}/week-{NN}-daily.json`, written every
-morning by `scripts/update-week-daily.mts` (espn-snapshot Action, 05:47 and
-10:47 Israel). A day counts as finished once its UTC date has passed — same rule
-as the home recap. Daily lines are rebuilt every run; the win % of earlier days
-is kept, only the latest day is recomputed (the 10:47 run fixes a late game).
+Data for §5–6: `data/projections/{season}/week-{NN}-daily.json`, written on
+every run of the espn-snapshot Action by `scripts/update-week-daily.mts`. A day
+counts as finished once its UTC date has passed — same rule as the home recap.
+Daily lines are rebuilt every run. No win % is saved while a game is on (tip-off
+to +4 h) or once a game has started on a day not finished yet: a day's big dot
+is computed on the first run after all its games are over, then kept.
 
 ## 7. Build order
 

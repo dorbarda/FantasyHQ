@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { gameSd, normalCdf, remainingVariance, winProbability } from '../win-probability';
-import { matchupDaily, pointsThrough, startWinProb, type WeekDaily } from '../week-daily';
+import { countMoves, gamesInProgress, matchupDaily, pointsThrough, rosterIds, startWinProb, type WeekDaily } from '../week-daily';
 import type { TeamProjection, WeekProjection } from '../week-projections';
 
 describe('normalCdf', () => {
@@ -72,5 +72,67 @@ describe('matchupDaily', () => {
 
   it('pointsThrough sums the first N days', () => {
     expect(pointsThrough([{ played: 1, points: 10.04 }, { played: 1, points: 5 }, { played: 1, points: 7 }], 2)).toBe(15);
+  });
+});
+
+describe('mid-day changes', () => {
+  const frozen: WeekProjection = {
+    season: 2027, week: 1, frozenAt: '', days: ['2026-10-20', '2026-10-21', '2026-10-22'], averageSource: '',
+    matchups: [{ home: team(2, 120, 40, 3), away: team(9, 100, 40, 3), actual: null }],
+  };
+  const daily: WeekDaily = {
+    season: 2027, week: 1, updatedAt: '',
+    days: [{ date: '2026-10-20', scoringPeriodId: 1 }],
+    teams: {},
+    matchups: [{
+      homeTeamId: 2, awayTeamId: 9, homeWinProb: [0.56],
+      changes: [
+        { at: '2026-10-20T10:00:00Z', day: 0, homeWinProb: 0.6, moves: { '9': 1 } },
+        { at: '2026-10-21T12:00:00Z', day: 1, homeWinProb: 0.5, moves: { '2': 2 } },
+      ],
+    }],
+  };
+
+  it('small dots sit between the big dots, in order, with Israel time', () => {
+    const d = matchupDaily(frozen, daily, 2, 9)!;
+    expect(d.winProb.map(p => [p.label, p.kind])).toEqual([
+      ['Start', 'day'], ['Tue 13:00', 'change'], ['Tue', 'day'], ['Wed 15:00', 'change'],
+    ]);
+    const slots = d.winProb.map(p => p.slot);
+    expect(slots).toEqual([...slots].sort((a, b) => a - b));
+    expect(slots[1]).toBeGreaterThan(0);
+    expect(slots[1]).toBeLessThan(1);
+    expect(slots[3]).toBeGreaterThan(1);
+    expect(slots[3]).toBeLessThan(2);
+  });
+
+  it('moves follow the sides', () => {
+    const d = matchupDaily(frozen, daily, 9, 2)!;
+    expect(d.winProb[1].moves).toEqual({ left: 1, right: 0 });
+    expect(d.winProb[3]).toMatchObject({ left: 0.5, moves: { left: 0, right: 2 } });
+  });
+});
+
+describe('gamesInProgress', () => {
+  const tip = Date.parse('2026-10-21T00:00:00Z');
+  const schedules = [{ proTeamId: 1, abbrev: 'ATL', games: [{ scoringPeriodId: 2, opponentId: 2, isHome: true, dateMs: tip }] }];
+  it('blocks while on, and after tip-off on a day not finished yet', () => {
+    expect(gamesInProgress(schedules, new Set([2]), tip + 3600_000)).toBe(true);
+    expect(gamesInProgress(schedules, new Set([1]), tip + 6 * 3600_000)).toBe(true);
+  });
+  it('free before tip-off and once the day is over', () => {
+    expect(gamesInProgress(schedules, new Set([1]), tip - 60_000)).toBe(false);
+    expect(gamesInProgress(schedules, new Set([1, 2]), tip + 5 * 3600_000)).toBe(false);
+  });
+});
+
+describe('countMoves', () => {
+  const roster = (...e: [number, number][]) => rosterIds({ roster: { entries: e.map(([playerId, lineupSlotId]) => ({ playerId, lineupSlotId })) } });
+  it('pickup = 1, IR move = 1, lineup swap = 0', () => {
+    const before = roster([1, 0], [2, 12], [3, 0]);
+    expect(countMoves(before, roster([1, 0], [2, 12], [4, 0]))).toBe(1);
+    expect(countMoves(before, roster([1, 0], [2, 13], [3, 0]))).toBe(1);
+    expect(countMoves(before, roster([1, 12], [2, 0], [3, 0]))).toBe(0);
+    expect(countMoves(undefined, before)).toBe(0);
   });
 });

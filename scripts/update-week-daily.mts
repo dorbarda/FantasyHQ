@@ -3,15 +3,17 @@
  * Run with: npx tsx scripts/update-week-daily.mts
  *
  * Writes data/projections/<season>/week-NN-daily.json for the week of the
- * most recent finished day (yesterday, UTC — same rule as the home recap):
+ * most recent finished day (yesterday, UTC — same rule as the home recap),
+ * and for the week of today when a new week has begun:
  *   • each team's starters played + points, every finished day
- *   • the home team's win probability after each finished day
+ *   • the home team's win probability after each finished day (big dot)
+ *   • every change of 1 point or more in between (small dot) — roster moves
+ *     during the day, with who made them
  *
- * Runs every morning in the espn-snapshot Action (05:47 and 10:47 Israel).
- * Daily lines are rebuilt each run. The win probability of earlier days is
- * kept as saved; only the latest finished day (and any missing day) is
- * recomputed, because it uses today's rosters for the days still to come —
- * the 10:47 run corrects a late game the 05:47 run caught mid-way.
+ * Runs on every espn-snapshot Action run (scheduled + hourly from outside).
+ * Daily lines are rebuilt each run. While a game is on, no win % is saved:
+ * a day's big dot is computed once, on the first run after its games are all
+ * over, and kept from then on.
  * Spec: docs/MATCHUP-DETAIL-SPEC.md §5–6.
  */
 import { writeFileSync, mkdirSync, readFileSync } from 'node:fs';
@@ -42,28 +44,36 @@ if (!ESPN_S2 || !SWID || !LEAGUE_ID) {
 const { CURRENT_SEASON } = await import('../lib/season');
 const { getScheduleSeason, weeksOf, buildDateIndex } = await import('../lib/espn-schedule');
 const { getNightLineups } = await import('../lib/espn');
-const { winProbAfter } = await import('../lib/week-daily');
+const { winProbAfter, startWinProb, gamesInProgress, rosterIds, countMoves, CHANGE_THRESHOLD } = await import('../lib/week-daily');
+const { readWeekProjection } = await import('../lib/projections-data');
 type WeekDaily = import('../lib/week-daily').WeekDaily;
 
 const season = await getScheduleSeason();
 const weeks = weeksOf(season);
 const index = buildDateIndex(season.schedules);
-const today = new Date().toISOString().slice(0, 10);
+const now = new Date();
+const today = now.toISOString().slice(0, 10);
+const weekNums = Object.keys(weeks).map(Number).sort((a, b) => a - b);
+const finishedOf = (w: number) => weeks[w]
+  .map(sp => ({ date: index.dateFor(sp)!, scoringPeriodId: sp }))
+  .filter(d => d.date < today);
 
-// The week holding the latest finished day.
-let week = 0;
-for (const w of Object.keys(weeks).map(Number).sort((a, b) => a - b)) {
+// The week holding the latest finished day, then today's week if a new one began.
+let lastWeek = 0;
+for (const w of weekNums) {
   const first = index.dateFor(weeks[w][0]);
-  if (first && first < today) week = w;
+  if (first && first < today) lastWeek = w;
 }
-if (!week) {
+const todayWeek = weekNums.find(w => weeks[w].some(sp => index.dateFor(sp) === today)) ?? 0;
+const todo = [lastWeek, todayWeek].filter((w, i, a) => w && a.indexOf(w) === i);
+if (todo.length === 0) {
   console.log(`⏳ No finished day yet this season (today ${today}).`);
   process.exit(0);
 }
-const weekDays = weeks[week];
-const finished = weekDays
-  .map(sp => ({ date: index.dateFor(sp)!, scoringPeriodId: sp }))
-  .filter(d => d.date < today);
+
+const allFinished = new Set(weekNums.flatMap(w => finishedOf(w).map(d => d.scoringPeriodId)));
+const live = gamesInProgress(season.schedules, allFinished, now.getTime());
+if (live) console.log('🏀 Games on — daily lines only, no new win % dots.');
 
 const url = `https://lm-api-reads.fantasy.espn.com/apis/v3/games/fba/seasons/${CURRENT_SEASON}` +
   `/segments/0/leagues/${LEAGUE_ID}?view=mTeam&view=mRoster&view=mMatchup`;
@@ -74,51 +84,118 @@ if (!res.ok) {
 }
 const league = await res.json();
 const teamById = new Map<number, any>((league.teams || []).map((t: any) => [t.id, t]));
-
-// Daily lines, rebuilt every run.
-const teams: WeekDaily['teams'] = {};
-for (const [i, day] of finished.entries()) {
-  for (const t of await getNightLineups(day.scoringPeriodId)) {
-    const played = t.starters.filter(p => p.played);
-    (teams[String(t.teamId)] ??= Array.from({ length: finished.length }, () => ({ played: 0, points: 0 })))[i] = {
-      played: played.length,
-      points: Math.round(played.reduce((s, p) => s + p.fantasyPoints, 0) * 10) / 10,
-    };
-  }
-}
+const rostersNow: Record<string, string[]> = {};
+for (const [id, t] of teamById) rostersNow[String(id)] = rosterIds(t);
 
 const outDir = resolve(ROOT, 'data', 'projections', String(CURRENT_SEASON));
-const file = resolve(outDir, `week-${String(week).padStart(2, '0')}-daily.json`);
-let previous: WeekDaily | null = null;
-try { previous = JSON.parse(readFileSync(file, 'utf-8')); } catch { /* first day of the week */ }
+const fileOf = (w: number) => resolve(outDir, `week-${String(w).padStart(2, '0')}-daily.json`);
+const readDaily = (w: number): WeekDaily | null => {
+  try { return JSON.parse(readFileSync(fileOf(w), 'utf-8')); } catch { return null; }
+};
+// Rosters at the last dot of the week before — so moves made before a new
+// week's first run still count on its first dot.
+const seedRosters = readDaily(lastWeek)?.rosters;
 
-const pairs = (league.schedule || []).filter((m: any) =>
-  m.matchupPeriodId === week && (!m.playoffTierType || m.playoffTierType === 'NONE') &&
-  teamById.has(m.home?.teamId) && teamById.has(m.away?.teamId));
+for (const week of todo) {
+  const weekDays = weeks[week];
+  const finished = finishedOf(week);
 
-const matchups: WeekDaily['matchups'] = pairs.map((m: any) => {
-  const old = previous?.matchups.find(p => p.homeTeamId === m.home.teamId && p.awayTeamId === m.away.teamId);
-  const homeWinProb = finished.map((_, i) => {
-    const isLatest = i === finished.length - 1;
-    const kept = old?.homeWinProb[i];
-    if (!isLatest && kept != null) return kept;
-    const remaining = weekDays.filter(sp => sp > finished[i].scoringPeriodId);
-    return winProbAfter(teamById.get(m.home.teamId), teamById.get(m.away.teamId), teams, i + 1,
-      remaining, season.schedules, CURRENT_SEASON, week);
+  // Daily lines, rebuilt every run.
+  const teams: WeekDaily['teams'] = {};
+  for (const [i, day] of finished.entries()) {
+    for (const t of await getNightLineups(day.scoringPeriodId)) {
+      const played = t.starters.filter(p => p.played);
+      (teams[String(t.teamId)] ??= Array.from({ length: finished.length }, () => ({ played: 0, points: 0 })))[i] = {
+        played: played.length,
+        points: Math.round(played.reduce((s, p) => s + p.fantasyPoints, 0) * 10) / 10,
+      };
+    }
+  }
+
+  const previous = readDaily(week);
+  const baseline = previous?.rosters ?? (week !== lastWeek ? seedRosters : undefined) ?? {};
+  const rosters: Record<string, string[]> = { ...baseline };
+  const frozen = readWeekProjection(week, CURRENT_SEASON);
+
+  const pairs = (league.schedule || []).filter((m: any) =>
+    m.matchupPeriodId === week && (!m.playoffTierType || m.playoffTierType === 'NONE') &&
+    teamById.has(m.home?.teamId) && teamById.has(m.away?.teamId));
+
+  const matchups: WeekDaily['matchups'] = pairs.map((m: any) => {
+    const h = m.home.teamId as number;
+    const a = m.away.teamId as number;
+    const old = previous?.matchups.find(p => p.homeTeamId === h && p.awayTeamId === a);
+    const prob = (dayCount: number) => winProbAfter(teamById.get(h), teamById.get(a), teams, dayCount,
+      weekDays.filter(sp => dayCount === 0 || sp > finished[dayCount - 1].scoringPeriodId),
+      season.schedules, CURRENT_SEASON, week);
+    // Moves since this matchup's last dot; a new dot resets the count.
+    let moved = false;
+    const movesNow = () => {
+      const out: Record<string, number> = {};
+      for (const id of [h, a]) {
+        const n = countMoves(baseline[String(id)], rostersNow[String(id)]);
+        if (n) out[String(id)] = n;
+      }
+      return Object.keys(out).length ? out : null;
+    };
+
+    const homeWinProb: (number | null)[] = [];
+    const dayMoves: (Record<string, number> | null)[] = [];
+    finished.forEach((_, i) => {
+      const kept = old?.homeWinProb[i];
+      if (kept != null) {
+        homeWinProb.push(kept);
+        dayMoves.push(old?.dayMoves?.[i] ?? null);
+      } else if (live) {
+        homeWinProb.push(null);
+        dayMoves.push(null);
+      } else {
+        homeWinProb.push(prob(i + 1));
+        dayMoves.push(movesNow());
+        moved = true;
+      }
+    });
+
+    // A change between dots: only from a run with no game on and days still to come.
+    const changes = [...(old?.changes ?? [])];
+    const day = finished.length;
+    if (!live && finished.length < weekDays.length) {
+      const startP = frozen?.matchups.find(x => x.home.teamId === h && x.away.teamId === a);
+      const lastDot = changes.filter(c => c.day === day).at(-1)?.homeWinProb
+        ?? (day > 0 ? homeWinProb[day - 1] : startP ? startWinProb(startP.home, startP.away) : null);
+      const p = prob(day);
+      if (lastDot != null && Math.abs(p - lastDot) >= CHANGE_THRESHOLD) {
+        const moves = movesNow();
+        changes.push({ at: now.toISOString(), day, homeWinProb: p, ...(moves ? { moves } : {}) });
+        moved = true;
+      }
+    }
+
+    if (moved || !baseline[String(h)]) {
+      rosters[String(h)] = rostersNow[String(h)];
+      rosters[String(a)] = rostersNow[String(a)];
+    }
+    return {
+      homeTeamId: h, awayTeamId: a, homeWinProb,
+      ...(dayMoves.some(Boolean) ? { dayMoves } : {}),
+      ...(changes.length ? { changes } : {}),
+    };
   });
-  return { homeTeamId: m.home.teamId, awayTeamId: m.away.teamId, homeWinProb };
-});
 
-const out: WeekDaily = { season: CURRENT_SEASON, week, updatedAt: new Date().toISOString(), days: finished, teams, matchups };
-const unchanged = previous && JSON.stringify({ ...previous, updatedAt: '' }) === JSON.stringify({ ...out, updatedAt: '' });
-if (unchanged) {
-  console.log(`➖ Week ${week} daily: unchanged.`);
-  process.exit(0);
-}
-mkdirSync(outDir, { recursive: true });
-writeFileSync(file, JSON.stringify(out, null, 2) + '\n');
-console.log(`✅ Week ${week}: ${finished.length} finished day${finished.length === 1 ? '' : 's'} → ${file}`);
-for (const m of matchups) {
-  const name = (id: number) => (teamById.get(id)?.name ?? `Team ${id}`).trim();
-  console.log(`   ${name(m.homeTeamId)} ${Math.round((m.homeWinProb.at(-1) ?? 0) * 100)}%  vs  ${name(m.awayTeamId)}`);
+  const out: WeekDaily = {
+    season: CURRENT_SEASON, week, updatedAt: now.toISOString(), days: finished, teams, matchups, rosters,
+  };
+  const unchanged = previous && JSON.stringify({ ...previous, updatedAt: '' }) === JSON.stringify({ ...out, updatedAt: '' });
+  if (unchanged) {
+    console.log(`➖ Week ${week} daily: unchanged.`);
+    continue;
+  }
+  mkdirSync(outDir, { recursive: true });
+  writeFileSync(fileOf(week), JSON.stringify(out, null, 2) + '\n');
+  console.log(`✅ Week ${week}: ${finished.length} finished day${finished.length === 1 ? '' : 's'} → ${fileOf(week)}`);
+  for (const m of matchups) {
+    const name = (id: number) => (teamById.get(id)?.name ?? `Team ${id}`).trim();
+    const p = m.changes?.filter(c => c.day === finished.length).at(-1)?.homeWinProb ?? m.homeWinProb.at(-1);
+    console.log(`   ${name(m.homeTeamId)} ${p == null ? '–' : `${Math.round(p * 100)}%`}  vs  ${name(m.awayTeamId)}`);
+  }
 }

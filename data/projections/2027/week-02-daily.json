@@ -1,7 +1,7 @@
 {
   "season": 2027,
   "week": 2,
-  "updatedAt": "2026-10-29T09:01:07.140Z",
+  "updatedAt": "2026-10-30T04:01:08.116Z",
   "days": [
     {
       "date": "2026-10-26",
@@ -14,6 +14,10 @@
     {
       "date": "2026-10-28",
       "scoringPeriodId": 9
+    },
+    {
+      "date": "2026-10-29",
+      "scoringPeriodId": 10
     }
   ],
   "teams": {
@@ -29,6 +33,10 @@
       {
         "played": 9,
         "points": 275
+      },
+      {
+        "played": 3,
+        "points": 74
       }
     ],
     "2": [
@@ -43,6 +51,10 @@
       {
         "played": 7,
         "points": 141
+      },
+      {
+        "played": 4,
+        "points": 113
       }
     ],
     "3": [
@@ -57,6 +69,10 @@
       {
         "played": 10,
         "points": 402
+      },
+      {
+        "played": 5,
+        "points": 165
       }
     ],
     "4": [
@@ -71,6 +87,10 @@
       {
         "played": 10,
         "points": 302
+      },
+      {
+        "played": 2,
+        "points": 54
       }
     ],
     "5": [
@@ -85,6 +105,10 @@
       {
         "played": 10,
         "points": 337
+      },
+      {
+        "played": 3,
+        "points": 132
       }
     ],
     "6": [
@@ -99,6 +123,10 @@
       {
         "played": 9,
         "points": 313
+      },
+      {
+        "played": 4,
+        "points": 104
       }
     ],
     "8": [
@@ -113,6 +141,10 @@
       {
         "played": 10,
         "points": 302
+      },
+      {
+        "played": 2,
+        "points": 63
       }
     ],
     "9": [
@@ -127,6 +159,10 @@
       {
         "played": 10,
         "points": 276
+      },
+      {
+        "played": 3,
+        "points": 56
       }
     ],
     "10": [
@@ -141,6 +177,10 @@
       {
         "played": 8,
         "points": 289
+      },
+      {
+        "played": 3,
+        "points": 94
       }
     ],
     "11": [
@@ -155,6 +195,10 @@
       {
         "played": 10,
         "points": 331
+      },
+      {
+        "played": 3,
+        "points": 113
       }
     ]
   },
@@ -165,7 +209,8 @@
       "homeWinProb": [
         0.362,
         0.491,
-        0.399
+        0.399,
+        null
       ]
     },
     {
@@ -174,7 +219,8 @@
       "homeWinProb": [
         0.228,
         0.859,
-        1
+        1,
+        null
       ],
       "changes": [
         {
@@ -198,7 +244,8 @@
       "homeWinProb": [
         0.431,
         0.533,
-        0.571
+        0.571,
+        null
       ],
       "changes": [
         {
@@ -225,7 +272,8 @@
       "homeWinProb": [
         0.917,
         0.979,
-        0.966
+        0.966,
+        null
       ]
     },
     {
@@ -234,7 +282,8 @@
       "homeWinProb": [
         0.943,
         0.846,
-        0.85
+        0.85,
+        null
       ],
       "changes": [
         {

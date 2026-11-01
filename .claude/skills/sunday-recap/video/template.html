@@ -85,6 +85,25 @@
   .mpct { color: var(--win); font-weight: 900; }
   .mside.fav .mlogo { border-color: var(--win); }
   .mside.fav .mscore { color: var(--win); }
+  /* story screens */
+  .stitle { text-align: center; font-size: 76px; font-weight: 900; margin-top: 34px; line-height: 1.1; }
+  .spath { text-align: center; font-size: 38px; color: var(--muted); font-weight: 700; margin-top: 14px; }
+  .spath b { color: var(--text); }
+  .chart { margin-top: 30px; background: var(--bg2); border: 3px solid var(--line); border-radius: 36px; padding: 24px 30px 14px; }
+  .chart h5 { font-size: 28px; font-weight: 700; color: var(--muted); text-align: center; margin-bottom: 6px; }
+  .chart h5 .h { color: var(--home); } .chart h5 .a { color: var(--away); }
+  .chart svg { display: block; width: 100%; height: auto; }
+  .lines { margin-top: 30px; display: flex; flex-direction: column; gap: 16px; }
+  .sl { font-size: 40px; font-weight: 700; line-height: 1.25; padding-right: 40px; position: relative; }
+  .sl::before { content: ''; position: absolute; right: 0; top: 20px; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); }
+  .need { margin-top: auto; background: linear-gradient(180deg, rgba(251,146,60,.18), rgba(251,146,60,.06)); border: 4px solid var(--hot); border-radius: 40px; padding: 30px 40px; text-align: center; }
+  .need h4 { font-size: 44px; font-weight: 900; color: var(--hot); }
+  .need .nbig { font-size: 110px; font-weight: 900; line-height: 1.05; margin-top: 8px; }
+  .need .nbig small { font-size: 46px; font-weight: 700; color: var(--muted); }
+  .need .nsub { font-size: 36px; font-weight: 700; color: var(--muted); margin-top: 8px; line-height: 1.3; }
+  .need .nsub b { color: var(--text); }
+  .sfoot { margin-top: auto; text-align: center; font-size: 44px; font-weight: 900; }
+  .sfoot span { color: var(--win); }
 </style>
 </head>
 <body>
@@ -97,17 +116,26 @@
  * Data comes from window.RECAP (recap-data.mts output).
  */
 const D = window.RECAP;
-const INTRO = 3, CARD = 6, LIST = 5, OUTRO = 3.5, FADE = 0.35;
+const INTRO = 3, CARD = 6, STORY_CLOSE = 7.5, STORY = 6.5, LIST = 5, OUTRO = 3.5, FADE = 0.35;
+const STORIES = window.STORIES || {};
+const storyOf = m => STORIES[`${m.home.teamId}-${m.away.teamId}`];
 // A matchup is "close" while the underdog still has at least this chance.
 // Close ones get a full card; the rest share compact screens, up to PER_LIST each.
-const CLOSE_MAX_FAV = 80, PER_LIST = 3;
+// 90: on the last night a 10% underdog is still worth a full card.
+const CLOSE_MAX_FAV = 90, PER_LIST = 3;
 // Order: closest first, biggest blowouts last (recap-data.mts already sorts so).
 const games = D.matchups;
 const close = games.filter(m => m.favoriteWinProb < CLOSE_MAX_FAV);
 const decided = games.filter(m => m.favoriteWinProb >= CLOSE_MAX_FAV);
+// With a story, every decided matchup gets its own story screen; without, compact lists.
+const withStories = decided.every(storyOf);
 const lists = [];
-for (let i = 0; i < decided.length; i += PER_LIST) lists.push(decided.slice(i, i + PER_LIST));
-const total = INTRO + close.length * CARD + lists.length * LIST + OUTRO;
+if (!withStories) for (let i = 0; i < decided.length; i += PER_LIST) lists.push(decided.slice(i, i + PER_LIST));
+const closeLen = m => CARD + (storyOf(m) ? STORY_CLOSE : 0);
+const closeStart = close.map((_, i) => INTRO + close.slice(0, i).reduce((n, m) => n + closeLen(m), 0));
+const afterClose = INTRO + close.reduce((n, m) => n + closeLen(m), 0);
+const decidedLen = withStories ? decided.length * STORY : lists.length * LIST;
+const total = afterClose + decidedLen + OUTRO;
 window.DURATION = total;
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
@@ -132,8 +160,45 @@ let html = `
   <div class="sub el" data-in="0.8">שבוע ${D.week} · ${games.length} מאצ'אפים · לילה אחד</div>
 </section>`;
 
+const DAY = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'];
+// Lead after each day as bars: up = home ahead (home color), down = away ahead.
+function leadChart(m) {
+  const path = m.leadPath || [];
+  if (!path.length) return '';
+  // Room for value labels above/below the bars and day labels at the bottom.
+  const W = 900, H = 330, LAB = 44, DAYS = 46;
+  const up = Math.max(0, ...path.map(p => p.lead)), down = Math.max(0, ...path.map(p => -p.lead));
+  const area = H - DAYS - 2 * LAB, scale = area / Math.max(40, up + down);
+  const mid = LAB + up * scale + (up + down < 40 ? (40 - up - down) * scale / 2 : 0);
+  const bw = W / path.length;
+  const bars = path.map((p, i) => {
+    const h = Math.max(4, Math.abs(p.lead) * scale), x = i * bw + bw * 0.18, w = bw * 0.64;
+    const up = p.lead >= 0, y = up ? mid - h : mid;
+    const col = up ? 'var(--home)' : 'var(--away)';
+    const ty = up ? y - 12 : y + h + 34;
+    return `<rect class="bar-g" data-i="${i}" x="${x}" y="${y}" width="${w}" height="${h}" rx="10" fill="${col}"/>
+      <text x="${x + w / 2}" y="${ty}" text-anchor="middle" font-size="30" font-weight="900" fill="var(--text)" direction="ltr">${up ? '+' : '−'}${Math.round(Math.abs(p.lead))}</text>
+      <text x="${x + w / 2}" y="${H - 4}" text-anchor="middle" font-size="30" font-weight="700" fill="var(--muted)">${DAY[new Date(p.date + 'T12:00:00Z').getUTCDay()]}</text>`;
+  }).join('');
+  return `<div class="chart el" data-in="0.9">
+    <h5>הפער בסוף כל יום · <span class="h ltr">▲ ${esc(m.home.name)}</span> · <span class="a ltr">▼ ${esc(m.away.name)}</span></h5>
+    <svg viewBox="0 0 ${W} ${H}"><line x1="0" x2="${W}" y1="${mid}" y2="${mid}" stroke="var(--line)" stroke-width="3"/>${bars}</svg>
+  </div>`;
+}
+const storyLines = (st, max, from = 1.4) => st.lines.slice(0, max)
+  .map((l, k) => `<div class="sl el" data-in="${from + k * 0.35}">${ltrBits(l)}</div>`).join('');
+// In story lines, {text} marks an English name or a signed number: kept left-to-right.
+function ltrBits(l) { return esc(l).replace(/\{([^}]+)\}/g, '<span class="ltr">$1</span>'); }
+// Favorite's win % at the start of the week vs now.
+function winPathLine(m) {
+  if (!m.homeWinPath) return '';
+  const homeFav = m.home.winProb >= m.away.winProb;
+  const startP = homeFav ? m.homeWinPath[0] : 100 - m.homeWinPath[0];
+  return `<div class="spath el" data-in="0.6">סיכוי לניצחון של <b class="ltr">${esc(m.projectedWinner)}</b><br>בתחילת השבוע <b class="ltr">${Math.round(startP)}%</b> ← עכשיו <b class="ltr">${favPct(m)}</b></div>`;
+}
+
 close.forEach((m, i) => {
-  const start = INTRO + i * CARD;
+  const start = closeStart[i];
   const [label, cls] = i === 0 ? ['קרב השבוע 🔥', 'hot'] : tag(m.favoriteWinProb);
   const side = (s, which) => `
     <div class="team ${which}">
@@ -175,11 +240,57 @@ close.forEach((m, i) => {
     <div class="barlabel">סיכוי לנצח</div>
   </div>
 </section>`;
+  const st = storyOf(m), u = m.underdogTonight;
+  if (!st) return;
+  const s2 = start + CARD;
+  const fav = m.projectedWinner;
+  html += `
+<section class="scene" data-start="${s2}" data-end="${s2 + STORY_CLOSE}">
+  <div class="top">
+    <div class="tag ${cls} el" data-in="0.05">איך הגענו לכאן?</div>
+    <div class="count el ltr" data-in="0.05">${i + 1} / ${games.length}</div>
+  </div>
+  <div class="stitle el" data-in="0.3">${esc(st.title)}</div>
+  ${winPathLine(m)}
+  ${leadChart(m)}
+  <div class="lines">${storyLines(st, 4)}</div>
+  ${u && u.perPlayerNeeded != null ? `
+  <div class="need el" data-in="3.2">
+    <h4>🎯 מה <span class="ltr">${esc(u.team)}</span> צריך הלילה?</h4>
+    <div class="nbig"><span class="ltr">${u.perPlayerNeeded}</span> <small>נק' לשחקן</small></div>
+    <div class="nsub"><b class="ltr">${Math.floor(u.pointsNeeded) + 1}+</b> נק' מ-<b>${u.players}</b> שחקנים · הצפי שלהם: <b class="ltr">${u.expectedPerPlayer}</b> לשחקן</div>
+    <div class="nsub">אם <span class="ltr">${esc(fav)}</span> יעשו את הצפי: <b class="ltr">${Math.round(u.favoriteExpectedPoints)}</b> נק' מ-<b>${u.favoritePlayers}</b> שחקנים</div>
+  </div>` : ''}
+</section>`;
+});
+
+// Decided matchups, each with its story (when stories.json has them all).
+if (withStories) decided.forEach((m, j) => {
+  const start = afterClose + j * STORY, st = storyOf(m);
+  const team = (s, fav) => `
+      <div class="mside${fav ? ' fav' : ''}">
+        <img class="mlogo" src="${logo(s.logo)}">
+        <div class="mname ltr">${esc(s.name)}</div>
+        <div class="mscore">${Math.round(s.live)}</div>
+      </div>`;
+  const done = m.favoriteWinProb >= 99;
+  html += `
+<section class="scene" data-start="${start}" data-end="${start + STORY}">
+  <div class="top">
+    <div class="tag el" data-in="0.05">${done ? 'סגור ✅' : 'כמעט גמור ✅'}</div>
+    <div class="count el ltr" data-in="0.05">${close.length + j + 1} / ${games.length}</div>
+  </div>
+  <div class="mteams el" data-in="0.15" style="margin-top:36px">${team(m.home, m.home.winProb >= m.away.winProb)}<div class="mvs">–</div>${team(m.away, m.away.winProb > m.home.winProb)}</div>
+  <div class="stitle el" data-in="0.4">${esc(st.title)}</div>
+  ${winPathLine(m)}
+  ${leadChart(m)}
+  <div class="lines">${storyLines(st, 5, 1.2)}</div>
+</section>`;
 });
 
 // Decided matchups: a few per screen, score + gap + projected winner only.
 lists.forEach((group, li) => {
-  const start = INTRO + close.length * CARD + li * LIST;
+  const start = afterClose + li * LIST;
   const first = close.length + li * PER_LIST + 1;
   const range = group.length > 1 ? `${first}–${first + group.length - 1}` : `${first}`;
   const team = (s, fav) => `
@@ -204,7 +315,7 @@ lists.forEach((group, li) => {
 </section>`;
 });
 
-const outStart = INTRO + close.length * CARD + lists.length * LIST;
+const outStart = afterClose + decidedLen;
 html += `
 <section class="scene center" data-start="${outStart}" data-end="${total + 1}">
   <div class="big el" data-in="0.1">הכל נקבע<br>הלילה 🔥</div>
@@ -231,6 +342,10 @@ window.render = t => {
     for (const el of sc.querySelectorAll('[data-count]')) {
       const p = ease((lt - 0.4) / 1.2);
       el.textContent = Math.round(+el.dataset.count * p);
+    }
+    for (const el of sc.querySelectorAll('.bar-g')) {
+      const p = ease((lt - 1.1 - 0.12 * +el.dataset.i) / 0.5);
+      el.style.opacity = p;
     }
     for (const el of sc.querySelectorAll('[data-fill]')) {
       const p = ease((lt - 2.8) / 1.4);

@@ -1,6 +1,7 @@
 /**
  * Render the Sunday recap video: template.html + recap JSON → vertical MP4.
- * Run with: node .claude/skills/sunday-recap/video/render.mjs <recap.json> <out.mp4>
+ * Run with: node .claude/skills/sunday-recap/video/render.mjs <recap.json> <out.mp4> [stories.json]
+ * stories.json (optional, written by Claude): { "<homeId>-<awayId>": { "title": "…", "lines": ["…"] } }
  *
  * Steps the page's render(t) frame by frame in headless Chromium and pipes
  * the screenshots into ffmpeg (H.264, yuv420p — plays in WhatsApp).
@@ -10,9 +11,9 @@ import { spawn, execSync } from 'node:child_process';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const [recapPath, outPath] = process.argv.slice(2);
+const [recapPath, outPath, storiesPath] = process.argv.slice(2);
 if (!recapPath || !outPath) {
-  console.error('Usage: node render.mjs <recap.json> <out.mp4>');
+  console.error('Usage: node render.mjs <recap.json> <out.mp4> [stories.json]');
   process.exit(1);
 }
 const FPS = 30;
@@ -25,7 +26,8 @@ const { chromium } = await import(pathToFileURL(
 
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
-await page.addInitScript(`window.RECAP = ${recap};`);
+const stories = storiesPath ? readFileSync(resolve(storiesPath), 'utf-8') : '{}';
+await page.addInitScript(`window.RECAP = ${recap}; window.STORIES = ${stories};`);
 await page.goto(pathToFileURL(resolve(here, 'template.html')).href);
 await page.evaluate(() => document.fonts.ready);
 const duration = await page.evaluate(() => window.DURATION);

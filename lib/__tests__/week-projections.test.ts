@@ -35,8 +35,18 @@ describe('playerAverage', () => {
   it('uses the ESPN projection for weeks 1–2', () => {
     expect(playerAverage(p, SEASON, 2)).toBe(40);
   });
-  it('uses the last 15 days from week 3', () => {
-    expect(playerAverage(p, SEASON, 3)).toBe(50);
+  it('blends 60% projection + 40% last 15 days in week 3', () => {
+    expect(playerAverage(p, SEASON, 3)).toBe(44);
+  });
+  it('blends 20% projection + 80% last 15 days in week 4', () => {
+    expect(playerAverage(p, SEASON, 4)).toBe(48);
+  });
+  it('uses only the last 15 days from week 5', () => {
+    expect(playerAverage(p, SEASON, 5)).toBe(50);
+  });
+  it('uses the last 15 days alone when there is no ESPN projection', () => {
+    const q = player('Z', 0, 1, CENTER, 0, 30).playerPoolEntry.player;
+    expect(playerAverage(q, SEASON, 3)).toBe(30);
   });
   it('falls back to the projection with no recent games', () => {
     const q = player('Y', 40, 1, CENTER).playerPoolEntry.player;

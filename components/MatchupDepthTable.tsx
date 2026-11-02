@@ -67,7 +67,7 @@ export default function MatchupDepthTable({ data }: Props) {
             </tr>
           </thead>
           <tbody>
-            {completedPeriods.map(period => {
+            {[...completedPeriods].reverse().map(period => {
               const periodRows = rows.filter(r => r.matchupPeriod === period);
               return periodRows.map((row, rowIdx) => (
                 <tr

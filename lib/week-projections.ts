@@ -18,6 +18,17 @@ const POSITION: Record<number, string> = { 0: 'PG', 1: 'SG', 2: 'SF', 3: 'PF', 4
 /** Weeks 1–2 use ESPN's season projection; from week 3 the last 15 days. */
 export const PROJECTION_WEEKS = 2;
 
+/**
+ * Share of the last-15-days average in the blend, by week. Weeks 1–2: 0
+ * (ESPN projection only); week 3: 40%; week 4: 80%; week 5 on: 100%.
+ */
+export function last15Weight(week: number): number {
+  if (week <= PROJECTION_WEEKS) return 0;
+  if (week === 3) return 0.4;
+  if (week === 4) return 0.8;
+  return 1;
+}
+
 export interface ProjectedPlayer {
   name: string;
   pos: string;
@@ -53,18 +64,21 @@ export interface WeekProjection {
 }
 
 /**
- * The player's fantasy points per game used for this week.
- * Weeks 1–2: ESPN's projected average for the season (stat id `10{season}`).
- * Later: actual average over the last 15 days (`02{season}`), falling back to
- * the projection for a player with no games in that window.
+ * The player's fantasy points per game used for this week: a blend of ESPN's
+ * projected average for the season (stat id `10{season}`) and the actual
+ * average over the last 15 days (`02{season}`), weighted by last15Weight().
+ * A player with no games in the last 15 days gets the projection only; a
+ * player with no ESPN projection gets the last 15 days only.
  */
 export function playerAverage(player: any, season: number, week: number): number {
   const stats: any[] = player?.stats || [];
   const byId = (id: string) => stats.find(s => s.id === id);
   const projection = byId(`10${season}`)?.appliedAverage ?? 0;
-  if (week <= PROJECTION_WEEKS) return round1(projection);
   const last15 = byId(`02${season}`)?.appliedAverage ?? 0;
-  return round1(last15 > 0 ? last15 : projection);
+  const w = last15Weight(week);
+  if (w === 0 || last15 <= 0) return round1(projection);
+  if (projection <= 0) return round1(last15);
+  return round1(w * last15 + (1 - w) * projection);
 }
 
 /** Can every player in the list start at once? Bipartite matching onto the slots. */
@@ -183,11 +197,18 @@ export function buildWeekProjection(
     week,
     frozenAt,
     days,
-    averageSource: week <= PROJECTION_WEEKS
-      ? `ESPN ${season - 1}-${String(season).slice(2)} projected average`
-      : 'Average over the last 15 days (ESPN projection if no games in that window)',
+    averageSource: averageSourceLabel(season, week),
     matchups,
   };
+}
+
+function averageSourceLabel(season: number, week: number): string {
+  const w = last15Weight(week);
+  if (w === 0) return `ESPN ${season - 1}-${String(season).slice(2)} projected average`;
+  if (w === 1) return 'Average over the last 15 days (ESPN projection if no games in that window)';
+  const pct = Math.round(w * 100);
+  return `${100 - pct}% ESPN projected average + ${pct}% last 15 days ` +
+    '(ESPN projection alone if no games in that window)';
 }
 
 function round1(n: number): number {

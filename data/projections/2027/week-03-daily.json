@@ -1,14 +1,82 @@
 {
   "season": 2027,
   "week": 3,
-  "updatedAt": "2026-11-02T21:46:58.674Z",
-  "days": [],
-  "teams": {},
+  "updatedAt": "2026-11-03T04:01:43.958Z",
+  "days": [
+    {
+      "date": "2026-11-02",
+      "scoringPeriodId": 14
+    }
+  ],
+  "teams": {
+    "1": [
+      {
+        "played": 10,
+        "points": 318
+      }
+    ],
+    "2": [
+      {
+        "played": 10,
+        "points": 334
+      }
+    ],
+    "3": [
+      {
+        "played": 9,
+        "points": 255
+      }
+    ],
+    "4": [
+      {
+        "played": 10,
+        "points": 294
+      }
+    ],
+    "5": [
+      {
+        "played": 10,
+        "points": 318
+      }
+    ],
+    "6": [
+      {
+        "played": 10,
+        "points": 273
+      }
+    ],
+    "8": [
+      {
+        "played": 9,
+        "points": 169
+      }
+    ],
+    "9": [
+      {
+        "played": 10,
+        "points": 333
+      }
+    ],
+    "10": [
+      {
+        "played": 10,
+        "points": 279
+      }
+    ],
+    "11": [
+      {
+        "played": 10,
+        "points": 319
+      }
+    ]
+  },
   "matchups": [
     {
       "homeTeamId": 3,
       "awayTeamId": 6,
-      "homeWinProb": [],
+      "homeWinProb": [
+        null
+      ],
       "changes": [
         {
           "at": "2026-11-02T06:01:44.604Z",
@@ -33,7 +101,9 @@
     {
       "homeTeamId": 5,
       "awayTeamId": 4,
-      "homeWinProb": [],
+      "homeWinProb": [
+        null
+      ],
       "changes": [
         {
           "at": "2026-11-02T06:01:44.604Z",
@@ -74,7 +144,9 @@
     {
       "homeTeamId": 11,
       "awayTeamId": 1,
-      "homeWinProb": [],
+      "homeWinProb": [
+        null
+      ],
       "changes": [
         {
           "at": "2026-11-02T06:01:44.604Z",
@@ -102,7 +174,9 @@
     {
       "homeTeamId": 2,
       "awayTeamId": 10,
-      "homeWinProb": [],
+      "homeWinProb": [
+        null
+      ],
       "changes": [
         {
           "at": "2026-11-02T09:01:43.820Z",
@@ -128,7 +202,9 @@
     {
       "homeTeamId": 9,
       "awayTeamId": 8,
-      "homeWinProb": [],
+      "homeWinProb": [
+        null
+      ],
       "changes": [
         {
           "at": "2026-11-02T06:01:44.604Z",

@@ -1,7 +1,7 @@
 {
   "season": 2027,
   "week": 3,
-  "updatedAt": "2026-11-03T06:57:35.473Z",
+  "updatedAt": "2026-11-03T07:44:23.456Z",
   "days": [
     {
       "date": "2026-11-02",
@@ -75,7 +75,12 @@
       "homeTeamId": 3,
       "awayTeamId": 6,
       "homeWinProb": [
-        null
+        0.65
+      ],
+      "dayMoves": [
+        {
+          "6": 1
+        }
       ],
       "changes": [
         {
@@ -102,7 +107,12 @@
       "homeTeamId": 5,
       "awayTeamId": 4,
       "homeWinProb": [
-        null
+        0.055
+      ],
+      "dayMoves": [
+        {
+          "5": 1
+        }
       ],
       "changes": [
         {
@@ -145,7 +155,7 @@
       "homeTeamId": 11,
       "awayTeamId": 1,
       "homeWinProb": [
-        null
+        0.159
       ],
       "changes": [
         {
@@ -175,7 +185,7 @@
       "homeTeamId": 2,
       "awayTeamId": 10,
       "homeWinProb": [
-        null
+        0.037
       ],
       "changes": [
         {
@@ -203,7 +213,7 @@
       "homeTeamId": 9,
       "awayTeamId": 8,
       "homeWinProb": [
-        null
+        0.988
       ],
       "changes": [
         {
@@ -291,7 +301,7 @@
     "5": [
       "3112335",
       "3147657",
-      "3936099",
+      "3936099:ir",
       "4066259",
       "4278039",
       "4395724",
@@ -307,7 +317,6 @@
     "6": [
       "3064440",
       "3078576",
-      "3150844",
       "3907497:ir",
       "3934719",
       "3995",
@@ -315,6 +324,7 @@
       "4277905",
       "4396971",
       "4432848",
+      "4433083",
       "4684740",
       "4702382",
       "5037871",

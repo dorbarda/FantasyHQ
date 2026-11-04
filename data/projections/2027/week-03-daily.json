@@ -1,11 +1,15 @@
 {
   "season": 2027,
   "week": 3,
-  "updatedAt": "2026-11-03T09:01:25.761Z",
+  "updatedAt": "2026-11-04T04:01:41.489Z",
   "days": [
     {
       "date": "2026-11-02",
       "scoringPeriodId": 14
+    },
+    {
+      "date": "2026-11-03",
+      "scoringPeriodId": 15
     }
   ],
   "teams": {
@@ -13,60 +17,100 @@
       {
         "played": 10,
         "points": 400
+      },
+      {
+        "played": 0,
+        "points": 0
       }
     ],
     "2": [
       {
         "played": 10,
         "points": 343
+      },
+      {
+        "played": 0,
+        "points": 0
       }
     ],
     "3": [
       {
         "played": 9,
         "points": 307
+      },
+      {
+        "played": 0,
+        "points": 0
       }
     ],
     "4": [
       {
         "played": 10,
         "points": 375
+      },
+      {
+        "played": 0,
+        "points": 0
       }
     ],
     "5": [
       {
         "played": 10,
         "points": 370
+      },
+      {
+        "played": 0,
+        "points": 0
       }
     ],
     "6": [
       {
         "played": 10,
         "points": 273
+      },
+      {
+        "played": 0,
+        "points": 0
       }
     ],
     "8": [
       {
         "played": 9,
         "points": 252
+      },
+      {
+        "played": 0,
+        "points": 0
       }
     ],
     "9": [
       {
         "played": 10,
         "points": 356
+      },
+      {
+        "played": 0,
+        "points": 0
       }
     ],
     "10": [
       {
         "played": 10,
         "points": 324
+      },
+      {
+        "played": 0,
+        "points": 0
       }
     ],
     "11": [
       {
         "played": 10,
         "points": 348
+      },
+      {
+        "played": 0,
+        "points": 0
       }
     ]
   },
@@ -75,12 +119,14 @@
       "homeTeamId": 3,
       "awayTeamId": 6,
       "homeWinProb": [
-        0.65
+        0.65,
+        0.693
       ],
       "dayMoves": [
         {
           "6": 1
-        }
+        },
+        null
       ],
       "changes": [
         {
@@ -115,12 +161,14 @@
       "homeTeamId": 5,
       "awayTeamId": 4,
       "homeWinProb": [
-        0.055
+        0.055,
+        0.031
       ],
       "dayMoves": [
         {
           "5": 1
-        }
+        },
+        null
       ],
       "changes": [
         {
@@ -171,6 +219,7 @@
       "homeTeamId": 11,
       "awayTeamId": 1,
       "homeWinProb": [
+        0.159,
         0.159
       ],
       "changes": [
@@ -201,6 +250,7 @@
       "homeTeamId": 2,
       "awayTeamId": 10,
       "homeWinProb": [
+        0.037,
         0.037
       ],
       "changes": [
@@ -229,7 +279,8 @@
       "homeTeamId": 9,
       "awayTeamId": 8,
       "homeWinProb": [
-        0.988
+        0.988,
+        0.966
       ],
       "changes": [
         {

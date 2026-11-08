@@ -7,7 +7,7 @@
  *
  *   • live score + gap (ESPN totalPointsLive)
  *   • starters left tonight + key players tonight (games not started yet)
- *   • moves left this week: 1 move per day of the matchup (week 1 = 6 days)
+ *   • moves left this week: 1 move per game day of the matchup (no-game days don't count)
  *   • projected final score + win % for the rest of the week
  *
  * --as-if-last-night: test mode — treat today as the week's last day
@@ -75,9 +75,10 @@ if (remaining.some(sp => sp > today)) {
   else console.error(`⚠️ ESPN ${next.status} for tomorrow's rosters — using today's.`);
 }
 
-// League rule: 1 move per day of the matchup, so the weekly limit is the
-// week's length (usually 7; ESPN: matchupLimitPerScoringPeriod).
-const moveLimit = weekDays.length;
+// League rule: 1 move per day of the matchup (ESPN: matchupLimitPerScoringPeriod).
+// A day with no NBA games (e.g. Election Day) gives no move.
+const gameDays = new Set(season.schedules.flatMap((t: any) => t.games.map((g: any) => g.scoringPeriodId)));
+const moveLimit = weekDays.filter(sp => gameDays.has(sp)).length;
 const members = new Map<string, any>((league.members || []).map((m: any) => [m.id, m]));
 // Same overrides as lib/espn.ts — two owners share a first name.
 const OWNER_LABEL: Record<string, string> = { 'Nordau Peaky Blinder': 'Barda', "Flint Tropics 70's Show": 'Gelless' };

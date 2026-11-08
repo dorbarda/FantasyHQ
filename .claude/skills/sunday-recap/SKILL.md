@@ -23,7 +23,8 @@ npx tsx .claude/skills/sunday-recap/recap-data.mts --out recaps/recap.json
 
 Fields per team: `live`, `playersLeftTonight`, `keyPlayersTonight` (top 3 by
 average, still to play tonight), `movesUsed` this week, `movesLeft` (league rule:
-1 move per day of the matchup, so the limit = days in the week — usually 7),
+1 move per game day of the matchup, so the limit = days with NBA games — usually 7;
+week 3 of 2026-27 had 6, no games on Election Day),
 `projected`, `winProb`. Per matchup: `gap`,
 `leader`, `projectedWinner`, `favoriteWinProb`. Matchups come sorted closest first.
 

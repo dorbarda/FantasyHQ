@@ -204,6 +204,8 @@ lib/__tests__/trades.test.ts
    `TRADES_PUBLIC = false`: no menu links, `/trades` is a 404, owner codes are
    refused, only `ADMIN_KEY` opens team pages. The Monday task keeps running
    so Dor can review. Flip to `true` to launch.
+   **Launched for week 4 (2026-11-09):** `TRADES_PUBLIC = true`, and Trades
+   replaces League in the mobile bottom bar (League stays in the More drawer).
 
 1. Re-run the data after Dor moves the ESPN trade deadline to Mar 1 and
    check `league.tradeDeadline`.

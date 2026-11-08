@@ -1,6 +1,7 @@
 'use client';
 
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import NbaLogo from '@/components/NbaLogo';
 
 const SCORE_COLORS: Record<string, string> = {
   '4-0': '#10B981',
@@ -130,6 +131,7 @@ export default function PlayoffSeriesAnalyticsCard({ label, teams, winPicks, sco
               ].map(({ team, count, pct, color }) => team ? (
                 <div key={team} className="flex items-center gap-2">
                   <span className="shrink-0 w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
+                  <NbaLogo team={team} size={16} />
                   <span className="text-[11px] text-foreground flex-1 truncate">{team}</span>
                   <span className="text-[11px] font-semibold text-secondary shrink-0">
                     {count}/{total} · {pct}%

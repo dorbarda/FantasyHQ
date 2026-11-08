@@ -1,5 +1,6 @@
 import OwnerAvatar from './OwnerAvatar';
 import type { TradeIdea, TradePlayerCard, TradeAngle, DiagnosisFlag } from '@/lib/trade-output';
+import NbaLogo from '@/components/NbaLogo';
 
 export const ANGLE_LABELS: Record<TradeAngle, string> = {
   'sell-high': 'Sell high',
@@ -44,7 +45,7 @@ function PlayerRow({ p }: { p: TradePlayerCard }) {
         )}
       </div>
       <p className="text-[12px] text-muted">
-        {p.proTeam} · {p.positions.join('/')}
+        <NbaLogo team={p.proTeam} size={14} className="mr-0.5 -mt-0.5" />{p.proTeam} · {p.positions.join('/')}
       </p>
       <p className="type-stat text-[12px] text-foreground mt-0.5">
         {fmt(p.avgSeason)} avg · {fmt(p.avgProjected)} proj · {p.gamesPlayoffs} playoff games

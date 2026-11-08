@@ -8,6 +8,7 @@ import TeamCategoryRadar from '@/components/TeamCategoryRadar';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import NbaLogo from '@/components/NbaLogo';
 
 export const revalidate = 3600;
 
@@ -520,7 +521,8 @@ export default async function TeamProfilePage({
                         {p.position}
                       </span>
                       {p.proTeam !== '—' && (
-                        <span className="text-[10px] font-semibold text-tertiary bg-background border border-border rounded px-1.5 py-0.5">
+                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-tertiary bg-background border border-border rounded px-1.5 py-0.5">
+                          <NbaLogo team={p.proTeam} size={12} />
                           {p.proTeam}
                         </span>
                       )}

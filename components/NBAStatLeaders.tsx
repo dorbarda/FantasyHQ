@@ -1,4 +1,5 @@
 import type { NBAStatLeader, NBAStatLeadersData } from '@/lib/types';
+import NbaLogo from '@/components/NbaLogo';
 
 interface Props {
   leaders: NBAStatLeadersData;
@@ -67,7 +68,7 @@ function StatCard({
                   {p.playerName}
                 </p>
                 <p className="text-[11px] text-muted">
-                  {p.team} · {p.gp} GP
+                  <NbaLogo team={p.team} size={13} className="mr-1 -mt-0.5" />{p.team} · {p.gp} GP
                 </p>
               </div>
 

@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { hasEspnCredentials, getMatchups } from '@/lib/espn';
 import matchupsJson from '@/data/matchups.json';
-import type { Matchup, MatchupsData } from '@/lib/types';
+import type { MatchupsData } from '@/lib/types';
 import OwnerAvatar from '@/components/OwnerAvatar';
 import RecapHighlights from '@/components/RecapHighlights';
 import HomeTrends from '@/components/HomeTrends';
@@ -14,6 +14,14 @@ import { hasSeasonStarted, topLast30, surprises, busts } from '@/lib/player-tren
 import { readSnapshot } from '@/lib/snapshots';
 import { computePowerRankings } from '@/lib/power-rankings';
 import type { MatchupDepthData } from '@/lib/types';
+import WeekPulseCard, { type PulseRow } from '@/components/WeekPulseCard';
+import { readWeekProjection, readWeekDaily } from '@/lib/projections-data';
+import { matchupDaily } from '@/lib/week-daily';
+import { winPulse } from '@/lib/week-pulse';
+import { loadTonight } from '@/lib/tonight-data';
+import { getScoreboard, nextDate } from '@/lib/nba-scoreboard';
+import { LastNightNba, NextNbaGames } from '@/components/NbaNightCards';
+import HomeChapterNav from '@/components/HomeChapterNav';
 import {
   managerOfTheNight,
   worstManagerOfTheNight,
@@ -21,12 +29,13 @@ import {
   type ManagerAward,
   type NightPlayer,
 } from '@/lib/nightly';
+import NbaLogo from '@/components/NbaLogo';
 
 export const revalidate = 1800;
 
 /**
  * Home — the daily recap: what happened last night. Spec: docs/HOME-SPEC.md.
- * Everything except the closest matchup reads the nightly snapshots, so the
+ * Everything except the "This week" card reads the nightly snapshots, so the
  * page renders without waiting on ESPN or YouTube.
  */
 
@@ -38,117 +47,69 @@ function nightLabel(date: string): string {
     : d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' });
 }
 
-// ─── Closest matchup ──────────────────────────────────────────────────────────
+// ─── Chapters ─────────────────────────────────────────────────────────────────
 
-function findClosestMatchup(matchups: Matchup[]): Matchup {
-  return matchups.reduce((closest, m) => {
-    const diff = Math.abs(m.home.actualScore - m.away.actualScore);
-    const closestDiff = Math.abs(closest.home.actualScore - closest.away.actualScore);
-    return diff < closestDiff ? m : closest;
-  });
+const CHAPTERS = [
+  { id: 'fantasy', label: '🏆 Fantasy' },
+  { id: 'nba', label: '🏀 NBA' },
+  { id: 'highlights', label: '🎬 Highlights' },
+];
+
+/** One "chapter" of the scrolling home page: big header, content, link to the next one. */
+function Chapter({
+  id, number, title, subtitle, next, tinted, children,
+}: {
+  id: string;
+  number: number;
+  title: string;
+  subtitle: string;
+  next?: { id: string; label: string };
+  tinted?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <section
+      id={id}
+      className={`scroll-mt-[108px] md:scroll-mt-[52px] px-4 sm:px-6 pt-10 pb-8 border-t border-border ${tinted ? 'bg-surface-secondary' : ''}`}
+    >
+      <div className="max-w-[1480px]">
+        <header className="home-reveal mb-6">
+          <p className="text-[12px] font-bold tabular-nums text-accent-text tracking-widest">
+            {String(number).padStart(2, '0')}
+          </p>
+          <h2 className="text-[28px] sm:text-[36px] font-black tracking-tight leading-[1.05] text-foreground mt-1">
+            {title}
+          </h2>
+          <p className="text-[13px] text-secondary mt-2">{subtitle}</p>
+        </header>
+        <div className="home-reveal">{children}</div>
+        {next && (
+          <div className="flex justify-center mt-10">
+            <a
+              href={`#${next.id}`}
+              className="group inline-flex flex-col items-center gap-1 text-[12px] font-semibold text-muted hover:text-foreground transition-colors"
+            >
+              <span>Next · {next.label}</span>
+              <span className="text-[18px] leading-none transition-transform group-hover:translate-y-0.5">↓</span>
+            </a>
+          </div>
+        )}
+      </div>
+    </section>
+  );
 }
 
-// ─── Closest Matchup Hero Card ────────────────────────────────────────────────
+// ─── Next NBA game day ────────────────────────────────────────────────────────
 
-function ClosestMatchupCard({ matchup, week }: { matchup: Matchup; week: number }) {
-  const { home, away, isFinal, isLive } = matchup;
-  const margin = Math.abs(home.actualScore - away.actualScore);
-  const leader = home.actualScore >= away.actualScore ? home : away;
-  const trailer = home.actualScore >= away.actualScore ? away : home;
-  const hasScores = home.actualScore > 0 || away.actualScore > 0;
-
-  return (
-    <div className="rounded-2xl overflow-hidden bg-panel text-white">
-      {/* Header bar */}
-      <div className="flex items-center justify-between px-5 py-3 border-b border-white/10">
-        <div className="flex items-center gap-2">
-          <svg viewBox="0 0 12 12" fill="#C8956C" className="w-3 h-3">
-            <path d="M6 1l1.3 3h3l-2.4 1.8.9 3L6 7l-2.8 1.8.9-3L1.7 4h3z"/>
-          </svg>
-          <span className="text-[12px] font-semibold text-accent uppercase tracking-wider">
-            Week {week} · Closest Game
-          </span>
-        </div>
-        {isLive && (
-          <div className="flex items-center gap-1.5">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-positive opacity-75" />
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-positive" />
-            </span>
-            <span className="text-[11px] font-semibold text-positive">Live</span>
-          </div>
-        )}
-        {isFinal && (
-          <span className="text-[11px] font-semibold text-panel-text-muted">Final</span>
-        )}
-      </div>
-
-      {/* Scores */}
-      <div className="px-5 py-6">
-        {hasScores ? (
-          <div className="flex items-center justify-center gap-4">
-            {/* Leader */}
-            <div className="flex-1 text-right">
-              <p className="text-[13px] font-medium text-panel-text-muted mb-1">{leader.ownerName}</p>
-              <p className="text-[34px] sm:text-[48px] font-bold tabular-nums leading-none text-white">
-                {leader.actualScore.toFixed(1)}
-              </p>
-              <p className="text-[12px] text-panel-text-muted mt-1 truncate">{leader.teamName}</p>
-              {!isFinal && leader.playersRemainingToday > 0 && (
-                <p className="text-[11px] text-panel-text-muted mt-1">{leader.playersRemainingToday} starter game{leader.playersRemainingToday !== 1 ? 's' : ''} left</p>
-              )}
-            </div>
-
-            {/* Divider */}
-            <div className="flex flex-col items-center shrink-0 px-2">
-              <span className="text-[20px] font-light text-panel-text">—</span>
-              <div className="mt-2 px-3 py-1 rounded-full bg-accent/20 border border-accent/30">
-                <span className="text-[12px] font-bold text-accent">
-                  ±{margin.toFixed(1)}
-                </span>
-              </div>
-            </div>
-
-            {/* Trailer */}
-            <div className="flex-1 text-left">
-              <p className="text-[13px] font-medium text-panel-text-muted mb-1">{trailer.ownerName}</p>
-              <p className="text-[34px] sm:text-[48px] font-bold tabular-nums leading-none text-panel-text-muted">
-                {trailer.actualScore.toFixed(1)}
-              </p>
-              <p className="text-[12px] text-panel-text-muted mt-1 truncate">{trailer.teamName}</p>
-              {!isFinal && trailer.playersRemainingToday > 0 && (
-                <p className="text-[11px] text-panel-text-muted mt-1">{trailer.playersRemainingToday} starter game{trailer.playersRemainingToday !== 1 ? 's' : ''} left</p>
-              )}
-            </div>
-          </div>
-        ) : (
-          <div className="text-center py-4">
-            <p className="text-[15px] text-panel-text-muted">{home.ownerName} vs {away.ownerName}</p>
-            <p className="text-[12px] text-panel-text mt-1">Scores not yet available</p>
-          </div>
-        )}
-      </div>
-
-      {/* Projected row */}
-      {!isFinal && (home.projectedScore > 0 || away.projectedScore > 0) && (
-        <div className="flex items-center justify-between px-5 py-3 border-t border-white/5 bg-white/3">
-          <div className="text-right flex-1">
-            <span className="text-[11px] text-panel-text-muted">Proj </span>
-            <span className="text-[12px] font-semibold text-panel-text-muted tabular-nums">
-              {leader.projectedScore.toFixed(1)}
-            </span>
-          </div>
-          <span className="text-[10px] text-panel-text px-3">PROJECTED</span>
-          <div className="text-left flex-1">
-            <span className="text-[11px] text-panel-text-muted">Proj </span>
-            <span className="text-[12px] font-semibold text-panel-text-muted tabular-nums">
-              {trailer.projectedScore.toFixed(1)}
-            </span>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+/** Games of the first day with games after `date` (looks 4 days ahead). */
+async function nextGameDay(date: string) {
+  let d = date;
+  for (let i = 0; i < 4; i++) {
+    d = nextDate(d);
+    const games = await getScoreboard(d);
+    if (games.length > 0) return games;
+  }
+  return [];
 }
 
 // ─── Top players of the night ─────────────────────────────────────────────────
@@ -171,7 +132,7 @@ function TopPlayersCard({ players }: { players: NightPlayer[] }) {
             <div className="flex-1 min-w-0">
               <p className="text-[15px] font-semibold text-foreground truncate">
                 {p.playerName}
-                {p.proTeam && <span className="text-[12px] font-medium text-muted"> · {p.proTeam}</span>}
+                {p.proTeam && <span className="text-[12px] font-medium text-muted"> · <NbaLogo team={p.proTeam} size={14} className="mr-0.5 -mt-0.5" />{p.proTeam}</span>}
               </p>
               <div className="flex items-center gap-1.5 mt-0.5 min-w-0">
                 <OwnerAvatar ownerName={p.ownerName} teamName={p.teamName} size={16} />
@@ -241,9 +202,30 @@ export default async function HomePage() {
     }
   }
   const { matchups, week } = matchupsData;
-  const closestMatchup = matchups.length > 0 ? findClosestMatchup(matchups) : null;
 
+  // "This week" card: win % from the day-by-day file, today's players live.
+  const espnId = (teamId: string) => Number(teamId.replace(/^team/, ''));
+  const frozen = readWeekProjection(week);
+  const daily = readWeekDaily(week);
   const night = loadNightlyRecap();
+  const [tonight, nbaLastNight, nbaNext] = await Promise.all([
+    matchups.some(m => !m.isFinal) ? loadTonight(week) : Promise.resolve(null),
+    night ? getScoreboard(night.date) : Promise.resolve([]),
+    night ? nextGameDay(night.date) : Promise.resolve([]),
+  ]);
+  const pulseRows: PulseRow[] = matchups.map(m => {
+    const l = espnId(m.home.teamId);
+    const r = espnId(m.away.teamId);
+    const d = matchupDaily(frozen, daily, l, r);
+    const tl = tonight?.teams.get(l);
+    const tr = tonight?.teams.get(r);
+    return {
+      matchup: m,
+      pulse: d ? winPulse(d.winProb) : null,
+      tonight: tl && tr ? { left: tl, right: tr } : null,
+    };
+  });
+
   const players = night ? topPlayers(night.players) : [];
   const best = night ? managerOfTheNight(night.teams) : null;
   const worst = night ? worstManagerOfTheNight(night.teams) : null;
@@ -256,7 +238,7 @@ export default async function HomePage() {
   const power = depth ? computePowerRankings(depth.data.rows) : null;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="home-chapters min-h-screen bg-background">
       {/* Header */}
       <div className="px-4 sm:px-6 pt-6 pb-4">
         <div className="flex items-center gap-4">
@@ -271,35 +253,69 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <div className="px-4 sm:px-6 pb-8 max-w-[1480px] grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_340px] gap-6 items-start">
-        <div className="min-w-0 space-y-6">
-          {night ? (
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
-              {players.length > 0 && <TopPlayersCard players={players} />}
-              <div className="space-y-4">
-                {best && <ManagerCard award={best} kind="best" />}
-                {worst && <ManagerCard award={worst} kind="worst" />}
+      <HomeChapterNav chapters={CHAPTERS} />
+
+      {/* 1 · Fantasy */}
+      <Chapter
+        id="fantasy"
+        number={1}
+        title="Tonight in our fantasy league"
+        subtitle={night ? `Last night · ${nightLabel(night.date)} · Week ${week}` : `Week ${week}`}
+        next={CHAPTERS[1]}
+      >
+        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_340px] gap-6 items-start">
+          <div className="min-w-0 space-y-6">
+            {night ? (
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
+                {players.length > 0 && <TopPlayersCard players={players} />}
+                <div className="space-y-4">
+                  {best && <ManagerCard award={best} kind="best" />}
+                  {worst && <ManagerCard award={worst} kind="worst" />}
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="rounded-2xl bg-surface border border-border p-8 text-center">
-              <p className="text-[15px] font-semibold text-foreground">No games yet this season</p>
-              <p className="text-[13px] text-secondary mt-1">The daily recap starts the morning after opening night.</p>
-            </div>
-          )}
+            ) : (
+              <div className="rounded-2xl bg-surface border border-border p-8 text-center">
+                <p className="text-[15px] font-semibold text-foreground">No games yet this season</p>
+                <p className="text-[13px] text-secondary mt-1">The daily recap starts the morning after opening night.</p>
+              </div>
+            )}
+            {pulseRows.length > 0 && <WeekPulseCard rows={pulseRows} week={week} />}
+          </div>
 
-          {closestMatchup && <ClosestMatchupCard matchup={closestMatchup} week={week} />}
-
-          <RecapHighlights clips={clips} />
+          <HomeTrends
+            last30={trendsLive ? topLast30(trendsLive) : null}
+            movers={trendsLive ? { surprises: surprises(trendsLive), busts: busts(trendsLive) } : null}
+            power={power ? power.entries.slice(0, 3) : []}
+            powerWeeks={power && power.recentWeeks.length > 0 ? weekRange(power.recentWeeks) : null}
+          />
         </div>
+      </Chapter>
 
-        <HomeTrends
-          last30={trendsLive ? topLast30(trendsLive) : null}
-          movers={trendsLive ? { surprises: surprises(trendsLive), busts: busts(trendsLive) } : null}
-          power={power ? power.entries.slice(0, 3) : []}
-          powerWeeks={power && power.recentWeeks.length > 0 ? weekRange(power.recentWeeks) : null}
-        />
-      </div>
+      {/* 2 · NBA */}
+      <Chapter
+        id="nba"
+        number={2}
+        title="Tonight in the NBA"
+        subtitle="Last night's scores and the next games, in Israel time"
+        next={CHAPTERS[2]}
+        tinted
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start max-w-[1100px]">
+          <LastNightNba games={nbaLastNight} dateLabel={night ? nightLabel(night.date) : ''} />
+          <NextNbaGames games={nbaNext} rostered={tonight?.rostered ?? null} />
+        </div>
+      </Chapter>
+
+      {/* 3 · Highlights */}
+      <Chapter id="highlights" number={3} title="Highlights" subtitle="Last night's best plays">
+        {clips.length > 0 ? (
+          <RecapHighlights clips={clips} showTitle={false} />
+        ) : (
+          <div className="rounded-2xl bg-surface border border-border p-8 text-center">
+            <p className="text-[13px] text-secondary">No clips for last night yet.</p>
+          </div>
+        )}
+      </Chapter>
     </div>
   );
 }

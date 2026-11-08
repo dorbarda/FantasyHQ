@@ -18,10 +18,11 @@ morning. The weekly story stays on `/recap`.
 3. **Manager of the night** — highest total points that night.
 4. **Worst manager of the night** — lowest **points per player who played**
    (option b). Managers with nobody playing are left out.
-5. **Closest matchup** — the current week's closest head-to-head (live ESPN,
-   same card as before). "Proj" = points so far + player average × startable
-   games left (same averages and lineup rules as the matchup projections).
+5. ~~Closest matchup~~ — replaced 2026-11-08 by the "Every matchup" card
+   (§6).
 6. **Highlights** — last night's clips, same cards as `/recap`.
+
+Since 2026-11-08 these sit in three chapters — see §6.
 
 ## 2. Definitions
 
@@ -83,3 +84,44 @@ The preseason projection is frozen once into
 (ESPN keeps updating its projection in-season). Data: new nightly snapshot
 `player-trends`, built by `lib/player-trends-data.ts`; logic in
 `lib/player-trends.ts` (tested). Refreshes with the 05:47/10:47 runs, not live.
+
+## 6. Chapters, every-matchup card, NBA boxes (added 2026-11-08)
+
+The page scrolls as three chapters, each with a big header and a
+"Next ↓" link. A sticky menu (🏆 Fantasy · 🏀 NBA · 🎬 Highlights) glides
+to each one and highlights the chapter on screen. Chapters fade in as they
+scroll into view (CSS scroll-driven animation; off with reduced motion, and
+browsers without it just show everything). No scroll locking — the fantasy
+chapter is taller than a phone screen.
+
+1. **Tonight in our fantasy league** — top 5, best/worst manager, the
+   side column (§5), and **Every matchup** (`components/WeekPulseCard.tsx`):
+   - score, **win chance** and **last night's swing** — from the
+     day-by-day file `data/projections/<season>/week-NN-daily.json`, so it
+     is the morning number and does not move during live games. Swing = the
+     last day dot minus the dot before it; "now" also follows roster moves
+     made after the night (`lib/week-pulse.ts`, tested).
+   - **playing today** per team + its top 2 averages — live ESPN rosters
+     through the projection lineup rules (IR out, OUT players don't start,
+     games already started don't count) (`lib/tonight-data.ts`).
+   - sorted by closest race (win chance nearest 50%); the biggest swing
+     (≥ 10 points of %) gets a 🎢 badge.
+2. **Tonight in the NBA** (`components/NbaNightCards.tsx`) — ESPN's public
+   scoreboard, no key (`lib/nba-scoreboard.ts`, tested, cached 5 min):
+   - **last night** = the nightly snapshot's date: final scores, records,
+     each game's top scorer, ESPN's game note.
+   - **next games** = first day with games after it (looks 4 days ahead),
+     tip-off in **Israel time** (`Asia/Jerusalem`, so summer/winter time is
+     automatic), and 👥 = players on our rosters in that game (IR not counted).
+3. **Highlights** — unchanged clips.
+
+Note: the live roster call is ~2.7 MB, over Next's 2 MB fetch cache, so it
+is fetched fresh — at most once per 30-minute page revalidation.
+
+## 7. NBA team logos (added 2026-11-08)
+
+`public/nba/<key>.png` + `<key>-dark.png`, 96×96, downloaded once from
+ESPN's CDN. `lib/nba-teams.ts` maps every spelling our sources use
+(NYK/NY, GSW/GS, full names, nicknames) to a logo; `components/NbaLogo.tsx`
+renders both and CSS shows the one for the current theme. Used across the
+site wherever an NBA team appears.

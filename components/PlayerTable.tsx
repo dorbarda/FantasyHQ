@@ -1,5 +1,6 @@
 import { Player } from '@/lib/types';
 import PositionBadge from './PositionBadge';
+import NbaLogo from '@/components/NbaLogo';
 
 interface PlayerTableProps {
   players: Player[];
@@ -36,7 +37,7 @@ export default function PlayerTable({ players }: PlayerTableProps) {
               <PositionBadge position={player.position} />
               <p className="text-[13px] font-semibold tracking-tight text-foreground truncate">{player.name}</p>
             </div>
-            <p className="text-[11px] text-secondary">{player.team}</p>
+            <p className="text-[11px] text-secondary"><NbaLogo team={player.team} size={12} className="mr-0.5 -mt-0.5" />{player.team}</p>
           </div>
 
           <span className="text-[13px] font-medium text-foreground text-right tabular-nums">{player.pts.toFixed(1)}</span>

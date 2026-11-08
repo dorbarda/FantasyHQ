@@ -19,12 +19,12 @@ function sourceLabel(source: string): string {
   return source === 'nba on youtube' ? 'NBA on YouTube' : `via ${source}`;
 }
 
-export default function RecapHighlights({ clips }: { clips: Highlight[] }) {
+export default function RecapHighlights({ clips, showTitle = true }: { clips: Highlight[]; showTitle?: boolean }) {
   if (clips.length === 0) return null;
 
   return (
-    <section className="mb-6">
-      <p className="type-section-label mb-3">Highlights</p>
+    <section className={showTitle ? 'mb-6' : ''}>
+      {showTitle && <p className="type-section-label mb-3">Highlights</p>}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {clips.map(clip => (

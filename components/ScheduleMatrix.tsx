@@ -1,4 +1,5 @@
 import type { ScheduleWeek, ScheduleRow } from '@/lib/espn-schedule';
+import NbaLogo from '@/components/NbaLogo';
 
 /** Game count drives the colour — that's the question the grid answers. */
 function countColor(games: number, maxGames: number): string {
@@ -111,7 +112,7 @@ export default function ScheduleMatrix({ week }: { week: ScheduleWeek }) {
                   className={`${i < rows.length - 1 ? 'border-b border-border' : ''} ${rowTint(row.gameCount, maxGames)}`}
                 >
                   <td className="sticky left-0 bg-surface px-3 py-2 border-r border-border z-10">
-                    <span className="text-[13px] font-semibold text-foreground">{row.abbrev}</span>
+                    <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-foreground"><NbaLogo team={row.abbrev} size={18} />{row.abbrev}</span>
                   </td>
 
                   {row.cells.map((cell, idx) => (

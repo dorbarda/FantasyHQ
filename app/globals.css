@@ -286,3 +286,8 @@ html:has(.home-chapters) { scroll-behavior: smooth; }
     }
   }
 }
+
+/* ─── NBA logos (components/NbaLogo.tsx) — one per theme ─────────────────── */
+.nba-logo-dark { display: none; }
+:root[data-theme="dark"] .nba-logo-light { display: none; }
+:root[data-theme="dark"] .nba-logo-dark { display: inline-block; }

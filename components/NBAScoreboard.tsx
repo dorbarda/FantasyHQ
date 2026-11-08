@@ -1,4 +1,5 @@
 import type { NBAGame } from '@/lib/types';
+import NbaLogo from '@/components/NbaLogo';
 
 function statusStyle(status: NBAGame['status']) {
   if (status === 'live') return 'text-positive-bright font-semibold';
@@ -34,7 +35,8 @@ function GameCard({ game }: { game: NBAGame }) {
 
       {/* Away team */}
       <div className="flex items-center justify-between">
-        <span className={`text-[13px] font-semibold ${awayLeads && isFinal ? 'text-foreground' : isLive && awayLeads ? 'text-foreground' : 'text-muted'}`}>
+        <span className={`inline-flex items-center gap-1.5 text-[13px] font-semibold ${awayLeads && isFinal ? 'text-foreground' : isLive && awayLeads ? 'text-foreground' : 'text-muted'}`}>
+          <NbaLogo team={away.tricode} size={18} />
           {away.tricode}
           <span className="text-[10px] font-normal text-secondary ml-1">{away.wins}-{away.losses}</span>
         </span>
@@ -47,7 +49,8 @@ function GameCard({ game }: { game: NBAGame }) {
 
       {/* Home team */}
       <div className="flex items-center justify-between mt-0.5">
-        <span className={`text-[13px] font-semibold ${homeLeads && isFinal ? 'text-foreground' : isLive && homeLeads ? 'text-foreground' : 'text-muted'}`}>
+        <span className={`inline-flex items-center gap-1.5 text-[13px] font-semibold ${homeLeads && isFinal ? 'text-foreground' : isLive && homeLeads ? 'text-foreground' : 'text-muted'}`}>
+          <NbaLogo team={home.tricode} size={18} />
           {home.tricode}
           <span className="text-[10px] font-normal text-secondary ml-1">{home.wins}-{home.losses}</span>
         </span>

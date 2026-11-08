@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { loadPlayoffYear, listPlayoffYears } from '@/lib/playoffs';
 import { computeAllScores } from '@/lib/playoff-scoring';
 import type { PlayoffYearData } from '@/lib/playoffs';
+import NbaLogo from '@/components/NbaLogo';
 
 export const dynamicParams = false;
 
@@ -80,7 +81,11 @@ function ResultsSection({ title, items }: {
           <div key={i} className={`flex items-center justify-between px-4 py-2.5 border-b border-surface-secondary last:border-0 ${i % 2 === 0 ? 'bg-surface' : 'bg-background'}`}>
             <div className="min-w-0 flex-1">
               <p className="text-[13px] font-semibold text-foreground">{item.label}</p>
-              <p className="text-[12px] text-tertiary mt-0.5">{item.teams[0]} vs {item.teams[1]}</p>
+              <p className="flex items-center gap-1.5 flex-wrap text-[12px] text-tertiary mt-0.5">
+                <NbaLogo team={item.teams[0]} size={16} />{item.teams[0]}
+                <span>vs</span>
+                <NbaLogo team={item.teams[1]} size={16} />{item.teams[1]}
+              </p>
             </div>
             {item.winner && (
               <div className="flex items-center gap-2 shrink-0 ml-4">
@@ -89,8 +94,8 @@ function ResultsSection({ title, items }: {
                     {item.score}
                   </span>
                 )}
-                <span className="text-[12px] font-semibold text-positive bg-positive-surface rounded-lg px-3 py-1">
-                  ✓ {item.winner}
+                <span className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-positive bg-positive-surface rounded-lg px-3 py-1">
+                  ✓ <NbaLogo team={item.winner} size={16} />{item.winner}
                 </span>
               </div>
             )}

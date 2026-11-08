@@ -1,3 +1,4 @@
+import NbaLogo from '@/components/NbaLogo';
 import { gameTopScorer, israelDay, israelTime, type ScoreboardGame, type ScoreboardTeam } from '@/lib/nba-scoreboard';
 
 /**
@@ -21,7 +22,8 @@ function TeamScore({ t, done }: { t: ScoreboardTeam; done: boolean }) {
   const strong = !done || t.winner;
   return (
     <div className="flex items-center justify-between gap-2">
-      <p className={`text-[14px] font-semibold ${strong ? 'text-foreground' : 'text-secondary'}`}>
+      <p className={`flex items-center gap-2 text-[14px] font-semibold ${strong ? 'text-foreground' : 'text-secondary'}`}>
+        <NbaLogo team={t.abbrev} size={22} />
         {t.abbrev}
         {t.record && <span className="text-[11px] font-medium text-muted ml-1.5">{t.record}</span>}
       </p>
@@ -93,10 +95,12 @@ export function NextNbaGames({ games, rostered }: { games: ScoreboardGame[]; ros
                     <p className={`text-[11px] font-semibold ${g.state === 'in' ? 'text-positive-text' : 'text-muted'}`}>{g.detail}</p>
                   )}
                 </div>
-                <p className="flex-1 min-w-0 text-[14px] font-semibold text-foreground truncate">
+                <p className="flex-1 min-w-0 flex items-center gap-1.5 text-[14px] font-semibold text-foreground truncate">
+                  <NbaLogo team={g.away.abbrev} size={20} />
                   {g.away.abbrev}
                   {g.state !== 'pre' && <span className="tabular-nums text-secondary"> {g.away.score}</span>}
-                  <span className="text-muted font-normal"> @ </span>
+                  <span className="text-muted font-normal px-0.5">@</span>
+                  <NbaLogo team={g.home.abbrev} size={20} />
                   {g.home.abbrev}
                   {g.state !== 'pre' && <span className="tabular-nums text-secondary"> {g.home.score}</span>}
                 </p>

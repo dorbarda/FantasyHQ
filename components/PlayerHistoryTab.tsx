@@ -3,6 +3,7 @@
 import { useState, useTransition, useCallback } from 'react';
 import { searchPlayerHistory, PlayerHistoryResult, PlayerSeasonData } from '@/app/draft/actions';
 import type { DraftGrade } from '@/lib/types';
+import NbaLogo from '@/components/NbaLogo';
 
 // ─── Grade badge (mirrors DraftValueAnalysis) ────────────────────────────────
 
@@ -133,7 +134,7 @@ function PlayerCard({ result }: { result: PlayerHistoryResult }) {
         <div>
           <p className="text-[16px] font-semibold text-foreground">{result.playerName}</p>
           <p className="text-[12px] text-secondary mt-0.5">
-            {result.seasons[0].position} · {result.seasons[0].proTeam}
+            {result.seasons[0].position} · <NbaLogo team={result.seasons[0].proTeam} size={14} className="mr-0.5 -mt-0.5" />{result.seasons[0].proTeam}
           </p>
         </div>
         <div className="flex gap-5 text-right shrink-0">

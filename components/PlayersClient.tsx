@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import type { Player } from '@/lib/types';
+import NbaLogo from '@/components/NbaLogo';
 
 // ─── Position badge ───────────────────────────────────────────────────────────
 
@@ -94,7 +95,7 @@ function PodiumCard({ player, rank, view }: { player: Player; rank: number; view
       {/* Name + team */}
       <div>
         <p className="text-[17px] font-bold text-foreground leading-tight">{player.name}</p>
-        <p className="text-[12px] text-secondary mt-0.5">{player.team}</p>
+        <p className="text-[12px] text-secondary mt-0.5"><NbaLogo team={player.team} size={16} className="mr-0.5 -mt-0.5" />{player.team}</p>
       </div>
 
       {/* FP */}
@@ -174,7 +175,7 @@ function TableRow({
         <PosBadge pos={player.position} />
         <div className="min-w-0">
           <p className="text-[13px] font-semibold text-foreground truncate leading-tight">{player.name}</p>
-          <p className="text-[10px] text-secondary">{player.team}</p>
+          <p className="text-[10px] text-secondary"><NbaLogo team={player.team} size={12} className="mr-0.5 -mt-0.5" />{player.team}</p>
         </div>
       </div>
 

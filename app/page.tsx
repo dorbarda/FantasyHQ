@@ -29,6 +29,7 @@ import {
   type ManagerAward,
   type NightPlayer,
 } from '@/lib/nightly';
+import NbaLogo from '@/components/NbaLogo';
 
 export const revalidate = 1800;
 
@@ -131,7 +132,7 @@ function TopPlayersCard({ players }: { players: NightPlayer[] }) {
             <div className="flex-1 min-w-0">
               <p className="text-[15px] font-semibold text-foreground truncate">
                 {p.playerName}
-                {p.proTeam && <span className="text-[12px] font-medium text-muted"> · {p.proTeam}</span>}
+                {p.proTeam && <span className="text-[12px] font-medium text-muted"> · <NbaLogo team={p.proTeam} size={14} className="mr-0.5 -mt-0.5" />{p.proTeam}</span>}
               </p>
               <div className="flex items-center gap-1.5 mt-0.5 min-w-0">
                 <OwnerAvatar ownerName={p.ownerName} teamName={p.teamName} size={16} />

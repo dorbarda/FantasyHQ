@@ -1,4 +1,5 @@
 import type { NBAConferenceStanding } from '@/lib/types';
+import NbaLogo from '@/components/NbaLogo';
 
 interface Props {
   east: NBAConferenceStanding[];
@@ -55,6 +56,7 @@ function ConferenceTable({
 
               {/* Team */}
               <div className="flex items-center gap-2 min-w-0">
+                <NbaLogo team={row.teamTricode || row.teamName} size={18} />
                 <span className="text-[12px] font-bold text-foreground tabular-nums shrink-0">
                   {row.teamTricode || row.teamName.slice(0, 3).toUpperCase()}
                 </span>

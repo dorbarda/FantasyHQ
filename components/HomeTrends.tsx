@@ -2,6 +2,7 @@ import Link from 'next/link';
 import OwnerAvatar from '@/components/OwnerAvatar';
 import { rankGain, type TrendPlayer } from '@/lib/player-trends';
 import type { PowerRankingEntry } from '@/lib/power-rankings';
+import NbaLogo from '@/components/NbaLogo';
 
 /** Home page side column: last-30 leaders, surprises & busts, power rankings. */
 
@@ -33,7 +34,7 @@ function PlayerLine({ p, i, children }: { p: TrendPlayer; i: number; children: R
       <div className="flex-1 min-w-0">
         <p className="text-[13px] font-semibold text-foreground truncate">
           {p.name}
-          {p.proTeam && <span className="text-[11px] font-medium text-muted"> · {p.proTeam}</span>}
+          {p.proTeam && <span className="text-[11px] font-medium text-muted"> · <NbaLogo team={p.proTeam} size={13} className="mr-0.5 -mt-0.5" />{p.proTeam}</span>}
         </p>
         <p className="text-[11px] text-secondary truncate">{p.ownerName ?? 'Free agent'}</p>
       </div>

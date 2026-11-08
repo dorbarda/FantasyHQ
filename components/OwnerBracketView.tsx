@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import NbaLogo from '@/components/NbaLogo';
 
 type SeriesStatus = 'pending' | 'correct' | 'exact' | 'wrong43' | 'wrong';
 
@@ -104,6 +105,7 @@ function SeriesCard({
           return (
             <div key={i} className={`flex items-center gap-3 px-3 py-2.5 ${isPicked ? cfg.bg : ''}`}>
               <span className={`shrink-0 w-2 h-2 rounded-full ${isPicked ? cfg.bar : 'bg-border'}`} />
+              <NbaLogo team={team} size={20} />
               <span className={`flex-1 text-[12px] truncate ${isPicked ? `font-bold ${cfg.text}` : 'font-medium text-muted'}`}>
                 {team}
               </span>
@@ -152,7 +154,8 @@ function BonusCard({
   return (
     <div className={`flex-1 min-w-0 rounded-xl border p-3 ${cfg.bg} ${cfg.border}`}>
       <p className="text-[9px] font-bold uppercase tracking-wider text-muted mb-1">{label}</p>
-      <p className={`text-[13px] font-bold truncate ${status === 'pending' ? 'text-foreground' : cfg.text}`}>
+      <p className={`flex items-center gap-1.5 text-[13px] font-bold truncate ${status === 'pending' ? 'text-foreground' : cfg.text}`}>
+        {pick && <NbaLogo team={pick} size={18} />}
         {pick ? shortName(pick) : '—'}
       </p>
       {status !== 'pending' && (

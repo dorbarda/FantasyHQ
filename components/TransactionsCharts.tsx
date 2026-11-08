@@ -1,4 +1,5 @@
 import type { TransactionsData, TradeEvent } from '@/lib/types';
+import NbaLogo from '@/components/NbaLogo';
 
 // ─── Shared bar chart primitives ──────────────────────────────────────────────
 
@@ -16,7 +17,8 @@ function Bar({ value, max, color }: { value: number; max: number; color: string 
 
 function TeamBadge({ team }: { team: string }) {
   return (
-    <span className="inline-flex items-center justify-center text-[9px] font-bold rounded px-1.5 py-0.5 bg-panel-border text-white tracking-wide min-w-[30px]">
+    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-secondary tracking-wide min-w-[44px]">
+      <NbaLogo team={team} size={16} />
       {team}
     </span>
   );

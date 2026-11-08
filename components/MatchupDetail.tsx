@@ -6,6 +6,7 @@ import type { Matchup, MatchupTeam } from '@/lib/types';
 import type { TeamProjection } from '@/lib/week-projections';
 import { teamLogoSrc } from '@/lib/team-logos';
 import { weekdayLabel, type DayLine, type MatchupDaily } from '@/lib/week-daily';
+import NbaLogo from '@/components/NbaLogo';
 
 interface Props {
   matchup: Matchup;
@@ -69,7 +70,7 @@ function KeyPlayers({ team }: { team: TeamProjection }) {
           <li key={p.name} className="rounded-md bg-surface-secondary px-2.5 py-1.5">
             <p className="text-[13px] font-medium text-foreground truncate">{p.name}</p>
             <p className="text-[11px] text-secondary tabular-nums">
-              {p.pos} · {p.nba} · avg {fmt(p.avg)} ·{' '}
+              {p.pos} · <NbaLogo team={p.nba} size={12} className="mr-0.5 -mt-0.5" />{p.nba} · avg {fmt(p.avg)} ·{' '}
               <span className={p.games <= 2 ? 'text-warning font-semibold' : 'text-foreground font-semibold'}>
                 {p.games} {p.games === 1 ? 'game' : 'games'}
               </span>

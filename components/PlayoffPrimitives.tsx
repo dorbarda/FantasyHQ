@@ -2,6 +2,8 @@ import { getTeamMeta } from '@/lib/team-meta';
 import { bestTextOn } from '@/lib/contrast';
 import { getInitials } from '@/lib/owner-meta';
 import type { PickStatus } from '@/lib/playoff-analytics';
+import NbaLogo from '@/components/NbaLogo';
+import { findNbaTeam } from '@/lib/nba-teams';
 
 export function Avatar({
   name,
@@ -42,6 +44,7 @@ export function TeamMark({
   team: string;
   size?: number;
 }) {
+  if (findNbaTeam(team)) return <NbaLogo team={team} size={size} />;
   const meta = getTeamMeta(team);
   return (
     <div

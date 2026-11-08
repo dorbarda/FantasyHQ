@@ -75,6 +75,13 @@ if (remaining.some(sp => sp > today)) {
   else console.error(`⚠️ ESPN ${next.status} for tomorrow's rosters — using today's.`);
 }
 
+// "Tonight" = the next night with games still to come. Israel Sunday morning,
+// ESPN is still on Saturday (its games are over) — then tonight is Sunday.
+const GAME_LENGTH_MS = 3.5 * 3600_000;
+const todayStillOn = season.schedules.some((t: any) => t.games.some((g: any) =>
+  g.scoringPeriodId === today && (g.dateMs == null || g.dateMs + GAME_LENGTH_MS > Date.now())));
+const tonightSp = asIfLastNight || todayStillOn ? today : (remaining.find(sp => sp > today) ?? today);
+
 // League rule: 1 move per day of the matchup (ESPN: matchupLimitPerScoringPeriod).
 // A day with no NBA games (e.g. Election Day) gives no move.
 const gameDays = new Set(season.schedules.flatMap((t: any) => t.games.map((g: any) => g.scoringPeriodId)));
@@ -87,12 +94,13 @@ const clean = (s: string) => s.replace(/[\uD800-\uDFFF]|[☀-⟿]|[︀-️]/g, '
 const hasPlayed = (player: any, sp: number) => sp === today && !!dayStatLine({ playerPoolEntry: { player } }, sp);
 const r1 = (n: number) => Math.round(n * 10) / 10;
 
-function side(team: any, espnSide: any) {
+function side(team: any, espnSide: any, nextTeam = nextById.get(team.id)) {
   const name = clean(team.name || `Team ${team.id}`);
   const owner = OWNER_LABEL[name] ?? (team.owners || []).map((id: string) => members.get(id)?.firstName ?? '?').join(' & ');
   const live = r1(espnSide.totalPointsLive ?? espnSide.totalPoints ?? 0);
-  const rest = projectRestOfWeek(team, nextById.get(team.id), today, remaining, season.schedules, CURRENT_SEASON, week, hasPlayed);
-  const tonight = projectTeam(team, [today], season.schedules, CURRENT_SEASON, week, hasPlayed);
+  const rest = projectRestOfWeek(team, nextTeam, today, remaining, season.schedules, CURRENT_SEASON, week, hasPlayed);
+  const tonight = projectTeam(tonightSp === today ? team : nextTeam ?? team, [tonightSp],
+    season.schedules, CURRENT_SEASON, week, hasPlayed);
   const movesUsed: number = (nextById.get(team.id) ?? team).transactionCounter?.matchupAcquisitionTotals?.[String(week)] ?? 0;
   return {
     teamId: team.id,
@@ -111,8 +119,29 @@ function side(team: any, espnSide: any) {
     movesLeft: Math.max(0, moveLimit - movesUsed),
     projected: r1(live + rest.projectedPoints),
     variance: remainingVariance(rest.roster),
+    // Doubtful players with games still to come — candidates for "what if he sits".
+    uncertain: [...new Map(rest.roster
+      .filter((p: any) => p.games > 0 && UNCERTAIN.has(p.status))
+      .map((p: any) => [p.name, { name: p.name, nba: p.nba, avg: p.avg, status: p.status }])).values()],
   };
 }
+
+// ESPN statuses where a player may or may not play.
+const UNCERTAIN = new Set(['DAY_TO_DAY', 'QUESTIONABLE', 'DOUBTFUL', 'GAME_TIME_DECISION']);
+
+/** Same team with one player ruled OUT (on today's and tomorrow's roster). */
+function withOut(team: any, playerName: string) {
+  if (!team) return team;
+  const t = structuredClone(team);
+  for (const e of t.roster?.entries || []) {
+    const p = e.playerPoolEntry?.player;
+    if (p?.fullName === playerName) p.injuryStatus = 'OUT';
+  }
+  return t;
+}
+
+const homeWinPct = (h: any, a: any) => Math.round(winProbability(
+  { expected: h.projected, variance: h.variance }, { expected: a.projected, variance: a.variance }) * 1000) / 10;
 
 const teamById = new Map<number, any>((league.teams || []).map((t: any) => [t.id, t]));
 const matchups = (league.schedule || [])
@@ -123,9 +152,25 @@ const matchups = (league.schedule || [])
     const away = side(teamById.get(m.away.teamId), m.away);
     const pHome = winProbability({ expected: home.projected, variance: home.variance },
       { expected: away.projected, variance: away.variance });
+    // What if: each doubtful player sits (a bench player may take his spot).
+    const whatIf = (['home', 'away'] as const).flatMap(which => {
+      const s = which === 'home' ? home : away;
+      return s.uncertain.map((p: any) => {
+        const id = which === 'home' ? m.home.teamId : m.away.teamId;
+        const raw = teamById.get(id);
+        const out = side(withOut(raw, p.name), which === 'home' ? m.home : m.away, withOut(nextById.get(id), p.name));
+        const h = which === 'home' ? out : home, a = which === 'home' ? away : out;
+        const pSits = homeWinPct(h, a);
+        return {
+          side: which, team: s.name, player: p.name, nba: p.nba, avg: p.avg, status: p.status,
+          ifPlays: { homeWinProb: Math.round(pHome * 1000) / 10, projected: s.projected },
+          ifSits: { homeWinProb: pSits, projected: out.projected },
+        };
+      });
+    }).sort((x, y) => Math.abs(y.ifPlays.homeWinProb - y.ifSits.homeWinProb) - Math.abs(x.ifPlays.homeWinProb - x.ifSits.homeWinProb));
     const leader = home.live >= away.live ? home : away;
     const favorite = pHome >= 0.5 ? home : away;
-    const strip = ({ variance, ...rest }: typeof home) => (void variance, rest);
+    const strip = ({ variance, uncertain, ...rest }: typeof home) => (void variance, void uncertain, rest);
     return {
       home: { ...strip(home), winProb: Math.round(pHome * 1000) / 10 },
       away: { ...strip(away), winProb: Math.round((1 - pHome) * 1000) / 10 },
@@ -134,6 +179,7 @@ const matchups = (league.schedule || [])
       projectedGap: r1(Math.abs(home.projected - away.projected)),
       projectedWinner: favorite.name,
       favoriteWinProb: Math.round(Math.max(pHome, 1 - pHome) * 1000) / 10,
+      whatIf,
     };
   })
   // Closest first: the matchup nearest a coin flip leads.
@@ -144,6 +190,7 @@ const out = {
   week,
   date: index.dateFor(today),
   scoringPeriodId: today,
+  tonight: index.dateFor(tonightSp),
   isLastDay,
   mode: asIfLastNight ? 'as-if-last-night (test)' : 'rest-of-week',
   moveLimitPerWeek: moveLimit,

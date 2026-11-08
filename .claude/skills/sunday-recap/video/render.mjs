@@ -3,9 +3,12 @@
  * Run with: node .claude/skills/sunday-recap/video/render.mjs <recap.json> <out.mp4>
  *
  * Steps the page's render(t) frame by frame in headless Chromium and pipes
- * the screenshots into ffmpeg (H.264, yuv420p — plays in WhatsApp).
+ * the screenshots into ffmpeg (H.264, yuv420p — plays in WhatsApp), then adds
+ * the soundtrack from music.py, synced to the page's scene cuts (window.CUES).
  */
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { spawn, execSync } from 'node:child_process';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -29,12 +32,15 @@ await page.addInitScript(`window.RECAP = ${recap};`);
 await page.goto(pathToFileURL(resolve(here, 'template.html')).href);
 await page.evaluate(() => document.fonts.ready);
 const duration = await page.evaluate(() => window.DURATION);
+const cues = await page.evaluate(() => window.CUES ?? []);
 const frames = Math.ceil(duration * FPS);
+const tmp = mkdtempSync(join(tmpdir(), 'recap-video-'));
+const silent = join(tmp, 'video.mp4');
 
 const ffmpeg = spawn('ffmpeg', [
   '-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-i', '-',
-  '-c:v', 'libx264', '-preset', 'medium', '-crf', '20', '-pix_fmt', 'yuv420p',
-  '-movflags', '+faststart', resolve(outPath),
+  '-c:v', 'libx264', '-preset', 'medium', '-crf', '24', '-pix_fmt', 'yuv420p',
+  '-movflags', '+faststart', silent,
 ], { stdio: ['pipe', 'inherit', 'inherit'] });
 
 for (let f = 0; f < frames; f++) {
@@ -45,4 +51,11 @@ for (let f = 0; f < frames; f++) {
 ffmpeg.stdin.end();
 await new Promise((ok, fail) => ffmpeg.on('close', c => (c === 0 ? ok() : fail(new Error(`ffmpeg exit ${c}`)))));
 await browser.close();
+
+// Soundtrack, then mux (video stream copied as is).
+const cuesFile = join(tmp, 'cues.json'), wav = join(tmp, 'music.wav');
+writeFileSync(cuesFile, JSON.stringify(cues));
+execSync(`python3 "${resolve(here, 'music.py')}" ${duration} "${cuesFile}" "${wav}"`, { stdio: 'inherit' });
+execSync(`ffmpeg -y -loglevel error -i "${silent}" -i "${wav}" -c:v copy -c:a aac -b:a 192k -shortest -movflags +faststart "${resolve(outPath)}"`);
+rmSync(tmp, { recursive: true, force: true });
 console.log(`✅ ${frames} frames, ${duration.toFixed(1)}s → ${outPath}`);

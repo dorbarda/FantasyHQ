@@ -75,8 +75,14 @@ const allFinished = new Set(weekNums.flatMap(w => finishedOf(w).map(d => d.scori
 const live = gamesInProgress(season.schedules, allFinished, now.getTime());
 if (live) console.log('🏀 Games on — daily lines only, no new win % dots.');
 
+// Rosters as of the first day not yet played: ESPN's own "today" stays on the
+// US day until it closes overnight, so its default rosters miss pickups made
+// after last night's games (Israel-morning adds). Projections and move
+// counts are all about the days still to come.
+const nextDay = todo.flatMap(w => weeks[w]).filter(sp => !allFinished.has(sp)).sort((a, b) => a - b)[0];
 const url = `https://lm-api-reads.fantasy.espn.com/apis/v3/games/fba/seasons/${CURRENT_SEASON}` +
-  `/segments/0/leagues/${LEAGUE_ID}?view=mTeam&view=mRoster&view=mMatchup`;
+  `/segments/0/leagues/${LEAGUE_ID}?view=mTeam&view=mRoster&view=mMatchup` +
+  (nextDay ? `&scoringPeriodId=${nextDay}` : '');
 const res = await fetch(url, { headers: { Cookie: `espn_s2=${ESPN_S2}; SWID=${SWID}`, Accept: 'application/json' } });
 if (!res.ok) {
   console.error(`❌ ESPN API ${res.status} — cookies expired or LEAGUE_ID/SEASON wrong.`);

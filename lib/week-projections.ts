@@ -174,6 +174,34 @@ export function projectTeam(
   };
 }
 
+/**
+ * Rest of the week for one team: today with today's roster (games already
+ * started don't count), later days with tomorrow's roster. ESPN keeps
+ * "today" on the US day until it closes overnight, so a pickup made after
+ * tonight's games — e.g. an Israel-morning add — only shows on tomorrow's
+ * roster (`?scoringPeriodId=today+1`). `nextTeam` missing → today's roster.
+ */
+export function projectRestOfWeek(
+  todayTeam: any,
+  nextTeam: any | undefined,
+  today: number,
+  remaining: number[],
+  schedules: ProTeamSchedule[],
+  season: number,
+  week: number,
+  hasPlayed?: (player: any, scoringPeriodId: number) => boolean,
+): { games: number; projectedPoints: number; roster: ProjectedPlayer[] } {
+  const parts = [
+    projectTeam(todayTeam, remaining.filter(sp => sp <= today), schedules, season, week, hasPlayed),
+    projectTeam(nextTeam ?? todayTeam, remaining.filter(sp => sp > today), schedules, season, week, hasPlayed),
+  ];
+  return {
+    games: parts[0].games + parts[1].games,
+    projectedPoints: round1(parts[0].projectedPoints + parts[1].projectedPoints),
+    roster: [...parts[0].roster, ...parts[1].roster],
+  };
+}
+
 /** All of one week's head-to-head matchups from an ESPN mTeam+mRoster+mMatchup response. */
 export function buildWeekProjection(
   league: any,

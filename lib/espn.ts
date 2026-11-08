@@ -14,7 +14,7 @@ import { CURRENT_SEASON } from './season';
 import { NON_SCORING_SLOTS, countStartersOnDay, dayStatLine } from './lineup';
 import { loadScheduleSeason } from './schedule-data';
 import { weeksOf } from './espn-schedule';
-import { projectTeam } from './week-projections';
+import { projectRestOfWeek } from './week-projections';
 
 const ESPN_S2 = process.env.ESPN_S2;
 const SWID = process.env.SWID;
@@ -116,12 +116,24 @@ async function makeGamesLeft(teams: any[], matchupPeriod: number, currentScoring
   const days = season ? (weeksOf(season)[matchupPeriod] ?? []) : [];
   const remaining = days.filter(sp => sp >= currentScoringPeriod);
   const byId = new Map(teams.map(t => [t.id, t]));
+  // Later days use tomorrow's rosters, so overnight pickups count (ESPN
+  // shows them only from the day they take effect).
+  const nextById = new Map<number, any>();
+  if (remaining.some(sp => sp > currentScoringPeriod)) {
+    try {
+      const next = await espnFetch(`?view=mRoster&view=mTeam&scoringPeriodId=${currentScoringPeriod + 1}`, undefined, true);
+      for (const t of next.teams || []) nextById.set(t.id, t);
+    } catch {
+      /* fall back to today's rosters */
+    }
+  }
   const hasPlayed = (player: any, sp: number) =>
     sp === currentScoringPeriod && !!dayStatLine({ playerPoolEntry: { player } }, sp);
   return (teamId: number): { games: number; points: number } => {
     const team = byId.get(teamId);
     if (!team || !season || remaining.length === 0) return { games: 0, points: 0 };
-    const p = projectTeam(team, remaining, season.schedules, CURRENT_SEASON, matchupPeriod, hasPlayed);
+    const p = projectRestOfWeek(team, nextById.get(teamId), currentScoringPeriod, remaining,
+      season.schedules, CURRENT_SEASON, matchupPeriod, hasPlayed);
     return { games: p.games, points: p.projectedPoints };
   };
 }

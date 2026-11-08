@@ -211,6 +211,20 @@ const short = n => n.length > 22 ? n.slice(0, 21) + '…' : n;
 const scenes = [];
 const add = (beats, html, kind) => scenes.push({ beats, html, kind });
 
+// Poster: the first frame is the chat thumbnail (WhatsApp), so the video
+// opens on a finished title card with a teaser, then wipes into the intro.
+const bigWhatIf = allWhatIf.filter(w => swing(w) >= BIG_SWING).sort((a, b) => swing(b) - swing(a))[0];
+const [p0h, p0a] = pair(games[0]);
+add(3, `
+  <div class="kicker ltr">WEEK ${D.week} · FINAL NIGHT</div>
+  <div class="stamp ltr" style="margin-top:40px">SUNDAY</div>
+  <div class="stamp ltr" style="color:var(--away)">SHOW</div>
+  <div class="stamp ltr" style="color:var(--home)">DOWN</div>
+  <div class="pill" style="margin-top:70px;font-size:46px;border-color:var(--gold)">${bigWhatIf
+    ? `<span class="ltr">${esc(bigWhatIf.player.split(' ')[0])}</span> משחק? 😱 ✅ <span class="ltr" style="color:var(--win)">${Math.round(own(bigWhatIf, bigWhatIf.ifPlays.homeWinProb))}%</span> ❌ <span class="ltr" style="color:var(--lose)">${Math.round(own(bigWhatIf, bigWhatIf.ifSits.homeWinProb))}%</span>`
+    : `קרב הלילה: <span class="ltr">${p0h} – ${p0a}</span> 🔥`}</div>
+  <div class="heb-huge" style="font-size:90px;margin-top:50px">▶ הלילה האחרון</div>`, 'poster center');
+
 add(10, `
   <div class="kicker el ltr" data-in="0.1" data-fx="slam">WEEK ${D.week} · ${games.length} MATCHUPS</div>
   <div class="stamp el ltr" data-in="0.5" data-fx="slam" style="margin-top:40px">SUNDAY</div>

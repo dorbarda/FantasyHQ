@@ -113,7 +113,8 @@ n_bars = int(np.ceil(dur / BAR)) + 1
 
 starts = sorted(c["t"] for c in cues)
 kind_at = lambda s: next((c["kind"] for c in reversed(cues) if c["t"] <= s + 1e-6), "intro")
-intro_end = starts[1] if len(starts) > 1 else 4.0
+# The build lasts through the poster + intro; full beat from the first real scene.
+intro_end = next((c["t"] for c in cues if c["kind"] not in ("poster", "intro")), 4.0)
 whatif_breaks = [(c["t"], c["t"] + 2 * BEAT) for c in cues if c["kind"] == "whatif"]
 in_break = lambda s: any(a <= s < b for a, b in whatif_breaks)
 outro_start = next((c["t"] for c in cues if c["kind"] == "outro"), dur)
@@ -162,7 +163,7 @@ for bar in range(n_bars):
             nn = int(BEAT / 2 * SR); tt = t_arr(nn)
             sig = lowpass(saw(note_hz(m), nn), 500) * np.exp(-tt * 6) * np.minimum(1, tt / 0.004)
             put(bass, s + k * BEAT / 2, sig, 0.9)
-    if kind_at(s) not in ("intro",):
+    if kind_at(s) not in ("intro", "poster"):
         # arp: 16ths over chord tones, two octaves
         tones = [chord[0] + 24, chord[1] + 24, chord[2] + 24, chord[1] + 36]
         for k in range(16):

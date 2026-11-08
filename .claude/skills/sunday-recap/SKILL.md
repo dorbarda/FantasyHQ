@@ -57,7 +57,7 @@ node .claude/skills/sunday-recap/video/render.mjs recaps/recap.json recaps/week-
 
 - 1080×1920, 30 fps, ~45–55 s, H.264 + AAC, ~12 MB — sends fine on WhatsApp. About 4 minutes to render.
 - Broadcast style, cut on the beat (120 BPM, scenes measured in beats):
-  intro → THE BOARD (all scores + win %) → a fight card per close matchup
+  poster (first frame = WhatsApp thumbnail: title + teaser) → intro → THE BOARD (all scores + win %) → a fight card per close matchup
   (underdog ≥ 10%, `CLOSE_MAX_FAV`) → WHAT IF? for a DTD player who swings his
   matchup ≥ 15% (`BIG_SWING`) → DTD WATCH (every doubtful player: win % if he
   plays → if he sits) → QUICK HITS (decided ones) → match of the night.

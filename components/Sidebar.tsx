@@ -209,17 +209,30 @@ const NAV_GROUPS = [
   },
 ];
 
-// Flat list for bottom nav (most important pages only)
-const BOTTOM_NAV = [
+// Bottom nav (mobile): the main pages, with "More" in the middle — it opens
+// the drawer with every page, like the desktop sidebar.
+const BOTTOM_LEFT = [
   { href: '/',         label: 'Home',     Icon: HomeIcon     },
   { href: '/matchups', label: 'Matchups', Icon: MatchupsIcon },
-  { href: '/league',   label: 'League',   Icon: LeagueIcon   },
-  // Depth holds the slot until trade suggestions launch.
-  TRADES_PUBLIC
-    ? { href: '/trades', label: 'Trades', Icon: TradesIcon }
-    : { href: '/matchup-depth', label: 'Depth', Icon: DepthIcon },
-  { href: '/analysis', label: 'Analysis', Icon: AnalysisIcon },
 ];
+const BOTTOM_RIGHT = [
+  { href: '/schedule', label: 'Schedule', Icon: ScheduleIcon },
+  { href: '/league',   label: 'League',   Icon: LeagueIcon   },
+];
+
+function MoreIcon() {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4 shrink-0">
+      <rect x="3" y="3" width="5.5" height="5.5" rx="1.25" stroke="currentColor" strokeWidth="1.5"/>
+      <rect x="11.5" y="3" width="5.5" height="5.5" rx="1.25" stroke="currentColor" strokeWidth="1.5"/>
+      <rect x="3" y="11.5" width="5.5" height="5.5" rx="1.25" stroke="currentColor" strokeWidth="1.5"/>
+      <rect x="11.5" y="11.5" width="5.5" height="5.5" rx="1.25" stroke="currentColor" strokeWidth="1.5"/>
+    </svg>
+  );
+}
+
+const isActivePath = (href: string, pathname: string) =>
+  href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(href + '/');
 
 // ─── Sidebar (desktop) ────────────────────────────────────────────────────────
 
@@ -371,23 +384,36 @@ function MobileNav({ pathname }: { pathname: string }) {
 
       {/* Bottom navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-panel border-t border-panel-border z-50 flex">
-        {BOTTOM_NAV.map(({ href, label, Icon }) => {
-          const isActive = href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(href + '/');
-          return (
-            <Link
-              key={href}
-              href={href}
-              className={`flex-1 flex flex-col items-center gap-1 py-2 transition-colors ${
-                isActive ? 'text-accent' : 'text-panel-text-muted hover:text-panel-text'
-              }`}
-            >
-              <Icon />
-              <span className="text-[10px] font-semibold">{label}</span>
-            </Link>
-          );
-        })}
+        {BOTTOM_LEFT.map(item => <BottomLink key={item.href} {...item} pathname={pathname} />)}
+        <button
+          onClick={() => setOpen(true)}
+          aria-label="More pages"
+          className={`flex-1 flex flex-col items-center gap-1 py-2 transition-colors ${
+            // Lit while the drawer is open, or on a page that has no tab of its own.
+            open || ![...BOTTOM_LEFT, ...BOTTOM_RIGHT].some(i => isActivePath(i.href, pathname))
+              ? 'text-accent' : 'text-panel-text-muted hover:text-panel-text'
+          }`}
+        >
+          <MoreIcon />
+          <span className="text-[10px] font-semibold">More</span>
+        </button>
+        {BOTTOM_RIGHT.map(item => <BottomLink key={item.href} {...item} pathname={pathname} />)}
       </nav>
     </>
+  );
+}
+
+function BottomLink({ href, label, Icon, pathname }: { href: string; label: string; Icon: () => React.JSX.Element; pathname: string }) {
+  return (
+    <Link
+      href={href}
+      className={`flex-1 flex flex-col items-center gap-1 py-2 transition-colors ${
+        isActivePath(href, pathname) ? 'text-accent' : 'text-panel-text-muted hover:text-panel-text'
+      }`}
+    >
+      <Icon />
+      <span className="text-[10px] font-semibold">{label}</span>
+    </Link>
   );
 }
 

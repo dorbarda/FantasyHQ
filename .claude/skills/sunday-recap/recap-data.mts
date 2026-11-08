@@ -43,7 +43,7 @@ const outFile = args.includes('--out') ? args[args.indexOf('--out') + 1] : null;
 // Import AFTER env is loaded — these modules read process.env at load time.
 const { CURRENT_SEASON } = await import(resolve(ROOT, 'lib/season.ts'));
 const { getScheduleSeason, weeksOf, buildDateIndex } = await import(resolve(ROOT, 'lib/espn-schedule.ts'));
-const { projectTeam } = await import(resolve(ROOT, 'lib/week-projections.ts'));
+const { projectTeam, projectRestOfWeek } = await import(resolve(ROOT, 'lib/week-projections.ts'));
 const { winProbability, remainingVariance } = await import(resolve(ROOT, 'lib/win-probability.ts'));
 const { dayStatLine } = await import(resolve(ROOT, 'lib/lineup.ts'));
 const { teamLogoSrc } = await import(resolve(ROOT, 'lib/team-logos.ts'));
@@ -65,6 +65,16 @@ const index = buildDateIndex(season.schedules);
 const remaining = asIfLastNight ? [today] : weekDays.filter(sp => sp >= today);
 const isLastDay = today === weekDays.at(-1);
 
+// Tomorrow's rosters: ESPN's "today" stays on the US day until it closes
+// overnight, so pickups made after tonight's games (Israel morning) only show
+// from the next scoring period. Later days are projected with these.
+const nextById = new Map<number, any>();
+if (remaining.some(sp => sp > today)) {
+  const next = await fetch(`${url}&scoringPeriodId=${today + 1}`, { headers: { Cookie: `espn_s2=${ESPN_S2}; SWID=${SWID}`, Accept: 'application/json' } });
+  if (next.ok) for (const t of (await next.json()).teams || []) nextById.set(t.id, t);
+  else console.error(`⚠️ ESPN ${next.status} for tomorrow's rosters — using today's.`);
+}
+
 // League rule: 1 move per day of the matchup, so the weekly limit is the
 // week's length (usually 7; ESPN: matchupLimitPerScoringPeriod).
 const moveLimit = weekDays.length;
@@ -80,9 +90,9 @@ function side(team: any, espnSide: any) {
   const name = clean(team.name || `Team ${team.id}`);
   const owner = OWNER_LABEL[name] ?? (team.owners || []).map((id: string) => members.get(id)?.firstName ?? '?').join(' & ');
   const live = r1(espnSide.totalPointsLive ?? espnSide.totalPoints ?? 0);
-  const rest = projectTeam(team, remaining, season.schedules, CURRENT_SEASON, week, hasPlayed);
+  const rest = projectRestOfWeek(team, nextById.get(team.id), today, remaining, season.schedules, CURRENT_SEASON, week, hasPlayed);
   const tonight = projectTeam(team, [today], season.schedules, CURRENT_SEASON, week, hasPlayed);
-  const movesUsed: number = team.transactionCounter?.matchupAcquisitionTotals?.[String(week)] ?? 0;
+  const movesUsed: number = (nextById.get(team.id) ?? team).transactionCounter?.matchupAcquisitionTotals?.[String(week)] ?? 0;
   return {
     teamId: team.id,
     name,

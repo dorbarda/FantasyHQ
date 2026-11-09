@@ -102,7 +102,7 @@ export default async function OwnerTradesPage({
             <form action={lockTrades}>
               <input type="hidden" name="slug" value={slug} />
               <button type="submit" className="text-[13px] font-semibold text-muted underline">
-                {session === ADMIN_SLUG ? 'Log out (commissioner)' : 'Lock this page'}
+                {session === ADMIN_SLUG ? 'Log out (commissioner)' : 'Log out'}
               </button>
             </form>
           </footer>

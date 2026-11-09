@@ -96,6 +96,14 @@ describe('validateTradeDraft', () => {
     expect(run(twice).errors).toContain('Ann: appears twice.');
   });
 
+  it('rejects "bench" in the prose — there are no lineups in the data', () => {
+    const d = goodDraft();
+    d.teams[0].trades[0].whyTheyAccept = 'Star One sits on their bench.';
+    expect(run(d).errors.some(e => e.includes('says "bench"'))).toBe(true);
+    d.teams[0].trades[0].whyTheyAccept = 'Too many PF/C on their roster.';
+    expect(run(d).errors.some(e => e.includes('says "bench"'))).toBe(false);
+  });
+
   it('rejects a number in the prose that is not in the data', () => {
     const d = goodDraft();
     d.teams[0].diagnosis.summary = 'Star One averages 52.7 — elite.';

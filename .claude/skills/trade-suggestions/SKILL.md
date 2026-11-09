@@ -119,6 +119,9 @@ it, the angle must be there. The check enforces both ways.
 - Summary up to 700 characters, each "why" up to 400. Write to the owner
   ("you"), direct and a bit fun, but useful first. Player and team names as in
   the digest.
+- **Never say "bench" or "benched".** The data has no lineups, and the
+  league sets daily lineups, so it reads as "not playing". Say "you have too
+  many PF/C" (or whichever position) instead. The check rejects it.
 - **Never invent a number.** Quote only numbers that appear in the digest for
   this team, its trade partners, or the league header (round the way the
   digest shows them). No sums, differences or percentages you computed —

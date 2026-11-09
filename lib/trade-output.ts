@@ -146,6 +146,12 @@ function spellings(n: number): string[] {
  * Numbers prose may quote: anything in the teams it talks about and the league
  * block, small counts (weeks, rounds, players, "top 10"), and the seasons.
  */
+/**
+ * The input has no lineup slots, and with daily lineups nobody really "sits on
+ * the bench" — Dor, 2026-11-09. Talk about too many players at a position.
+ */
+const BENCH_WORDS = /\bbench(?:ed)?\b/i;
+
 export function allowedNumbers(input: TradeInput, teams: TradeInputTeam[]): Set<string> {
   const nums: number[] = [input.season, input.season - 1, input.week];
   for (let i = 0; i <= input.league.periods.length + 1; i++) nums.push(i);
@@ -319,6 +325,7 @@ export function validateTradeDraft(
     for (const [label, text] of texts) {
       const bad = unknownNumbers(text, allowed, allNames);
       if (bad.length) errors.push(`${where} ${label} has number(s) not in the data: ${[...new Set(bad)].join(', ')}.`);
+      if (BENCH_WORDS.test(text)) errors.push(`${where} ${label} says "bench" — the data has no lineups, and in a daily points league it reads as "not playing". Say "too many PF/C" instead.`);
     }
 
     advice.push({

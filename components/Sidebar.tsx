@@ -217,7 +217,9 @@ const BOTTOM_LEFT = [
 ];
 const BOTTOM_RIGHT = [
   { href: '/schedule', label: 'Schedule', Icon: ScheduleIcon },
-  { href: '/league',   label: 'League',   Icon: LeagueIcon   },
+  TRADES_PUBLIC
+    ? { href: '/trades', label: 'Trades', Icon: TradesIcon }
+    : { href: '/league', label: 'League', Icon: LeagueIcon },
 ];
 
 function MoreIcon() {

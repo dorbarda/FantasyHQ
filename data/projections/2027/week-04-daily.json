@@ -1,14 +1,82 @@
 {
   "season": 2027,
   "week": 4,
-  "updatedAt": "2026-11-09T19:12:22.540Z",
-  "days": [],
-  "teams": {},
+  "updatedAt": "2026-11-10T04:01:21.534Z",
+  "days": [
+    {
+      "date": "2026-11-09",
+      "scoringPeriodId": 21
+    }
+  ],
+  "teams": {
+    "1": [
+      {
+        "played": 6,
+        "points": 252
+      }
+    ],
+    "2": [
+      {
+        "played": 5,
+        "points": 134
+      }
+    ],
+    "3": [
+      {
+        "played": 7,
+        "points": 179
+      }
+    ],
+    "4": [
+      {
+        "played": 8,
+        "points": 221
+      }
+    ],
+    "5": [
+      {
+        "played": 7,
+        "points": 249
+      }
+    ],
+    "6": [
+      {
+        "played": 8,
+        "points": 312
+      }
+    ],
+    "8": [
+      {
+        "played": 7,
+        "points": 190
+      }
+    ],
+    "9": [
+      {
+        "played": 8,
+        "points": 278
+      }
+    ],
+    "10": [
+      {
+        "played": 4,
+        "points": 100
+      }
+    ],
+    "11": [
+      {
+        "played": 6,
+        "points": 176
+      }
+    ]
+  },
   "matchups": [
     {
       "homeTeamId": 4,
       "awayTeamId": 1,
-      "homeWinProb": [],
+      "homeWinProb": [
+        null
+      ],
       "changes": [
         {
           "at": "2026-11-09T06:01:33.870Z",
@@ -36,7 +104,9 @@
     {
       "homeTeamId": 10,
       "awayTeamId": 3,
-      "homeWinProb": [],
+      "homeWinProb": [
+        null
+      ],
       "changes": [
         {
           "at": "2026-11-09T06:01:33.870Z",
@@ -53,7 +123,9 @@
     {
       "homeTeamId": 8,
       "awayTeamId": 6,
-      "homeWinProb": [],
+      "homeWinProb": [
+        null
+      ],
       "changes": [
         {
           "at": "2026-11-09T06:01:33.870Z",
@@ -69,12 +141,16 @@
     {
       "homeTeamId": 2,
       "awayTeamId": 5,
-      "homeWinProb": []
+      "homeWinProb": [
+        null
+      ]
     },
     {
       "homeTeamId": 9,
       "awayTeamId": 11,
-      "homeWinProb": [],
+      "homeWinProb": [
+        null
+      ],
       "changes": [
         {
           "at": "2026-11-09T06:01:33.870Z",

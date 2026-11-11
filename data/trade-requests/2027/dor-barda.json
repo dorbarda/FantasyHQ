@@ -19,7 +19,7 @@
         "trades": [
           {
             "partnerOwner": "Amir Ben Izhak",
-            "partnerTeamName": "Libi\u2019s Legacy",
+            "partnerTeamName": "Libi’s Legacy",
             "give": [
               {
                 "playerId": 5175737,
@@ -82,7 +82,7 @@
           },
           {
             "partnerOwner": "Amir Ben Izhak",
-            "partnerTeamName": "Libi\u2019s Legacy",
+            "partnerTeamName": "Libi’s Legacy",
             "give": [
               {
                 "playerId": 6442,
@@ -127,7 +127,7 @@
           },
           {
             "partnerOwner": "Amir Ben Izhak",
-            "partnerTeamName": "Libi\u2019s Legacy",
+            "partnerTeamName": "Libi’s Legacy",
             "give": [
               {
                 "playerId": 4066383,
@@ -199,7 +199,158 @@
       "note": "Test run of the scheduled task",
       "createdAt": "2026-11-11T16:00:00.000Z",
       "by": "commissioner",
-      "status": "pending"
+      "status": "answered",
+      "answer": {
+        "answeredAt": "2026-11-11T15:05:16.891Z",
+        "inputGeneratedAt": "2026-11-11T15:04:45.952Z",
+        "summary": "Miles Bridges is a solid mid-value forward on the market: 35 avg this season, 39.4 over his L15, but a projected rank of 79 (33.9). That makes him a sell-high candidate right now. The best market is a team that values current production over projection. My favorite is Derrick White from Amir Ben Izhak: you lose a bit of current scoring but gain a higher projected player.",
+        "trades": [
+          {
+            "partnerOwner": "Amir Ben Izhak",
+            "partnerTeamName": "Libi’s Legacy",
+            "give": [
+              {
+                "playerId": 4066383,
+                "name": "Miles Bridges",
+                "proTeam": "PHX",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 35,
+                "avgLast15": 39.4,
+                "avgProjected": 33.9,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 15
+              }
+            ],
+            "get": [
+              {
+                "playerId": 3078576,
+                "name": "Derrick White",
+                "proTeam": "BOS",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 28.1,
+                "avgLast15": 27.5,
+                "avgProjected": 37,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "sell-high",
+              "buy-low"
+            ],
+            "whyForYou": "Selling high on Bridges: 39.4 over his L15 against a projection of 33.9. Derrick White is buying low: 28.1 so far this season but projected at 37 (rank 61), with 2 games this week.",
+            "whyTheyAccept": "Amir gets the higher scorer today, 35 avg against White's 28.1, plus 2 games this week for Bridges as well. A fair one-for-one swap of forwards for a guard.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          },
+          {
+            "partnerOwner": "Yotam Goldin",
+            "partnerTeamName": "PlottKe",
+            "give": [
+              {
+                "playerId": 4066383,
+                "name": "Miles Bridges",
+                "proTeam": "PHX",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 35,
+                "avgLast15": 39.4,
+                "avgProjected": 33.9,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 15
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4397688,
+                "name": "Trey Murphy III",
+                "proTeam": "NOP",
+                "positions": [
+                  "SG",
+                  "SF"
+                ],
+                "injuryStatus": "DAY_TO_DAY",
+                "avgSeason": 30,
+                "avgLast15": 31.7,
+                "avgProjected": 36.8,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 15
+              }
+            ],
+            "angles": [
+              "sell-high",
+              "buy-low"
+            ],
+            "whyForYou": "Sell high on Bridges (39.4 L15, projected 33.9) and buy low on Trey Murphy III: 30 avg but 37 over his L7 and a projection of 36.8, with 3 games this week. He is day-to-day, so check his status.",
+            "whyTheyAccept": "Goldin is 0-3 and needs healthy production now. Bridges gives 35 avg against Murphy's 30 and is ACTIVE, while Murphy is day-to-day.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          },
+          {
+            "partnerOwner": "Yoav Coracos",
+            "partnerTeamName": "Team Mamba Forever",
+            "give": [
+              {
+                "playerId": 4066383,
+                "name": "Miles Bridges",
+                "proTeam": "PHX",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 35,
+                "avgLast15": 39.4,
+                "avgProjected": 33.9,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 15
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4433287,
+                "name": "Brandon Miller",
+                "proTeam": "CHA",
+                "positions": [
+                  "SG",
+                  "SF"
+                ],
+                "injuryStatus": "DAY_TO_DAY",
+                "avgSeason": 28.3,
+                "avgLast15": 26,
+                "avgProjected": 37.4,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "angles": [
+              "buy-low",
+              "sell-high"
+            ],
+            "whyForYou": "Selling high on Bridges, buying low on Brandon Miller: 28.3 avg this season, projected 37.4 (rank 59). He is on IR and day-to-day, so this is a patient move that needs an IR slot.",
+            "whyTheyAccept": "Yoav has Banchero out and Miller on IR. Bridges is an active 35 avg forward who plays right away, while Miller is not producing now.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          }
+        ]
+      }
     }
   ]
 }

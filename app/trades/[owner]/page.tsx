@@ -4,11 +4,26 @@ import { notFound } from 'next/navigation';
 import OwnerAvatar from '@/components/OwnerAvatar';
 import TradeIdeaCard, { FLAG_LABELS } from '@/components/TradeIdeaCard';
 import TradeUnlockForm from '@/components/TradeUnlockForm';
+import TradeRequestForm from '@/components/TradeRequestForm';
+import TradeRequestList from '@/components/TradeRequestList';
 import { lockTrades } from '../actions';
 import { listTradeWeeks, loadTradeWeek } from '@/lib/trades-data';
 import { ownerToSlug } from '@/lib/team-utils';
 import { TRADES_COOKIE, canView, readSession, ADMIN_SLUG } from '@/lib/owner-auth';
 import { TRADES_PUBLIC } from '@/lib/trades-launch';
+import { getLeagueRosters } from '@/lib/espn';
+import { PRO_TEAM_ABBREV } from '@/lib/espn-schedule';
+import { nextAnswerRun, pickerRosters, requestsLeftToday, type PickerTeam, type TradeRequestFile } from '@/lib/trade-requests';
+import { canSaveRequests, readRequestFile } from '@/lib/trade-requests-store';
+
+/** Live rosters for the request form and the owner's requests; either may fail on its own. */
+async function loadRequests(owner: string, slug: string) {
+  const [rosters, file] = await Promise.all([
+    getLeagueRosters().then(l => pickerRosters(l, PRO_TEAM_ABBREV)).catch((): PickerTeam[] | null => null),
+    readRequestFile(owner, slug).then(r => r.file).catch((): TradeRequestFile | null => null),
+  ]);
+  return { rosters, file };
+}
 
 // Behind a per-owner passcode: never cache or pre-render.
 export const dynamic = 'force-dynamic';
@@ -32,6 +47,12 @@ export default async function OwnerTradesPage({
   if (!advice) notFound();
 
   const session = readSession((await cookies()).get(TRADES_COOKIE)?.value, process.env.OWNER_KEYS ?? '', Date.now());
+  const unlocked = TRADES_PUBLIC ? canView(session, slug) : session === ADMIN_SLUG;
+
+  const now = new Date();
+  const deadlinePassed = !!file?.tradeDeadline && Date.parse(file.tradeDeadline) <= now.getTime();
+  const requests = unlocked ? await loadRequests(advice.owner, slug) : null;
+  const nextRun = nextAnswerRun(now);
 
   return (
     <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6 max-w-3xl">
@@ -45,7 +66,7 @@ export default async function OwnerTradesPage({
         </div>
       </header>
 
-      {!(TRADES_PUBLIC ? canView(session, slug) : session === ADMIN_SLUG) ? (
+      {!unlocked ? (
         <TradeUnlockForm slug={slug} owner={advice.owner} />
       ) : (
         <div className="flex flex-col gap-4">
@@ -81,6 +102,26 @@ export default async function OwnerTradesPage({
             Ideas from Claude, based on ESPN data from Monday morning. Numbers on the cards come straight
             from ESPN; trades still need the other owner to say yes.
           </p>
+
+          {deadlinePassed ? (
+            <p className="text-[14px] text-muted">The trade deadline has passed — no more requests this season.</p>
+          ) : !canSaveRequests() ? null : !requests?.rosters ? (
+            <p className="text-[14px] text-muted">Couldn&apos;t load the rosters from ESPN, so you can&apos;t ask Claude right now. Try again soon.</p>
+          ) : (
+            <TradeRequestForm
+              slug={slug}
+              owner={advice.owner}
+              rosters={requests.rosters}
+              left={requestsLeftToday(requests.file, now)}
+              nextRun={nextRun}
+              commissioner={session === ADMIN_SLUG}
+            />
+          )}
+          {requests?.file === null ? (
+            <p className="text-[13px] text-muted">Couldn&apos;t load your requests right now.</p>
+          ) : (
+            <TradeRequestList requests={requests?.file?.requests ?? []} nextRun={nextRun} />
+          )}
 
           <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
             {weeks.length > 1 ? (

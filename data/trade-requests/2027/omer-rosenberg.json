@@ -1,0 +1,17 @@
+{
+  "season": 2027,
+  "owner": "Omer Rosenberg",
+  "requests": [
+    {
+      "id": "2026-11-11T15-26-02-522Z-d05429",
+      "kind": "buy",
+      "playerId": 4871145,
+      "playerName": "Josh Giddey",
+      "playerOwner": "Ilay Mendel",
+      "note": "",
+      "createdAt": "2026-11-11T15:26:02.522Z",
+      "by": "owner",
+      "status": "pending"
+    }
+  ]
+}

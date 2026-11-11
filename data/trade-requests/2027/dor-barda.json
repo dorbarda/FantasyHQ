@@ -1,0 +1,17 @@
+{
+  "season": 2027,
+  "owner": "Dor Barda",
+  "requests": [
+    {
+      "id": "2026-11-11T14-57-54-304Z-680363",
+      "kind": "buy",
+      "playerId": 4277905,
+      "playerName": "Trae Young",
+      "playerOwner": "Amir Ben Izhak",
+      "note": "",
+      "createdAt": "2026-11-11T14:57:54.304Z",
+      "by": "owner",
+      "status": "pending"
+    }
+  ]
+}

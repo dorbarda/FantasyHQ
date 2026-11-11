@@ -19,7 +19,7 @@
         "trades": [
           {
             "partnerOwner": "Amir Ben Izhak",
-            "partnerTeamName": "Libi’s Legacy",
+            "partnerTeamName": "Libi\u2019s Legacy",
             "give": [
               {
                 "playerId": 5175737,
@@ -82,7 +82,7 @@
           },
           {
             "partnerOwner": "Amir Ben Izhak",
-            "partnerTeamName": "Libi’s Legacy",
+            "partnerTeamName": "Libi\u2019s Legacy",
             "give": [
               {
                 "playerId": 6442,
@@ -127,7 +127,7 @@
           },
           {
             "partnerOwner": "Amir Ben Izhak",
-            "partnerTeamName": "Libi’s Legacy",
+            "partnerTeamName": "Libi\u2019s Legacy",
             "give": [
               {
                 "playerId": 4066383,
@@ -189,6 +189,17 @@
           }
         ]
       }
+    },
+    {
+      "id": "2026-11-11T16-00-00-000Z-test01",
+      "kind": "sell",
+      "playerId": 4066383,
+      "playerName": "Miles Bridges",
+      "playerOwner": "Dor Barda",
+      "note": "Test run of the scheduled task",
+      "createdAt": "2026-11-11T16:00:00.000Z",
+      "by": "commissioner",
+      "status": "pending"
     }
   ]
 }

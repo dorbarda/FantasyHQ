@@ -1,0 +1,17 @@
+{
+  "season": 2027,
+  "owner": "Dor Gelless",
+  "requests": [
+    {
+      "id": "2026-11-11T15-13-30-852Z-fb8f8f",
+      "kind": "sell",
+      "playerId": 5061575,
+      "playerName": "Kon Knueppel",
+      "playerOwner": "Dor Gelless",
+      "note": "",
+      "createdAt": "2026-11-11T15:13:30.852Z",
+      "by": "owner",
+      "status": "pending"
+    }
+  ]
+}

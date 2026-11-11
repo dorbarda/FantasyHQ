@@ -194,6 +194,124 @@ function card(p: TradeInputPlayer): TradePlayerCard {
 const projected = (ps: TradeInputPlayer[]) => ps.reduce((s, p) => s + (p.avg.projected ?? 0), 0);
 const best = (ps: TradeInputPlayer[]) => Math.max(0, ...ps.map(p => p.avg.projected ?? 0));
 
+// ─── Shared checks (weekly file and on-request answers) ──────────────────────
+
+/** A trade idea as Claude writes it: owners and player ids, plus prose. */
+export type TradeDraftIdea = TradeDraft['teams'][number]['trades'][number];
+
+/**
+ * Check `team`'s trade ideas against the input and turn the good ones into
+ * cards. Problems go into `errors` / `warnings`, each prefixed with `where`.
+ * Returns the cards and every team the ideas touch (for the number check).
+ */
+export function checkTradeIdeas(
+  input: TradeInput,
+  team: TradeInputTeam,
+  trades: TradeDraftIdea[],
+  where: string,
+  errors: string[],
+  warnings: string[],
+  timesSuggested: Map<number, number> = new Map(),
+): { ideas: TradeIdea[]; partners: Set<TradeInputTeam> } {
+  const byOwner = new Map(input.teams.map(t => [t.owner, t]));
+  const rosterMax = Object.values(input.league.lineupSlots).reduce((a, b) => a + b, 0);
+  const partners = new Set<TradeInputTeam>([team]);
+  const ideas: TradeIdea[] = [];
+  const tradeKeys = new Set<string>();
+
+  trades.forEach((tr, i) => {
+    const at = `${where} trade ${i + 1}:`;
+    const partner = byOwner.get(tr.partnerOwner);
+    if (!partner) { errors.push(`${at} unknown partner "${tr.partnerOwner}".`); return; }
+    if (partner === team) { errors.push(`${at} trade with yourself.`); return; }
+    partners.add(partner);
+
+    const side = (ids: number[], from: TradeInputTeam, label: string): TradeInputPlayer[] | null => {
+      if (!Array.isArray(ids) || ids.length < 1 || ids.length > MAX_PLAYERS_PER_SIDE) {
+        errors.push(`${at} "${label}" needs 1–${MAX_PLAYERS_PER_SIDE} players.`);
+        return null;
+      }
+      if (new Set(ids).size !== ids.length) { errors.push(`${at} "${label}" repeats a player.`); return null; }
+      const players = ids.map(id => from.roster.find(p => p.playerId === id));
+      const missing = ids.filter((_, k) => !players[k]);
+      if (missing.length) {
+        errors.push(`${at} player id(s) ${missing.join(', ')} not on ${from.owner}'s roster.`);
+        return null;
+      }
+      const pickups = (players as TradeInputPlayer[]).filter(p => !p.tradeable);
+      if (pickups.length) {
+        errors.push(`${at} ${pickups.map(p => p.name).join(', ')} joined ${from.owner}'s roster under ${MIN_DAYS_ON_ROSTER} days ago — pickups can't be traded.`);
+        return null;
+      }
+      return players as TradeInputPlayer[];
+    };
+    const give = side(tr.give, team, 'give');
+    const get = side(tr.get, partner, 'get');
+
+    for (const [label, text] of [['whyForYou', tr.whyForYou], ['whyTheyAccept', tr.whyTheyAccept]] as const) {
+      const t = (text ?? '').trim();
+      if (!t) errors.push(`${at} empty ${label}.`);
+      if (t.length > MAX_WHY_CHARS) errors.push(`${at} ${label} is ${t.length} chars (max ${MAX_WHY_CHARS}).`);
+    }
+    const angles = Array.isArray(tr.angles) ? tr.angles : [];
+    if (angles.length === 0) errors.push(`${at} needs at least one angle.`);
+    for (const a of angles) {
+      if (!(TRADE_ANGLES as readonly string[]).includes(a)) errors.push(`${at} unknown angle "${a}".`);
+    }
+    for (const [angle, words] of SPOKEN_ANGLES) {
+      const said = words.test(tr.whyForYou ?? '');
+      if (angles.includes(angle) && !said) errors.push(`${at} angle "${angle}" but whyForYou never says "${angle.replace('-', ' ')}".`);
+      if (!angles.includes(angle) && said) errors.push(`${at} whyForYou says "${angle.replace('-', ' ')}" but the angle is missing.`);
+    }
+    if (!give || !get) return;
+
+    const key = `${partner.owner}|${[...tr.give].sort().join(',')}|${[...tr.get].sort().join(',')}`;
+    if (tradeKeys.has(key)) errors.push(`${at} same trade listed twice.`);
+    tradeKeys.add(key);
+
+    for (const p of [...give, ...get]) timesSuggested.set(p.playerId, (timesSuggested.get(p.playerId) ?? 0) + 1);
+
+    const gaveValue = projected(get); // what the partner gives up
+    const gotValue = projected(give);
+    if (gaveValue > 0 && (gaveValue - gotValue) / gaveValue > LOPSIDED_SHARE && best(get) >= best(give)) {
+      warnings.push(`${at} ${partner.owner} gives up much more projected value — may say no.`);
+    }
+
+    ideas.push({
+      partnerOwner: partner.owner,
+      partnerTeamName: partner.teamName,
+      give: give.map(card),
+      get: get.map(card),
+      angles: angles as TradeAngle[],
+      whyForYou: tr.whyForYou.trim(),
+      whyTheyAccept: tr.whyTheyAccept.trim(),
+      dropsNeeded: {
+        you: Math.max(0, team.roster.length - give.length + get.length - rosterMax),
+        partner: Math.max(0, partner.roster.length - get.length + give.length - rosterMax),
+      },
+    });
+  });
+
+  return { ideas, partners };
+}
+
+/** Prose may only quote numbers from these teams or the league, and never says "bench". */
+export function checkProse(
+  input: TradeInput,
+  teams: Iterable<TradeInputTeam>,
+  texts: [string, string][],
+  where: string,
+  errors: string[],
+): void {
+  const allowed = allowedNumbers(input, [...teams]);
+  const allNames = input.teams.flatMap(t => [t.owner, t.teamName, ...t.roster.map(p => p.name)]);
+  for (const [label, text] of texts) {
+    const bad = unknownNumbers(text, allowed, allNames);
+    if (bad.length) errors.push(`${where} ${label} has number(s) not in the data: ${[...new Set(bad)].join(', ')}.`);
+    if (BENCH_WORDS.test(text)) errors.push(`${where} ${label} says "bench" — the data has no lineups, and in a daily points league it reads as "not playing". Say "too many PF/C" instead.`);
+  }
+}
+
 export function validateTradeDraft(
   input: TradeInput,
   draft: TradeDraft,
@@ -209,8 +327,6 @@ export function validateTradeDraft(
   if (draft.week !== input.week) errors.push(`Draft is for week ${draft.week}, input is week ${input.week}.`);
 
   const byOwner = new Map(input.teams.map(t => [t.owner, t]));
-  const rosterMax = Object.values(input.league.lineupSlots).reduce((a, b) => a + b, 0);
-  const allNames = input.teams.flatMap(t => [t.owner, t.teamName, ...t.roster.map(p => p.name)]);
   const timesSuggested = new Map<number, number>();
 
   const seen = new Set<string>();
@@ -236,97 +352,15 @@ export function validateTradeDraft(
     if (trades.length > MAX_TRADES) errors.push(`${where} ${trades.length} trades (max ${MAX_TRADES}).`);
     if (trades.length === 0) warnings.push(`${where} no trade ideas.`);
 
-    const partnersInProse = new Set<TradeInputTeam>([team]);
-    const ideas: TradeIdea[] = [];
-    const tradeKeys = new Set<string>();
+    const { ideas, partners: partnersInProse } = checkTradeIdeas(input, team, trades, where, errors, warnings, timesSuggested);
 
-    trades.forEach((tr, i) => {
-      const at = `${where} trade ${i + 1}:`;
-      const partner = byOwner.get(tr.partnerOwner);
-      if (!partner) { errors.push(`${at} unknown partner "${tr.partnerOwner}".`); return; }
-      if (partner === team) { errors.push(`${at} trade with yourself.`); return; }
-      partnersInProse.add(partner);
-
-      const side = (ids: number[], from: TradeInputTeam, label: string): TradeInputPlayer[] | null => {
-        if (!Array.isArray(ids) || ids.length < 1 || ids.length > MAX_PLAYERS_PER_SIDE) {
-          errors.push(`${at} "${label}" needs 1–${MAX_PLAYERS_PER_SIDE} players.`);
-          return null;
-        }
-        if (new Set(ids).size !== ids.length) { errors.push(`${at} "${label}" repeats a player.`); return null; }
-        const players = ids.map(id => from.roster.find(p => p.playerId === id));
-        const missing = ids.filter((_, k) => !players[k]);
-        if (missing.length) {
-          errors.push(`${at} player id(s) ${missing.join(', ')} not on ${from.owner}'s roster.`);
-          return null;
-        }
-        const pickups = (players as TradeInputPlayer[]).filter(p => !p.tradeable);
-        if (pickups.length) {
-          errors.push(`${at} ${pickups.map(p => p.name).join(', ')} joined ${from.owner}'s roster under ${MIN_DAYS_ON_ROSTER} days ago — pickups can't be traded.`);
-          return null;
-        }
-        return players as TradeInputPlayer[];
-      };
-      const give = side(tr.give, team, 'give');
-      const get = side(tr.get, partner, 'get');
-
-      for (const [label, text] of [['whyForYou', tr.whyForYou], ['whyTheyAccept', tr.whyTheyAccept]] as const) {
-        const t = (text ?? '').trim();
-        if (!t) errors.push(`${at} empty ${label}.`);
-        if (t.length > MAX_WHY_CHARS) errors.push(`${at} ${label} is ${t.length} chars (max ${MAX_WHY_CHARS}).`);
-      }
-      const angles = Array.isArray(tr.angles) ? tr.angles : [];
-      if (angles.length === 0) errors.push(`${at} needs at least one angle.`);
-      for (const a of angles) {
-        if (!(TRADE_ANGLES as readonly string[]).includes(a)) errors.push(`${at} unknown angle "${a}".`);
-      }
-      for (const [angle, words] of SPOKEN_ANGLES) {
-        const said = words.test(tr.whyForYou ?? '');
-        if (angles.includes(angle) && !said) errors.push(`${at} angle "${angle}" but whyForYou never says "${angle.replace('-', ' ')}".`);
-        if (!angles.includes(angle) && said) errors.push(`${at} whyForYou says "${angle.replace('-', ' ')}" but the angle is missing.`);
-      }
-      if (!give || !get) return;
-
-      const key = `${partner.owner}|${[...tr.give].sort().join(',')}|${[...tr.get].sort().join(',')}`;
-      if (tradeKeys.has(key)) errors.push(`${at} same trade listed twice.`);
-      tradeKeys.add(key);
-
-      for (const p of [...give, ...get]) timesSuggested.set(p.playerId, (timesSuggested.get(p.playerId) ?? 0) + 1);
-
-      const gaveValue = projected(get); // what the partner gives up
-      const gotValue = projected(give);
-      if (gaveValue > 0 && (gaveValue - gotValue) / gaveValue > LOPSIDED_SHARE && best(get) >= best(give)) {
-        warnings.push(`${at} ${partner.owner} gives up much more projected value — may say no.`);
-      }
-
-      ideas.push({
-        partnerOwner: partner.owner,
-        partnerTeamName: partner.teamName,
-        give: give.map(card),
-        get: get.map(card),
-        angles: angles as TradeAngle[],
-        whyForYou: tr.whyForYou.trim(),
-        whyTheyAccept: tr.whyTheyAccept.trim(),
-        dropsNeeded: {
-          you: Math.max(0, team.roster.length - give.length + get.length - rosterMax),
-          partner: Math.max(0, partner.roster.length - get.length + give.length - rosterMax),
-        },
-      });
-    });
-
-    // Prose may only quote numbers from this team, its trade partners, or the league.
-    const allowed = allowedNumbers(input, [...partnersInProse]);
-    const texts: [string, string][] = [
+    checkProse(input, partnersInProse, [
       ['summary', summary],
       ...trades.flatMap((tr, i) => [
         [`trade ${i + 1} whyForYou`, tr.whyForYou ?? ''],
         [`trade ${i + 1} whyTheyAccept`, tr.whyTheyAccept ?? ''],
       ] as [string, string][]),
-    ];
-    for (const [label, text] of texts) {
-      const bad = unknownNumbers(text, allowed, allNames);
-      if (bad.length) errors.push(`${where} ${label} has number(s) not in the data: ${[...new Set(bad)].join(', ')}.`);
-      if (BENCH_WORDS.test(text)) errors.push(`${where} ${label} says "bench" — the data has no lineups, and in a daily points league it reads as "not playing". Say "too many PF/C" instead.`);
-    }
+    ], where, errors);
 
     advice.push({
       owner: team.owner,

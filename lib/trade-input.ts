@@ -158,6 +158,18 @@ function acquisitionOf(entry: any, generatedAt: string): Pick<TradeInputPlayer, 
   };
 }
 
+/**
+ * Owner name for an ESPN team: the primary owner's first + last name. The
+ * trade pages, requests and Claude's drafts all match owners by this string.
+ */
+export function ownerNamer(league: any): (team: any) => string {
+  const members = new Map<string, any>((league.members || []).map((m: any) => [m.id, m]));
+  return (team: any) => {
+    const m = members.get(team.primaryOwner) ?? members.get(team.owners?.[0]);
+    return m ? `${m.firstName} ${m.lastName}`.trim() : `Team ${team.id}`;
+  };
+}
+
 function rankBy(players: TradeInputPlayer[], value: (p: TradeInputPlayer) => number | null): Map<number, number> {
   const ranked = players
     .filter(p => value(p) !== null)
@@ -192,11 +204,7 @@ export function buildTradeInput(
   const restOfRegular = gamesOn(schedules, regular.flatMap(p => p.days).filter(d => d >= from));
   const playoffRounds = playoff.map(p => gamesOn(schedules, p.days));
 
-  const members = new Map<string, any>((league.members || []).map((m: any) => [m.id, m]));
-  const ownerOf = (team: any) => {
-    const m = members.get(team.primaryOwner) ?? members.get(team.owners?.[0]);
-    return m ? `${m.firstName} ${m.lastName}`.trim() : `Team ${team.id}`;
-  };
+  const ownerOf = ownerNamer(league);
   const ownerById = new Map<number, string>((league.teams || []).map((t: any) => [t.id, ownerOf(t)]));
 
   const season = opts.season;

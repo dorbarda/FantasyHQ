@@ -11,7 +11,108 @@
       "note": "",
       "createdAt": "2026-11-11T15:13:30.852Z",
       "by": "owner",
-      "status": "pending"
+      "status": "answered",
+      "answer": {
+        "answeredAt": "2026-11-11T19:50:46.137Z",
+        "inputGeneratedAt": "2026-11-11T19:48:56.349Z",
+        "summary": "Knueppel is OUT on IR with 1 game played, so his market is thin right now. The best move is to trade his 35.2 projection (rank 71) for a healthy starter. Only Dor Barda and Amir Ben Izhak have an open IR spot to hold him, so I targeted them. I like Miles Bridges from Dor Barda most: healthy and averaging 35.",
+        "trades": [
+          {
+            "partnerOwner": "Dor Barda",
+            "partnerTeamName": "Nordau Peaky Blinder🚬",
+            "give": [
+              {
+                "playerId": 5061575,
+                "name": "Kon Knueppel",
+                "proTeam": "CHA",
+                "positions": [
+                  "SG",
+                  "SF"
+                ],
+                "injuryStatus": "OUT",
+                "avgSeason": -2,
+                "avgLast15": -2,
+                "avgProjected": 35.2,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4066383,
+                "name": "Miles Bridges",
+                "proTeam": "PHX",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 35,
+                "avgLast15": 39.4,
+                "avgProjected": 33.9,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 15
+              }
+            ],
+            "angles": [
+              "injury-cover"
+            ],
+            "whyForYou": "Knueppel is OUT and has played 1 game, so he gives you nothing now. Miles Bridges is healthy, averages 35 and plays 2 games this week, which helps while Barnes is also out.",
+            "whyTheyAccept": "Knueppel projects 35.2 (rank 71) against 33.9 for Bridges, and Barda has only Butler on IR, so there is room to stash him until he returns.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          },
+          {
+            "partnerOwner": "Amir Ben Izhak",
+            "partnerTeamName": "Libi’s Legacy",
+            "give": [
+              {
+                "playerId": 5061575,
+                "name": "Kon Knueppel",
+                "proTeam": "CHA",
+                "positions": [
+                  "SG",
+                  "SF"
+                ],
+                "injuryStatus": "OUT",
+                "avgSeason": -2,
+                "avgLast15": -2,
+                "avgProjected": 35.2,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "get": [
+              {
+                "playerId": 3064440,
+                "name": "Zach LaVine",
+                "proTeam": "SAC",
+                "positions": [
+                  "SG",
+                  "SF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 32.1,
+                "avgLast15": 29,
+                "avgProjected": 32,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "injury-cover"
+            ],
+            "whyForYou": "Zach LaVine is healthy and averages 32.1, a steady starter while Knueppel and Barnes are both out.",
+            "whyTheyAccept": "Knueppel projects 35.2 against 32 for LaVine, and Amir has only Markkanen on IR, so he can stash Knueppel and bet on the return.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          }
+        ]
+      }
     }
   ]
 }

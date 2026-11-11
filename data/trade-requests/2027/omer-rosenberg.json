@@ -11,7 +11,109 @@
       "note": "",
       "createdAt": "2026-11-11T15:26:02.522Z",
       "by": "owner",
-      "status": "pending"
+      "status": "answered",
+      "answer": {
+        "answeredAt": "2026-11-11T19:50:46.137Z",
+        "inputGeneratedAt": "2026-11-11T19:48:56.349Z",
+        "summary": "Giddey is a buy low: he averages 28.4 against a 46.2 projection (rank 15), so Ilay Mendel may not price him at full value yet. Expect resistance anyway, he is a starter. The cleanest offer is Franz Wagner (40.4 average, 56 over L7), which gives Ilay a forward. I like that one most; Evan Mobley is the fallback.",
+        "trades": [
+          {
+            "partnerOwner": "Ilay Mendel",
+            "partnerTeamName": "King Ozniyon",
+            "give": [
+              {
+                "playerId": 4566434,
+                "name": "Franz Wagner",
+                "proTeam": "ORL",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 40.4,
+                "avgLast15": 43.3,
+                "avgProjected": 38.6,
+                "gamesRestOfRegularSeason": 49,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4871145,
+                "name": "Josh Giddey",
+                "proTeam": "CHI",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 28.4,
+                "avgLast15": 33.4,
+                "avgProjected": 46.2,
+                "gamesRestOfRegularSeason": 49,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "sell-high",
+              "buy-low"
+            ],
+            "whyForYou": "Sell high on Franz Wagner: he averages 40.4 and 56 over L7 against a 38.6 projection (rank 50). Buy low on Josh Giddey: 28.4 average against a 46.2 projection (rank 15), and L7 is already up to 35.",
+            "whyTheyAccept": "Ilay gets a forward averaging 40.4 and running hot, for a guard averaging 28.4. Ilay already has Fox, Quickley, Alexander-Walker and Ajay Mitchell at guard.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          },
+          {
+            "partnerOwner": "Ilay Mendel",
+            "partnerTeamName": "King Ozniyon",
+            "give": [
+              {
+                "playerId": 4432158,
+                "name": "Evan Mobley",
+                "proTeam": "CLE",
+                "positions": [
+                  "PF",
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 38.1,
+                "avgLast15": 36.5,
+                "avgProjected": 43.3,
+                "gamesRestOfRegularSeason": 49,
+                "gamesPlayoffs": 12
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4871145,
+                "name": "Josh Giddey",
+                "proTeam": "CHI",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 28.4,
+                "avgLast15": 33.4,
+                "avgProjected": 46.2,
+                "gamesRestOfRegularSeason": 49,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "buy-low"
+            ],
+            "whyForYou": "Buy low on Josh Giddey: 28.4 average against a 46.2 projection (rank 15). Mobley averages 38.1 now, so you trade current production for a higher ceiling.",
+            "whyTheyAccept": "Ilay gets Mobley, a PF/C averaging 38.1 with 3 games this week, for a guard averaging 28.4, and he covers for Missi being out on IR.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          }
+        ]
+      }
     }
   ]
 }

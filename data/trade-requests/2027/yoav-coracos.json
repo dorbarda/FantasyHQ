@@ -11,7 +11,154 @@
       "note": "",
       "createdAt": "2026-11-11T15:29:35.490Z",
       "by": "owner",
-      "status": "pending"
+      "status": "answered",
+      "answer": {
+        "answeredAt": "2026-11-11T19:50:46.137Z",
+        "inputGeneratedAt": "2026-11-11T19:48:56.349Z",
+        "summary": "Herro is a solid starter (35.1 average, projected rank 45) but DAY_TO_DAY and below his 38.8 projection, so this is not a peak-value sale. The smart move is swapping him for underperforming players with more upside. Best market: Nir Zele's Darius Garland (29 average against a 40.4 projection). Harden and Amen Thompson follow the same logic.",
+        "trades": [
+          {
+            "partnerOwner": "Nir Zele",
+            "partnerTeamName": "Slotzki",
+            "give": [
+              {
+                "playerId": 4395725,
+                "name": "Tyler Herro",
+                "proTeam": "MIL",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "DAY_TO_DAY",
+                "avgSeason": 35.1,
+                "avgLast15": 31.7,
+                "avgProjected": 38.8,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4396907,
+                "name": "Darius Garland",
+                "proTeam": "LAC",
+                "positions": [
+                  "PG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 29,
+                "avgLast15": 27.9,
+                "avgProjected": 40.4,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "buy-low"
+            ],
+            "whyForYou": "Buy low on Darius Garland: he averages 29 against a 40.4 projection (rank 38). Herro is DAY_TO_DAY, so you swap a hurt, fairly valued guard for more upside.",
+            "whyTheyAccept": "Nir is 1-2 and needs points now: Herro averages 35.1 against 29 for Garland, and plays 3 games this week to Garland's 2.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          },
+          {
+            "partnerOwner": "Dor Gelless",
+            "partnerTeamName": "Flint Tropics 70's Show",
+            "give": [
+              {
+                "playerId": 4395725,
+                "name": "Tyler Herro",
+                "proTeam": "MIL",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "DAY_TO_DAY",
+                "avgSeason": 35.1,
+                "avgLast15": 31.7,
+                "avgProjected": 38.8,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "get": [
+              {
+                "playerId": 3992,
+                "name": "James Harden",
+                "proTeam": "CLE",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 29.1,
+                "avgLast15": 28.5,
+                "avgProjected": 42.1,
+                "gamesRestOfRegularSeason": 49,
+                "gamesPlayoffs": 12
+              }
+            ],
+            "angles": [
+              "buy-low"
+            ],
+            "whyForYou": "Buy low on James Harden: 29.1 average against a 42.1 projection (rank 35), and he is healthy while Herro is DAY_TO_DAY.",
+            "whyTheyAccept": "Dor Gelless is 0-3 with Barnes and Knueppel out, so he needs production today: Herro averages 35.1 against 29.1 for Harden.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          },
+          {
+            "partnerOwner": "Amir Ben Izhak",
+            "partnerTeamName": "Libi’s Legacy",
+            "give": [
+              {
+                "playerId": 4395725,
+                "name": "Tyler Herro",
+                "proTeam": "MIL",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "DAY_TO_DAY",
+                "avgSeason": 35.1,
+                "avgLast15": 31.7,
+                "avgProjected": 38.8,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4684740,
+                "name": "Amen Thompson",
+                "proTeam": "HOU",
+                "positions": [
+                  "SG",
+                  "SF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 30.5,
+                "avgLast15": 27.6,
+                "avgProjected": 40,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "buy-low"
+            ],
+            "whyForYou": "Buy low on Amen Thompson: 30.5 average against a 40 projection (rank 40), with 3 games this week.",
+            "whyTheyAccept": "Amir gets Herro at 35.1 (projected rank 45) for Amen's 30.5, and wants points now while sitting at 2-1.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          }
+        ]
+      }
     },
     {
       "id": "2026-11-11T18-58-22-685Z-319a8f",
@@ -22,7 +169,108 @@
       "note": "",
       "createdAt": "2026-11-11T18:58:22.685Z",
       "by": "owner",
-      "status": "pending"
+      "status": "answered",
+      "answer": {
+        "answeredAt": "2026-11-11T19:50:46.137Z",
+        "inputGeneratedAt": "2026-11-11T19:48:56.349Z",
+        "summary": "Avdija (37.7 average, projected rank 37) is a real starter for Ilay Mendel, so you need a fair offer. Herro is the closest match and the one I like most. If Ilay wants more, Booker is the upgrade offer.",
+        "trades": [
+          {
+            "partnerOwner": "Ilay Mendel",
+            "partnerTeamName": "King Ozniyon",
+            "give": [
+              {
+                "playerId": 4395725,
+                "name": "Tyler Herro",
+                "proTeam": "MIL",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "DAY_TO_DAY",
+                "avgSeason": 35.1,
+                "avgLast15": 31.7,
+                "avgProjected": 38.8,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4683021,
+                "name": "Deni Avdija",
+                "proTeam": "POR",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 37.7,
+                "avgLast15": 37.3,
+                "avgProjected": 40.4,
+                "gamesRestOfRegularSeason": 49,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "positional-need"
+            ],
+            "whyForYou": "Herro for Avdija is the cleanest offer: both are starters of similar value (Herro projected rank 45, Avdija 37) and you land a SF/PF.",
+            "whyTheyAccept": "Ilay is deep at guard, so this is a harder sell. But Herro projects 38.8 against 40.4 for Avdija, and plays 3 games this week to Avdija's 2.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          },
+          {
+            "partnerOwner": "Ilay Mendel",
+            "partnerTeamName": "King Ozniyon",
+            "give": [
+              {
+                "playerId": 3136193,
+                "name": "Devin Booker",
+                "proTeam": "PHX",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 38.2,
+                "avgLast15": 37.7,
+                "avgProjected": 43.2,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 15
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4683021,
+                "name": "Deni Avdija",
+                "proTeam": "POR",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 37.7,
+                "avgLast15": 37.3,
+                "avgProjected": 40.4,
+                "gamesRestOfRegularSeason": 49,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "positional-need"
+            ],
+            "whyForYou": "Star-for-star: Booker (projected rank 29) is worth more than Avdija (rank 37), so this is the offer Ilay can least refuse, and you land a SF/PF.",
+            "whyTheyAccept": "Booker projects 43.2 against 40.4 for Avdija and averages 38.2 against 37.7, so Ilay gets the better player.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          }
+        ]
+      }
     }
   ]
 }

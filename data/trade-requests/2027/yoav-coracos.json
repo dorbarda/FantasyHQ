@@ -1,0 +1,17 @@
+{
+  "season": 2027,
+  "owner": "Yoav Coracos",
+  "requests": [
+    {
+      "id": "2026-11-11T15-29-35-490Z-fcd8d3",
+      "kind": "sell",
+      "playerId": 4395725,
+      "playerName": "Tyler Herro",
+      "playerOwner": "Yoav Coracos",
+      "note": "",
+      "createdAt": "2026-11-11T15:29:35.490Z",
+      "by": "owner",
+      "status": "pending"
+    }
+  ]
+}

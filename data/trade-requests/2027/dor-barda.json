@@ -11,7 +11,184 @@
       "note": "",
       "createdAt": "2026-11-11T14:57:54.304Z",
       "by": "owner",
-      "status": "pending"
+      "status": "answered",
+      "answer": {
+        "answeredAt": "2026-11-11T15:02:58.874Z",
+        "inputGeneratedAt": "2026-11-11T15:02:28.386Z",
+        "summary": "Good time to buy low: Trae Young averages 35.5 but ESPN projects 44.4 (rank 20 by projection), and he has 14 playoff games. You have lots of guards (SGA, LaMelo, Kyrie, Reaves, VanVleet), so pay with them, not your bigs. Amir is thin at forward with Markkanen day-to-day, so a forward helps him say yes. My favourite is idea 1: Lendeborg + VanVleet.",
+        "trades": [
+          {
+            "partnerOwner": "Amir Ben Izhak",
+            "partnerTeamName": "Libi’s Legacy",
+            "give": [
+              {
+                "playerId": 5175737,
+                "name": "Yaxel Lendeborg",
+                "proTeam": "GSW",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 37.8,
+                "avgLast15": 37.1,
+                "avgProjected": 33.7,
+                "gamesRestOfRegularSeason": 46,
+                "gamesPlayoffs": 15
+              },
+              {
+                "playerId": 2991230,
+                "name": "Fred VanVleet",
+                "proTeam": "HOU",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 30.7,
+                "avgLast15": 30.2,
+                "avgProjected": 33.4,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4277905,
+                "name": "Trae Young",
+                "proTeam": "WAS",
+                "positions": [
+                  "PG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 35.5,
+                "avgLast15": 31.1,
+                "avgProjected": 44.4,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "buy-low",
+              "sell-high",
+              "consolidation"
+            ],
+            "whyForYou": "Sell high on Yaxel Lendeborg (37.8 now, 33.7 projected) and buy low on Trae (35.5 now, 44.4 projected). VanVleet is your fifth guard, so you turn two depth players into one top-20 projected player and free a roster spot.",
+            "whyTheyAccept": "Amir gets two healthy starters for one: a SF/PF while Markkanen is day-to-day, plus a guard. Lendeborg is scoring 37.8, more than Trae right now.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          },
+          {
+            "partnerOwner": "Amir Ben Izhak",
+            "partnerTeamName": "Libi’s Legacy",
+            "give": [
+              {
+                "playerId": 6442,
+                "name": "Kyrie Irving",
+                "proTeam": "DAL",
+                "positions": [
+                  "PG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 39.8,
+                "avgLast15": 42.5,
+                "avgProjected": 44.2,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4277905,
+                "name": "Trae Young",
+                "proTeam": "WAS",
+                "positions": [
+                  "PG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 35.5,
+                "avgLast15": 31.1,
+                "avgProjected": 44.4,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "buy-low"
+            ],
+            "whyForYou": "A simple guard swap to buy low: Kyrie projects 44.2, Trae 44.4, but Trae has 48 games left this season vs. Kyrie's 47. You keep all your forwards and bigs.",
+            "whyTheyAccept": "Kyrie is playing better right now: 39.8 a game vs. Trae's 35.5, and 42.5 over the last 15 days. Easy to sell as an upgrade.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          },
+          {
+            "partnerOwner": "Amir Ben Izhak",
+            "partnerTeamName": "Libi’s Legacy",
+            "give": [
+              {
+                "playerId": 4066383,
+                "name": "Miles Bridges",
+                "proTeam": "PHX",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 35,
+                "avgLast15": 39.4,
+                "avgProjected": 33.9,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 15
+              },
+              {
+                "playerId": 2991230,
+                "name": "Fred VanVleet",
+                "proTeam": "HOU",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 30.7,
+                "avgLast15": 30.2,
+                "avgProjected": 33.4,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4277905,
+                "name": "Trae Young",
+                "proTeam": "WAS",
+                "positions": [
+                  "PG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 35.5,
+                "avgLast15": 31.1,
+                "avgProjected": 44.4,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "buy-low",
+              "consolidation"
+            ],
+            "whyForYou": "Same idea as 1 if you'd rather keep Lendeborg: buy low on Trae with Miles Bridges and VanVleet. You keep Lendeborg and both centers.",
+            "whyTheyAccept": "Bridges (SF/PF, 35 a game) fills Amir's forward hole and has 15 playoff games; VanVleet adds guard depth.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          }
+        ]
+      }
     }
   ]
 }

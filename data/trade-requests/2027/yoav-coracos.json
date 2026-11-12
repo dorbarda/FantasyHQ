@@ -393,7 +393,155 @@
       "note": "",
       "createdAt": "2026-11-12T17:04:06.401Z",
       "by": "owner",
-      "status": "pending"
+      "status": "answered",
+      "answer": {
+        "answeredAt": "2026-11-12T19:50:10.024Z",
+        "inputGeneratedAt": "2026-11-12T19:49:32.578Z",
+        "summary": "LeBron is OUT right now, so his market is discounted: he averages 35.6 against a 42.5 projection (rank 33 by projection) and has 15 playoff games, which a contender can wait for. Best fits are teams that can use a forward and don't mind the wait. My favourite is idea 2: Paul George from Nir Zele, who averages 41.8 and is day-to-day. Idea 1 gets you a healthy PF/C in Bam Adebayo.",
+        "trades": [
+          {
+            "partnerOwner": "Nir Zele",
+            "partnerTeamName": "Slotzki",
+            "give": [
+              {
+                "playerId": 1966,
+                "name": "LeBron James",
+                "proTeam": "PHI",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "OUT",
+                "avgSeason": 35.6,
+                "avgLast15": 35.7,
+                "avgProjected": 42.5,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 15
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4251,
+                "name": "Paul George",
+                "proTeam": "BOS",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "DAY_TO_DAY",
+                "avgSeason": 41.8,
+                "avgLast15": 42.5,
+                "avgProjected": 38.5,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "injury-cover"
+            ],
+            "whyForYou": "You swap an injured forward for one who is scoring now: Paul George (day-to-day) averages 41.8 this season versus 35.6 for LeBron, who is OUT. Playoff games are 14 vs 15, so you lose little for the playoffs.",
+            "whyTheyAccept": "Nir gets the higher projection (42.5 vs 38.5) and a top-33 projected player, and has Chet Holmgren and Ja Morant on IR so can afford to wait on LeBron for the playoff weeks.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          },
+          {
+            "partnerOwner": "Dor Gelless",
+            "partnerTeamName": "Flint Tropics 70's Show",
+            "give": [
+              {
+                "playerId": 1966,
+                "name": "LeBron James",
+                "proTeam": "PHI",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "OUT",
+                "avgSeason": 35.6,
+                "avgLast15": 35.7,
+                "avgProjected": 42.5,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 15
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4066261,
+                "name": "Bam Adebayo",
+                "proTeam": "MIA",
+                "positions": [
+                  "PF",
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 40.2,
+                "avgLast15": 45.9,
+                "avgProjected": 39.6,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "angles": [
+              "injury-cover"
+            ],
+            "whyForYou": "Bam Adebayo is ACTIVE and averages 40.2 at PF/C, covering the injury hole LeBron leaves (he is OUT). You give up 2 playoff games (13 vs 15) but get points every week.",
+            "whyTheyAccept": "Dor is 0-3 and needs a higher ceiling: LeBron is projected 42.5 (rank 33) against 39.6 for Bam (rank 41), and Dor already has Zubac and Poeltl for center depth, so a forward helps.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          },
+          {
+            "partnerOwner": "Omer Rosenberg",
+            "partnerTeamName": "Inglourious Basterds",
+            "give": [
+              {
+                "playerId": 1966,
+                "name": "LeBron James",
+                "proTeam": "PHI",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "OUT",
+                "avgSeason": 35.6,
+                "avgLast15": 35.7,
+                "avgProjected": 42.5,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 15
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4566434,
+                "name": "Franz Wagner",
+                "proTeam": "ORL",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 41,
+                "avgLast15": 43.8,
+                "avgProjected": 38.6,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "injury-cover"
+            ],
+            "whyForYou": "Franz Wagner is ACTIVE and averages 41, versus 35.6 for LeBron who is OUT, and you keep the same SF/PF slot. Franz has 14 playoff games, one fewer than LeBron.",
+            "whyTheyAccept": "Omer has Jaren Jackson Jr. and Jalen Suggs OUT and is deep at forward, so he can take a bigger projection: LeBron at 42.5 (rank 33) against Franz at 38.6 (rank 50).",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          }
+        ]
+      }
     }
   ]
 }

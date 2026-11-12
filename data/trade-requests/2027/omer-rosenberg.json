@@ -114,6 +114,17 @@
           }
         ]
       }
+    },
+    {
+      "id": "2026-11-12T08-11-03-737Z-85ec18",
+      "kind": "buy",
+      "playerId": 3934672,
+      "playerName": "Jalen Brunson",
+      "playerOwner": "Nir Zele",
+      "note": "אני רוצה לתת שני שחקנים עליו",
+      "createdAt": "2026-11-12T08:11:03.737Z",
+      "by": "owner",
+      "status": "pending"
     }
   ]
 }

@@ -383,6 +383,17 @@
           }
         ]
       }
+    },
+    {
+      "id": "2026-11-12T17-04-06-401Z-434d70",
+      "kind": "sell",
+      "playerId": 1966,
+      "playerName": "LeBron James",
+      "playerOwner": "Yoav Coracos",
+      "note": "",
+      "createdAt": "2026-11-12T17:04:06.401Z",
+      "by": "owner",
+      "status": "pending"
     }
   ]
 }

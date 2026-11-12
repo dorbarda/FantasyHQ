@@ -271,6 +271,17 @@
           }
         ]
       }
+    },
+    {
+      "id": "2026-11-12T11-45-39-408Z-17e9ee",
+      "kind": "buy",
+      "playerId": 5037871,
+      "playerName": "Dylan Harper",
+      "playerOwner": "Amir Ben Izhak",
+      "note": "",
+      "createdAt": "2026-11-12T11:45:39.408Z",
+      "by": "owner",
+      "status": "pending"
     }
   ]
 }

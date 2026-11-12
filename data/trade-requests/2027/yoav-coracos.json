@@ -281,7 +281,108 @@
       "note": "",
       "createdAt": "2026-11-12T11:45:39.408Z",
       "by": "owner",
-      "status": "pending"
+      "status": "answered",
+      "answer": {
+        "answeredAt": "2026-11-12T13:52:11.234Z",
+        "inputGeneratedAt": "2026-11-12T13:51:08.585Z",
+        "summary": "Dylan Harper scores 35.7 per game against 32.3 projected, so Amir Ben Izhak has a reason to sell high - offer equal or better projection. Barrett (32.6 projected, 14 playoff games) is a straight swap. Herro (38.8 projected) is a stronger offer if you want to close quickly. Harper has 13 playoff games, so you lose nothing in the playoff weeks.",
+        "trades": [
+          {
+            "partnerOwner": "Amir Ben Izhak",
+            "partnerTeamName": "Libi’s Legacy",
+            "give": [
+              {
+                "playerId": 4395625,
+                "name": "RJ Barrett",
+                "proTeam": "TOR",
+                "positions": [
+                  "SG",
+                  "SF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 32.5,
+                "avgLast15": 31.8,
+                "avgProjected": 32.6,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "get": [
+              {
+                "playerId": 5037871,
+                "name": "Dylan Harper",
+                "proTeam": "SAS",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 35.7,
+                "avgLast15": 36.5,
+                "avgProjected": 32.3,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "angles": [
+              "playoff-schedule"
+            ],
+            "whyForYou": "Harper (35.7 per game, 32.3 projected) for Barrett (32.6 projected) is an even swap on paper and costs you very little.",
+            "whyTheyAccept": "Amir Ben Izhak sells high on Harper and receives a player with 14 playoff games against Harper's 13.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          },
+          {
+            "partnerOwner": "Amir Ben Izhak",
+            "partnerTeamName": "Libi’s Legacy",
+            "give": [
+              {
+                "playerId": 4395725,
+                "name": "Tyler Herro",
+                "proTeam": "MIL",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 35.5,
+                "avgLast15": 32.9,
+                "avgProjected": 38.8,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "get": [
+              {
+                "playerId": 5037871,
+                "name": "Dylan Harper",
+                "proTeam": "SAS",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 35.7,
+                "avgLast15": 36.5,
+                "avgProjected": 32.3,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "angles": [
+              "positional-need"
+            ],
+            "whyForYou": "Herro is 38.8 projected against Harper's 32.3, so this is the offer that is hard to refuse. Harper keeps the PG/SG slot filled.",
+            "whyTheyAccept": "Amir Ben Izhak sells high on Harper and gets Herro, rank 45 in projection against Harper's 92.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          }
+        ]
+      }
     }
   ]
 }

@@ -124,7 +124,196 @@
       "note": "אני רוצה לתת שני שחקנים עליו",
       "createdAt": "2026-11-12T08:11:03.737Z",
       "by": "owner",
-      "status": "pending"
+      "status": "answered",
+      "answer": {
+        "answeredAt": "2026-11-12T13:52:11.234Z",
+        "inputGeneratedAt": "2026-11-12T13:51:08.585Z",
+        "summary": "Nir Zele is deep at guard (Brunson, Garland, Acuff, Mitchell) and thin on the wing, so give him forwards, not guards. Best package: Franz Wagner plus Edgecombe - selling high on Wagner (41 per game against 38.6 projected). Brunson is 38.4 per game and 43.8 projected, rank 24. Option 2 swaps Edgecombe for Castle; option 3 keeps Wagner and offers two guards, which Nir may refuse.",
+        "trades": [
+          {
+            "partnerOwner": "Nir Zele",
+            "partnerTeamName": "Slotzki",
+            "give": [
+              {
+                "playerId": 4566434,
+                "name": "Franz Wagner",
+                "proTeam": "ORL",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 41,
+                "avgLast15": 43.8,
+                "avgProjected": 38.6,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 14
+              },
+              {
+                "playerId": 5124612,
+                "name": "VJ Edgecombe",
+                "proTeam": "PHI",
+                "positions": [
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 31.1,
+                "avgLast15": 30.4,
+                "avgProjected": 33.7,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 15
+              }
+            ],
+            "get": [
+              {
+                "playerId": 3934672,
+                "name": "Jalen Brunson",
+                "proTeam": "NYK",
+                "positions": [
+                  "PG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 38.4,
+                "avgLast15": 44.1,
+                "avgProjected": 43.8,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "angles": [
+              "sell-high",
+              "consolidation"
+            ],
+            "whyForYou": "Selling high on Wagner (41 per game against 38.6 projected) plus Edgecombe gets you Brunson, 43.8 projected, rank 24. Two players for one, as you wanted.",
+            "whyTheyAccept": "Nir Zele is thin at forward and Wagner is a starter at SF/PF. Edgecombe adds a second starter for a guard-heavy roster.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 1
+            }
+          },
+          {
+            "partnerOwner": "Nir Zele",
+            "partnerTeamName": "Slotzki",
+            "give": [
+              {
+                "playerId": 4566434,
+                "name": "Franz Wagner",
+                "proTeam": "ORL",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 41,
+                "avgLast15": 43.8,
+                "avgProjected": 38.6,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 14
+              },
+              {
+                "playerId": 4845367,
+                "name": "Stephon Castle",
+                "proTeam": "SAS",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 28.6,
+                "avgLast15": 25.9,
+                "avgProjected": 36.9,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "get": [
+              {
+                "playerId": 3934672,
+                "name": "Jalen Brunson",
+                "proTeam": "NYK",
+                "positions": [
+                  "PG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 38.4,
+                "avgLast15": 44.1,
+                "avgProjected": 43.8,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "angles": [
+              "sell-high"
+            ],
+            "whyForYou": "Sell high on Wagner and add Castle for Brunson. Castle is a young PG/SG with 36.9 projected, so the price is high but fair.",
+            "whyTheyAccept": "Nir Zele gets a starting SF/PF in Wagner and a 36.9 projected guard in Castle for one player, a clear gain in depth.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 1
+            }
+          },
+          {
+            "partnerOwner": "Nir Zele",
+            "partnerTeamName": "Slotzki",
+            "give": [
+              {
+                "playerId": 4845367,
+                "name": "Stephon Castle",
+                "proTeam": "SAS",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 28.6,
+                "avgLast15": 25.9,
+                "avgProjected": 36.9,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 13
+              },
+              {
+                "playerId": 5124612,
+                "name": "VJ Edgecombe",
+                "proTeam": "PHI",
+                "positions": [
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 31.1,
+                "avgLast15": 30.4,
+                "avgProjected": 33.7,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 15
+              }
+            ],
+            "get": [
+              {
+                "playerId": 3934672,
+                "name": "Jalen Brunson",
+                "proTeam": "NYK",
+                "positions": [
+                  "PG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 38.4,
+                "avgLast15": 44.1,
+                "avgProjected": 43.8,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "angles": [
+              "consolidation"
+            ],
+            "whyForYou": "Keeps Wagner. Castle and Edgecombe go out for Brunson, a star at 43.8 projected, and you still have Murray, Tatum and Flagg.",
+            "whyTheyAccept": "Two starters for one. It is the weakest offer for Nir Zele, who may say no.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 1
+            }
+          }
+        ]
+      }
     }
   ]
 }

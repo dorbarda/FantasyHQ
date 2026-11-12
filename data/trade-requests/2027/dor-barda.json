@@ -361,7 +361,201 @@
       "note": "I want a star",
       "createdAt": "2026-11-12T10:21:16.986Z",
       "by": "owner",
-      "status": "pending"
+      "status": "answered",
+      "answer": {
+        "answeredAt": "2026-11-12T13:52:11.234Z",
+        "inputGeneratedAt": "2026-11-12T13:51:08.585Z",
+        "summary": "Durant is averaging 35.1 against 42.9 projected, so the market will price him below his projection - this is not a sell-high spot. To land a real star you need to add a piece. Best fit: Durant plus Bridges for Jalen Johnson (40.3 avg, 50 projected, rank 7), a buy-low on a star whose owner is 0-3. Two other routes: Durant with Lendeborg for Anthony Davis, or Durant with Allen for Sabonis.",
+        "trades": [
+          {
+            "partnerOwner": "Dor Gelless",
+            "partnerTeamName": "Flint Tropics 70's Show",
+            "give": [
+              {
+                "playerId": 3202,
+                "name": "Kevin Durant",
+                "proTeam": "HOU",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 35.1,
+                "avgLast15": 32.9,
+                "avgProjected": 42.9,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 14
+              },
+              {
+                "playerId": 4066383,
+                "name": "Miles Bridges",
+                "proTeam": "PHX",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 35,
+                "avgLast15": 39.4,
+                "avgProjected": 33.9,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 15
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4701230,
+                "name": "Jalen Johnson",
+                "proTeam": "ATL",
+                "positions": [
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 40.3,
+                "avgLast15": 34,
+                "avgProjected": 50,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "buy-low",
+              "consolidation"
+            ],
+            "whyForYou": "Buy low on Jalen Johnson: 40.3 per game against 50 projected, rank 7 in projection. You turn two forwards into the star you asked for.",
+            "whyTheyAccept": "Dor Gelless is 0-3 with Barnes and Knueppel on IR. Two healthy starters, Durant (42.9 projected) and Bridges, patch the holes right away.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 1
+            }
+          },
+          {
+            "partnerOwner": "Nir Zele",
+            "partnerTeamName": "Slotzki",
+            "give": [
+              {
+                "playerId": 3202,
+                "name": "Kevin Durant",
+                "proTeam": "HOU",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 35.1,
+                "avgLast15": 32.9,
+                "avgProjected": 42.9,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 14
+              },
+              {
+                "playerId": 5175737,
+                "name": "Yaxel Lendeborg",
+                "proTeam": "GSW",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 37.8,
+                "avgLast15": 37.1,
+                "avgProjected": 33.7,
+                "gamesRestOfRegularSeason": 45,
+                "gamesPlayoffs": 15
+              }
+            ],
+            "get": [
+              {
+                "playerId": 6583,
+                "name": "Anthony Davis",
+                "proTeam": "WAS",
+                "positions": [
+                  "PF",
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 44.8,
+                "avgLast15": 50.2,
+                "avgProjected": 49.6,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "sell-high",
+              "consolidation"
+            ],
+            "whyForYou": "Selling high on Lendeborg (37.8 per game against 33.7 projected) helps pay for Anthony Davis, 44.8 per game and 49.6 projected. You get a PF/C star.",
+            "whyTheyAccept": "Nir Zele has Green at 19.8 per game and George day-to-day on the wings. Durant and Lendeborg give two forwards and 14 playoff games each for one big.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 1
+            }
+          },
+          {
+            "partnerOwner": "Barak Miller",
+            "partnerTeamName": "Team Miller",
+            "give": [
+              {
+                "playerId": 3202,
+                "name": "Kevin Durant",
+                "proTeam": "HOU",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 35.1,
+                "avgLast15": 32.9,
+                "avgProjected": 42.9,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 14
+              },
+              {
+                "playerId": 4066328,
+                "name": "Jarrett Allen",
+                "proTeam": "CLE",
+                "positions": [
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 31.8,
+                "avgLast15": 31,
+                "avgProjected": 36.9,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 12
+              }
+            ],
+            "get": [
+              {
+                "playerId": 3155942,
+                "name": "Domantas Sabonis",
+                "proTeam": "SAC",
+                "positions": [
+                  "PF",
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 38.4,
+                "avgLast15": 29.2,
+                "avgProjected": 46.7,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "buy-low",
+              "depth"
+            ],
+            "whyForYou": "Buy low on Sabonis: 38.4 per game against 46.7 projected, rank 12 in projection. You keep Kessler at center.",
+            "whyTheyAccept": "Embiid is day-to-day and Ingram is out. Allen adds a center and Durant a forward, two bodies for the injury holes.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 1
+            }
+          }
+        ]
+      }
     }
   ]
 }

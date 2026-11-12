@@ -351,6 +351,17 @@
           }
         ]
       }
+    },
+    {
+      "id": "2026-11-12T10-21-16-986Z-ecb9a4",
+      "kind": "sell",
+      "playerId": 3202,
+      "playerName": "Kevin Durant",
+      "playerOwner": "Dor Barda",
+      "note": "I want a star",
+      "createdAt": "2026-11-12T10:21:16.986Z",
+      "by": "owner",
+      "status": "pending"
     }
   ]
 }

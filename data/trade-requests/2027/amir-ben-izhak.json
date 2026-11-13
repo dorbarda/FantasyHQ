@@ -1,0 +1,17 @@
+{
+  "season": 2027,
+  "owner": "Amir Ben Izhak",
+  "requests": [
+    {
+      "id": "2026-11-13T13-55-09-362Z-1f91d0",
+      "kind": "sell",
+      "playerId": 3078576,
+      "playerName": "Derrick White",
+      "playerOwner": "Amir Ben Izhak",
+      "note": "",
+      "createdAt": "2026-11-13T13:55:09.362Z",
+      "by": "owner",
+      "status": "pending"
+    }
+  ]
+}

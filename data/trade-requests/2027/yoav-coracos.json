@@ -552,7 +552,196 @@
       "note": "",
       "createdAt": "2026-11-13T10:34:06.177Z",
       "by": "owner",
-      "status": "pending"
+      "status": "answered",
+      "answer": {
+        "answeredAt": "2026-11-13T14:40:33.424Z",
+        "inputGeneratedAt": "2026-11-13T14:39:41.955Z",
+        "summary": "Jalen Johnson is a star: projected rank 7, 40.3 per game this season and 50 projected, so Dor Gelless will want real value. Dor is 0-3 and thin, so two-for-one packages that give him more starters are the realistic route. I like the LeBron and Barrett package most because it gives Dor 29 playoff games for Johnson's 14.",
+        "trades": [
+          {
+            "partnerOwner": "Dor Gelless",
+            "partnerTeamName": "Flint Tropics 70's Show",
+            "give": [
+              {
+                "playerId": 4395725,
+                "name": "Tyler Herro",
+                "proTeam": "MIL",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 35.5,
+                "avgLast15": 32.5,
+                "avgProjected": 38.8,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 13
+              },
+              {
+                "playerId": 5041935,
+                "name": "Cameron Boozer",
+                "proTeam": "MEM",
+                "positions": [
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 32.3,
+                "avgLast15": 33.6,
+                "avgProjected": 34.3,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 15
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4701230,
+                "name": "Jalen Johnson",
+                "proTeam": "ATL",
+                "positions": [
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 40.3,
+                "avgLast15": 33,
+                "avgProjected": 50,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "consolidation"
+            ],
+            "whyForYou": "You consolidate two mid-level players, Herro (35.5) and Boozer (32.3), into one star projected at 50. Johnson plays 2 games this week.",
+            "whyTheyAccept": "Dor is 0-3 and gets two starters averaging 35.5 and 32.3 for one player, which fills holes while Barnes and Knueppel are out.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 1
+            }
+          },
+          {
+            "partnerOwner": "Dor Gelless",
+            "partnerTeamName": "Flint Tropics 70's Show",
+            "give": [
+              {
+                "playerId": 1966,
+                "name": "LeBron James",
+                "proTeam": "PHI",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "DAY_TO_DAY",
+                "avgSeason": 35.6,
+                "avgLast15": 33.5,
+                "avgProjected": 42.5,
+                "gamesRestOfRegularSeason": 46,
+                "gamesPlayoffs": 15
+              },
+              {
+                "playerId": 4395625,
+                "name": "RJ Barrett",
+                "proTeam": "TOR",
+                "positions": [
+                  "SG",
+                  "SF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 34.6,
+                "avgLast15": 32.5,
+                "avgProjected": 32.6,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4701230,
+                "name": "Jalen Johnson",
+                "proTeam": "ATL",
+                "positions": [
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 40.3,
+                "avgLast15": 33,
+                "avgProjected": 50,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "consolidation",
+              "playoff-schedule"
+            ],
+            "whyForYou": "LeBron is day to day and Barrett is a secondary piece, so you turn two lower-impact players into one star projected at 50.",
+            "whyTheyAccept": "Dor gets LeBron (35.6, 15 playoff games) and Barrett (34.6, 14 playoff games), 29 playoff games combined against Johnson's 14.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 1
+            }
+          },
+          {
+            "partnerOwner": "Dor Gelless",
+            "partnerTeamName": "Flint Tropics 70's Show",
+            "give": [
+              {
+                "playerId": 3136193,
+                "name": "Devin Booker",
+                "proTeam": "PHX",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 40.6,
+                "avgLast15": 41.1,
+                "avgProjected": 43.2,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 15
+              },
+              {
+                "playerId": 4277847,
+                "name": "Wendell Carter Jr.",
+                "proTeam": "ORL",
+                "positions": [
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 30.6,
+                "avgLast15": 29.7,
+                "avgProjected": 23,
+                "gamesRestOfRegularSeason": 48,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4701230,
+                "name": "Jalen Johnson",
+                "proTeam": "ATL",
+                "positions": [
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 40.3,
+                "avgLast15": 33,
+                "avgProjected": 50,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "consolidation"
+            ],
+            "whyForYou": "Booker (40.6) plus Carter (30.6) for Johnson (projected 50) is the biggest offer. It puts a top-7 projected player on your team for two starters.",
+            "whyTheyAccept": "Dor gets Booker, who matches Johnson's 40.3 average with 15 playoff games, plus Carter at center, where Zubac averages only 22.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 1
+            }
+          }
+        ]
+      }
     }
   ]
 }

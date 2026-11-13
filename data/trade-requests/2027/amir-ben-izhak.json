@@ -11,7 +11,107 @@
       "note": "",
       "createdAt": "2026-11-13T13:55:09.362Z",
       "by": "owner",
-      "status": "pending"
+      "status": "answered",
+      "answer": {
+        "answeredAt": "2026-11-13T14:40:33.424Z",
+        "inputGeneratedAt": "2026-11-13T14:39:41.955Z",
+        "summary": "White is a useful but not a premium piece: 30.1 per game this season (projected 37, rank 85 this season, 61 projected), and he is not a core piece of your roster. The market is modest, so I'd target bigger-upside players who are underperforming. I like the Zubac deal most: it buys low on a center whose projection is far above his average.",
+        "trades": [
+          {
+            "partnerOwner": "Dor Gelless",
+            "partnerTeamName": "Flint Tropics 70's Show",
+            "give": [
+              {
+                "playerId": 3078576,
+                "name": "Derrick White",
+                "proTeam": "BOS",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 30.1,
+                "avgLast15": 30.9,
+                "avgProjected": 37,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4017837,
+                "name": "Ivica Zubac",
+                "proTeam": "IND",
+                "positions": [
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 22,
+                "avgLast15": 22.3,
+                "avgProjected": 35.5,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "angles": [
+              "buy-low"
+            ],
+            "whyForYou": "Buying low on Ivica Zubac: he averages 22 this season but projects at 35.5 and scored 31.4 last season, and he plays 2 games this week. You are deep at guard, so you swap a spare guard for a starting-caliber center.",
+            "whyTheyAccept": "Dor is 0-3 and needs points now. White averages 30.1 against Zubac's 22, a clear upgrade, and White has 14 playoff games.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          },
+          {
+            "partnerOwner": "Yotam Goldin",
+            "partnerTeamName": "PlottKe",
+            "give": [
+              {
+                "playerId": 3078576,
+                "name": "Derrick White",
+                "proTeam": "BOS",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 30.1,
+                "avgLast15": 30.9,
+                "avgProjected": 37,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "get": [
+              {
+                "playerId": 3032976,
+                "name": "Rudy Gobert",
+                "proTeam": "MIN",
+                "positions": [
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 22.8,
+                "avgLast15": 27.8,
+                "avgProjected": 34.3,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "angles": [
+              "buy-low",
+              "depth"
+            ],
+            "whyForYou": "Buying low on Rudy Gobert: he averages 22.8 but projects at 34.3 and scored 32.8 last season. He gives you center depth behind Wembanyama while using a guard you have extra of.",
+            "whyTheyAccept": "Yotam is 0-3 with the league's lowest points total. White's 30.1 average is well above Gobert's 22.8, which helps right now.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          }
+        ]
+      }
     }
   ]
 }

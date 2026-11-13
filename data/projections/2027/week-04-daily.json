@@ -1,7 +1,7 @@
 {
   "season": 2027,
   "week": 4,
-  "updatedAt": "2026-11-12T20:01:23.260Z",
+  "updatedAt": "2026-11-13T04:01:29.107Z",
   "days": [
     {
       "date": "2026-11-09",
@@ -14,6 +14,10 @@
     {
       "date": "2026-11-11",
       "scoringPeriodId": 23
+    },
+    {
+      "date": "2026-11-12",
+      "scoringPeriodId": 24
     }
   ],
   "teams": {
@@ -29,6 +33,10 @@
       {
         "played": 9,
         "points": 293
+      },
+      {
+        "played": 3,
+        "points": 142
       }
     ],
     "2": [
@@ -43,6 +51,10 @@
       {
         "played": 7,
         "points": 206
+      },
+      {
+        "played": 5,
+        "points": 173
       }
     ],
     "3": [
@@ -57,6 +69,10 @@
       {
         "played": 8,
         "points": 224
+      },
+      {
+        "played": 3,
+        "points": 85
       }
     ],
     "4": [
@@ -71,6 +87,10 @@
       {
         "played": 9,
         "points": 303
+      },
+      {
+        "played": 5,
+        "points": 127
       }
     ],
     "5": [
@@ -85,6 +105,10 @@
       {
         "played": 10,
         "points": 319
+      },
+      {
+        "played": 5,
+        "points": 140
       }
     ],
     "6": [
@@ -99,6 +123,10 @@
       {
         "played": 9,
         "points": 362
+      },
+      {
+        "played": 4,
+        "points": 114
       }
     ],
     "8": [
@@ -113,6 +141,10 @@
       {
         "played": 9,
         "points": 275
+      },
+      {
+        "played": 2,
+        "points": 46
       }
     ],
     "9": [
@@ -127,6 +159,10 @@
       {
         "played": 8,
         "points": 262
+      },
+      {
+        "played": 5,
+        "points": 217
       }
     ],
     "10": [
@@ -141,6 +177,10 @@
       {
         "played": 6,
         "points": 243
+      },
+      {
+        "played": 3,
+        "points": 84
       }
     ],
     "11": [
@@ -155,6 +195,10 @@
       {
         "played": 8,
         "points": 272
+      },
+      {
+        "played": 4,
+        "points": 178
       }
     ]
   },
@@ -165,7 +209,8 @@
       "homeWinProb": [
         0.265,
         0.647,
-        0.418
+        0.418,
+        null
       ],
       "dayMoves": [
         {
@@ -176,7 +221,8 @@
         {
           "1": 1,
           "4": 3
-        }
+        },
+        null
       ],
       "changes": [
         {
@@ -236,7 +282,8 @@
       "homeWinProb": [
         0.989,
         0.998,
-        1
+        1,
+        null
       ],
       "dayMoves": [
         {
@@ -246,7 +293,8 @@
         null,
         {
           "3": 2
-        }
+        },
+        null
       ],
       "changes": [
         {
@@ -272,7 +320,8 @@
       "homeWinProb": [
         0.09,
         0.013,
-        0.002
+        0.002,
+        null
       ],
       "dayMoves": [
         {
@@ -281,6 +330,7 @@
         {
           "8": 2
         },
+        null,
         null
       ],
       "changes": [
@@ -314,7 +364,8 @@
       "homeWinProb": [
         0.003,
         0.005,
-        0
+        0,
+        null
       ],
       "dayMoves": [
         {
@@ -325,7 +376,8 @@
         {
           "2": 2,
           "5": 4
-        }
+        },
+        null
       ]
     },
     {
@@ -334,13 +386,15 @@
       "homeWinProb": [
         0.974,
         0.965,
-        0.872
+        0.872,
+        null
       ],
       "dayMoves": [
         null,
         {
           "11": 1
         },
+        null,
         null
       ],
       "changes": [

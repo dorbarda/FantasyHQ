@@ -753,6 +753,17 @@
       "createdAt": "2026-11-14T21:21:40.939Z",
       "by": "owner",
       "status": "pending"
+    },
+    {
+      "id": "2026-11-14T21-21-58-792Z-269a40",
+      "kind": "sell",
+      "playerId": 4433287,
+      "playerName": "Brandon Miller",
+      "playerOwner": "Yoav Coracos",
+      "note": "",
+      "createdAt": "2026-11-14T21:21:58.792Z",
+      "by": "owner",
+      "status": "pending"
     }
   ]
 }

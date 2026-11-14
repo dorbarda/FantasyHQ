@@ -742,6 +742,17 @@
           }
         ]
       }
+    },
+    {
+      "id": "2026-11-14T21-21-40-939Z-6fc37c",
+      "kind": "buy",
+      "playerId": 5175737,
+      "playerName": "Yaxel Lendeborg",
+      "playerOwner": "Dor Barda",
+      "note": "",
+      "createdAt": "2026-11-14T21:21:40.939Z",
+      "by": "owner",
+      "status": "pending"
     }
   ]
 }

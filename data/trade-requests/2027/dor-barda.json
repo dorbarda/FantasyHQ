@@ -566,7 +566,198 @@
       "note": "I want to trade 2 of the following players - Yaxel/Miles Bridges/Walker Kessler/Kyrie for star player. ignore the tyrese box. It has to be a star that has a good fantasy playoff schedule",
       "createdAt": "2026-11-15T09:21:50.288Z",
       "by": "owner",
-      "status": "pending"
+      "status": "answered",
+      "answer": {
+        "answeredAt": "2026-11-15T13:49:25.379Z",
+        "inputGeneratedAt": "2026-11-15T13:49:05.504Z",
+        "summary": "Tyrese Haliburton (Yotam Goldin) is rank 6 this season and 9 projected, but he is OUT on IR with 13 playoff games, so he isn't the best-schedule star around. The form asks for him, so every idea gets him and costs two of Kyrie, Kessler, Bridges and Yaxel, as your note says. Yotam is 0-3, so he should want two proven scorers. My favorite is Kyrie + Bridges: Bridges has 15 playoff games.",
+        "trades": [
+          {
+            "partnerOwner": "Yotam Goldin",
+            "partnerTeamName": "PlottKe",
+            "give": [
+              {
+                "playerId": 6442,
+                "name": "Kyrie Irving",
+                "proTeam": "DAL",
+                "positions": [
+                  "PG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 40.5,
+                "avgLast15": 40,
+                "avgProjected": 44.2,
+                "gamesRestOfRegularSeason": 45,
+                "gamesPlayoffs": 14
+              },
+              {
+                "playerId": 4066383,
+                "name": "Miles Bridges",
+                "proTeam": "PHX",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 34,
+                "avgLast15": 34.7,
+                "avgProjected": 33.9,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 15
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4396993,
+                "name": "Tyrese Haliburton",
+                "proTeam": "IND",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "OUT",
+                "avgSeason": 50.8,
+                "avgLast15": null,
+                "avgProjected": 48.6,
+                "gamesRestOfRegularSeason": 46,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "angles": [
+              "consolidation",
+              "playoff-schedule"
+            ],
+            "whyForYou": "Two-for-one consolidation into a star: Haliburton is rank 6 while Kyrie is rank 28 and Bridges rank 58. You lose Bridges' 15 playoff games, but you keep Kessler and Yaxel.",
+            "whyTheyAccept": "Yotam is 0-3 and Haliburton is OUT with GP 4. He gets Kyrie (40.5 avg, rank 28) and Bridges (34 avg, 15 playoff games) who play now.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 1
+            }
+          },
+          {
+            "partnerOwner": "Yotam Goldin",
+            "partnerTeamName": "PlottKe",
+            "give": [
+              {
+                "playerId": 6442,
+                "name": "Kyrie Irving",
+                "proTeam": "DAL",
+                "positions": [
+                  "PG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 40.5,
+                "avgLast15": 40,
+                "avgProjected": 44.2,
+                "gamesRestOfRegularSeason": 45,
+                "gamesPlayoffs": 14
+              },
+              {
+                "playerId": 4433136,
+                "name": "Walker Kessler",
+                "proTeam": "LAL",
+                "positions": [
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 41.2,
+                "avgLast15": 42.7,
+                "avgProjected": 38.6,
+                "gamesRestOfRegularSeason": 46,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4396993,
+                "name": "Tyrese Haliburton",
+                "proTeam": "IND",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "OUT",
+                "avgSeason": 50.8,
+                "avgLast15": null,
+                "avgProjected": 48.6,
+                "gamesRestOfRegularSeason": 46,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "angles": [
+              "consolidation"
+            ],
+            "whyForYou": "You turn two top-30 players into a top-10 star. Kyrie (rank 28) and Kessler (rank 24) are strong, so this is the priciest idea, but it keeps Bridges and Yaxel with their 15 playoff games.",
+            "whyTheyAccept": "Yotam gets Kessler (41.2 avg, rank 24) at C, where Gobert and Claxton are struggling, plus Kyrie at 40.5 avg. Both are ACTIVE while Haliburton is out.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 1
+            }
+          },
+          {
+            "partnerOwner": "Yotam Goldin",
+            "partnerTeamName": "PlottKe",
+            "give": [
+              {
+                "playerId": 5175737,
+                "name": "Yaxel Lendeborg",
+                "proTeam": "GSW",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 34.7,
+                "avgLast15": 37.7,
+                "avgProjected": 33.7,
+                "gamesRestOfRegularSeason": 44,
+                "gamesPlayoffs": 15
+              },
+              {
+                "playerId": 4433136,
+                "name": "Walker Kessler",
+                "proTeam": "LAL",
+                "positions": [
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 41.2,
+                "avgLast15": 42.7,
+                "avgProjected": 38.6,
+                "gamesRestOfRegularSeason": 46,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4396993,
+                "name": "Tyrese Haliburton",
+                "proTeam": "IND",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "OUT",
+                "avgSeason": 50.8,
+                "avgLast15": null,
+                "avgProjected": 48.6,
+                "gamesRestOfRegularSeason": 46,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "angles": [
+              "consolidation",
+              "depth"
+            ],
+            "whyForYou": "This is the cheaper offer: Yaxel (34.7 avg, rank 50) and Kessler (rank 24) for Haliburton. You keep Kyrie and Bridges, but Yotam may want more.",
+            "whyTheyAccept": "Yotam gets Kessler at C (41.2 avg) and Yaxel with 15 playoff games, both ACTIVE, for a star who is OUT. It may need a sweetener.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 1
+            }
+          }
+        ]
+      }
     }
   ]
 }

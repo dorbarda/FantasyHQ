@@ -556,6 +556,17 @@
           }
         ]
       }
+    },
+    {
+      "id": "2026-11-15T09-21-50-288Z-7ddc36",
+      "kind": "buy",
+      "playerId": 4396993,
+      "playerName": "Tyrese Haliburton",
+      "playerOwner": "Yotam Goldin",
+      "note": "I want to trade 2 of the following players - Yaxel/Miles Bridges/Walker Kessler/Kyrie for star player. ignore the tyrese box. It has to be a star that has a good fantasy playoff schedule",
+      "createdAt": "2026-11-15T09:21:50.288Z",
+      "by": "owner",
+      "status": "pending"
     }
   ]
 }

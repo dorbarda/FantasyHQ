@@ -325,6 +325,17 @@
       "createdAt": "2026-11-15T14:25:20.915Z",
       "by": "owner",
       "status": "pending"
+    },
+    {
+      "id": "2026-11-15T14-25-55-078Z-47d7ac",
+      "kind": "buy",
+      "playerId": 3917376,
+      "playerName": "Jaylen Brown",
+      "playerOwner": "Yuval Halevy",
+      "note": "",
+      "createdAt": "2026-11-15T14:25:55.078Z",
+      "by": "owner",
+      "status": "pending"
     }
   ]
 }

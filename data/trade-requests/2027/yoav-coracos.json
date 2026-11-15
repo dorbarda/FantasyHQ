@@ -752,7 +752,122 @@
       "note": "",
       "createdAt": "2026-11-14T21:21:40.939Z",
       "by": "owner",
-      "status": "pending"
+      "status": "answered",
+      "answer": {
+        "answeredAt": "2026-11-15T07:50:32.072Z",
+        "inputGeneratedAt": "2026-11-15T07:49:48.414Z",
+        "summary": "Lendeborg is on Dor Barda's team, scoring 34.7 a game with 15 playoff games. Dor is short on healthy bodies (Allen, Reaves, VanVleet and Butler are all OUT), so the best way in is healthy, useful players. I'd lead with Herro: a higher projection (38.8 vs 33.7) is a real carrot for Dor.",
+        "trades": [
+          {
+            "partnerOwner": "Dor Barda",
+            "partnerTeamName": "Nordau Peaky Blinder🚬",
+            "give": [
+              {
+                "playerId": 4395725,
+                "name": "Tyler Herro",
+                "proTeam": "MIL",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 34.8,
+                "avgLast15": 31.7,
+                "avgProjected": 38.8,
+                "gamesRestOfRegularSeason": 46,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "get": [
+              {
+                "playerId": 5175737,
+                "name": "Yaxel Lendeborg",
+                "proTeam": "GSW",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 34.7,
+                "avgLast15": 32.8,
+                "avgProjected": 33.7,
+                "gamesRestOfRegularSeason": 44,
+                "gamesPlayoffs": 15
+              }
+            ],
+            "angles": [
+              "playoff-schedule"
+            ],
+            "whyForYou": "Lendeborg gives you a SF/PF with 15 playoff games, two more than Herro's 13, and your guard group stays deep. You hand over the higher projection (38.8 vs 33.7), so this is the price of getting a yes.",
+            "whyTheyAccept": "Dor gets a player projected 38.8 against Lendeborg's 33.7, scoring a similar 34.8 now, and Herro plays this week while Lendeborg has no game. A clear upgrade on paper, at a spot where Dor has injuries.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          },
+          {
+            "partnerOwner": "Dor Barda",
+            "partnerTeamName": "Nordau Peaky Blinder🚬",
+            "give": [
+              {
+                "playerId": 4397136,
+                "name": "Saddiq Bey",
+                "proTeam": "NOP",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 28,
+                "avgLast15": 31.6,
+                "avgProjected": 25.9,
+                "gamesRestOfRegularSeason": 46,
+                "gamesPlayoffs": 15
+              },
+              {
+                "playerId": 4277847,
+                "name": "Wendell Carter Jr.",
+                "proTeam": "ORL",
+                "positions": [
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 30.3,
+                "avgLast15": 29.3,
+                "avgProjected": 23,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "get": [
+              {
+                "playerId": 5175737,
+                "name": "Yaxel Lendeborg",
+                "proTeam": "GSW",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 34.7,
+                "avgLast15": 32.8,
+                "avgProjected": 33.7,
+                "gamesRestOfRegularSeason": 44,
+                "gamesPlayoffs": 15
+              }
+            ],
+            "angles": [
+              "consolidation"
+            ],
+            "whyForYou": "Two solid starters become one better player: Lendeborg averages 34.7, above Bey's 28 and Carter's 30.3, and has 15 playoff games, one more than each.",
+            "whyTheyAccept": "Dor has Jarrett Allen OUT, and Carter is a healthy center who plays this week. Bey adds a SF/PF who also plays, so Dor gets two active players for one while many of his starters are OUT.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          }
+        ]
+      }
     },
     {
       "id": "2026-11-14T21-21-58-792Z-269a40",
@@ -763,7 +878,155 @@
       "note": "",
       "createdAt": "2026-11-14T21:21:58.792Z",
       "by": "owner",
-      "status": "pending"
+      "status": "answered",
+      "answer": {
+        "answeredAt": "2026-11-15T07:50:32.072Z",
+        "inputGeneratedAt": "2026-11-15T07:49:48.414Z",
+        "summary": "Miller is a tough sell right now: 28.3 a game this season and 21 over the last 15 games, against a 37.4 projection and 34 last year. Selling now means selling low, so I'd only move him for players who produce now. These three offers swap him for healthy contributors; each partner gets the higher projection.",
+        "trades": [
+          {
+            "partnerOwner": "Dor Gelless",
+            "partnerTeamName": "Flint Tropics 70's Show",
+            "give": [
+              {
+                "playerId": 4433287,
+                "name": "Brandon Miller",
+                "proTeam": "CHA",
+                "positions": [
+                  "SG",
+                  "SF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 28.3,
+                "avgLast15": 21,
+                "avgProjected": 37.4,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "get": [
+              {
+                "playerId": 5041955,
+                "name": "Darryn Peterson",
+                "proTeam": "UTA",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 32.8,
+                "avgLast15": 38.9,
+                "avgProjected": 29.1,
+                "gamesRestOfRegularSeason": 46,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "playoff-schedule"
+            ],
+            "whyForYou": "Peterson is producing now (32.8 a game, 38.9 over the last 15) and has 14 playoff games to Miller's 13. You trade projection for points you can use immediately.",
+            "whyTheyAccept": "Dor Gelless is 0-3 with Barnes, Harden, Porter and Knueppel out. Miller's 37.4 projection is far above Peterson's 29.1, and the wing talent could help him recover.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          },
+          {
+            "partnerOwner": "Barak Miller",
+            "partnerTeamName": "Team Miller",
+            "give": [
+              {
+                "playerId": 4433287,
+                "name": "Brandon Miller",
+                "proTeam": "CHA",
+                "positions": [
+                  "SG",
+                  "SF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 28.3,
+                "avgLast15": 21,
+                "avgProjected": 37.4,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4431671,
+                "name": "Jaden McDaniels",
+                "proTeam": "MIN",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 35.2,
+                "avgLast15": 36.3,
+                "avgProjected": 29.7,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "angles": [
+              "injury-cover"
+            ],
+            "whyForYou": "McDaniels is a steady SF/PF scoring 35.2 a game and covers the hole left by Banchero being OUT, with the same 13 playoff games. You get production you can count on instead of waiting for Miller to bounce back.",
+            "whyTheyAccept": "Barak has Embiid, Mitchell, Curry and Ingram all out and needs upside. Miller projects at 37.4 against McDaniels' 29.7, a clear projection gain.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          },
+          {
+            "partnerOwner": "Omer Rosenberg",
+            "partnerTeamName": "Inglourious Basterds",
+            "give": [
+              {
+                "playerId": 4433287,
+                "name": "Brandon Miller",
+                "proTeam": "CHA",
+                "positions": [
+                  "SG",
+                  "SF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 28.3,
+                "avgLast15": 21,
+                "avgProjected": 37.4,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4684742,
+                "name": "Ausar Thompson",
+                "proTeam": "DET",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 32.5,
+                "avgLast15": 36.9,
+                "avgProjected": 30.8,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "playoff-schedule"
+            ],
+            "whyForYou": "Ausar Thompson is a SF/PF scoring 32.5 a game, above Miller's 28.3, and has 14 playoff games to Miller's 13.",
+            "whyTheyAccept": "Omer gets a SG/SF projected 37.4, against Thompson's 30.8, to cover for Mobley and Jackson Jr. being out, and Miller keeps his upside for the playoffs.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          }
+        ]
+      }
     }
   ]
 }

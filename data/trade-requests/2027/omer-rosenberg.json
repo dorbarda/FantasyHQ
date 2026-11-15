@@ -324,7 +324,136 @@
       "note": "",
       "createdAt": "2026-11-15T14:25:20.915Z",
       "by": "owner",
-      "status": "pending"
+      "status": "answered",
+      "answer": {
+        "answeredAt": "2026-11-15T19:50:02.112Z",
+        "inputGeneratedAt": "2026-11-15T19:49:30.147Z",
+        "summary": "Jalen Johnson is a top-7 projected player (50 projected, 41.5 season average), and Dor Gelless is 0-3 with Barnes, Knueppel and Harden all hurting, so he needs bodies now. The best route is two solid starters for one star. I like Murray plus Castle most.",
+        "trades": [
+          {
+            "partnerOwner": "Dor Gelless",
+            "partnerTeamName": "Flint Tropics 70's Show",
+            "give": [
+              {
+                "playerId": 3936299,
+                "name": "Jamal Murray",
+                "proTeam": "DEN",
+                "positions": [
+                  "PG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 48.8,
+                "avgLast15": 50.5,
+                "avgProjected": 43.9,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 14
+              },
+              {
+                "playerId": 4845367,
+                "name": "Stephon Castle",
+                "proTeam": "SAS",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 31.2,
+                "avgLast15": 28.5,
+                "avgProjected": 36.9,
+                "gamesRestOfRegularSeason": 46,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4701230,
+                "name": "Jalen Johnson",
+                "proTeam": "ATL",
+                "positions": [
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 41.5,
+                "avgLast15": 38.3,
+                "avgProjected": 50,
+                "gamesRestOfRegularSeason": 46,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "consolidation"
+            ],
+            "whyForYou": "You turn two non-core pieces into a top-7 projected player (50 projected). Murray averages 48.8 but projects 43.9, and Castle projects 36.9.",
+            "whyTheyAccept": "Gelless is 0-3 with Barnes and Knueppel OUT and Harden on IR. Murray (48.8 avg) and Castle fill the holes at once.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 1
+            }
+          },
+          {
+            "partnerOwner": "Dor Gelless",
+            "partnerTeamName": "Flint Tropics 70's Show",
+            "give": [
+              {
+                "playerId": 4566434,
+                "name": "Franz Wagner",
+                "proTeam": "ORL",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 44,
+                "avgLast15": 51.4,
+                "avgProjected": 38.6,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 14
+              },
+              {
+                "playerId": 4684742,
+                "name": "Ausar Thompson",
+                "proTeam": "DET",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 32.5,
+                "avgLast15": 36.5,
+                "avgProjected": 30.8,
+                "gamesRestOfRegularSeason": 46,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4701230,
+                "name": "Jalen Johnson",
+                "proTeam": "ATL",
+                "positions": [
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 41.5,
+                "avgLast15": 38.3,
+                "avgProjected": 50,
+                "gamesRestOfRegularSeason": 46,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "sell-high",
+              "consolidation"
+            ],
+            "whyForYou": "Sell high on Wagner: he averages 44 but projects 38.6, and his L7 is 60. Add Thompson (32.5 avg) and you land Johnson.",
+            "whyTheyAccept": "Gelless gets Wagner's hot form (60 L7) plus Thompson (32.5 avg), two healthy players for a thin, injured roster.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 1
+            }
+          }
+        ]
+      }
     },
     {
       "id": "2026-11-15T14-25-55-078Z-47d7ac",
@@ -335,7 +464,122 @@
       "note": "",
       "createdAt": "2026-11-15T14:25:55.078Z",
       "by": "owner",
-      "status": "pending"
+      "status": "answered",
+      "answer": {
+        "answeredAt": "2026-11-15T19:50:02.112Z",
+        "inputGeneratedAt": "2026-11-15T19:49:30.147Z",
+        "summary": "Jaylen Brown projects 38.6 (rank 51) on Yuval Halevy's 3-0 team, which has Edwards, Duren, Nembhard and Wilson hurting. Yuval is the leader, so only an offer that fills his holes has a chance. Wagner for Brown is the cleanest swap.",
+        "trades": [
+          {
+            "partnerOwner": "Yuval Halevy",
+            "partnerTeamName": "League's American Problem",
+            "give": [
+              {
+                "playerId": 4566434,
+                "name": "Franz Wagner",
+                "proTeam": "ORL",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 44,
+                "avgLast15": 51.4,
+                "avgProjected": 38.6,
+                "gamesRestOfRegularSeason": 47,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "get": [
+              {
+                "playerId": 3917376,
+                "name": "Jaylen Brown",
+                "proTeam": "PHI",
+                "positions": [
+                  "SG",
+                  "SF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 36.2,
+                "avgLast15": 36.5,
+                "avgProjected": 38.6,
+                "gamesRestOfRegularSeason": 46,
+                "gamesPlayoffs": 15
+              }
+            ],
+            "angles": [
+              "sell-high"
+            ],
+            "whyForYou": "Sell high on Wagner: he averages 44 with a 60 L7 but projects only 38.6, the same as Brown's 38.6 projection.",
+            "whyTheyAccept": "Yuval gets a player averaging 44 against Brown's 36.2, with the same 38.6 projection.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          },
+          {
+            "partnerOwner": "Yuval Halevy",
+            "partnerTeamName": "League's American Problem",
+            "give": [
+              {
+                "playerId": 5124612,
+                "name": "VJ Edgecombe",
+                "proTeam": "PHI",
+                "positions": [
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 32.1,
+                "avgLast15": 35.3,
+                "avgProjected": 33.7,
+                "gamesRestOfRegularSeason": 46,
+                "gamesPlayoffs": 15
+              },
+              {
+                "playerId": 4684742,
+                "name": "Ausar Thompson",
+                "proTeam": "DET",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 32.5,
+                "avgLast15": 36.5,
+                "avgProjected": 30.8,
+                "gamesRestOfRegularSeason": 46,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "get": [
+              {
+                "playerId": 3917376,
+                "name": "Jaylen Brown",
+                "proTeam": "PHI",
+                "positions": [
+                  "SG",
+                  "SF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 36.2,
+                "avgLast15": 36.5,
+                "avgProjected": 38.6,
+                "gamesRestOfRegularSeason": 46,
+                "gamesPlayoffs": 15
+              }
+            ],
+            "angles": [
+              "depth"
+            ],
+            "whyForYou": "Edgecombe (33.7 projected) and Thompson (30.8 projected) are depth for you, and Brown projects 38.6 and plays 15 playoff games.",
+            "whyTheyAccept": "Yuval has Edwards, Duren, Nembhard and Wilson hurting. Two healthy players replace missing lineup spots.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 1
+            }
+          }
+        ]
+      }
     }
   ]
 }

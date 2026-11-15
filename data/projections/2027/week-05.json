@@ -1,0 +1,2117 @@
+{
+  "season": 2027,
+  "week": 5,
+  "frozenAt": "2026-11-15T21:28:49.596Z",
+  "days": [
+    "2026-11-16",
+    "2026-11-17",
+    "2026-11-18",
+    "2026-11-19",
+    "2026-11-20",
+    "2026-11-21",
+    "2026-11-22"
+  ],
+  "averageSource": "Average over the last 15 days (ESPN projection if no games in that window)",
+  "matchups": [
+    {
+      "home": {
+        "teamId": 10,
+        "teamName": "Slotzki",
+        "games": 45,
+        "gamesLostToLineupLimit": 0,
+        "projectedPoints": 1746.3,
+        "keyPlayers": [
+          {
+            "name": "Anthony Davis",
+            "pos": "PF",
+            "nba": "WSH",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 54.8,
+            "games": 4,
+            "projected": 219.2
+          },
+          {
+            "name": "Giannis Antetokounmpo",
+            "pos": "PF",
+            "nba": "MIA",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 54.6,
+            "games": 3,
+            "projected": 163.8
+          },
+          {
+            "name": "Davion Mitchell",
+            "pos": "PG",
+            "nba": "MIA",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 46,
+            "games": 3,
+            "projected": 138
+          }
+        ],
+        "injuries": [
+          {
+            "name": "Chet Holmgren",
+            "status": "OUT",
+            "onIR": true
+          },
+          {
+            "name": "Ja Morant",
+            "status": "OUT",
+            "onIR": true
+          },
+          {
+            "name": "Daniel Gafford",
+            "status": "DAY_TO_DAY",
+            "onIR": false
+          }
+        ],
+        "roster": [
+          {
+            "name": "Giannis Antetokounmpo",
+            "pos": "PF",
+            "nba": "MIA",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 54.6,
+            "games": 3,
+            "projected": 163.8
+          },
+          {
+            "name": "Jalen Brunson",
+            "pos": "PG",
+            "nba": "NY",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 44.2,
+            "games": 4,
+            "projected": 176.8
+          },
+          {
+            "name": "Karl-Anthony Towns",
+            "pos": "C",
+            "nba": "NY",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 45.8,
+            "games": 4,
+            "projected": 183.2
+          },
+          {
+            "name": "Anthony Davis",
+            "pos": "PF",
+            "nba": "WSH",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 54.8,
+            "games": 4,
+            "projected": 219.2
+          },
+          {
+            "name": "Desmond Bane",
+            "pos": "SG",
+            "nba": "ORL",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 31.2,
+            "games": 4,
+            "projected": 124.8
+          },
+          {
+            "name": "Darius Garland",
+            "pos": "PG",
+            "nba": "LAC",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 31.5,
+            "games": 3,
+            "projected": 94.5
+          },
+          {
+            "name": "Chet Holmgren",
+            "pos": "PF",
+            "nba": "OKC",
+            "status": "OUT",
+            "onIR": true,
+            "avg": 37.9,
+            "games": 0,
+            "projected": 0
+          },
+          {
+            "name": "Ja Morant",
+            "pos": "PG",
+            "nba": "POR",
+            "status": "OUT",
+            "onIR": true,
+            "avg": 37.5,
+            "games": 0,
+            "projected": 0
+          },
+          {
+            "name": "Paul George",
+            "pos": "SF",
+            "nba": "BOS",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 41.2,
+            "games": 4,
+            "projected": 164.8
+          },
+          {
+            "name": "Darius Acuff Jr.",
+            "pos": "PG",
+            "nba": "SAC",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 44.3,
+            "games": 3,
+            "projected": 132.9
+          },
+          {
+            "name": "Davion Mitchell",
+            "pos": "PG",
+            "nba": "MIA",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 46,
+            "games": 3,
+            "projected": 138
+          },
+          {
+            "name": "Daniel Gafford",
+            "pos": "C",
+            "nba": "DAL",
+            "status": "DAY_TO_DAY",
+            "onIR": false,
+            "avg": 22.9,
+            "games": 3,
+            "projected": 68.7
+          },
+          {
+            "name": "Brayden Burries",
+            "pos": "SG",
+            "nba": "MIL",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 21.1,
+            "games": 3,
+            "projected": 63.3
+          },
+          {
+            "name": "Isaiah Hartenstein",
+            "pos": "C",
+            "nba": "OKC",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 33.3,
+            "games": 3,
+            "projected": 99.9
+          },
+          {
+            "name": "Cam Spencer",
+            "pos": "PG",
+            "nba": "MEM",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 29.1,
+            "games": 4,
+            "projected": 116.4
+          }
+        ]
+      },
+      "away": {
+        "teamId": 8,
+        "teamName": "Flint Tropics 70's Show",
+        "games": 36,
+        "gamesLostToLineupLimit": 2,
+        "projectedPoints": 1122.2,
+        "keyPlayers": [
+          {
+            "name": "Bam Adebayo",
+            "pos": "PF",
+            "nba": "MIA",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 47.7,
+            "games": 3,
+            "projected": 143.1
+          },
+          {
+            "name": "Scottie Barnes",
+            "pos": "SG",
+            "nba": "TOR",
+            "status": "OUT",
+            "onIR": false,
+            "avg": 39,
+            "games": 0,
+            "projected": 0
+          },
+          {
+            "name": "Darryn Peterson",
+            "pos": "PG",
+            "nba": "UTAH",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 38.9,
+            "games": 4,
+            "projected": 155.6
+          }
+        ],
+        "injuries": [
+          {
+            "name": "Scottie Barnes",
+            "status": "OUT",
+            "onIR": false
+          },
+          {
+            "name": "James Harden",
+            "status": "DAY_TO_DAY",
+            "onIR": true
+          },
+          {
+            "name": "Kon Knueppel",
+            "status": "OUT",
+            "onIR": true
+          },
+          {
+            "name": "Michael Porter Jr.",
+            "status": "DAY_TO_DAY",
+            "onIR": false
+          }
+        ],
+        "roster": [
+          {
+            "name": "Jalen Johnson",
+            "pos": "PF",
+            "nba": "ATL",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 38.3,
+            "games": 3,
+            "projected": 114.9
+          },
+          {
+            "name": "Scottie Barnes",
+            "pos": "SG",
+            "nba": "TOR",
+            "status": "OUT",
+            "onIR": false,
+            "avg": 39,
+            "games": 0,
+            "projected": 0
+          },
+          {
+            "name": "James Harden",
+            "pos": "PG",
+            "nba": "CLE",
+            "status": "DAY_TO_DAY",
+            "onIR": true,
+            "avg": 34.8,
+            "games": 0,
+            "projected": 0
+          },
+          {
+            "name": "Bam Adebayo",
+            "pos": "PF",
+            "nba": "MIA",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 47.7,
+            "games": 3,
+            "projected": 143.1
+          },
+          {
+            "name": "Kon Knueppel",
+            "pos": "SG",
+            "nba": "CHA",
+            "status": "OUT",
+            "onIR": true,
+            "avg": 35.2,
+            "games": 0,
+            "projected": 0
+          },
+          {
+            "name": "Michael Porter Jr.",
+            "pos": "SF",
+            "nba": "BKN",
+            "status": "DAY_TO_DAY",
+            "onIR": false,
+            "avg": 32.8,
+            "games": 3,
+            "projected": 98.4
+          },
+          {
+            "name": "Ivica Zubac",
+            "pos": "C",
+            "nba": "IND",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 22.2,
+            "games": 1,
+            "projected": 22.2
+          },
+          {
+            "name": "Matas Buzelis",
+            "pos": "SF",
+            "nba": "CHI",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 23.2,
+            "games": 4,
+            "projected": 92.8
+          },
+          {
+            "name": "Darryn Peterson",
+            "pos": "PG",
+            "nba": "UTAH",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 38.9,
+            "games": 4,
+            "projected": 155.6
+          },
+          {
+            "name": "Ace Bailey",
+            "pos": "SF",
+            "nba": "UTAH",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 27.1,
+            "games": 4,
+            "projected": 108.4
+          },
+          {
+            "name": "Grayson Allen",
+            "pos": "PG",
+            "nba": "CHA",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 31.7,
+            "games": 2,
+            "projected": 63.4
+          },
+          {
+            "name": "Jakob Poeltl",
+            "pos": "C",
+            "nba": "TOR",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 31,
+            "games": 3,
+            "projected": 93
+          },
+          {
+            "name": "Quenton Jackson",
+            "pos": "PG",
+            "nba": "IND",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 25.5,
+            "games": 3,
+            "projected": 76.5
+          },
+          {
+            "name": "Aday Mara",
+            "pos": "C",
+            "nba": "OKC",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 28,
+            "games": 3,
+            "projected": 84
+          },
+          {
+            "name": "Kelly Oubre Jr.",
+            "pos": "SG",
+            "nba": "IND",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 23.3,
+            "games": 3,
+            "projected": 69.9
+          }
+        ]
+      },
+      "actual": null
+    },
+    {
+      "home": {
+        "teamId": 4,
+        "teamName": "Nordau Peaky Blinder🚬",
+        "games": 36,
+        "gamesLostToLineupLimit": 0,
+        "projectedPoints": 1154.8,
+        "keyPlayers": [
+          {
+            "name": "Shai Gilgeous-Alexander",
+            "pos": "PG",
+            "nba": "OKC",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 47.6,
+            "games": 3,
+            "projected": 142.8
+          },
+          {
+            "name": "LaMelo Ball",
+            "pos": "PG",
+            "nba": "MIN",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 40.7,
+            "games": 4,
+            "projected": 162.8
+          },
+          {
+            "name": "Kyrie Irving",
+            "pos": "PG",
+            "nba": "DAL",
+            "status": "OUT",
+            "onIR": false,
+            "avg": 40,
+            "games": 0,
+            "projected": 0
+          }
+        ],
+        "injuries": [
+          {
+            "name": "Austin Reaves",
+            "status": "OUT",
+            "onIR": true
+          },
+          {
+            "name": "Kyrie Irving",
+            "status": "OUT",
+            "onIR": false
+          },
+          {
+            "name": "Jarrett Allen",
+            "status": "DAY_TO_DAY",
+            "onIR": false
+          },
+          {
+            "name": "Fred VanVleet",
+            "status": "OUT",
+            "onIR": false
+          },
+          {
+            "name": "Jimmy Butler III",
+            "status": "OUT",
+            "onIR": true
+          }
+        ],
+        "roster": [
+          {
+            "name": "Shai Gilgeous-Alexander",
+            "pos": "PG",
+            "nba": "OKC",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 47.6,
+            "games": 3,
+            "projected": 142.8
+          },
+          {
+            "name": "LaMelo Ball",
+            "pos": "PG",
+            "nba": "MIN",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 40.7,
+            "games": 4,
+            "projected": 162.8
+          },
+          {
+            "name": "Kevin Durant",
+            "pos": "SF",
+            "nba": "HOU",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 33,
+            "games": 3,
+            "projected": 99
+          },
+          {
+            "name": "Austin Reaves",
+            "pos": "PG",
+            "nba": "LAL",
+            "status": "OUT",
+            "onIR": true,
+            "avg": 38.7,
+            "games": 0,
+            "projected": 0
+          },
+          {
+            "name": "Kyrie Irving",
+            "pos": "PG",
+            "nba": "DAL",
+            "status": "OUT",
+            "onIR": false,
+            "avg": 40,
+            "games": 0,
+            "projected": 0
+          },
+          {
+            "name": "Jarrett Allen",
+            "pos": "C",
+            "nba": "CLE",
+            "status": "DAY_TO_DAY",
+            "onIR": false,
+            "avg": 28.5,
+            "games": 3,
+            "projected": 85.5
+          },
+          {
+            "name": "Walker Kessler",
+            "pos": "C",
+            "nba": "LAL",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 38,
+            "games": 3,
+            "projected": 114
+          },
+          {
+            "name": "Miles Bridges",
+            "pos": "SF",
+            "nba": "PHX",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 31.3,
+            "games": 3,
+            "projected": 93.9
+          },
+          {
+            "name": "Fred VanVleet",
+            "pos": "PG",
+            "nba": "HOU",
+            "status": "OUT",
+            "onIR": false,
+            "avg": 30.7,
+            "games": 0,
+            "projected": 0
+          },
+          {
+            "name": "Jimmy Butler III",
+            "pos": "SG",
+            "nba": "GS",
+            "status": "OUT",
+            "onIR": true,
+            "avg": 38.8,
+            "games": 0,
+            "projected": 0
+          },
+          {
+            "name": "Yaxel Lendeborg",
+            "pos": "SF",
+            "nba": "GS",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 37.7,
+            "games": 4,
+            "projected": 150.8
+          },
+          {
+            "name": "Devin Vassell",
+            "pos": "SG",
+            "nba": "SA",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 24.2,
+            "games": 3,
+            "projected": 72.6
+          },
+          {
+            "name": "Jared McCain",
+            "pos": "PG",
+            "nba": "OKC",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 25.5,
+            "games": 3,
+            "projected": 76.5
+          },
+          {
+            "name": "Sandro Mamukelashvili",
+            "pos": "PF",
+            "nba": "LAL",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 24.3,
+            "games": 3,
+            "projected": 72.9
+          },
+          {
+            "name": "Toumani Camara",
+            "pos": "SF",
+            "nba": "POR",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 21,
+            "games": 4,
+            "projected": 84
+          }
+        ]
+      },
+      "away": {
+        "teamId": 2,
+        "teamName": "PlottKe",
+        "games": 44,
+        "gamesLostToLineupLimit": 0,
+        "projectedPoints": 1381,
+        "keyPlayers": [
+          {
+            "name": "Cade Cunningham",
+            "pos": "PG",
+            "nba": "DET",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 58.2,
+            "games": 4,
+            "projected": 232.8
+          },
+          {
+            "name": "Ty Jerome",
+            "pos": "PG",
+            "nba": "MEM",
+            "status": "DAY_TO_DAY",
+            "onIR": false,
+            "avg": 37.5,
+            "games": 4,
+            "projected": 150
+          },
+          {
+            "name": "Anthony Black",
+            "pos": "PG",
+            "nba": "ORL",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 37.5,
+            "games": 4,
+            "projected": 150
+          }
+        ],
+        "injuries": [
+          {
+            "name": "Tyrese Haliburton",
+            "status": "OUT",
+            "onIR": true
+          },
+          {
+            "name": "Kawhi Leonard",
+            "status": "OUT",
+            "onIR": true
+          },
+          {
+            "name": "Trey Murphy III",
+            "status": "OUT",
+            "onIR": false
+          },
+          {
+            "name": "Ty Jerome",
+            "status": "DAY_TO_DAY",
+            "onIR": false
+          },
+          {
+            "name": "Nic Claxton",
+            "status": "DAY_TO_DAY",
+            "onIR": false
+          }
+        ],
+        "roster": [
+          {
+            "name": "Cade Cunningham",
+            "pos": "PG",
+            "nba": "DET",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 58.2,
+            "games": 4,
+            "projected": 232.8
+          },
+          {
+            "name": "Tyrese Haliburton",
+            "pos": "PG",
+            "nba": "IND",
+            "status": "OUT",
+            "onIR": true,
+            "avg": 48.6,
+            "games": 0,
+            "projected": 0
+          },
+          {
+            "name": "Kawhi Leonard",
+            "pos": "SF",
+            "nba": "TOR",
+            "status": "OUT",
+            "onIR": true,
+            "avg": 45.8,
+            "games": 0,
+            "projected": 0
+          },
+          {
+            "name": "Julius Randle",
+            "pos": "PF",
+            "nba": "BKN",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 30.1,
+            "games": 3,
+            "projected": 90.3
+          },
+          {
+            "name": "Trey Murphy III",
+            "pos": "SG",
+            "nba": "NO",
+            "status": "OUT",
+            "onIR": false,
+            "avg": 35.5,
+            "games": 0,
+            "projected": 0
+          },
+          {
+            "name": "Donovan Clingan",
+            "pos": "C",
+            "nba": "POR",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 35.4,
+            "games": 4,
+            "projected": 141.6
+          },
+          {
+            "name": "Ty Jerome",
+            "pos": "PG",
+            "nba": "MEM",
+            "status": "DAY_TO_DAY",
+            "onIR": false,
+            "avg": 37.5,
+            "games": 4,
+            "projected": 150
+          },
+          {
+            "name": "Coby White",
+            "pos": "PG",
+            "nba": "CHA",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 10.2,
+            "games": 2,
+            "projected": 20.4
+          },
+          {
+            "name": "Rudy Gobert",
+            "pos": "C",
+            "nba": "MIN",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 24.2,
+            "games": 4,
+            "projected": 96.8
+          },
+          {
+            "name": "Nic Claxton",
+            "pos": "C",
+            "nba": "CHI",
+            "status": "DAY_TO_DAY",
+            "onIR": false,
+            "avg": 22.3,
+            "games": 4,
+            "projected": 89.2
+          },
+          {
+            "name": "Cedric Coward",
+            "pos": "SG",
+            "nba": "MEM",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 34.1,
+            "games": 4,
+            "projected": 136.4
+          },
+          {
+            "name": "Anthony Black",
+            "pos": "PG",
+            "nba": "ORL",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 37.5,
+            "games": 4,
+            "projected": 150
+          },
+          {
+            "name": "Norman Powell",
+            "pos": "SG",
+            "nba": "CHI",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 29.3,
+            "games": 4,
+            "projected": 117.2
+          },
+          {
+            "name": "Derik Queen",
+            "pos": "PF",
+            "nba": "NO",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 23.7,
+            "games": 4,
+            "projected": 94.8
+          },
+          {
+            "name": "Egor Demin",
+            "pos": "PG",
+            "nba": "BKN",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 20.5,
+            "games": 3,
+            "projected": 61.5
+          }
+        ]
+      },
+      "actual": null
+    },
+    {
+      "home": {
+        "teamId": 1,
+        "teamName": "Team Mamba Forever",
+        "games": 40,
+        "gamesLostToLineupLimit": 2,
+        "projectedPoints": 1412.2,
+        "keyPlayers": [
+          {
+            "name": "Luka Doncic",
+            "pos": "PG",
+            "nba": "LAL",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 64,
+            "games": 3,
+            "projected": 192
+          },
+          {
+            "name": "Alperen Sengun",
+            "pos": "C",
+            "nba": "HOU",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 53,
+            "games": 3,
+            "projected": 159
+          },
+          {
+            "name": "Devin Booker",
+            "pos": "PG",
+            "nba": "PHX",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 37.6,
+            "games": 3,
+            "projected": 112.8
+          }
+        ],
+        "injuries": [
+          {
+            "name": "Paolo Banchero",
+            "status": "OUT",
+            "onIR": true
+          }
+        ],
+        "roster": [
+          {
+            "name": "Luka Doncic",
+            "pos": "PG",
+            "nba": "LAL",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 64,
+            "games": 3,
+            "projected": 192
+          },
+          {
+            "name": "Alperen Sengun",
+            "pos": "C",
+            "nba": "HOU",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 53,
+            "games": 3,
+            "projected": 159
+          },
+          {
+            "name": "Devin Booker",
+            "pos": "PG",
+            "nba": "PHX",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 37.6,
+            "games": 3,
+            "projected": 112.8
+          },
+          {
+            "name": "LeBron James",
+            "pos": "SF",
+            "nba": "PHI",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 32.5,
+            "games": 3,
+            "projected": 97.5
+          },
+          {
+            "name": "Paolo Banchero",
+            "pos": "SF",
+            "nba": "ORL",
+            "status": "OUT",
+            "onIR": true,
+            "avg": 39,
+            "games": 0,
+            "projected": 0
+          },
+          {
+            "name": "Tyler Herro",
+            "pos": "PG",
+            "nba": "MIL",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 31.7,
+            "games": 3,
+            "projected": 95.1
+          },
+          {
+            "name": "Brandon Miller",
+            "pos": "SG",
+            "nba": "CHA",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 20,
+            "games": 2,
+            "projected": 40
+          },
+          {
+            "name": "Cameron Boozer",
+            "pos": "PF",
+            "nba": "MEM",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 31.6,
+            "games": 4,
+            "projected": 126.4
+          },
+          {
+            "name": "RJ Barrett",
+            "pos": "SG",
+            "nba": "TOR",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 35.9,
+            "games": 3,
+            "projected": 107.7
+          },
+          {
+            "name": "Wendell Carter Jr.",
+            "pos": "C",
+            "nba": "ORL",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 28.6,
+            "games": 3,
+            "projected": 85.8
+          },
+          {
+            "name": "Saddiq Bey",
+            "pos": "SF",
+            "nba": "NO",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 31.6,
+            "games": 4,
+            "projected": 126.4
+          },
+          {
+            "name": "Jaime Jaquez Jr.",
+            "pos": "SG",
+            "nba": "MIL",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 26.9,
+            "games": 2,
+            "projected": 53.8
+          },
+          {
+            "name": "Daniss Jenkins",
+            "pos": "PG",
+            "nba": "DET",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 31.2,
+            "games": 4,
+            "projected": 124.8
+          },
+          {
+            "name": "Keegan Murray",
+            "pos": "SF",
+            "nba": "SAC",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 30.3,
+            "games": 3,
+            "projected": 90.9
+          }
+        ]
+      },
+      "away": {
+        "teamId": 9,
+        "teamName": "Inglourious Basterds",
+        "games": 44,
+        "gamesLostToLineupLimit": 3,
+        "projectedPoints": 1484.8,
+        "keyPlayers": [
+          {
+            "name": "Franz Wagner",
+            "pos": "SF",
+            "nba": "ORL",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 51.4,
+            "games": 4,
+            "projected": 205.6
+          },
+          {
+            "name": "Jamal Murray",
+            "pos": "PG",
+            "nba": "DEN",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 50.5,
+            "games": 4,
+            "projected": 202
+          },
+          {
+            "name": "Jayson Tatum",
+            "pos": "SF",
+            "nba": "BOS",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 44.5,
+            "games": 4,
+            "projected": 178
+          }
+        ],
+        "injuries": [
+          {
+            "name": "Evan Mobley",
+            "status": "DAY_TO_DAY",
+            "onIR": true
+          },
+          {
+            "name": "Jaren Jackson Jr.",
+            "status": "OUT",
+            "onIR": true
+          }
+        ],
+        "roster": [
+          {
+            "name": "Jayson Tatum",
+            "pos": "SF",
+            "nba": "BOS",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 44.5,
+            "games": 4,
+            "projected": 178
+          },
+          {
+            "name": "Cooper Flagg",
+            "pos": "SF",
+            "nba": "DAL",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 42.4,
+            "games": 3,
+            "projected": 127.2
+          },
+          {
+            "name": "Jamal Murray",
+            "pos": "PG",
+            "nba": "DEN",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 50.5,
+            "games": 4,
+            "projected": 202
+          },
+          {
+            "name": "Evan Mobley",
+            "pos": "PF",
+            "nba": "CLE",
+            "status": "DAY_TO_DAY",
+            "onIR": true,
+            "avg": 34.9,
+            "games": 0,
+            "projected": 0
+          },
+          {
+            "name": "Stephon Castle",
+            "pos": "PG",
+            "nba": "SA",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 28.5,
+            "games": 3,
+            "projected": 85.5
+          },
+          {
+            "name": "Franz Wagner",
+            "pos": "SF",
+            "nba": "ORL",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 51.4,
+            "games": 4,
+            "projected": 205.6
+          },
+          {
+            "name": "VJ Edgecombe",
+            "pos": "SG",
+            "nba": "PHI",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 36.5,
+            "games": 3,
+            "projected": 109.5
+          },
+          {
+            "name": "Jaren Jackson Jr.",
+            "pos": "PF",
+            "nba": "UTAH",
+            "status": "OUT",
+            "onIR": true,
+            "avg": 38.1,
+            "games": 0,
+            "projected": 0
+          },
+          {
+            "name": "CJ McCollum",
+            "pos": "PG",
+            "nba": "ATL",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 28.1,
+            "games": 3,
+            "projected": 84.3
+          },
+          {
+            "name": "AJ Dybantsa",
+            "pos": "SF",
+            "nba": "WSH",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 23.3,
+            "games": 3,
+            "projected": 69.9
+          },
+          {
+            "name": "Jalen Suggs",
+            "pos": "PG",
+            "nba": "ORL",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 4,
+            "games": 2,
+            "projected": 8
+          },
+          {
+            "name": "Ausar Thompson",
+            "pos": "SF",
+            "nba": "DET",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 36.5,
+            "games": 4,
+            "projected": 146
+          },
+          {
+            "name": "Collin Murray-Boyles",
+            "pos": "PF",
+            "nba": "TOR",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 26.8,
+            "games": 3,
+            "projected": 80.4
+          },
+          {
+            "name": "Mikal Bridges",
+            "pos": "SG",
+            "nba": "NY",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 19.8,
+            "games": 4,
+            "projected": 79.2
+          },
+          {
+            "name": "Christian Braun",
+            "pos": "SG",
+            "nba": "DEN",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 27.3,
+            "games": 4,
+            "projected": 109.2
+          }
+        ]
+      },
+      "actual": null
+    },
+    {
+      "home": {
+        "teamId": 3,
+        "teamName": "Team Miller",
+        "games": 45,
+        "gamesLostToLineupLimit": 2,
+        "projectedPoints": 1283,
+        "keyPlayers": [
+          {
+            "name": "Donovan Mitchell",
+            "pos": "PG",
+            "nba": "CLE",
+            "status": "DAY_TO_DAY",
+            "onIR": false,
+            "avg": 39.9,
+            "games": 3,
+            "projected": 119.7
+          },
+          {
+            "name": "Pascal Siakam",
+            "pos": "PF",
+            "nba": "IND",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 39.7,
+            "games": 3,
+            "projected": 119.1
+          },
+          {
+            "name": "Zion Williamson",
+            "pos": "PF",
+            "nba": "NO",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 38.3,
+            "games": 4,
+            "projected": 153.2
+          }
+        ],
+        "injuries": [
+          {
+            "name": "Donovan Mitchell",
+            "status": "DAY_TO_DAY",
+            "onIR": false
+          },
+          {
+            "name": "Stephen Curry",
+            "status": "OUT",
+            "onIR": true
+          },
+          {
+            "name": "Joel Embiid",
+            "status": "DAY_TO_DAY",
+            "onIR": false
+          },
+          {
+            "name": "Brandon Ingram",
+            "status": "OUT",
+            "onIR": true
+          },
+          {
+            "name": "Jerami Grant",
+            "status": "DAY_TO_DAY",
+            "onIR": false
+          }
+        ],
+        "roster": [
+          {
+            "name": "Donovan Mitchell",
+            "pos": "PG",
+            "nba": "CLE",
+            "status": "DAY_TO_DAY",
+            "onIR": false,
+            "avg": 39.9,
+            "games": 3,
+            "projected": 119.7
+          },
+          {
+            "name": "Domantas Sabonis",
+            "pos": "PF",
+            "nba": "SAC",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 30.5,
+            "games": 3,
+            "projected": 91.5
+          },
+          {
+            "name": "Stephen Curry",
+            "pos": "PG",
+            "nba": "GS",
+            "status": "OUT",
+            "onIR": true,
+            "avg": 40.8,
+            "games": 0,
+            "projected": 0
+          },
+          {
+            "name": "Pascal Siakam",
+            "pos": "PF",
+            "nba": "IND",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 39.7,
+            "games": 3,
+            "projected": 119.1
+          },
+          {
+            "name": "Zion Williamson",
+            "pos": "PF",
+            "nba": "NO",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 38.3,
+            "games": 4,
+            "projected": 153.2
+          },
+          {
+            "name": "Damian Lillard",
+            "pos": "PG",
+            "nba": "POR",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 32.6,
+            "games": 4,
+            "projected": 130.4
+          },
+          {
+            "name": "Joel Embiid",
+            "pos": "C",
+            "nba": "PHI",
+            "status": "DAY_TO_DAY",
+            "onIR": false,
+            "avg": 24.8,
+            "games": 3,
+            "projected": 74.4
+          },
+          {
+            "name": "Josh Hart",
+            "pos": "SG",
+            "nba": "NY",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 19,
+            "games": 4,
+            "projected": 76
+          },
+          {
+            "name": "Jaden McDaniels",
+            "pos": "SF",
+            "nba": "MIN",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 33.6,
+            "games": 4,
+            "projected": 134.4
+          },
+          {
+            "name": "Brandon Ingram",
+            "pos": "SF",
+            "nba": "LAC",
+            "status": "OUT",
+            "onIR": true,
+            "avg": 38.5,
+            "games": 0,
+            "projected": 0
+          },
+          {
+            "name": "Aaron Wiggins",
+            "pos": "SG",
+            "nba": "ATL",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 23.6,
+            "games": 3,
+            "projected": 70.8
+          },
+          {
+            "name": "Paul Reed",
+            "pos": "PF",
+            "nba": "DET",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 23.8,
+            "games": 4,
+            "projected": 95.2
+          },
+          {
+            "name": "Karlo Matkovic",
+            "pos": "PF",
+            "nba": "NO",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 18.9,
+            "games": 3,
+            "projected": 56.7
+          },
+          {
+            "name": "Draymond Green",
+            "pos": "PF",
+            "nba": "GS",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 22,
+            "games": 3,
+            "projected": 66
+          },
+          {
+            "name": "Jerami Grant",
+            "pos": "PF",
+            "nba": "MEM",
+            "status": "DAY_TO_DAY",
+            "onIR": false,
+            "avg": 23.9,
+            "games": 4,
+            "projected": 95.6
+          }
+        ]
+      },
+      "away": {
+        "teamId": 5,
+        "teamName": "King Ozniyon",
+        "games": 42,
+        "gamesLostToLineupLimit": 0,
+        "projectedPoints": 1462.9,
+        "keyPlayers": [
+          {
+            "name": "Nikola Jokic",
+            "pos": "C",
+            "nba": "DEN",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 65.3,
+            "games": 4,
+            "projected": 261.2
+          },
+          {
+            "name": "Deni Avdija",
+            "pos": "SF",
+            "nba": "POR",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 40.5,
+            "games": 4,
+            "projected": 162
+          },
+          {
+            "name": "Kyshawn George",
+            "pos": "SG",
+            "nba": "WSH",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 39.3,
+            "games": 4,
+            "projected": 157.2
+          }
+        ],
+        "injuries": [
+          {
+            "name": "De'Aaron Fox",
+            "status": "OUT",
+            "onIR": false
+          },
+          {
+            "name": "Ajay Mitchell",
+            "status": "DAY_TO_DAY",
+            "onIR": true
+          }
+        ],
+        "roster": [
+          {
+            "name": "Nikola Jokic",
+            "pos": "C",
+            "nba": "DEN",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 65.3,
+            "games": 4,
+            "projected": 261.2
+          },
+          {
+            "name": "Josh Giddey",
+            "pos": "PG",
+            "nba": "CHI",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 34,
+            "games": 4,
+            "projected": 136
+          },
+          {
+            "name": "Deni Avdija",
+            "pos": "SF",
+            "nba": "POR",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 40.5,
+            "games": 4,
+            "projected": 162
+          },
+          {
+            "name": "De'Aaron Fox",
+            "pos": "PG",
+            "nba": "SA",
+            "status": "OUT",
+            "onIR": false,
+            "avg": 28.9,
+            "games": 0,
+            "projected": 0
+          },
+          {
+            "name": "Nickeil Alexander-Walker",
+            "pos": "PG",
+            "nba": "ATL",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 33.3,
+            "games": 3,
+            "projected": 99.9
+          },
+          {
+            "name": "Keyonte George",
+            "pos": "PG",
+            "nba": "UTAH",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 32.3,
+            "games": 4,
+            "projected": 129.2
+          },
+          {
+            "name": "Immanuel Quickley",
+            "pos": "PG",
+            "nba": "TOR",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 34,
+            "games": 3,
+            "projected": 102
+          },
+          {
+            "name": "Jabari Smith Jr.",
+            "pos": "PF",
+            "nba": "HOU",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 32.7,
+            "games": 3,
+            "projected": 98.1
+          },
+          {
+            "name": "Kyshawn George",
+            "pos": "SG",
+            "nba": "WSH",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 39.3,
+            "games": 4,
+            "projected": 157.2
+          },
+          {
+            "name": "Ajay Mitchell",
+            "pos": "PG",
+            "nba": "OKC",
+            "status": "DAY_TO_DAY",
+            "onIR": true,
+            "avg": 29.5,
+            "games": 0,
+            "projected": 0
+          },
+          {
+            "name": "Yves Missi",
+            "pos": "C",
+            "nba": "NO",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 22,
+            "games": 4,
+            "projected": 88
+          },
+          {
+            "name": "P.J. Washington",
+            "pos": "SF",
+            "nba": "DAL",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 25.3,
+            "games": 3,
+            "projected": 75.9
+          },
+          {
+            "name": "Jonathan Kuminga",
+            "pos": "SF",
+            "nba": "MIN",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 26.1,
+            "games": 4,
+            "projected": 104.4
+          },
+          {
+            "name": "Moussa Diabate",
+            "pos": "PF",
+            "nba": "CHA",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 24.5,
+            "games": 2,
+            "projected": 49
+          }
+        ]
+      },
+      "actual": null
+    },
+    {
+      "home": {
+        "teamId": 6,
+        "teamName": "Libi’s Legacy",
+        "games": 44,
+        "gamesLostToLineupLimit": 0,
+        "projectedPoints": 1359.5,
+        "keyPlayers": [
+          {
+            "name": "Victor Wembanyama",
+            "pos": "C",
+            "nba": "SA",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 70,
+            "games": 3,
+            "projected": 210
+          },
+          {
+            "name": "Dylan Harper",
+            "pos": "PG",
+            "nba": "SA",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 36.5,
+            "games": 3,
+            "projected": 109.5
+          },
+          {
+            "name": "Trae Young",
+            "pos": "PG",
+            "nba": "WSH",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 33.4,
+            "games": 4,
+            "projected": 133.6
+          }
+        ],
+        "injuries": [
+          {
+            "name": "Lauri Markkanen",
+            "status": "OUT",
+            "onIR": true
+          },
+          {
+            "name": "Dejounte Murray",
+            "status": "OUT",
+            "onIR": true
+          },
+          {
+            "name": "Duncan Robinson",
+            "status": "DAY_TO_DAY",
+            "onIR": false
+          }
+        ],
+        "roster": [
+          {
+            "name": "Victor Wembanyama",
+            "pos": "C",
+            "nba": "SA",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 70,
+            "games": 3,
+            "projected": 210
+          },
+          {
+            "name": "Trae Young",
+            "pos": "PG",
+            "nba": "WSH",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 33.4,
+            "games": 4,
+            "projected": 133.6
+          },
+          {
+            "name": "Amen Thompson",
+            "pos": "SG",
+            "nba": "HOU",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 26.4,
+            "games": 3,
+            "projected": 79.2
+          },
+          {
+            "name": "Derrick White",
+            "pos": "PG",
+            "nba": "BOS",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 31.3,
+            "games": 4,
+            "projected": 125.2
+          },
+          {
+            "name": "Lauri Markkanen",
+            "pos": "SF",
+            "nba": "UTAH",
+            "status": "OUT",
+            "onIR": true,
+            "avg": 37.3,
+            "games": 0,
+            "projected": 0
+          },
+          {
+            "name": "Dejounte Murray",
+            "pos": "PG",
+            "nba": "NO",
+            "status": "OUT",
+            "onIR": true,
+            "avg": 20,
+            "games": 0,
+            "projected": 0
+          },
+          {
+            "name": "Naz Reid",
+            "pos": "PF",
+            "nba": "CHA",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 28.5,
+            "games": 2,
+            "projected": 57
+          },
+          {
+            "name": "Dylan Harper",
+            "pos": "PG",
+            "nba": "SA",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 36.5,
+            "games": 3,
+            "projected": 109.5
+          },
+          {
+            "name": "OG Anunoby",
+            "pos": "SF",
+            "nba": "NY",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 26.8,
+            "games": 4,
+            "projected": 107.2
+          },
+          {
+            "name": "Zach LaVine",
+            "pos": "SG",
+            "nba": "SAC",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 27.4,
+            "games": 3,
+            "projected": 82.2
+          },
+          {
+            "name": "Jrue Holiday",
+            "pos": "PG",
+            "nba": "POR",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 26.3,
+            "games": 4,
+            "projected": 105.2
+          },
+          {
+            "name": "Duncan Robinson",
+            "pos": "SG",
+            "nba": "DET",
+            "status": "DAY_TO_DAY",
+            "onIR": false,
+            "avg": 29.5,
+            "games": 4,
+            "projected": 118
+          },
+          {
+            "name": "Aaron Gordon",
+            "pos": "PF",
+            "nba": "DEN",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 18.5,
+            "games": 4,
+            "projected": 74
+          },
+          {
+            "name": "Derrick Jones Jr.",
+            "pos": "SF",
+            "nba": "LAC",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 25.2,
+            "games": 3,
+            "projected": 75.6
+          },
+          {
+            "name": "Myles Turner",
+            "pos": "C",
+            "nba": "MIL",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 27.6,
+            "games": 3,
+            "projected": 82.8
+          }
+        ]
+      },
+      "away": {
+        "teamId": 11,
+        "teamName": "League's American Problem",
+        "games": 40,
+        "gamesLostToLineupLimit": 1,
+        "projectedPoints": 1402,
+        "keyPlayers": [
+          {
+            "name": "Tyrese Maxey",
+            "pos": "PG",
+            "nba": "PHI",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 46.1,
+            "games": 3,
+            "projected": 138.3
+          },
+          {
+            "name": "Ayo Dosunmu",
+            "pos": "PG",
+            "nba": "MIN",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 41.6,
+            "games": 4,
+            "projected": 166.4
+          },
+          {
+            "name": "Dyson Daniels",
+            "pos": "PG",
+            "nba": "ATL",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 39.6,
+            "games": 3,
+            "projected": 118.8
+          }
+        ],
+        "injuries": [
+          {
+            "name": "Anthony Edwards",
+            "status": "OUT",
+            "onIR": true
+          },
+          {
+            "name": "Jalen Duren",
+            "status": "OUT",
+            "onIR": true
+          },
+          {
+            "name": "Caleb Wilson",
+            "status": "OUT",
+            "onIR": false
+          },
+          {
+            "name": "Andrew Nembhard",
+            "status": "DAY_TO_DAY",
+            "onIR": false
+          },
+          {
+            "name": "Jalen Smith",
+            "status": "DAY_TO_DAY",
+            "onIR": false
+          }
+        ],
+        "roster": [
+          {
+            "name": "Anthony Edwards",
+            "pos": "SG",
+            "nba": "MIN",
+            "status": "OUT",
+            "onIR": true,
+            "avg": 47.2,
+            "games": 0,
+            "projected": 0
+          },
+          {
+            "name": "Tyrese Maxey",
+            "pos": "PG",
+            "nba": "PHI",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 46.1,
+            "games": 3,
+            "projected": 138.3
+          },
+          {
+            "name": "Jalen Duren",
+            "pos": "C",
+            "nba": "DET",
+            "status": "OUT",
+            "onIR": true,
+            "avg": 42.2,
+            "games": 0,
+            "projected": 0
+          },
+          {
+            "name": "Jaylen Brown",
+            "pos": "SG",
+            "nba": "PHI",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 37.6,
+            "games": 3,
+            "projected": 112.8
+          },
+          {
+            "name": "Dyson Daniels",
+            "pos": "PG",
+            "nba": "ATL",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 39.6,
+            "games": 3,
+            "projected": 118.8
+          },
+          {
+            "name": "Caleb Wilson",
+            "pos": "SF",
+            "nba": "CHI",
+            "status": "OUT",
+            "onIR": false,
+            "avg": 26,
+            "games": 0,
+            "projected": 0
+          },
+          {
+            "name": "Onyeka Okongwu",
+            "pos": "C",
+            "nba": "ATL",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 36.7,
+            "games": 3,
+            "projected": 110.1
+          },
+          {
+            "name": "Alex Sarr",
+            "pos": "PF",
+            "nba": "WSH",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 31.3,
+            "games": 4,
+            "projected": 125.2
+          },
+          {
+            "name": "Brandin Podziemski",
+            "pos": "PG",
+            "nba": "GS",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 34.1,
+            "games": 4,
+            "projected": 136.4
+          },
+          {
+            "name": "Ayo Dosunmu",
+            "pos": "PG",
+            "nba": "MIN",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 41.6,
+            "games": 4,
+            "projected": 166.4
+          },
+          {
+            "name": "Andrew Nembhard",
+            "pos": "PG",
+            "nba": "IND",
+            "status": "DAY_TO_DAY",
+            "onIR": false,
+            "avg": 29.7,
+            "games": 3,
+            "projected": 89.1
+          },
+          {
+            "name": "Jeremiah Fears",
+            "pos": "PG",
+            "nba": "NO",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 33,
+            "games": 4,
+            "projected": 132
+          },
+          {
+            "name": "Day'Ron Sharpe",
+            "pos": "C",
+            "nba": "BKN",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 36.1,
+            "games": 3,
+            "projected": 108.3
+          },
+          {
+            "name": "Jalen Smith",
+            "pos": "PF",
+            "nba": "CHI",
+            "status": "DAY_TO_DAY",
+            "onIR": false,
+            "avg": 33.2,
+            "games": 4,
+            "projected": 132.8
+          },
+          {
+            "name": "Zaccharie Risacher",
+            "pos": "SF",
+            "nba": "DAL",
+            "status": "ACTIVE",
+            "onIR": false,
+            "avg": 15.9,
+            "games": 2,
+            "projected": 31.8
+          }
+        ]
+      },
+      "actual": null
+    }
+  ]
+}

@@ -500,3 +500,25 @@ function buildMatchups(played: MatchupDepthRow[]): RecapMatchup[] {
 
   return out.sort((x, y) => y.margin - x.margin);
 }
+
+// ─── Season top weekly scores ────────────────────────────────────────────────
+
+export interface TopWeeklyScore extends WeeklyTopPlayer {
+  matchupPeriod: number;
+}
+
+/**
+ * Best single-week player totals of the season so far, across every finished
+ * week's top 10 (the same lists the recap shows). A player can appear more
+ * than once, one row per week. Ties: fewer games first, then earlier week.
+ */
+export function topWeeklyScores(
+  topPlayersByWeek: { matchupPeriod: number; players: WeeklyTopPlayer[] }[] | undefined,
+  limit = 10,
+): TopWeeklyScore[] {
+  return (topPlayersByWeek ?? [])
+    .flatMap(w => w.players.map(p => ({ ...p, matchupPeriod: w.matchupPeriod })))
+    .sort((a, b) =>
+      b.totalPoints - a.totalPoints || a.games - b.games || a.matchupPeriod - b.matchupPeriod)
+    .slice(0, limit);
+}

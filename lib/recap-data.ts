@@ -6,7 +6,7 @@
 import { readSnapshot } from './snapshots';
 import { hasEspnCredentials, getMatchupDepth } from './espn';
 import type { MatchupDepthData, MatchupDepthRow, RecordsData, WeeklyTopPlayer } from './types';
-import type { RecapContext } from './recap';
+import { topWeeklyScores, topManagerWeeks, type RecapContext, type TopWeeklyScore, type TopManagerWeek } from './recap';
 import { CURRENT_SEASON } from './season';
 
 async function loadDepth(): Promise<MatchupDepthData | null> {
@@ -30,6 +30,16 @@ export async function loadRecapRows(): Promise<MatchupDepthRow[]> {
 /** Top 10 players of one week ([] on snapshots built before this field existed). */
 export async function loadTopPlayersForWeek(week: number): Promise<WeeklyTopPlayer[]> {
   return (await loadDepth())?.topPlayersByWeek?.find(w => w.matchupPeriod === week)?.players ?? [];
+}
+
+/** The season's 10 best single-week player totals (finished weeks only). */
+export async function loadSeasonTopWeeklyScores(): Promise<TopWeeklyScore[]> {
+  return topWeeklyScores((await loadDepth())?.topPlayersByWeek);
+}
+
+/** The season's 10 best single-week team scores (finished weeks only). */
+export async function loadSeasonTopManagerWeeks(): Promise<TopManagerWeek[]> {
+  return topManagerWeeks(await loadRecapRows());
 }
 
 /**

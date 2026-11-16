@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import Sidebar from '@/components/Sidebar';
+import { Analytics } from '@vercel/analytics/next';
 
 const BASE_URL = 'https://fantasy-hq-ten.vercel.app';
 
@@ -49,6 +50,7 @@ export default function RootLayout({
         <main className="flex-1 min-w-0 md:ml-[220px] print:ml-0 min-h-screen pt-14 pb-16 md:pt-0 md:pb-0 print:pt-0 print:pb-0">
           {children}
         </main>
+        <Analytics />
       </body>
     </html>
   );

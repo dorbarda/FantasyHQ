@@ -68,17 +68,26 @@ export function topLast30(players: TrendPlayer[], n = 5): TrendPlayer[] {
 }
 
 /** Biggest climb vs. the preseason projection, among the current top 100. */
-export function surprises(players: TrendPlayer[], n = 3): TrendPlayer[] {
+export function surprises(players: TrendPlayer[], n = 5): TrendPlayer[] {
   return players
     .filter(p => p.rank <= RELEVANT_TOP && (rankGain(p) ?? 0) > 0)
     .sort((a, b) => rankGain(b)! - rankGain(a)! || a.rank - b.rank || byName(a, b))
     .slice(0, n);
 }
 
-/** Biggest drop vs. the preseason projection, among the projected top 100. */
-export function busts(players: TrendPlayer[], n = 3): TrendPlayer[] {
+/** Busts need more than this many games: 5 before week 6, 10 from week 6. */
+export function bustMinGames(week: number): number {
+  return week >= 6 ? 10 : 5;
+}
+
+/**
+ * Biggest drop vs. the preseason projection, among the projected top 100
+ * who played more than bustMinGames(week) games.
+ */
+export function busts(players: TrendPlayer[], week: number, n = 5): TrendPlayer[] {
+  const minGames = bustMinGames(week);
   return players
-    .filter(p => p.projRank !== null && p.projRank <= RELEVANT_TOP && rankGain(p)! < 0)
+    .filter(p => p.projRank !== null && p.projRank <= RELEVANT_TOP && p.gp > minGames && rankGain(p)! < 0)
     .sort((a, b) => rankGain(a)! - rankGain(b)! || a.projRank! - b.projRank! || byName(a, b))
     .slice(0, n);
 }

@@ -284,7 +284,7 @@ export default async function HomePage() {
 
           <HomeTrends
             last30={trendsLive ? topLast30(trendsLive) : null}
-            movers={trendsLive ? { surprises: surprises(trendsLive), busts: busts(trendsLive) } : null}
+            movers={trendsLive ? { surprises: surprises(trendsLive), busts: busts(trendsLive, week) } : null}
             power={power ? power.entries.slice(0, 3) : []}
             powerWeeks={power && power.recentWeeks.length > 0 ? weekRange(power.recentWeeks) : null}
           />

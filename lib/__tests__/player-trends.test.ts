@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { rankByValue, rankGain, topLast30, surprises, busts, hasSeasonStarted, type TrendPlayer } from '../player-trends';
 
-function p(name: string, rank: number, projRank: number | null, last30Pts = 0): TrendPlayer {
-  return { playerId: rank * 1000 + (projRank ?? 0), name, proTeam: 'BOS', ownerName: null, seasonPts: 100, gp: 5, last30Pts, rank, projRank };
+function p(name: string, rank: number, projRank: number | null, last30Pts = 0, gp = 12): TrendPlayer {
+  return { playerId: rank * 1000 + (projRank ?? 0), name, proTeam: 'BOS', ownerName: null, seasonPts: 100, gp, last30Pts, rank, projRank };
 }
 
 describe('rankByValue', () => {
@@ -23,6 +23,8 @@ describe('player trends', () => {
     p('Slump', 30, 20, 150),       // -10
     p('Late bust', 300, 150, 10),  // projected outside top 100
     p('Rookie', 50, null, 120),
+    p('Injured', 200, 3, 0, 4),    // -197 but only 4 games
+    p('Few games', 120, 10, 0, 8), // -110, 8 games: bust before week 6 only
   ];
 
   it('rankGain = projected rank minus current rank', () => {
@@ -40,7 +42,11 @@ describe('player trends', () => {
   });
 
   it('busts: projected top 100, biggest drop first', () => {
-    expect(busts(players).map(x => x.name)).toEqual(['Bust', 'Slump']);
+    expect(busts(players, 3).map(x => x.name)).toEqual(['Few games', 'Bust', 'Slump']);
+  });
+
+  it('busts: more than 5 games, more than 10 from week 6', () => {
+    expect(busts(players, 6).map(x => x.name)).toEqual(['Bust', 'Slump']);
   });
 
   it('season starts with the first point scored', () => {

@@ -789,9 +789,9 @@ async function buildDepthData(
 
   rows.sort((a, b) => a.matchupPeriod - b.matchupPeriod || a.teamName.localeCompare(b.teamName));
 
-  // Top players per week, from the same per-day roster fetches. A player's
-  // points count only on days he sat in a scoring slot and played — the
-  // points that actually counted for an owner.
+  // Top players per week, from the same per-day roster fetches. Every game
+  // a rostered player played counts, bench and IR included — this ranks the
+  // players, not what their owners scored.
   const topPlayersByWeek = completedPeriods.map(period => {
     const byPlayer = new Map<number, WeeklyTopPlayer & { raw: number }>();
     for (const sp of getScoringPeriods(period)) {
@@ -799,7 +799,7 @@ async function buildDepthData(
         const owner = teamMeta[Number(teamId)]?.owner || '?';
         for (const entry of entries) {
           const p = entry?.playerPoolEntry?.player;
-          if (!p?.id || NON_SCORING_SLOTS.has(entry.lineupSlotId)) continue;
+          if (!p?.id) continue;
           const day = dayStatLine(entry, sp);
           if (!day || !(day.appliedTotal > 0 || (day.stats?.['0'] || 0) > 0 || (day.stats?.['40'] || 0) > 0)) continue;
           const cur = byPlayer.get(p.id) || {

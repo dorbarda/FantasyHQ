@@ -26,7 +26,7 @@ export default function RecapView({
   nextWeek: number | null;
   /** Embeddable, verified clips for this week — empty renders nothing. */
   highlights?: Highlight[];
-  /** Week's top 10 players by total starter points — empty renders nothing. */
+  /** Week's top 10 players by total points (all games) — empty renders nothing. */
   topPlayers?: WeeklyTopPlayer[];
 }) {
   // The week's headline: whichever was more extreme, the blowout or the squeaker.

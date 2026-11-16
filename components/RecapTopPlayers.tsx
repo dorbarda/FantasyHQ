@@ -3,7 +3,7 @@ import type { WeeklyTopPlayer } from '@/lib/types';
 
 /**
  * The week's top 10 NBA players on league rosters, by total fantasy points
- * scored while in a starting slot. AVG = total ÷ those games.
+ * in every game they played (bench included). AVG = total ÷ games.
  */
 export default function RecapTopPlayers({ players }: { players: WeeklyTopPlayer[] }) {
   if (players.length === 0) return null;

@@ -1,6 +1,6 @@
 import RecapView from '@/components/RecapView';
 import { computeWeeklyRecap, listRecapWeeks, latestRecapWeek } from '@/lib/recap';
-import { loadRecapRows, loadAddsForWeek } from '@/lib/recap-data';
+import { loadRecapRows, loadAddsForWeek, loadTopPlayersForWeek } from '@/lib/recap-data';
 import { loadHighlightsForWeek } from '@/lib/highlights-data';
 import { CURRENT_SEASON_LABEL } from '@/lib/season';
 
@@ -32,6 +32,7 @@ export default async function LatestRecapPage() {
       prevWeek={weeks[idx + 1] ?? null}
       nextWeek={idx > 0 ? weeks[idx - 1] : null}
       highlights={loadHighlightsForWeek(week)}
+      topPlayers={await loadTopPlayersForWeek(week)}
     />
   );
 }

@@ -2,8 +2,10 @@ import Link from 'next/link';
 import OwnerAvatar from './OwnerAvatar';
 import RecapCard from './RecapCard';
 import RecapHighlights from './RecapHighlights';
+import RecapTopPlayers from './RecapTopPlayers';
 import type { WeeklyRecap } from '@/lib/recap';
 import type { Highlight } from '@/lib/highlightly';
+import type { WeeklyTopPlayer } from '@/lib/types';
 
 /**
  * The whole recap for one week. Laid out to be screenshotted on a phone: the
@@ -16,6 +18,7 @@ export default function RecapView({
   prevWeek,
   nextWeek,
   highlights = [],
+  topPlayers = [],
 }: {
   recap: WeeklyRecap;
   seasonLabel: string;
@@ -23,6 +26,8 @@ export default function RecapView({
   nextWeek: number | null;
   /** Embeddable, verified clips for this week — empty renders nothing. */
   highlights?: Highlight[];
+  /** Week's top 10 players by total points (all games) — empty renders nothing. */
+  topPlayers?: WeeklyTopPlayer[];
 }) {
   // The week's headline: whichever was more extreme, the blowout or the squeaker.
   const beatdown = recap.awards.find(a => a.id === 'beatdown')?.winners[0];
@@ -68,6 +73,9 @@ export default function RecapView({
             <RecapCard key={a.id} award={a} />
           ))}
         </div>
+
+        {/* Top 10 players — renders nothing on older snapshots */}
+        <RecapTopPlayers players={topPlayers} />
 
         {/* Highlights — renders nothing when there are no usable clips */}
         <RecapHighlights clips={highlights} />

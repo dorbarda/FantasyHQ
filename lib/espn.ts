@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type {
+  WeeklyTopPlayer,
   StandingEntry, MatchupsData, Matchup, Player,
   RulesData, SeasonStats,
   CategoryStanding, LuckTableEntry, StatsData,
@@ -788,12 +789,47 @@ async function buildDepthData(
 
   rows.sort((a, b) => a.matchupPeriod - b.matchupPeriod || a.teamName.localeCompare(b.teamName));
 
+  // Top players per week, from the same per-day roster fetches. A player's
+  // points count only on days he sat in a scoring slot and played — the
+  // points that actually counted for an owner.
+  const topPlayersByWeek = completedPeriods.map(period => {
+    const byPlayer = new Map<number, WeeklyTopPlayer & { raw: number }>();
+    for (const sp of getScoringPeriods(period)) {
+      for (const [teamId, entries] of Object.entries(periodDayMap[period]?.[sp] || {})) {
+        const owner = teamMeta[Number(teamId)]?.owner || '?';
+        for (const entry of entries) {
+          const p = entry?.playerPoolEntry?.player;
+          if (!p?.id || NON_SCORING_SLOTS.has(entry.lineupSlotId)) continue;
+          const day = dayStatLine(entry, sp);
+          if (!day || !(day.appliedTotal > 0 || (day.stats?.['0'] || 0) > 0 || (day.stats?.['40'] || 0) > 0)) continue;
+          const cur = byPlayer.get(p.id) || {
+            playerId: p.id, playerName: p.fullName || '?', proTeam: PRO_TEAMS[p.proTeamId] || 'FA',
+            ownerNames: [] as string[], totalPoints: 0, games: 0, avgPoints: 0, raw: 0,
+          };
+          cur.raw += day.appliedTotal || 0;
+          cur.games += 1;
+          if (!cur.ownerNames.includes(owner)) cur.ownerNames.push(owner);
+          byPlayer.set(p.id, cur);
+        }
+      }
+    }
+    const players = [...byPlayer.values()]
+      .sort((a, b) => b.raw - a.raw)
+      .slice(0, 10)
+      .map(({ raw, ...rest }) => ({
+        ...rest,
+        totalPoints: Math.round(raw * 10) / 10,
+        avgPoints: rest.games > 0 ? Math.round((raw / rest.games) * 10) / 10 : 0,
+      }));
+    return { matchupPeriod: period, players };
+  });
+
   // Use the max day count across all completed weeks so every week's columns align
   const daysPerMatchup = completedPeriods.length > 0
     ? Math.max(...completedPeriods.map(p => getScoringPeriods(p).length))
     : 7;
 
-  return { rows, daysPerMatchup, currentMatchupPeriod, completedPeriods };
+  return { rows, daysPerMatchup, currentMatchupPeriod, completedPeriods, topPlayersByWeek };
 }
 
 export async function getMatchupDepth(): Promise<MatchupDepthData> {

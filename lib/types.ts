@@ -144,8 +144,22 @@ export interface MatchupDepthRow {
   efficiency: number;         // scorePP / totalPlayers  (= teamScore / totalPlayers²)
 }
 
+/** One NBA player's week: only games played in a scoring (starter) slot count. */
+export interface WeeklyTopPlayer {
+  playerId: number;
+  playerName: string;
+  proTeam: string;
+  /** Fantasy owner(s) who started him that week — more than one after a mid-week trade/drop. */
+  ownerNames: string[];
+  totalPoints: number;
+  games: number;
+  avgPoints: number;
+}
+
 export interface MatchupDepthData {
   rows: MatchupDepthRow[];
+  /** Top 10 players per completed week, by total starter points. Absent on older snapshots. */
+  topPlayersByWeek?: { matchupPeriod: number; players: WeeklyTopPlayer[] }[];
   daysPerMatchup: number;     // usually 7
   currentMatchupPeriod: number;
   completedPeriods: number[];

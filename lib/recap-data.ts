@@ -5,20 +5,29 @@
  */
 import { readSnapshot } from './snapshots';
 import { hasEspnCredentials, getMatchupDepth } from './espn';
-import type { MatchupDepthData, MatchupDepthRow, TransactionsData } from './types';
+import type { MatchupDepthData, MatchupDepthRow, TransactionsData, WeeklyTopPlayer } from './types';
 
-export async function loadRecapRows(): Promise<MatchupDepthRow[]> {
+async function loadDepth(): Promise<MatchupDepthData | null> {
   const snap = readSnapshot<MatchupDepthData>('matchup-depth');
-  if (snap) return snap.data.rows;
+  if (snap) return snap.data;
 
   if (hasEspnCredentials()) {
     try {
-      return (await getMatchupDepth()).rows;
+      return await getMatchupDepth();
     } catch (err) {
       console.error('Recap depth fetch failed:', err);
     }
   }
-  return [];
+  return null;
+}
+
+export async function loadRecapRows(): Promise<MatchupDepthRow[]> {
+  return (await loadDepth())?.rows ?? [];
+}
+
+/** Top 10 players of one week ([] on snapshots built before this field existed). */
+export async function loadTopPlayersForWeek(week: number): Promise<WeeklyTopPlayer[]> {
+  return (await loadDepth())?.topPlayersByWeek?.find(w => w.matchupPeriod === week)?.players ?? [];
 }
 
 /**

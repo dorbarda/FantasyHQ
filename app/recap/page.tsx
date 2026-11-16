@@ -1,6 +1,6 @@
 import RecapView from '@/components/RecapView';
 import { computeWeeklyRecap, listRecapWeeks, latestRecapWeek } from '@/lib/recap';
-import { loadRecapRows, loadAddsForWeek, loadTopPlayersForWeek } from '@/lib/recap-data';
+import { loadRecapRows, loadRecapContext, loadTopPlayersForWeek } from '@/lib/recap-data';
 import { loadHighlightsForWeek } from '@/lib/highlights-data';
 import { CURRENT_SEASON_LABEL } from '@/lib/season';
 
@@ -9,7 +9,7 @@ export const revalidate = 3600;
 export default async function LatestRecapPage() {
   const rows = await loadRecapRows();
   const week = latestRecapWeek(rows);
-  const recap = week ? computeWeeklyRecap(rows, week, { addsThisWeek: loadAddsForWeek(week) }) : null;
+  const recap = week ? computeWeeklyRecap(rows, week, await loadRecapContext()) : null;
 
   if (!recap || week === null) {
     return (

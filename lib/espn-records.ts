@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type {
-  RecordsData, Superlative, H2HRecord, OwnerCareer,
+  RecordsData, Superlative, H2HRecord, OwnerCareer, HistoryMatchup,
 } from './types';
 
 import { ALL_SEASONS, CURRENT_SEASON, seasonLabel } from './season';
+import { canonicalOwner } from './owners';
 
 const ESPN_S2   = process.env.ESPN_S2;
 const SWID      = process.env.SWID;
@@ -68,7 +69,8 @@ async function fetchSeason(year: number): Promise<{ matchups: SeasonMatchup[]; s
   // Team ID → { name, owner }
   const teamMap: Record<number, { teamName: string; ownerName: string }> = {};
   for (const t of teamsData.teams || []) {
-    const ownerName = (t.owners || []).map((id: string) => memberMap[id] || 'Unknown').join(' & ');
+    // One name per person across seasons and co-owners (lib/owners.ts).
+    const ownerName = canonicalOwner((t.owners || []).map((id: string) => memberMap[id] || 'Unknown').join(' & '));
     teamMap[t.id] = { teamName: t.name || `Team ${t.id}`, ownerName };
   }
 
@@ -368,5 +370,17 @@ export async function getAllRecords(): Promise<RecordsData> {
   const { h2hMap, ownerNames } = computeH2H(allMatchups);
   const hallOfFame = computeHallOfFame(allMatchups, summaries);
 
-  return { superlatives, h2hMap, ownerNames, hallOfFame };
+  // Every game, compact — the recap's highlights (records, upsets) read this.
+  const matchups: HistoryMatchup[] = allMatchups
+    .filter(m => !isGhostTeam(m.home.ownerName) && !isGhostTeam(m.away.ownerName)
+      && !isGhostTeam(m.home.teamName) && !isGhostTeam(m.away.teamName))
+    .map(m => ({
+      year: m.year, seasonLabel: m.seasonLabel, week: m.week, isPlayoff: m.isPlayoff,
+      home: { ownerName: m.home.ownerName, score: m.home.score },
+      away: { ownerName: m.away.ownerName, score: m.away.score },
+      winner: m.winner,
+    }))
+    .sort((a, b) => a.year - b.year || a.week - b.week);
+
+  return { superlatives, h2hMap, ownerNames, hallOfFame, matchups };
 }

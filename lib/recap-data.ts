@@ -5,7 +5,9 @@
  */
 import { readSnapshot } from './snapshots';
 import { hasEspnCredentials, getMatchupDepth } from './espn';
-import type { MatchupDepthData, MatchupDepthRow, TransactionsData, WeeklyTopPlayer } from './types';
+import type { MatchupDepthData, MatchupDepthRow, RecordsData, WeeklyTopPlayer } from './types';
+import type { RecapContext } from './recap';
+import { CURRENT_SEASON } from './season';
 
 async function loadDepth(): Promise<MatchupDepthData | null> {
   const snap = readSnapshot<MatchupDepthData>('matchup-depth');
@@ -31,14 +33,16 @@ export async function loadTopPlayersForWeek(week: number): Promise<WeeklyTopPlay
 }
 
 /**
- * Per-week adds for Hot Pickup. The transactions snapshot only carries these
- * once getTransactions() keeps the scoring period it already fetches
- * (docs/RECAP-SPEC.md §4); until then this returns undefined and the award
- * is simply not shown.
+ * Everything the season highlights need besides this season's rows: earlier
+ * seasons' games (records snapshot) and this season's top players and bench
+ * games (depth snapshot). Missing pieces just mean fewer highlights.
  */
-export function loadAddsForWeek(week: number) {
-  const snap = readSnapshot<TransactionsData & {
-    addsByWeek?: { week: number; players: { playerId: number; playerName: string; proTeam: string; position: string; addCount: number }[] }[];
-  }>('transactions');
-  return snap?.data.addsByWeek?.find(w => w.week === week)?.players;
+export async function loadRecapContext(): Promise<RecapContext> {
+  const depth = await loadDepth();
+  const records = readSnapshot<RecordsData>('records');
+  return {
+    pastSeasons: (records?.data.matchups ?? []).filter(m => m.year < CURRENT_SEASON),
+    topPlayersByWeek: depth?.topPlayersByWeek,
+    benchGamesByWeek: depth?.benchGamesByWeek,
+  };
 }

@@ -156,10 +156,22 @@ export interface WeeklyTopPlayer {
   avgPoints: number;
 }
 
+/** One game a player played while his owner had him on the bench. */
+export interface BenchGame {
+  playerName: string;
+  proTeam: string;
+  ownerName: string;
+  teamName: string;
+  fantasyPoints: number;
+  scoringPeriodId: number;
+}
+
 export interface MatchupDepthData {
   rows: MatchupDepthRow[];
   /** Top 10 players per completed week, by total points (all games). Absent on older snapshots. */
   topPlayersByWeek?: { matchupPeriod: number; players: WeeklyTopPlayer[] }[];
+  /** Biggest single games left on a bench (slot 12), top 3 per week. Absent on older snapshots. */
+  benchGamesByWeek?: { matchupPeriod: number; games: BenchGame[] }[];
   daysPerMatchup: number;     // usually 7
   currentMatchupPeriod: number;
   completedPeriods: number[];
@@ -323,11 +335,24 @@ export interface OwnerCareer {
   bestSeasonRecord: string; // e.g. "14-7"
 }
 
+/** One finished game from any season (ghost teams removed). */
+export interface HistoryMatchup {
+  year: number;
+  seasonLabel: string;
+  week: number;
+  isPlayoff: boolean;
+  home: { ownerName: string; score: number };
+  away: { ownerName: string; score: number };
+  winner: 'home' | 'away';
+}
+
 export interface RecordsData {
   superlatives: Superlative[];
   h2hMap: Record<string, Record<string, H2HRecord>>;
   ownerNames: string[]; // stable sorted list for matrix axes
   hallOfFame: OwnerCareer[];
+  /** Every finished game, oldest first. Absent on older snapshots. */
+  matchups?: HistoryMatchup[];
 }
 
 // ─── Draft Board ──────────────────────────────────────────────────────────────

@@ -3,6 +3,7 @@ import OwnerAvatar from './OwnerAvatar';
 import RecapCard from './RecapCard';
 import RecapHighlights from './RecapHighlights';
 import RecapTopPlayers from './RecapTopPlayers';
+import RecapSeasonHighlights from './RecapSeasonHighlights';
 import type { WeeklyRecap } from '@/lib/recap';
 import type { Highlight } from '@/lib/highlightly';
 import type { WeeklyTopPlayer } from '@/lib/types';
@@ -29,10 +30,6 @@ export default function RecapView({
   /** Week's top 10 players by total points (all games) — empty renders nothing. */
   topPlayers?: WeeklyTopPlayer[];
 }) {
-  // The week's headline: whichever was more extreme, the blowout or the squeaker.
-  const beatdown = recap.awards.find(a => a.id === 'beatdown')?.winners[0];
-  const heartAttack = recap.awards.find(a => a.id === 'heartAttack')?.winners[0];
-
   return (
     <div className="min-h-screen bg-background px-4 sm:px-6 lg:px-8 py-6">
       <div className="max-w-5xl">
@@ -44,31 +41,23 @@ export default function RecapView({
           </p>
         </div>
 
-        {/* Headline fact */}
-        {(beatdown || heartAttack) && (
+        {/* Story of the week */}
+        {recap.story.length > 0 && (
           <div className="rounded-2xl bg-panel text-white px-5 py-4 mb-5">
             <p className="text-[11px] font-semibold uppercase tracking-widest text-accent mb-1.5">
               Story of the week
             </p>
-            {beatdown && (
-              <p className="text-[15px] leading-snug">
-                <span className="font-bold">{beatdown.ownerName}</span> put{' '}
-                <span className="font-bold">{beatdown.value.toFixed(1)}</span> on{' '}
-                <span className="font-bold">{beatdown.opponentName}</span>
-                {heartAttack && (
-                  <>
-                    , while <span className="font-bold">{heartAttack.ownerName}</span> survived by{' '}
-                    <span className="font-bold">{heartAttack.value.toFixed(1)}</span>
-                  </>
-                )}
-                .
-              </p>
-            )}
+            {recap.story.map(line => (
+              <p key={line} className="text-[15px] leading-snug mt-1 first:mt-0">{line}</p>
+            ))}
           </div>
         )}
 
+        {/* Season highlights — only on weeks that have them */}
+        <RecapSeasonHighlights highlights={recap.highlights} />
+
         {/* Award grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
           {recap.awards.map(a => (
             <RecapCard key={a.id} award={a} />
           ))}

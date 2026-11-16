@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import RecapView from '@/components/RecapView';
 import { computeWeeklyRecap, listRecapWeeks } from '@/lib/recap';
-import { loadRecapRows, loadAddsForWeek, loadTopPlayersForWeek } from '@/lib/recap-data';
+import { loadRecapRows, loadRecapContext, loadTopPlayersForWeek } from '@/lib/recap-data';
 import { loadHighlightsForWeek } from '@/lib/highlights-data';
 import { CURRENT_SEASON_LABEL } from '@/lib/season';
 
@@ -20,7 +20,7 @@ export default async function WeekRecapPage({
   const week = parseInt((await params).week, 10);
   const rows = await loadRecapRows();
   const recap = Number.isFinite(week)
-    ? computeWeeklyRecap(rows, week, { addsThisWeek: loadAddsForWeek(week) })
+    ? computeWeeklyRecap(rows, week, await loadRecapContext())
     : null;
   if (!recap) notFound();
 

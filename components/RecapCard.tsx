@@ -14,21 +14,10 @@ function formatValue(w: AwardWinner): string {
 /** The line under the name that says what earned the award. */
 function detailOf(award: Award, w: AwardWinner): string {
   switch (award.id) {
-    case 'beatdown':
-    case 'heartAttack':
-      return `${w.teamScore?.toFixed(1)} – ${w.opponentScore?.toFixed(1)} vs ${w.opponentName}`;
-    case 'ceiling':
-      return `vs ${w.opponentName}`;
     case 'noLuck':
       return `Lost with ${w.teamScore?.toFixed(1)} — beat ${w.value} other team${w.value === 1 ? '' : 's'}`;
     case 'slotzki':
       return `Won with ${w.teamScore?.toFixed(1)} — ${w.value} team${w.value === 1 ? '' : 's'} scored more`;
-    case 'grinder':
-      return `${w.value} starter games used`;
-    case 'sniper':
-      return `pts per game · ${w.teamScore?.toFixed(1)} points`;
-    case 'hotPickup':
-      return w.proTeam ? `${w.proTeam} · added ${w.value}×` : `Added ${w.value}×`;
   }
 }
 
@@ -54,21 +43,12 @@ export default function RecapCard({ award }: { award: Award }) {
       {/* Recipients — all of them when tied */}
       <div className="flex flex-col gap-2.5 mt-auto">
         {award.winners.map((w, i) => (
-          <div key={`${w.ownerName}-${w.playerName ?? ''}-${i}`} className="flex items-center gap-2.5">
-            {w.playerName ? (
-              <div className="min-w-0 flex-1">
-                <p className="text-[15px] font-bold text-foreground truncate">{w.playerName}</p>
-                <p className="text-[11px] text-muted leading-snug">{detailOf(award, w)}</p>
-              </div>
-            ) : (
-              <>
-                <OwnerAvatar ownerName={w.ownerName} teamName={w.teamName} size={32} />
-                <div className="min-w-0 flex-1">
-                  <p className="text-[15px] font-bold text-foreground truncate">{w.ownerName}</p>
-                  <p className="text-[11px] text-muted leading-snug">{detailOf(award, w)}</p>
-                </div>
-              </>
-            )}
+          <div key={`${w.ownerName}-${i}`} className="flex items-center gap-2.5">
+            <OwnerAvatar ownerName={w.ownerName} teamName={w.teamName} size={32} />
+            <div className="min-w-0 flex-1">
+              <p className="text-[15px] font-bold text-foreground truncate">{w.ownerName}</p>
+              <p className="text-[11px] text-muted leading-snug">{detailOf(award, w)}</p>
+            </div>
             <span className="text-[20px] font-black tabular-nums text-accent shrink-0">
               {formatValue(w)}
             </span>

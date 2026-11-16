@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { computeWeeklyRecap, listRecapWeeks, latestRecapWeek } from '../recap';
-import type { MatchupDepthRow, TransactionPlayer } from '../types';
+import { computeWeeklyRecap, listRecapWeeks, latestRecapWeek, BENCH_MIN_POINTS } from '../recap';
+import type { MatchupDepthRow, HistoryMatchup } from '../types';
+import { canonicalOwner } from '../owners';
 import week18 from './fixtures/week18-2026.json';
 
 // ── Fixtures ─────────────────────────────────────────────────────────────────
@@ -56,46 +57,7 @@ const WEEK = [
   ...pair('Gil', 70, 'Hal', 65),
 ];
 
-// ── Core five ────────────────────────────────────────────────────────────────
-
-describe('עשה לו גלס (biggest blowout)', () => {
-  it('picks the largest margin of victory', () => {
-    const w = winnersOf(computeWeeklyRecap(WEEK, 1), 'beatdown');
-    expect(w).toHaveLength(1);
-    expect(w[0].ownerName).toBe('Ann');
-    expect(w[0].value).toBe(50);
-  });
-
-  it('reports every team tied for the biggest margin', () => {
-    const tied = [...pair('Ann', 140, 'Ben', 90), ...pair('Cal', 150, 'Dan', 100)];
-    const w = winnersOf(computeWeeklyRecap(tied, 1), 'beatdown');
-    expect(w.map(x => x.ownerName).sort()).toEqual(['Ann', 'Cal']);
-  });
-});
-
-describe('Heart Attack (closest game)', () => {
-  it('picks the smallest margin of victory', () => {
-    const w = winnersOf(computeWeeklyRecap(WEEK, 1), 'heartAttack');
-    expect(w).toHaveLength(1);
-    expect(w[0].ownerName).toBe('Cal');
-    expect(w[0].value).toBe(1);
-  });
-});
-
-describe('Ceiling (highest score)', () => {
-  it('picks the highest single score, winner or not', () => {
-    const w = winnersOf(computeWeeklyRecap(WEEK, 1), 'ceiling');
-    expect(w).toHaveLength(1);
-    expect(w[0].ownerName).toBe('Ann');
-    expect(w[0].value).toBe(140);
-  });
-
-  it('can go to a team that lost', () => {
-    const rows = [...pair('Ann', 200, 'Ben', 210), ...pair('Cal', 100, 'Dan', 90)];
-    const w = winnersOf(computeWeeklyRecap(rows, 1), 'ceiling');
-    expect(w[0].ownerName).toBe('Ben');
-  });
-});
+// ── Luck awards ──────────────────────────────────────────────────────────────
 
 describe('לאילי אין מזל (unluckiest loss)', () => {
   it('picks the loser whose score beat the most other teams', () => {
@@ -142,64 +104,6 @@ describe('פרס הסלוצקי (luckiest win)', () => {
 
 // ── Effort awards ────────────────────────────────────────────────────────────
 
-describe('עשה ברדה (most starter games)', () => {
-  it('picks the highest totalPlayers', () => {
-    const rows = [
-      ...pair('Ann', 100, 'Ben', 90, { totalPlayers: 50 }),
-      ...pair('Cal', 80, 'Dan', 70, { totalPlayers: 30 }),
-    ];
-    const w = winnersOf(computeWeeklyRecap(rows, 1), 'grinder');
-    expect(w.map(x => x.ownerName).sort()).toEqual(['Ann', 'Ben']);
-    expect(w[0].value).toBe(50);
-  });
-});
-
-describe('Sniper (best points per game)', () => {
-  it('ranks by plain points per game, not score ÷ games²', () => {
-    const rows = [
-      // Ann: 1200 / 40 = 30.0 per game. Cal: 580 / 20 = 29.0 — fewer games
-      // must not be rewarded on its own (score ÷ games² would pick Cal).
-      ...pair('Ann', 1200, 'Ben', 900, { totalPlayers: 40 }),
-      ...pair('Cal', 580, 'Dan', 500, { totalPlayers: 20 }),
-    ];
-    const [w] = winnersOf(computeWeeklyRecap(rows, 1), 'sniper');
-    expect(w.ownerName).toBe('Ann');
-    expect(w.value).toBe(30);
-  });
-
-  it('picks the best points per game, not the highest score', () => {
-    const rows = [
-      // Ann scores more in total but uses far more slots to do it.
-      ...pair('Ann', 200, 'Ben', 100, { totalPlayers: 60 }),
-      ...pair('Cal', 120, 'Dan', 60, { totalPlayers: 20 }),
-    ];
-    const w = winnersOf(computeWeeklyRecap(rows, 1), 'sniper');
-    expect(w[0].ownerName).toBe('Cal');
-  });
-});
-
-// ── Hot Pickup ───────────────────────────────────────────────────────────────
-
-describe('Hot Pickup', () => {
-  const adds: TransactionPlayer[] = [
-    { playerId: 1, playerName: 'Waiver Wire Guy', proTeam: 'BOS', position: 'PG', addCount: 5 },
-    { playerId: 2, playerName: 'Someone Else', proTeam: 'LAL', position: 'C', addCount: 2 },
-  ];
-
-  it('is absent when per-week adds are not supplied', () => {
-    // The transactions snapshot only gains addsByWeek after the §4 change.
-    const recap = computeWeeklyRecap(WEEK, 1);
-    expect(recap!.awards.find(a => a.id === 'hotPickup')).toBeUndefined();
-  });
-
-  it('reports the most-added player when adds are supplied', () => {
-    const w = winnersOf(computeWeeklyRecap(WEEK, 1, { addsThisWeek: adds }), 'hotPickup');
-    expect(w).toHaveLength(1);
-    expect(w[0].playerName).toBe('Waiver Wire Guy');
-    expect(w[0].value).toBe(5);
-  });
-});
-
 // ── Edge cases ───────────────────────────────────────────────────────────────
 
 describe('edge cases', () => {
@@ -220,21 +124,16 @@ describe('edge cases', () => {
     const recap = computeWeeklyRecap(rows, 1)!;
     const everyone = recap.awards.flatMap(a => a.winners.map(w => w.ownerName));
     expect(everyone).not.toContain('Fake Team');
-    // The 400 blowout is a ghost's, so Ann still takes Ceiling.
-    expect(winnersOf(recap, 'ceiling')[0].ownerName).toBe('Ann');
   });
 
-  it('keeps a bye out of matchup awards but counts it for team awards', () => {
+  it('keeps a bye out of the luck awards and the matchup list', () => {
     const rows = [
       ...pair('Ann', 100, 'Ben', 90),
-      row({ ownerName: 'Solo', teamScore: 500, opponentName: '', opponentScore: 0, totalPlayers: 99 }),
+      row({ ownerName: 'Solo', teamScore: 50, opponentName: '', opponentScore: 0 }),
     ];
     const recap = computeWeeklyRecap(rows, 1)!;
-    // Team-level: the bye's huge score and slot count still win.
-    expect(winnersOf(recap, 'ceiling')[0].ownerName).toBe('Solo');
-    expect(winnersOf(recap, 'grinder')[0].ownerName).toBe('Solo');
-    // Matchup-level: the bye is not a blowout, and produces no matchup row.
-    expect(winnersOf(recap, 'beatdown')[0].ownerName).toBe('Ann');
+    const everyone = recap.awards.flatMap(a => a.winners.map(w => w.ownerName));
+    expect(everyone).not.toContain('Solo');
     expect(recap.matchups.map(m => m.home.ownerName)).not.toContain('Solo');
   });
 
@@ -306,26 +205,6 @@ describe('week 18 of 2025-26 (golden)', () => {
     expect(recap.matchups).toHaveLength(5);
   });
 
-  it('עשה לו גלס — Gelless beat Barak Miller by 235', () => {
-    const [w] = winnersOf(recap, 'beatdown');
-    expect(w.ownerName).toBe('Gelless');
-    expect(w.value).toBe(235);
-    expect(w.teamScore).toBe(1372);
-    expect(w.opponentScore).toBe(1137);
-  });
-
-  it('Heart Attack — Nir Zele edged Omer Rosenberg by 6', () => {
-    const [w] = winnersOf(recap, 'heartAttack');
-    expect(w.ownerName).toBe('Nir Zele');
-    expect(w.value).toBe(6);
-  });
-
-  it('Ceiling — Yuval Halevy posted the top score of 1526', () => {
-    const [w] = winnersOf(recap, 'ceiling');
-    expect(w.ownerName).toBe('Yuval Halevy');
-    expect(w.value).toBe(1526);
-  });
-
   it('לאילי אין מזל — Yotam Goldin lost with a score that beat 7 of the field', () => {
     const [w] = winnersOf(recap, 'noLuck');
     expect(w.ownerName).toBe('Yotam Goldin');
@@ -339,18 +218,118 @@ describe('week 18 of 2025-26 (golden)', () => {
     expect(w.value).toBe(7);
   });
 
-  it('עשה ברדה — Yotam Goldin used the most starter games', () => {
-    const [w] = winnersOf(recap, 'grinder');
-    expect(w.ownerName).toBe('Yotam Goldin');
-    expect(w.value).toBe(50);
+});
+
+// ── Season highlights ────────────────────────────────────────────────────────
+
+/** A past regular-season game. */
+function past(year: number, week: number, a: string, aScore: number, b: string, bScore: number, isPlayoff = false): HistoryMatchup {
+  return {
+    year, seasonLabel: `${year - 1}-${String(year).slice(2)}`, week, isPlayoff,
+    home: { ownerName: a, score: aScore }, away: { ownerName: b, score: bScore },
+    winner: aScore >= bScore ? 'home' : 'away',
+  };
+}
+const ids = (r: ReturnType<typeof computeWeeklyRecap>) => r!.highlights.map(h => h.id);
+const wk = (w: number, rows: MatchupDepthRow[]) => rows.map(r => ({ ...r, matchupPeriod: w }));
+
+describe('season highlights', () => {
+  it('flags an all-time record and names the old one', () => {
+    const pastSeasons = [past(2025, 3, 'Ann', 130, 'Ben', 100)];
+    const r = computeWeeklyRecap(WEEK, 1, { pastSeasons });
+    const h = r!.highlights.find(h => h.id === 'allTimeHigh')!;
+    expect(h.ownerName).toBe('Ann');
+    expect(h.value).toBe(140);
+    expect(h.detail).toContain('130');
   });
 
-  it('Sniper — Omer Rosenberg had the best points per game', () => {
-    const [w] = winnersOf(recap, 'sniper');
-    expect(w.ownerName).toBe('Omer Rosenberg');
+  it('ignores playoff scores for records', () => {
+    const pastSeasons = [past(2025, 20, 'Ann', 999, 'Ben', 100, true), past(2025, 3, 'Ann', 100, 'Ben', 90)];
+    expect(ids(computeWeeklyRecap(WEEK, 1, { pastSeasons }))).toContain('allTimeHigh');
   });
 
-  it('Hot Pickup is absent until the transactions snapshot carries per-week adds', () => {
-    expect(recap.awards.find(a => a.id === 'hotPickup')).toBeUndefined();
+  it('gives a season high only from week 2, when it beats earlier weeks', () => {
+    const rows = [...wk(1, pair('Ann', 120, 'Ben', 90)), ...wk(2, pair('Ann', 125, 'Ben', 95))];
+    expect(ids(computeWeeklyRecap(rows, 1))).not.toContain('seasonHigh');
+    expect(ids(computeWeeklyRecap(rows, 2))).toContain('seasonHigh');
+    const lower = [...wk(1, pair('Ann', 130, 'Ben', 90)), ...wk(2, pair('Ann', 125, 'Ben', 95))];
+    expect(ids(computeWeeklyRecap(lower, 2))).not.toContain('seasonHigh');
+  });
+
+  it('flags a season low', () => {
+    const rows = [...wk(1, pair('Ann', 120, 'Ben', 90)), ...wk(2, pair('Ann', 125, 'Ben', 80))];
+    const h = computeWeeklyRecap(rows, 2)!.highlights.find(h => h.id === 'seasonLow')!;
+    expect(h.ownerName).toBe('Ben');
+  });
+
+  it('flags a personal best only with enough history', () => {
+    const many = Array.from({ length: 10 }, (_, i) => past(2025, i + 1, 'Ben', 80, 'Ann', 200));
+    const rows = pair('Ann', 140, 'Ben', 90);
+    expect(computeWeeklyRecap(rows, 1, { pastSeasons: many })!.highlights.find(h => h.id === 'personalBest')?.ownerName).toBe('Ben');
+    expect(ids(computeWeeklyRecap(rows, 1, { pastSeasons: many.slice(0, 9) }))).not.toContain('personalBest');
+  });
+
+  it('flags a first-ever win and a broken losing streak, not an even rivalry', () => {
+    const lose = (n: number, a: string, b: string) => Array.from({ length: n }, (_, i) => past(2025, i + 1, a, 80, b, 100));
+    const win = (n: number, a: string, b: string) => Array.from({ length: n }, (_, i) => past(2024, i + 1, a, 100, b, 80));
+    const firstEver = computeWeeklyRecap(pair('Ann', 140, 'Ben', 90), 1, { pastSeasons: lose(2, 'Ann', 'Ben') });
+    expect(firstEver!.highlights.find(h => h.id === 'upset')!.detail).toContain('First win ever');
+    const streak = computeWeeklyRecap(pair('Ann', 140, 'Ben', 90), 1, { pastSeasons: [...win(5, 'Ann', 'Ben'), ...lose(3, 'Ann', 'Ben')] });
+    expect(streak!.highlights.find(h => h.id === 'upset')!.detail).toContain('3-game losing streak');
+    const even = computeWeeklyRecap(pair('Ann', 140, 'Ben', 90), 1, { pastSeasons: [...lose(2, 'Ann', 'Ben'), ...win(2, 'Ann', 'Ben')] });
+    expect(ids(even)).not.toContain('upset');
+  });
+
+  it('counts a rare win (≤25%) even without a streak', () => {
+    const games = [
+      past(2021, 1, 'Ann', 80, 'Ben', 100), past(2022, 1, 'Ann', 100, 'Ben', 80),
+      past(2023, 1, 'Ann', 80, 'Ben', 100), past(2024, 1, 'Ann', 80, 'Ben', 100), past(2025, 1, 'Ann', 100, 'Ben', 90),
+      past(2025, 2, 'Ann', 80, 'Ben', 100), past(2025, 3, 'Ann', 80, 'Ben', 100), past(2025, 4, 'Ann', 100, 'Ben', 90),
+      past(2025, 5, 'Ann', 80, 'Ben', 100), past(2025, 6, 'Ann', 80, 'Ben', 100), past(2025, 7, 'Ann', 80, 'Ben', 100),
+      past(2025, 8, 'Ann', 100, 'Ben', 90),
+    ]; // Ann 4–8 but won the last one → only the ≤25% rule could fire, and 4/12 > 25%
+    expect(ids(computeWeeklyRecap(pair('Ann', 140, 'Ben', 90), 1, { pastSeasons: games }))).not.toContain('upset');
+    const worse = [...games.slice(0, 11), past(2025, 8, 'Ann', 100, 'Ben', 90)].filter((_, i) => i !== 1 && i !== 4);
+    // Ann 2–8 with the last game a win → 20%, no streak
+    expect(computeWeeklyRecap(pair('Ann', 140, 'Ben', 90), 1, { pastSeasons: worse })!.highlights.find(h => h.id === 'upset')!.detail).toContain('Only win #3');
+  });
+
+  it('flags a player record week from week 2', () => {
+    const p = (name: string, total: number) => ({ playerId: total, playerName: name, proTeam: 'SAS', ownerNames: ['Ann'], totalPoints: total, games: 4, avgPoints: total / 4 });
+    const topPlayersByWeek = [{ matchupPeriod: 1, players: [p('A', 200)] }, { matchupPeriod: 2, players: [p('B', 210)] }];
+    const rows = [...wk(1, pair('Ann', 120, 'Ben', 90)), ...wk(2, pair('Ann', 110, 'Ben', 95))];
+    expect(ids(computeWeeklyRecap(rows, 1, { topPlayersByWeek }))).not.toContain('playerRecord');
+    expect(computeWeeklyRecap(rows, 2, { topPlayersByWeek })!.highlights.find(h => h.id === 'playerRecord')!.playerName).toBe('B');
+  });
+
+  it(`shows a bench game only at ${BENCH_MIN_POINTS}+ points`, () => {
+    const g = (pts: number) => [{ matchupPeriod: 1, games: [{ playerName: 'X', proTeam: 'BOS', ownerName: 'Ann', teamName: 'Ann FC', fantasyPoints: pts, scoringPeriodId: 1 }] }];
+    expect(ids(computeWeeklyRecap(WEEK, 1, { benchGamesByWeek: g(BENCH_MIN_POINTS) }))).toContain('benchBlunder');
+    expect(ids(computeWeeklyRecap(WEEK, 1, { benchGamesByWeek: g(BENCH_MIN_POINTS - 1) }))).not.toContain('benchBlunder');
+  });
+
+  it('a quiet week gets no highlights and a blowout story', () => {
+    const r = computeWeeklyRecap(WEEK, 1)!;
+    expect(r.highlights).toEqual([]);
+    expect(r.story[0]).toContain('Ann beat Ben by 50');
+  });
+
+  it('the story announces a new first place', () => {
+    const rows = [
+      ...wk(1, [...pair('Ann', 120, 'Ben', 90), ...pair('Cal', 100, 'Dan', 95)]),
+      ...wk(2, [...pair('Ann', 120, 'Cal', 90), ...pair('Ben', 100, 'Dan', 95)]),
+      ...wk(3, [...pair('Cal', 120, 'Ann', 90), ...pair('Ben', 100, 'Dan', 95)]),
+    ];
+    expect(computeWeeklyRecap(rows, 2)!.story[0]).toBe('Ann is alone in first place (2–0).');
+    expect(computeWeeklyRecap(rows, 3)!.story.some(s => s.includes('first place'))).toBe(false); // Ann & Ben tied 2–1
+  });
+});
+
+describe('canonicalOwner', () => {
+  it('merges the names one owner appears under', () => {
+    expect(canonicalOwner('Gelless')).toBe('Dor Gelless');
+    expect(canonicalOwner('Dor Gelless & the monkey comeback')).toBe('Dor Gelless');
+    expect(canonicalOwner('Barda')).toBe('Dor Barda');
+    expect(canonicalOwner('Nir Zele')).toBe('Nir Zele');
   });
 });

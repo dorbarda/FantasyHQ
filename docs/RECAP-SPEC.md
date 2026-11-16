@@ -1,5 +1,14 @@
 # Weekly Recap — specification
 
+> **Update 2026-11-16:** the award grid now keeps only לאילי אין מזל and פרס הסלוצקי.
+> The other awards were replaced by **Season Highlights** (lib/recap.ts `computeHighlights`):
+> all-time / season high and low weeks (regular season only, scores as they are),
+> personal best (needs 10+ past weeks), player record week (this season),
+> upsets (first win ever after 2+ meetings, ended a 3+ losing streak, or ≤25% win rate over 4+ meetings),
+> and the week's biggest bench game (≥40 pts). "Story of the week" is built from a new
+> sole first place (most wins, then points) plus the top two highlights.
+> Owner names are merged through lib/owners.ts.
+
 Defined with Dor on 2026-08-19. Build target: `/recap` and `/recap/[week]`,
 plus a teaser card on the home page.
 

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type {
-  WeeklyTopPlayer,
+  WeeklyTopPlayer, BenchGame,
   StandingEntry, MatchupsData, Matchup, Player,
   RulesData, SeasonStats,
   CategoryStanding, LuckTableEntry, StatsData,
@@ -824,12 +824,36 @@ async function buildDepthData(
     return { matchupPeriod: period, players };
   });
 
+  // Biggest single games left on a bench (slot 12 only — IR can't be started).
+  const BENCH_SLOT = 12;
+  const benchGamesByWeek = completedPeriods.map(period => {
+    const games: BenchGame[] = [];
+    for (const sp of getScoringPeriods(period)) {
+      for (const [teamId, entries] of Object.entries(periodDayMap[period]?.[sp] || {})) {
+        const meta = teamMeta[Number(teamId)];
+        for (const entry of entries) {
+          const p = entry?.playerPoolEntry?.player;
+          if (!p?.fullName || entry.lineupSlotId !== BENCH_SLOT) continue;
+          const pts = dayStatLine(entry, sp)?.appliedTotal || 0;
+          if (pts <= 0) continue;
+          games.push({
+            playerName: p.fullName, proTeam: PRO_TEAMS[p.proTeamId] || 'FA',
+            ownerName: meta?.owner || '?', teamName: meta?.name || '?',
+            fantasyPoints: Math.round(pts * 10) / 10, scoringPeriodId: sp,
+          });
+        }
+      }
+    }
+    games.sort((a, b) => b.fantasyPoints - a.fantasyPoints);
+    return { matchupPeriod: period, games: games.slice(0, 3) };
+  });
+
   // Use the max day count across all completed weeks so every week's columns align
   const daysPerMatchup = completedPeriods.length > 0
     ? Math.max(...completedPeriods.map(p => getScoringPeriods(p).length))
     : 7;
 
-  return { rows, daysPerMatchup, currentMatchupPeriod, completedPeriods, topPlayersByWeek };
+  return { rows, daysPerMatchup, currentMatchupPeriod, completedPeriods, topPlayersByWeek, benchGamesByWeek };
 }
 
 export async function getMatchupDepth(): Promise<MatchupDepthData> {

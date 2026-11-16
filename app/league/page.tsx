@@ -4,7 +4,8 @@ import type { StandingEntry, PlayoffBracketData } from '@/lib/types';
 import StandingsTable from '@/components/StandingsTable';
 import PlayoffBracket from '@/components/PlayoffBracket';
 import SeasonTopWeeklyScores from '@/components/SeasonTopWeeklyScores';
-import { loadSeasonTopWeeklyScores } from '@/lib/recap-data';
+import SeasonTopManagerWeeks from '@/components/SeasonTopManagerWeeks';
+import { loadSeasonTopWeeklyScores, loadSeasonTopManagerWeeks } from '@/lib/recap-data';
 
 export const revalidate = 1800;
 
@@ -30,7 +31,10 @@ export default async function LeaguePage() {
   const played = Math.max(0, ...standings.map((s) => s.wins + s.losses));
   const week: number | null = played > 0 ? played : null; // null = pre-season
 
-  const topWeeklyScores = await loadSeasonTopWeeklyScores();
+  const [topWeeklyScores, topManagerWeeks] = await Promise.all([
+    loadSeasonTopWeeklyScores(),
+    loadSeasonTopManagerWeeks(),
+  ]);
 
   const isPlayoffs = bracket?.isPlayoffs ?? false;
 
@@ -53,7 +57,12 @@ export default async function LeaguePage() {
             </div>
           </div>
           <StandingsTable standings={standings} />
-          <SeasonTopWeeklyScores scores={topWeeklyScores} />
+          {(topWeeklyScores.length > 0 || topManagerWeeks.length > 0) && (
+            <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-4 items-start">
+              <SeasonTopWeeklyScores scores={topWeeklyScores} />
+              <SeasonTopManagerWeeks weeks={topManagerWeeks} />
+            </div>
+          )}
         </>
       )}
     </div>

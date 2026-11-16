@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { topWeeklyScores } from '../recap';
+import { topWeeklyScores, topManagerWeeks } from '../recap';
 import type { WeeklyTopPlayer } from '../types';
 
 const p = (playerId: number, totalPoints: number, games = 4): WeeklyTopPlayer => ({
@@ -30,5 +30,17 @@ describe('topWeeklyScores', () => {
 
   it('returns [] when there is no data', () => {
     expect(topWeeklyScores(undefined)).toEqual([]);
+  });
+});
+
+describe('topManagerWeeks', () => {
+  const r = (ownerName: string, teamScore: number, matchupPeriod: number, won: boolean | null) =>
+    ({ matchupPeriod, teamId: ownerName, teamName: `${ownerName} FC `, ownerName, dailyPlayers: [],
+       totalPlayers: 40, teamScore, opponentName: 'X', opponentScore: 1000, won, scorePP: 0, efficiency: 0 });
+
+  it('ranks finished weeks by score, skips weeks in progress, ties by earlier week', () => {
+    const top = topManagerWeeks([r('A', 1400, 2, true), r('B', 1600, 4, null), r('C', 1400, 1, false), r('D', 1500, 3, true)]);
+    expect(top.map(t => t.ownerName)).toEqual(['D', 'C', 'A']);
+    expect(top[0].teamName).toBe('D FC');
   });
 });

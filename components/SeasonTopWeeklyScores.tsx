@@ -10,8 +10,8 @@ export default function SeasonTopWeeklyScores({ scores }: { scores: TopWeeklySco
   if (scores.length === 0) return null;
 
   return (
-    <section className="mt-8">
-      <p className="type-section-label mb-3">Top 10 Weekly Scores</p>
+    <section>
+      <p className="type-section-label mb-3">Top 10 Weekly Scores · Players</p>
       <div className="bg-surface border border-border rounded-2xl overflow-hidden">
         <div className="flex items-center gap-3 px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-muted">
           <span className="w-5 text-right">#</span>

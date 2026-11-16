@@ -1,7 +1,7 @@
 {
   "season": 2027,
   "week": 4,
-  "updatedAt": "2026-11-16T06:01:30.307Z",
+  "updatedAt": "2026-11-16T08:11:28.708Z",
   "days": [
     {
       "date": "2026-11-09",
@@ -160,7 +160,7 @@
       },
       {
         "played": 5,
-        "points": 115
+        "points": 113
       },
       {
         "played": 10,
@@ -186,7 +186,7 @@
     "6": [
       {
         "played": 8,
-        "points": 327
+        "points": 323
       },
       {
         "played": 4,
@@ -326,7 +326,7 @@
       },
       {
         "played": 4,
-        "points": 119
+        "points": 120
       },
       {
         "played": 6,

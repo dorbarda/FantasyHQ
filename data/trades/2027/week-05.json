@@ -1,0 +1,1346 @@
+{
+  "season": 2027,
+  "week": 5,
+  "generatedAt": "2026-11-16T09:38:38.418Z",
+  "inputGeneratedAt": "2026-11-16T09:35:29.398Z",
+  "tradeDeadline": "2027-03-08T10:00:00.000Z",
+  "teams": [
+    {
+      "owner": "Omer Rosenberg",
+      "teamName": "Inglourious Basterds",
+      "seed": 1,
+      "record": {
+        "wins": 3,
+        "losses": 1,
+        "ties": 0
+      },
+      "pointsFor": 5610,
+      "diagnosis": {
+        "summary": "3-1 and the top seed with 5610 points scored, so build for the playoff weeks. Tatum and Flagg lead the way, but both your bigs are OUT: Mobley and Jaren Jackson Jr. are on IR, which leaves you without a real C. Jamal Murray (48.8 vs. 43.9 projected) and Franz Wagner (44 vs. 38.6) are scoring well above their projections: perfect chips to sell high for frontcourt help.",
+        "flags": [
+          "contender",
+          "injuries"
+        ]
+      },
+      "trades": [
+        {
+          "partnerOwner": "Barak Miller",
+          "partnerTeamName": "Team Miller",
+          "give": [
+            {
+              "playerId": 3936299,
+              "name": "Jamal Murray",
+              "proTeam": "DEN",
+              "positions": [
+                "PG"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 48.8,
+              "avgLast15": 50.5,
+              "avgProjected": 43.9,
+              "gamesRestOfRegularSeason": 47,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "get": [
+            {
+              "playerId": 3155942,
+              "name": "Domantas Sabonis",
+              "proTeam": "SAC",
+              "positions": [
+                "PF",
+                "C"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 37.9,
+              "avgLast15": 30,
+              "avgProjected": 46.7,
+              "gamesRestOfRegularSeason": 45,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "angles": [
+            "sell-high",
+            "buy-low",
+            "positional-need"
+          ],
+          "whyForYou": "Sell high on Murray (48.8 vs. 43.9 projected) and buy low on Sabonis: 37.9 so far but projected 46.7, rank 12. You get the C that Mobley and Jackson Jr. can't give you right now.",
+          "whyTheyAccept": "Barak has Curry OUT and gets a guard scoring 48.8, ranked 9 this season, with 4 games this week to Sabonis's 3. They still have Embiid and Zion up front.",
+          "dropsNeeded": {
+            "you": 0,
+            "partner": 0
+          }
+        },
+        {
+          "partnerOwner": "Dor Barda",
+          "partnerTeamName": "Nordau Peaky Blinder🚬",
+          "give": [
+            {
+              "playerId": 4566434,
+              "name": "Franz Wagner",
+              "proTeam": "ORL",
+              "positions": [
+                "SF",
+                "PF"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 44,
+              "avgLast15": 51.4,
+              "avgProjected": 38.6,
+              "gamesRestOfRegularSeason": 47,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "get": [
+            {
+              "playerId": 4066328,
+              "name": "Jarrett Allen",
+              "proTeam": "CLE",
+              "positions": [
+                "C"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 31.3,
+              "avgLast15": 28.5,
+              "avgProjected": 36.9,
+              "gamesRestOfRegularSeason": 46,
+              "gamesPlayoffs": 12
+            },
+            {
+              "playerId": 5175737,
+              "name": "Yaxel Lendeborg",
+              "proTeam": "GSW",
+              "positions": [
+                "SF",
+                "PF"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 34.7,
+              "avgLast15": 37.7,
+              "avgProjected": 33.7,
+              "gamesRestOfRegularSeason": 44,
+              "gamesPlayoffs": 15
+            }
+          ],
+          "angles": [
+            "sell-high",
+            "depth",
+            "positional-need"
+          ],
+          "whyForYou": "Sell high on Wagner (44 vs. 38.6 projected, 33.9 last season). Jarrett Allen gives you a real C (projected 36.9) while Mobley is out, and Lendeborg adds a forward at 34.7 a game.",
+          "whyTheyAccept": "Dor Barda is 1-3 with Irving, Reaves, VanVleet and Butler OUT and needs one big scorer now: Wagner is at 60 over the last 7 and 51.4 over the last 15.",
+          "dropsNeeded": {
+            "you": 1,
+            "partner": 0
+          }
+        }
+      ]
+    },
+    {
+      "owner": "Ilay Mendel",
+      "teamName": "King Ozniyon",
+      "seed": 2,
+      "record": {
+        "wins": 3,
+        "losses": 1,
+        "ties": 0
+      },
+      "pointsFor": 5399,
+      "diagnosis": {
+        "summary": "3-1 with Jokic (rank 3 this season, projected rank 1) carrying you, but after him it's a long line of similar PG/SG: Quickley, Alexander-Walker, Keyonte George, Kyshawn George, Ajay Mitchell and Giddey, with Fox OUT. Hold Giddey: 29.4 so far but projected 46.2. Turn the guard pile into a second star and some size.",
+        "flags": [
+          "thin-middle",
+          "too-much-depth"
+        ]
+      },
+      "trades": [
+        {
+          "partnerOwner": "Dor Gelless",
+          "partnerTeamName": "Flint Tropics 70's Show",
+          "give": [
+            {
+              "playerId": 4395724,
+              "name": "Immanuel Quickley",
+              "proTeam": "TOR",
+              "positions": [
+                "PG",
+                "SG"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 34.6,
+              "avgLast15": 34.7,
+              "avgProjected": 34.9,
+              "gamesRestOfRegularSeason": 46,
+              "gamesPlayoffs": 14
+            },
+            {
+              "playerId": 4433627,
+              "name": "Keyonte George",
+              "proTeam": "UTA",
+              "positions": [
+                "PG",
+                "SG"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 33.1,
+              "avgLast15": 30.6,
+              "avgProjected": 36.8,
+              "gamesRestOfRegularSeason": 45,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "get": [
+            {
+              "playerId": 4701230,
+              "name": "Jalen Johnson",
+              "proTeam": "ATL",
+              "positions": [
+                "PF"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 39.5,
+              "avgLast15": 34.6,
+              "avgProjected": 50,
+              "gamesRestOfRegularSeason": 45,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "angles": [
+            "buy-low",
+            "consolidation"
+          ],
+          "whyForYou": "Buy low on Jalen Johnson: 39.5 so far, 49.3 last season and projected 50, rank 7. Two guards you have too many of become a second star next to Jokic.",
+          "whyTheyAccept": "Dor Gelless is 0-4 and needs points now: Quickley (34.6) and Keyonte George (33.1) are healthy starters, and Keyonte has 4 games this week.",
+          "dropsNeeded": {
+            "you": 0,
+            "partner": 1
+          }
+        },
+        {
+          "partnerOwner": "Yuval Halevy",
+          "partnerTeamName": "League's American Problem",
+          "give": [
+            {
+              "playerId": 5174563,
+              "name": "Kyshawn George",
+              "proTeam": "WAS",
+              "positions": [
+                "SG",
+                "SF"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 34,
+              "avgLast15": 38.3,
+              "avgProjected": 30.2,
+              "gamesRestOfRegularSeason": 45,
+              "gamesPlayoffs": 14
+            },
+            {
+              "playerId": 4432639,
+              "name": "Jabari Smith Jr.",
+              "proTeam": "HOU",
+              "positions": [
+                "PF",
+                "C"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 32.1,
+              "avgLast15": 31,
+              "avgProjected": 27.6,
+              "gamesRestOfRegularSeason": 45,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "get": [
+            {
+              "playerId": 3917376,
+              "name": "Jaylen Brown",
+              "proTeam": "PHI",
+              "positions": [
+                "SG",
+                "SF"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 36.8,
+              "avgLast15": 37.6,
+              "avgProjected": 38.6,
+              "gamesRestOfRegularSeason": 45,
+              "gamesPlayoffs": 15
+            }
+          ],
+          "angles": [
+            "sell-high",
+            "consolidation"
+          ],
+          "whyForYou": "Sell high on Kyshawn George (34 vs. 30.2 projected) and pack Jabari Smith Jr. (21.8 over the last 7) for Jaylen Brown: 43.4 last season, projected 38.6, with 15 playoff games.",
+          "whyTheyAccept": "Yuval has Duren and Edwards OUT: Jabari is a PF/C to cover the middle and Kyshawn is at 38.3 over the last 15, both with 14 playoff games.",
+          "dropsNeeded": {
+            "you": 0,
+            "partner": 1
+          }
+        }
+      ]
+    },
+    {
+      "owner": "Amir Ben Izhak",
+      "teamName": "Libi’s Legacy",
+      "seed": 3,
+      "record": {
+        "wins": 3,
+        "losses": 1,
+        "ties": 0
+      },
+      "pointsFor": 5546,
+      "diagnosis": {
+        "summary": "3-1 with Wembanyama (65.8 a game, rank 1) doing the heavy lifting, but the injury list is long: Dejounte Murray, Markkanen and LaVine are OUT and Duncan Robinson is DAY_TO_DAY. You've made 25 adds to plug the holes. Dylan Harper (35.9 vs. 32.3 projected, 25.1 last season) and Robinson (29.8 vs. 21.6) are your sell-high chips.",
+        "flags": [
+          "injuries"
+        ]
+      },
+      "trades": [
+        {
+          "partnerOwner": "Yotam Goldin",
+          "partnerTeamName": "PlottKe",
+          "give": [
+            {
+              "playerId": 3157465,
+              "name": "Duncan Robinson",
+              "proTeam": "DET",
+              "positions": [
+                "SG",
+                "SF"
+              ],
+              "injuryStatus": "DAY_TO_DAY",
+              "avgSeason": 29.8,
+              "avgLast15": 29.5,
+              "avgProjected": 21.6,
+              "gamesRestOfRegularSeason": 46,
+              "gamesPlayoffs": 14
+            },
+            {
+              "playerId": 3078576,
+              "name": "Derrick White",
+              "proTeam": "BOS",
+              "positions": [
+                "PG",
+                "SG"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 30.6,
+              "avgLast15": 32,
+              "avgProjected": 37,
+              "gamesRestOfRegularSeason": 46,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "get": [
+            {
+              "playerId": 3064514,
+              "name": "Julius Randle",
+              "proTeam": "BKN",
+              "positions": [
+                "PF"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 31,
+              "avgLast15": 30.1,
+              "avgProjected": 37,
+              "gamesRestOfRegularSeason": 46,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "angles": [
+            "sell-high",
+            "buy-low",
+            "consolidation"
+          ],
+          "whyForYou": "Sell high on Robinson (29.8 vs. 21.6 projected) and buy low on Randle: 31 so far, 37.4 last season and projected 37. You add a real PF and free a spot for streaming.",
+          "whyTheyAccept": "Yotam is 0-4 with Jerome and Murphy OUT and needs guards now: White (projected 37) and Robinson both have 4 games this week.",
+          "dropsNeeded": {
+            "you": 0,
+            "partner": 1
+          }
+        },
+        {
+          "partnerOwner": "Yoav Coracos",
+          "partnerTeamName": "Team Mamba Forever",
+          "give": [
+            {
+              "playerId": 5037871,
+              "name": "Dylan Harper",
+              "proTeam": "SAS",
+              "positions": [
+                "PG",
+                "SG"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 35.9,
+              "avgLast15": 37.9,
+              "avgProjected": 32.3,
+              "gamesRestOfRegularSeason": 45,
+              "gamesPlayoffs": 13
+            }
+          ],
+          "get": [
+            {
+              "playerId": 4433287,
+              "name": "Brandon Miller",
+              "proTeam": "CHA",
+              "positions": [
+                "SG",
+                "SF"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 26.5,
+              "avgLast15": 17.8,
+              "avgProjected": 37.4,
+              "gamesRestOfRegularSeason": 46,
+              "gamesPlayoffs": 13
+            }
+          ],
+          "angles": [
+            "sell-high",
+            "buy-low"
+          ],
+          "whyForYou": "Sell high on Harper (35.9 vs. 32.3 projected) and buy low on Brandon Miller: 26.5 so far but 34 last season and projected 37.4, rank 59.",
+          "whyTheyAccept": "Yoav gets the hot hand (Harper is at 42 over the last 7) for a wing who is at 9 over the last 7 and has only 2 games this week.",
+          "dropsNeeded": {
+            "you": 0,
+            "partner": 0
+          }
+        }
+      ]
+    },
+    {
+      "owner": "Yuval Halevy",
+      "teamName": "League's American Problem",
+      "seed": 4,
+      "record": {
+        "wins": 3,
+        "losses": 1,
+        "ties": 0
+      },
+      "pointsFor": 5429,
+      "diagnosis": {
+        "summary": "3-1, but Edwards, Duren and Caleb Wilson are OUT and Nembhard is DAY_TO_DAY, so Maxey keeps carrying you. You have too many PG/SG (Daniels, Podziemski, Dosunmu, Nembhard, Fears) and not enough size with Duren out. Dosunmu (35.5 vs. 30.4 projected) and Podziemski (34.5 vs. 30.8) are playing above their projections: sell high.",
+        "flags": [
+          "injuries",
+          "too-much-depth"
+        ]
+      },
+      "trades": [
+        {
+          "partnerOwner": "Barak Miller",
+          "partnerTeamName": "Team Miller",
+          "give": [
+            {
+              "playerId": 4397002,
+              "name": "Ayo Dosunmu",
+              "proTeam": "MIN",
+              "positions": [
+                "PG",
+                "SG"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 35.5,
+              "avgLast15": 41.7,
+              "avgProjected": 30.4,
+              "gamesRestOfRegularSeason": 46,
+              "gamesPlayoffs": 13
+            },
+            {
+              "playerId": 4709138,
+              "name": "Brandin Podziemski",
+              "proTeam": "GSW",
+              "positions": [
+                "PG",
+                "SG"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 34.5,
+              "avgLast15": 34.1,
+              "avgProjected": 30.8,
+              "gamesRestOfRegularSeason": 44,
+              "gamesPlayoffs": 15
+            }
+          ],
+          "get": [
+            {
+              "playerId": 4395628,
+              "name": "Zion Williamson",
+              "proTeam": "NOP",
+              "positions": [
+                "PF",
+                "C"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 40.3,
+              "avgLast15": 38.3,
+              "avgProjected": 40,
+              "gamesRestOfRegularSeason": 45,
+              "gamesPlayoffs": 15
+            }
+          ],
+          "angles": [
+            "sell-high",
+            "consolidation",
+            "positional-need"
+          ],
+          "whyForYou": "Sell high on Dosunmu and Podziemski and get Zion: 40.3 a game at PF/C, with 15 playoff games. Two guards you have too many of become one big who covers for Duren.",
+          "whyTheyAccept": "Barak has Curry OUT and plenty of bigs in Sabonis, Embiid and Siakam: two healthy guards scoring 35.5 and 34.5, both with 4 games this week.",
+          "dropsNeeded": {
+            "you": 0,
+            "partner": 1
+          }
+        },
+        {
+          "partnerOwner": "Yotam Goldin",
+          "partnerTeamName": "PlottKe",
+          "give": [
+            {
+              "playerId": 4869342,
+              "name": "Dyson Daniels",
+              "proTeam": "ATL",
+              "positions": [
+                "PG",
+                "SG"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 37.2,
+              "avgLast15": 38.3,
+              "avgProjected": 35.7,
+              "gamesRestOfRegularSeason": 45,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "get": [
+            {
+              "playerId": 3032976,
+              "name": "Rudy Gobert",
+              "proTeam": "MIN",
+              "positions": [
+                "C"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 22,
+              "avgLast15": 24.2,
+              "avgProjected": 34.3,
+              "gamesRestOfRegularSeason": 46,
+              "gamesPlayoffs": 13
+            }
+          ],
+          "angles": [
+            "buy-low",
+            "positional-need"
+          ],
+          "whyForYou": "Buy low on Gobert: 22 so far but 32.8 last season and projected 34.3. A C while Duren is OUT, paid for from your pile of guards.",
+          "whyTheyAccept": "Yotam has Clingan and Claxton at C and Jerome and Murphy OUT: Dyson Daniels is at 37.2 a game, projected 35.7.",
+          "dropsNeeded": {
+            "you": 0,
+            "partner": 0
+          }
+        }
+      ]
+    },
+    {
+      "owner": "Barak Miller",
+      "teamName": "Team Miller",
+      "seed": 5,
+      "record": {
+        "wins": 3,
+        "losses": 1,
+        "ties": 0
+      },
+      "pointsFor": 5221,
+      "diagnosis": {
+        "summary": "3-1, but only 5221 points scored, so the record flatters you a bit. Curry and Ingram are OUT, Embiid is DAY_TO_DAY and Sabonis is at 37.9 vs. 46.7 projected. Meanwhile McDaniels (35.2 vs. 29.7) and Wiggins (25.6 vs. 19.2) are scoring way above their projections: sell high while it lasts.",
+        "flags": [
+          "injuries"
+        ]
+      },
+      "trades": [
+        {
+          "partnerOwner": "Dor Gelless",
+          "partnerTeamName": "Flint Tropics 70's Show",
+          "give": [
+            {
+              "playerId": 4431671,
+              "name": "Jaden McDaniels",
+              "proTeam": "MIN",
+              "positions": [
+                "SF",
+                "PF"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 35.2,
+              "avgLast15": 33.6,
+              "avgProjected": 29.7,
+              "gamesRestOfRegularSeason": 46,
+              "gamesPlayoffs": 13
+            },
+            {
+              "playerId": 4397183,
+              "name": "Aaron Wiggins",
+              "proTeam": "ATL",
+              "positions": [
+                "SG",
+                "SF"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 25.6,
+              "avgLast15": 22.1,
+              "avgProjected": 19.2,
+              "gamesRestOfRegularSeason": 45,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "get": [
+            {
+              "playerId": 4278104,
+              "name": "Michael Porter Jr.",
+              "proTeam": "BKN",
+              "positions": [
+                "SF",
+                "PF"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 34.8,
+              "avgLast15": 32.8,
+              "avgProjected": 38.9,
+              "gamesRestOfRegularSeason": 46,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "angles": [
+            "sell-high",
+            "consolidation"
+          ],
+          "whyForYou": "Sell high on McDaniels and Wiggins for Michael Porter Jr.: 34.8 a game, 39.2 last season and projected 38.9, rank 44. Two depth wings become one starter.",
+          "whyTheyAccept": "Dor Gelless is 0-4 and needs bodies: McDaniels (35.2) and Wiggins (25.6) are healthy and can replace streaming pickups.",
+          "dropsNeeded": {
+            "you": 0,
+            "partner": 1
+          }
+        },
+        {
+          "partnerOwner": "Yuval Halevy",
+          "partnerTeamName": "League's American Problem",
+          "give": [
+            {
+              "playerId": 4395628,
+              "name": "Zion Williamson",
+              "proTeam": "NOP",
+              "positions": [
+                "PF",
+                "C"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 40.3,
+              "avgLast15": 38.3,
+              "avgProjected": 40,
+              "gamesRestOfRegularSeason": 45,
+              "gamesPlayoffs": 15
+            }
+          ],
+          "get": [
+            {
+              "playerId": 4397002,
+              "name": "Ayo Dosunmu",
+              "proTeam": "MIN",
+              "positions": [
+                "PG",
+                "SG"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 35.5,
+              "avgLast15": 41.7,
+              "avgProjected": 30.4,
+              "gamesRestOfRegularSeason": 46,
+              "gamesPlayoffs": 13
+            },
+            {
+              "playerId": 4709138,
+              "name": "Brandin Podziemski",
+              "proTeam": "GSW",
+              "positions": [
+                "PG",
+                "SG"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 34.5,
+              "avgLast15": 34.1,
+              "avgProjected": 30.8,
+              "gamesRestOfRegularSeason": 44,
+              "gamesPlayoffs": 15
+            }
+          ],
+          "angles": [
+            "depth",
+            "injury-cover"
+          ],
+          "whyForYou": "With Curry OUT you need guards: Dosunmu (35.5) and Podziemski (34.5) both play 4 games this week, and you still have Sabonis, Embiid and Siakam up front.",
+          "whyTheyAccept": "Yuval has Duren OUT and too many guards: Zion is a PF/C at 40.3 a game with 15 playoff games.",
+          "dropsNeeded": {
+            "you": 1,
+            "partner": 0
+          }
+        }
+      ]
+    },
+    {
+      "owner": "Yoav Coracos",
+      "teamName": "Team Mamba Forever",
+      "seed": 6,
+      "record": {
+        "wins": 2,
+        "losses": 2,
+        "ties": 0
+      },
+      "pointsFor": 5784,
+      "diagnosis": {
+        "summary": "2-2 despite 5784 points scored, the most in the league: bad luck, not a bad team. Luka (65.3) and Sengun are elite, but Banchero is OUT and Brandon Miller is at 9 over the last 7. Sengun is scoring 52.2 vs. 43 projected, a prime sell-high chip. Build for the playoff weeks.",
+        "flags": [
+          "contender",
+          "injuries"
+        ]
+      },
+      "trades": [
+        {
+          "partnerOwner": "Dor Barda",
+          "partnerTeamName": "Nordau Peaky Blinder🚬",
+          "give": [
+            {
+              "playerId": 4871144,
+              "name": "Alperen Sengun",
+              "proTeam": "HOU",
+              "positions": [
+                "C"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 52.2,
+              "avgLast15": 52.8,
+              "avgProjected": 43,
+              "gamesRestOfRegularSeason": 45,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "get": [
+            {
+              "playerId": 4432816,
+              "name": "LaMelo Ball",
+              "proTeam": "MIN",
+              "positions": [
+                "PG"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 36.3,
+              "avgLast15": 40.7,
+              "avgProjected": 46.4,
+              "gamesRestOfRegularSeason": 46,
+              "gamesPlayoffs": 13
+            }
+          ],
+          "angles": [
+            "sell-high",
+            "buy-low"
+          ],
+          "whyForYou": "Sell high on Sengun (52.2 vs. 43 projected, 44 last season) and buy low on LaMelo: 36.3 so far, 45 over the last 7, projected 46.4, rank 14. Wendell Carter Jr. keeps your C spot filled.",
+          "whyTheyAccept": "Dor Barda has guards to spare and is 1-3: Sengun is rank 5 this season and gives them a big man scoring now.",
+          "dropsNeeded": {
+            "you": 0,
+            "partner": 0
+          }
+        },
+        {
+          "partnerOwner": "Yotam Goldin",
+          "partnerTeamName": "PlottKe",
+          "give": [
+            {
+              "playerId": 4397136,
+              "name": "Saddiq Bey",
+              "proTeam": "NOP",
+              "positions": [
+                "SF",
+                "PF"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 28,
+              "avgLast15": 31.6,
+              "avgProjected": 25.9,
+              "gamesRestOfRegularSeason": 45,
+              "gamesPlayoffs": 15
+            },
+            {
+              "playerId": 4432848,
+              "name": "Jaime Jaquez Jr.",
+              "proTeam": "MIL",
+              "positions": [
+                "SG",
+                "SF"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 26.7,
+              "avgLast15": 25.7,
+              "avgProjected": 28.2,
+              "gamesRestOfRegularSeason": 45,
+              "gamesPlayoffs": 13
+            }
+          ],
+          "get": [
+            {
+              "playerId": 6450,
+              "name": "Kawhi Leonard",
+              "proTeam": "TOR",
+              "positions": [
+                "SF",
+                "PF"
+              ],
+              "injuryStatus": "OUT",
+              "avgSeason": 37.5,
+              "avgLast15": 0,
+              "avgProjected": 45.8,
+              "gamesRestOfRegularSeason": 46,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "angles": [
+            "buy-low",
+            "consolidation"
+          ],
+          "whyForYou": "Buy low on Kawhi: OUT now, but 48.7 last season and projected 45.8, rank 16, with 14 playoff games. You can afford to wait, and two wings at 28 and 26.7 are easy to replace.",
+          "whyTheyAccept": "Yotam is 0-4 and can't wait on Kawhi: Bey (28) and Jaquez (26.7) are healthy, and Bey has 4 games this week.",
+          "dropsNeeded": {
+            "you": 0,
+            "partner": 1
+          }
+        }
+      ]
+    },
+    {
+      "owner": "Nir Zele",
+      "teamName": "Slotzki",
+      "seed": 7,
+      "record": {
+        "wins": 2,
+        "losses": 2,
+        "ties": 0
+      },
+      "pointsFor": 5462,
+      "diagnosis": {
+        "summary": "2-2 with only 4971 points against you, which is tough luck. Giannis, Anthony Davis, Towns and Brunson are a great core, but Holmgren and Morant are OUT and you have too many PG: Brunson, Garland, Davion Mitchell and Acuff. Davion Mitchell (41.5 vs. 25.5 projected) and Acuff (37.6 vs. 30.4) are huge sell-high chips.",
+        "flags": [
+          "injuries",
+          "too-much-depth"
+        ]
+      },
+      "trades": [
+        {
+          "partnerOwner": "Dor Gelless",
+          "partnerTeamName": "Flint Tropics 70's Show",
+          "give": [
+            {
+              "playerId": 4278053,
+              "name": "Davion Mitchell",
+              "proTeam": "MIA",
+              "positions": [
+                "PG"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 41.5,
+              "avgLast15": 46,
+              "avgProjected": 25.5,
+              "gamesRestOfRegularSeason": 46,
+              "gamesPlayoffs": 13
+            },
+            {
+              "playerId": 5142620,
+              "name": "Darius Acuff Jr.",
+              "proTeam": "SAC",
+              "positions": [
+                "PG"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 37.6,
+              "avgLast15": 40.9,
+              "avgProjected": 30.4,
+              "gamesRestOfRegularSeason": 45,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "get": [
+            {
+              "playerId": 4433134,
+              "name": "Scottie Barnes",
+              "proTeam": "TOR",
+              "positions": [
+                "SG",
+                "SF"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 44,
+              "avgLast15": 44,
+              "avgProjected": 43.7,
+              "gamesRestOfRegularSeason": 46,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "angles": [
+            "sell-high",
+            "consolidation",
+            "positional-need"
+          ],
+          "whyForYou": "Sell high on Davion Mitchell (41.5 vs. 25.5 projected, 27.2 last season) and Acuff (37.6 vs. 30.4) for Scottie Barnes: SG/SF, 44 a game, 59 over the last 7. Two PG you have too many of become a wing.",
+          "whyTheyAccept": "Dor Gelless is 0-4 and needs depth now: two guards ranked 21 and 34 this season for one player.",
+          "dropsNeeded": {
+            "you": 0,
+            "partner": 1
+          }
+        },
+        {
+          "partnerOwner": "Amir Ben Izhak",
+          "partnerTeamName": "Libi’s Legacy",
+          "give": [
+            {
+              "playerId": 4396907,
+              "name": "Darius Garland",
+              "proTeam": "LAC",
+              "positions": [
+                "PG"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 31.2,
+              "avgLast15": 33,
+              "avgProjected": 40.4,
+              "gamesRestOfRegularSeason": 46,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "get": [
+            {
+              "playerId": 4684740,
+              "name": "Amen Thompson",
+              "proTeam": "HOU",
+              "positions": [
+                "SG",
+                "SF"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 33.2,
+              "avgLast15": 30.4,
+              "avgProjected": 40,
+              "gamesRestOfRegularSeason": 45,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "angles": [
+            "buy-low",
+            "positional-need"
+          ],
+          "whyForYou": "Buy low on Amen Thompson: 33.2 so far, 40.4 last season and projected 40. A SG/SF for a PG you can spare.",
+          "whyTheyAccept": "Amir has Dejounte Murray OUT: Garland is at 37.5 over the last 7 and projected 40.4.",
+          "dropsNeeded": {
+            "you": 0,
+            "partner": 0
+          }
+        }
+      ]
+    },
+    {
+      "owner": "Dor Barda",
+      "teamName": "Nordau Peaky Blinder🚬",
+      "seed": 8,
+      "record": {
+        "wins": 1,
+        "losses": 3,
+        "ties": 0
+      },
+      "pointsFor": 5752,
+      "diagnosis": {
+        "summary": "1-3 with 5752 points scored but 5799 against. The problem is health: Irving, Reaves, VanVleet and Butler are OUT, and you've made 28 adds just to fill the lineup. SGA and Kessler are carrying you. LaMelo (36.3 vs. 46.4 projected) is too good to give away cheap, but your guard pile is your trade currency once everyone is back.",
+        "flags": [
+          "injuries",
+          "playoff-push"
+        ]
+      },
+      "trades": [
+        {
+          "partnerOwner": "Yoav Coracos",
+          "partnerTeamName": "Team Mamba Forever",
+          "give": [
+            {
+              "playerId": 4432816,
+              "name": "LaMelo Ball",
+              "proTeam": "MIN",
+              "positions": [
+                "PG"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 36.3,
+              "avgLast15": 40.7,
+              "avgProjected": 46.4,
+              "gamesRestOfRegularSeason": 46,
+              "gamesPlayoffs": 13
+            }
+          ],
+          "get": [
+            {
+              "playerId": 4871144,
+              "name": "Alperen Sengun",
+              "proTeam": "HOU",
+              "positions": [
+                "C"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 52.2,
+              "avgLast15": 52.8,
+              "avgProjected": 43,
+              "gamesRestOfRegularSeason": 45,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "angles": [
+            "playoff-schedule"
+          ],
+          "whyForYou": "Turn a crowded PG spot into Sengun: 52.2 a game, rank 5 this season. At 1-3 you need points now, and he has 14 playoff games to LaMelo's 13.",
+          "whyTheyAccept": "Yoav gets LaMelo, projected 46.4 and rank 14, for a big scoring above his 43 projection.",
+          "dropsNeeded": {
+            "you": 0,
+            "partner": 0
+          }
+        },
+        {
+          "partnerOwner": "Omer Rosenberg",
+          "partnerTeamName": "Inglourious Basterds",
+          "give": [
+            {
+              "playerId": 4066328,
+              "name": "Jarrett Allen",
+              "proTeam": "CLE",
+              "positions": [
+                "C"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 31.3,
+              "avgLast15": 28.5,
+              "avgProjected": 36.9,
+              "gamesRestOfRegularSeason": 46,
+              "gamesPlayoffs": 12
+            },
+            {
+              "playerId": 5175737,
+              "name": "Yaxel Lendeborg",
+              "proTeam": "GSW",
+              "positions": [
+                "SF",
+                "PF"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 34.7,
+              "avgLast15": 37.7,
+              "avgProjected": 33.7,
+              "gamesRestOfRegularSeason": 44,
+              "gamesPlayoffs": 15
+            }
+          ],
+          "get": [
+            {
+              "playerId": 4566434,
+              "name": "Franz Wagner",
+              "proTeam": "ORL",
+              "positions": [
+                "SF",
+                "PF"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 44,
+              "avgLast15": 51.4,
+              "avgProjected": 38.6,
+              "gamesRestOfRegularSeason": 47,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "angles": [
+            "consolidation"
+          ],
+          "whyForYou": "Two for one for Franz Wagner: 44 a game, 60 over the last 7, with 4 games this week. Allen is your second C behind Kessler, and your pickups can cover Lendeborg's minutes.",
+          "whyTheyAccept": "Omer has Mobley and Jaren Jackson Jr. OUT and no C: Allen fixes that and Lendeborg adds a forward at 34.7 a game.",
+          "dropsNeeded": {
+            "you": 0,
+            "partner": 1
+          }
+        }
+      ]
+    },
+    {
+      "owner": "Dor Gelless",
+      "teamName": "Flint Tropics 70's Show",
+      "seed": 9,
+      "record": {
+        "wins": 0,
+        "losses": 4,
+        "ties": 0
+      },
+      "pointsFor": 4568,
+      "diagnosis": {
+        "summary": "0-4 with 4568 points scored, so the playoff line is the goal. The talent is there: Jalen Johnson (projected 50, rank 7), Barnes and Bam. But Johnson is at 39.5, Zubac at 22 and Buzelis at 21.6, and Knueppel is OUT. Hold Johnson for the bounce back. You need more healthy scorers, not one more star.",
+        "flags": [
+          "playoff-push"
+        ]
+      },
+      "trades": [
+        {
+          "partnerOwner": "Nir Zele",
+          "partnerTeamName": "Slotzki",
+          "give": [
+            {
+              "playerId": 4433134,
+              "name": "Scottie Barnes",
+              "proTeam": "TOR",
+              "positions": [
+                "SG",
+                "SF"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 44,
+              "avgLast15": 44,
+              "avgProjected": 43.7,
+              "gamesRestOfRegularSeason": 46,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "get": [
+            {
+              "playerId": 4278053,
+              "name": "Davion Mitchell",
+              "proTeam": "MIA",
+              "positions": [
+                "PG"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 41.5,
+              "avgLast15": 46,
+              "avgProjected": 25.5,
+              "gamesRestOfRegularSeason": 46,
+              "gamesPlayoffs": 13
+            },
+            {
+              "playerId": 5142620,
+              "name": "Darius Acuff Jr.",
+              "proTeam": "SAC",
+              "positions": [
+                "PG"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 37.6,
+              "avgLast15": 40.9,
+              "avgProjected": 30.4,
+              "gamesRestOfRegularSeason": 45,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "angles": [
+            "depth"
+          ],
+          "whyForYou": "One for two: Davion Mitchell (41.5) and Acuff (37.6), ranked 21 and 34 this season, for Barnes. Two starters replace pickups and fill every lineup spot.",
+          "whyTheyAccept": "Nir has too many PG and gets Barnes, a SG/SF at 44 a game.",
+          "dropsNeeded": {
+            "you": 1,
+            "partner": 0
+          }
+        },
+        {
+          "partnerOwner": "Barak Miller",
+          "partnerTeamName": "Team Miller",
+          "give": [
+            {
+              "playerId": 4278104,
+              "name": "Michael Porter Jr.",
+              "proTeam": "BKN",
+              "positions": [
+                "SF",
+                "PF"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 34.8,
+              "avgLast15": 32.8,
+              "avgProjected": 38.9,
+              "gamesRestOfRegularSeason": 46,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "get": [
+            {
+              "playerId": 4431671,
+              "name": "Jaden McDaniels",
+              "proTeam": "MIN",
+              "positions": [
+                "SF",
+                "PF"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 35.2,
+              "avgLast15": 33.6,
+              "avgProjected": 29.7,
+              "gamesRestOfRegularSeason": 46,
+              "gamesPlayoffs": 13
+            },
+            {
+              "playerId": 4397183,
+              "name": "Aaron Wiggins",
+              "proTeam": "ATL",
+              "positions": [
+                "SG",
+                "SF"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 25.6,
+              "avgLast15": 22.1,
+              "avgProjected": 19.2,
+              "gamesRestOfRegularSeason": 45,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "angles": [
+            "depth"
+          ],
+          "whyForYou": "One for two: McDaniels (35.2) and Wiggins (25.6) for Porter Jr. More healthy bodies and more points in your lineup every night.",
+          "whyTheyAccept": "Barak turns two depth wings into one starter, projected 38.9.",
+          "dropsNeeded": {
+            "you": 1,
+            "partner": 0
+          }
+        }
+      ]
+    },
+    {
+      "owner": "Yotam Goldin",
+      "teamName": "PlottKe",
+      "seed": 10,
+      "record": {
+        "wins": 0,
+        "losses": 4,
+        "ties": 0
+      },
+      "pointsFor": 4551,
+      "diagnosis": {
+        "summary": "0-4 and the fewest points scored (4551). Haliburton, Kawhi, Jerome and Trey Murphy III are OUT, Gobert is at 22 vs. 34.3 projected and Coby White at 12.2. Cade (50.3) can't do it alone. You need healthy players now, and Kawhi on IR is your best trade chip.",
+        "flags": [
+          "injuries",
+          "playoff-push"
+        ]
+      },
+      "trades": [
+        {
+          "partnerOwner": "Yoav Coracos",
+          "partnerTeamName": "Team Mamba Forever",
+          "give": [
+            {
+              "playerId": 6450,
+              "name": "Kawhi Leonard",
+              "proTeam": "TOR",
+              "positions": [
+                "SF",
+                "PF"
+              ],
+              "injuryStatus": "OUT",
+              "avgSeason": 37.5,
+              "avgLast15": 0,
+              "avgProjected": 45.8,
+              "gamesRestOfRegularSeason": 46,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "get": [
+            {
+              "playerId": 4397136,
+              "name": "Saddiq Bey",
+              "proTeam": "NOP",
+              "positions": [
+                "SF",
+                "PF"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 28,
+              "avgLast15": 31.6,
+              "avgProjected": 25.9,
+              "gamesRestOfRegularSeason": 45,
+              "gamesPlayoffs": 15
+            },
+            {
+              "playerId": 4432848,
+              "name": "Jaime Jaquez Jr.",
+              "proTeam": "MIL",
+              "positions": [
+                "SG",
+                "SF"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 26.7,
+              "avgLast15": 25.7,
+              "avgProjected": 28.2,
+              "gamesRestOfRegularSeason": 45,
+              "gamesPlayoffs": 13
+            }
+          ],
+          "angles": [
+            "depth",
+            "injury-cover"
+          ],
+          "whyForYou": "Kawhi helps in March, you need help now: Bey (28) and Jaquez (26.7) are healthy forwards, and Bey has 4 games this week.",
+          "whyTheyAccept": "Yoav can wait: Kawhi is projected 45.8, rank 16, with 14 playoff games.",
+          "dropsNeeded": {
+            "you": 1,
+            "partner": 0
+          }
+        },
+        {
+          "partnerOwner": "Amir Ben Izhak",
+          "partnerTeamName": "Libi’s Legacy",
+          "give": [
+            {
+              "playerId": 3064514,
+              "name": "Julius Randle",
+              "proTeam": "BKN",
+              "positions": [
+                "PF"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 31,
+              "avgLast15": 30.1,
+              "avgProjected": 37,
+              "gamesRestOfRegularSeason": 46,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "get": [
+            {
+              "playerId": 3078576,
+              "name": "Derrick White",
+              "proTeam": "BOS",
+              "positions": [
+                "PG",
+                "SG"
+              ],
+              "injuryStatus": "ACTIVE",
+              "avgSeason": 30.6,
+              "avgLast15": 32,
+              "avgProjected": 37,
+              "gamesRestOfRegularSeason": 46,
+              "gamesPlayoffs": 14
+            }
+          ],
+          "angles": [
+            "positional-need",
+            "injury-cover"
+          ],
+          "whyForYou": "With Jerome and Murphy OUT you need guards: Derrick White (37.2 last season, projected 37) has 4 games this week, and you have Queen and Claxton up front.",
+          "whyTheyAccept": "Amir gets a real PF in Randle, projected 37, for a guard they can spare.",
+          "dropsNeeded": {
+            "you": 0,
+            "partner": 0
+          }
+        }
+      ]
+    }
+  ]
+}

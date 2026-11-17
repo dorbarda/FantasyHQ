@@ -580,6 +580,17 @@
           }
         ]
       }
+    },
+    {
+      "id": "2026-11-17T13-47-40-701Z-f4d40d",
+      "kind": "buy",
+      "playerId": 4701230,
+      "playerName": "Jalen Johnson",
+      "playerOwner": "Dor Gelless",
+      "note": "",
+      "createdAt": "2026-11-17T13:47:40.701Z",
+      "by": "owner",
+      "status": "pending"
     }
   ]
 }

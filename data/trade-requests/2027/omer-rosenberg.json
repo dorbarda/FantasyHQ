@@ -591,6 +591,17 @@
       "createdAt": "2026-11-17T13:47:40.701Z",
       "by": "owner",
       "status": "pending"
+    },
+    {
+      "id": "2026-11-17T13-49-15-351Z-216585",
+      "kind": "buy",
+      "playerId": 3155942,
+      "playerName": "Domantas Sabonis",
+      "playerOwner": "Barak Miller",
+      "note": "",
+      "createdAt": "2026-11-17T13:49:15.351Z",
+      "by": "owner",
+      "status": "pending"
     }
   ]
 }

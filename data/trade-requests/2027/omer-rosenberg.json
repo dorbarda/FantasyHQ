@@ -590,7 +590,122 @@
       "note": "",
       "createdAt": "2026-11-17T13:47:40.701Z",
       "by": "owner",
-      "status": "pending"
+      "status": "answered",
+      "answer": {
+        "answeredAt": "2026-11-17T13:51:05.685Z",
+        "inputGeneratedAt": "2026-11-17T13:50:31.367Z",
+        "summary": "Jalen Johnson is Dor Gelless's best player: rank 7 projected, 50 projected avg, and you have no healthy PF (Mobley and Jaren Jackson Jr. are OUT on IR). Dor Gelless is 0-4, so he will want quality back, not one-for-one filler. The two-for-one with Franz Wagner and Stephon Castle is the one I like most.",
+        "trades": [
+          {
+            "partnerOwner": "Dor Gelless",
+            "partnerTeamName": "Flint Tropics 70's Show",
+            "give": [
+              {
+                "playerId": 4566434,
+                "name": "Franz Wagner",
+                "proTeam": "ORL",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 43.5,
+                "avgLast15": 52.9,
+                "avgProjected": 38.6,
+                "gamesRestOfRegularSeason": 46,
+                "gamesPlayoffs": 14
+              },
+              {
+                "playerId": 4845367,
+                "name": "Stephon Castle",
+                "proTeam": "SAS",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 32.8,
+                "avgLast15": 34.4,
+                "avgProjected": 36.9,
+                "gamesRestOfRegularSeason": 45,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4701230,
+                "name": "Jalen Johnson",
+                "proTeam": "ATL",
+                "positions": [
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 39.5,
+                "avgLast15": 37.3,
+                "avgProjected": 50,
+                "gamesRestOfRegularSeason": 45,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "sell-high",
+              "positional-need"
+            ],
+            "whyForYou": "Sell high on Franz Wagner: he averages 54.5 over the last 7 days against a 38.6 projection. Castle goes too, and you get Jalen Johnson, a projected top-7 PF, when your PF spots are empty with Mobley and Jaren Jackson Jr. OUT.",
+            "whyTheyAccept": "Dor Gelless is 0-4 and gets two starters, Wagner (rank 19 this season) and Castle, for one player. Wagner is hot right now and he gets a second starter in the same deal.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          },
+          {
+            "partnerOwner": "Dor Gelless",
+            "partnerTeamName": "Flint Tropics 70's Show",
+            "give": [
+              {
+                "playerId": 5041939,
+                "name": "Cooper Flagg",
+                "proTeam": "DAL",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 47.1,
+                "avgLast15": 40.5,
+                "avgProjected": 45.4,
+                "gamesRestOfRegularSeason": 44,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4701230,
+                "name": "Jalen Johnson",
+                "proTeam": "ATL",
+                "positions": [
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 39.5,
+                "avgLast15": 37.3,
+                "avgProjected": 50,
+                "gamesRestOfRegularSeason": 45,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "positional-need"
+            ],
+            "whyForYou": "A star-for-star swap that fixes your missing PF. Cooper Flagg (rank 10 this season) is a SF/PF, Jalen Johnson is projected rank 7 and has 14 playoff games, the same as Flagg.",
+            "whyTheyAccept": "Dor Gelless gets Flagg, a rank 10 player this season, for Johnson (rank 30 this season), and Flagg's 47.1 season average is well above Johnson's 39.5.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          }
+        ]
+      }
     },
     {
       "id": "2026-11-17T13-49-15-351Z-216585",
@@ -601,7 +716,125 @@
       "note": "",
       "createdAt": "2026-11-17T13:49:15.351Z",
       "by": "owner",
-      "status": "pending"
+      "status": "answered",
+      "answer": {
+        "answeredAt": "2026-11-17T13:51:05.685Z",
+        "inputGeneratedAt": "2026-11-17T13:50:31.367Z",
+        "summary": "Domantas Sabonis is Barak Miller's PF/C, and his last 7 days (26.3) are far below his 46.7 projection, so it is a good moment to buy low. Barak Miller has Curry OUT on IR, so a guard he can start is the currency. Jamal Murray for Sabonis is the cleanest offer.",
+        "trades": [
+          {
+            "partnerOwner": "Barak Miller",
+            "partnerTeamName": "Team Miller",
+            "give": [
+              {
+                "playerId": 3936299,
+                "name": "Jamal Murray",
+                "proTeam": "DEN",
+                "positions": [
+                  "PG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 48.3,
+                "avgLast15": 49.3,
+                "avgProjected": 43.9,
+                "gamesRestOfRegularSeason": 46,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "get": [
+              {
+                "playerId": 3155942,
+                "name": "Domantas Sabonis",
+                "proTeam": "SAC",
+                "positions": [
+                  "PF",
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 37.9,
+                "avgLast15": 28.2,
+                "avgProjected": 46.7,
+                "gamesRestOfRegularSeason": 45,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "sell-high",
+              "buy-low",
+              "injury-cover"
+            ],
+            "whyForYou": "Sell high on Jamal Murray (51.7 over the last 7 days) and buy low on Domantas Sabonis, who is at 26.3 over the last 7 days against a 46.7 projection. You get a PF/C and Sabonis has 14 playoff games.",
+            "whyTheyAccept": "Barak Miller has Stephen Curry OUT on IR, so a starting PG is a real need. Murray averages 48.3 this season, above Sabonis's 37.9.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          },
+          {
+            "partnerOwner": "Barak Miller",
+            "partnerTeamName": "Team Miller",
+            "give": [
+              {
+                "playerId": 4566434,
+                "name": "Franz Wagner",
+                "proTeam": "ORL",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 43.5,
+                "avgLast15": 52.9,
+                "avgProjected": 38.6,
+                "gamesRestOfRegularSeason": 46,
+                "gamesPlayoffs": 14
+              },
+              {
+                "playerId": 4845367,
+                "name": "Stephon Castle",
+                "proTeam": "SAS",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 32.8,
+                "avgLast15": 34.4,
+                "avgProjected": 36.9,
+                "gamesRestOfRegularSeason": 45,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "get": [
+              {
+                "playerId": 3155942,
+                "name": "Domantas Sabonis",
+                "proTeam": "SAC",
+                "positions": [
+                  "PF",
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 37.9,
+                "avgLast15": 28.2,
+                "avgProjected": 46.7,
+                "gamesRestOfRegularSeason": 45,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "sell-high",
+              "buy-low"
+            ],
+            "whyForYou": "Sell high on Franz Wagner (54.5 over the last 7 days against a 38.6 projection) and buy low on Domantas Sabonis, who is well under his 46.7 projection right now. Castle is the sweetener.",
+            "whyTheyAccept": "Barak Miller gets two starters for one: Wagner averages 43.5 this season and Castle is rank 66, filling holes while Curry and Brandon Ingram are OUT.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 1
+            }
+          }
+        ]
+      }
     }
   ]
 }

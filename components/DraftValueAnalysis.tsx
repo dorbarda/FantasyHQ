@@ -203,8 +203,7 @@ export default function DraftValueAnalysis({ data }: Props) {
       )}
       {data.inProgress && (
         <p className="text-[12px] text-warning-bright font-medium">
-          Season in progress — through {data.gamesPlayed} games. Final ranks are by fantasy points per game
-          (players with fewer than {Math.max(1, Math.round(data.gamesPlayed * 0.25))} games are not ranked).
+          Season in progress — through {data.gamesPlayed} games. Ranks so far are by total fantasy points.
         </p>
       )}
 

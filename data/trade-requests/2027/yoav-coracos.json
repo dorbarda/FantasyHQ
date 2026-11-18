@@ -1027,6 +1027,17 @@
           }
         ]
       }
+    },
+    {
+      "id": "2026-11-18T09-11-23-595Z-716a58",
+      "kind": "buy",
+      "playerId": 4396971,
+      "playerName": "Naz Reid",
+      "playerOwner": "Amir Ben Izhak",
+      "note": "",
+      "createdAt": "2026-11-18T09:11:23.595Z",
+      "by": "owner",
+      "status": "pending"
     }
   ]
 }

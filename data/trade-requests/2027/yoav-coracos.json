@@ -1154,6 +1154,17 @@
           }
         ]
       }
+    },
+    {
+      "id": "2026-11-18T22-05-36-763Z-84b69f",
+      "kind": "buy",
+      "playerId": 3136195,
+      "playerName": "Karl-Anthony Towns",
+      "playerOwner": "Nir Zele",
+      "note": "",
+      "createdAt": "2026-11-18T22:05:36.763Z",
+      "by": "owner",
+      "status": "pending"
     }
   ]
 }

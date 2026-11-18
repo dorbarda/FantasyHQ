@@ -229,18 +229,15 @@ export async function getDraftBoard(year: number): Promise<DraftBoardData> {
   const hasStats = actualPool.some(r => r.fp > 0);
   const hasProjections = projPool.some(r => r.projFp > 0);
   const inProgress = hasStats && !status.complete;
-  const rankBasis: 'total' | 'perGame' = inProgress ? 'perGame' : 'total';
+  // Always rank by total FP, in-season too: missed games count against a pick.
+  const rankBasis = 'total' as const;
 
   // "Through N games": the most games any top player has played so far.
   const gamesPlayed = actualPool.reduce((m, r) => Math.max(m, r.gp), 0);
-  // In-season, ignore tiny samples so one 60-point game can't rank #1 per game.
-  const minGP = inProgress ? Math.max(1, Math.round(gamesPlayed * 0.25)) : 1;
 
   // 4. Ranks among ALL players (drafted or not)
-  const actualValue = (r: PlayerRow) =>
-    r.gp < minGP ? null : rankBasis === 'perGame' ? r.fp / r.gp : r.fp;
-  const projValue = (r: PlayerRow) =>
-    rankBasis === 'perGame' ? (r.projGp > 0 ? r.projFp / r.projGp : null) : r.projFp;
+  const actualValue = (r: PlayerRow) => r.fp;
+  const projValue = (r: PlayerRow) => r.projFp;
   const actualRanks = hasStats ? rankPlayers(actualPool, actualValue) : new Map<number, number>();
   const projRanks = hasProjections ? rankPlayers(projPool, projValue) : new Map<number, number>();
   const outside = POOL_SIZE + 1; // anything not in the top POOL_SIZE

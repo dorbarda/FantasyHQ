@@ -399,7 +399,7 @@ export interface DraftBoardData {
   hasProjections: boolean;  // false if ESPN projections could not be loaded
   inProgress: boolean;      // season started but not finished
   gamesPlayed: number;      // "through N games" — most games played by any top player so far
-  rankBasis: 'total' | 'perGame'; // finished seasons rank by total FP, in-progress by FP per game
+  rankBasis: 'total' | 'perGame'; // always 'total' now; 'perGame' kept for old data
   poolSize: number;         // number of players ranked (ranks beyond this show as "outside")
 }
 

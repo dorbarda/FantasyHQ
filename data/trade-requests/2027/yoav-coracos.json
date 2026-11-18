@@ -1037,7 +1037,123 @@
       "note": "",
       "createdAt": "2026-11-18T09:11:23.595Z",
       "by": "owner",
-      "status": "pending"
+      "status": "answered",
+      "answer": {
+        "answeredAt": "2026-11-18T13:50:37.704Z",
+        "inputGeneratedAt": "2026-11-18T13:50:18.039Z",
+        "summary": "Naz Reid (PF/C, CHA) is a solid starter: 30.1 season average, 35.5 projected, projected rank 69, with 45 games left in the regular season. Amir Ben Izhak has Wembanyama at center and two players OUT (Dejounte Murray, Markkanen), so he needs bodies more than a big. I like the 2-for-1 best: Bey and Jaquez each play 3 games this week against Reid's 1.",
+        "trades": [
+          {
+            "partnerOwner": "Amir Ben Izhak",
+            "partnerTeamName": "Libi’s Legacy",
+            "give": [
+              {
+                "playerId": 4433287,
+                "name": "Brandon Miller",
+                "proTeam": "CHA",
+                "positions": [
+                  "SG",
+                  "SF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 27.5,
+                "avgLast15": 14.8,
+                "avgProjected": 37.4,
+                "gamesRestOfRegularSeason": 45,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4396971,
+                "name": "Naz Reid",
+                "proTeam": "CHA",
+                "positions": [
+                  "PF",
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 30.1,
+                "avgLast15": 37,
+                "avgProjected": 35.5,
+                "gamesRestOfRegularSeason": 45,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "angles": [
+              "positional-need"
+            ],
+            "whyForYou": "Reid gives you a real PF/C: your only center is Sengun. Brandon Miller is projected 37.4 against Reid's 35.5, so it is a fair swap of equal-level starters.",
+            "whyTheyAccept": "Amir gets the higher projection (Miller 37.4 vs Reid 35.5, projected rank 59 vs 69) at the same 1 game this week and 13 playoff games.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          },
+          {
+            "partnerOwner": "Amir Ben Izhak",
+            "partnerTeamName": "Libi’s Legacy",
+            "give": [
+              {
+                "playerId": 4397136,
+                "name": "Saddiq Bey",
+                "proTeam": "NOP",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 29.4,
+                "avgLast15": 32,
+                "avgProjected": 25.9,
+                "gamesRestOfRegularSeason": 44,
+                "gamesPlayoffs": 15
+              },
+              {
+                "playerId": 4432848,
+                "name": "Jaime Jaquez Jr.",
+                "proTeam": "MIL",
+                "positions": [
+                  "SG",
+                  "SF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 26.7,
+                "avgLast15": 26,
+                "avgProjected": 28.2,
+                "gamesRestOfRegularSeason": 45,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4396971,
+                "name": "Naz Reid",
+                "proTeam": "CHA",
+                "positions": [
+                  "PF",
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 30.1,
+                "avgLast15": 37,
+                "avgProjected": 35.5,
+                "gamesRestOfRegularSeason": 45,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "angles": [
+              "consolidation"
+            ],
+            "whyForYou": "Two mid starters for one better big: Reid projects 35.5, Bey 25.9 and Jaquez 28.2. You fill your PF/C slot and still have wings left.",
+            "whyTheyAccept": "Amir has Murray and Markkanen OUT. Bey and Jaquez each play 3 games this week while Reid plays 1, and Bey is averaging 29.4 this season, close to Reid's 30.1.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 1
+            }
+          }
+        ]
+      }
     }
   ]
 }

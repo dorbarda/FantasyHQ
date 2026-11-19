@@ -1,0 +1,17 @@
+{
+  "season": 2027,
+  "owner": "Yuval Halevy",
+  "requests": [
+    {
+      "id": "2026-11-19T20-49-10-160Z-09afc3",
+      "kind": "sell",
+      "playerId": 5160992,
+      "playerName": "Alex Sarr",
+      "playerOwner": "Yuval Halevy",
+      "note": "Someone offered me a trade: Alexar and Okungu and I get Walker Kessler. What do you think?",
+      "createdAt": "2026-11-19T20:49:10.160Z",
+      "by": "owner",
+      "status": "pending"
+    }
+  ]
+}

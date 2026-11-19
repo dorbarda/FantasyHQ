@@ -835,6 +835,17 @@
           }
         ]
       }
+    },
+    {
+      "id": "2026-11-19T09-23-12-011Z-957e35",
+      "kind": "buy",
+      "playerId": 3202,
+      "playerName": "Kevin Durant",
+      "playerOwner": "Dor Barda",
+      "note": "אני לא רוצה לוותר על שחקנים עם ממוצע מעל 40",
+      "createdAt": "2026-11-19T09:23:12.011Z",
+      "by": "owner",
+      "status": "pending"
     }
   ]
 }

@@ -845,7 +845,204 @@
       "note": "אני לא רוצה לוותר על שחקנים עם ממוצע מעל 40",
       "createdAt": "2026-11-19T09:23:12.011Z",
       "by": "owner",
-      "status": "pending"
+      "status": "answered",
+      "answer": {
+        "answeredAt": "2026-11-19T13:51:11.019Z",
+        "inputGeneratedAt": "2026-11-19T13:50:40.668Z",
+        "summary": "Durant averages 34.9 this season but is projected at 42.9 (rank 32), so he is a buy-low target, and Dor Barda (1-3) needs wins now. Per your note I kept Tatum, Flagg, Murray and Wagner (all above 40) out of every offer. Best idea: Thompson + Edgecombe, which gives Dor two starters for one.",
+        "trades": [
+          {
+            "partnerOwner": "Dor Barda",
+            "partnerTeamName": "Nordau Peaky Blinder🚬",
+            "give": [
+              {
+                "playerId": 4684742,
+                "name": "Ausar Thompson",
+                "proTeam": "DET",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 34.4,
+                "avgLast15": 39.7,
+                "avgProjected": 30.8,
+                "gamesRestOfRegularSeason": 44,
+                "gamesPlayoffs": 14
+              },
+              {
+                "playerId": 5124612,
+                "name": "VJ Edgecombe",
+                "proTeam": "PHI",
+                "positions": [
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 33.8,
+                "avgLast15": 37.1,
+                "avgProjected": 33.7,
+                "gamesRestOfRegularSeason": 43,
+                "gamesPlayoffs": 15
+              }
+            ],
+            "get": [
+              {
+                "playerId": 3202,
+                "name": "Kevin Durant",
+                "proTeam": "HOU",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 34.9,
+                "avgLast15": 34,
+                "avgProjected": 42.9,
+                "gamesRestOfRegularSeason": 43,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "sell-high",
+              "buy-low",
+              "consolidation"
+            ],
+            "whyForYou": "A sell high on Ausar Thompson (L7 51 vs projection 30.8) plus VJ Edgecombe, and you are buying low on Durant (34.9 avg vs 42.9 projected). Durant has 14 playoff games, same as Thompson.",
+            "whyTheyAccept": "Dor is 1-3 and gets two starters (34.4 and 33.8 avg) for one, with Thompson's L7 at 51. Thompson is an SF/PF like Durant, so the slot is covered.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 1
+            }
+          },
+          {
+            "partnerOwner": "Dor Barda",
+            "partnerTeamName": "Nordau Peaky Blinder🚬",
+            "give": [
+              {
+                "playerId": 4684742,
+                "name": "Ausar Thompson",
+                "proTeam": "DET",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 34.4,
+                "avgLast15": 39.7,
+                "avgProjected": 30.8,
+                "gamesRestOfRegularSeason": 44,
+                "gamesPlayoffs": 14
+              },
+              {
+                "playerId": 4845367,
+                "name": "Stephon Castle",
+                "proTeam": "SAS",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 31.6,
+                "avgLast15": 32.1,
+                "avgProjected": 36.9,
+                "gamesRestOfRegularSeason": 44,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "get": [
+              {
+                "playerId": 3202,
+                "name": "Kevin Durant",
+                "proTeam": "HOU",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 34.9,
+                "avgLast15": 34,
+                "avgProjected": 42.9,
+                "gamesRestOfRegularSeason": 43,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "sell-high",
+              "buy-low",
+              "consolidation"
+            ],
+            "whyForYou": "Another sell high on Thompson (L7 51 vs 30.8 projected) with Stephon Castle (31.6 avg, 13 playoff games), buying low on Durant at 34.9 vs 42.9 projected.",
+            "whyTheyAccept": "Dor gets two starters for one and a PG/SG in Castle (L7 43.7). Thompson fills Durant's SF/PF spot, and Dor keeps more total games this week.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 1
+            }
+          },
+          {
+            "partnerOwner": "Dor Barda",
+            "partnerTeamName": "Nordau Peaky Blinder🚬",
+            "give": [
+              {
+                "playerId": 4432158,
+                "name": "Evan Mobley",
+                "proTeam": "CLE",
+                "positions": [
+                  "PF",
+                  "C"
+                ],
+                "injuryStatus": "OUT",
+                "avgSeason": 36.8,
+                "avgLast15": 30.8,
+                "avgProjected": 43.3,
+                "gamesRestOfRegularSeason": 44,
+                "gamesPlayoffs": 12
+              },
+              {
+                "playerId": 4845367,
+                "name": "Stephon Castle",
+                "proTeam": "SAS",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 31.6,
+                "avgLast15": 32.1,
+                "avgProjected": 36.9,
+                "gamesRestOfRegularSeason": 44,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "get": [
+              {
+                "playerId": 3202,
+                "name": "Kevin Durant",
+                "proTeam": "HOU",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 34.9,
+                "avgLast15": 34,
+                "avgProjected": 42.9,
+                "gamesRestOfRegularSeason": 43,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "buy-low",
+              "depth"
+            ],
+            "whyForYou": "Mobley is OUT on your IR, so he gives you nothing now. Buying low on Durant (34.9 vs 42.9 projected) means you get a healthy starter for him and Castle.",
+            "whyTheyAccept": "Mobley is projected at 43.3 (rank 28), above Durant's 42.9, and last season he averaged 40.9. Dor also gets Castle, so he trades one starter for a star plus a starter. The risk for Dor is Mobley's injury.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 1
+            }
+          }
+        ]
+      }
     }
   ]
 }

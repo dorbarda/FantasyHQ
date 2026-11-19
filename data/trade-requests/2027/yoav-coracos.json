@@ -1164,7 +1164,121 @@
       "note": "",
       "createdAt": "2026-11-18T22:05:36.763Z",
       "by": "owner",
-      "status": "pending"
+      "status": "answered",
+      "answer": {
+        "answeredAt": "2026-11-19T07:50:14.241Z",
+        "inputGeneratedAt": "2026-11-19T07:49:46.757Z",
+        "summary": "Towns (44.6 avg, projected rank 22) is on Nir Zele's team, which is deep at center and light at guard/wing, so Nir needs guards back. The cleanest offer is Booker for Towns: Nir gets the extra playoff games. If Nir wants more, Herro plus Boozer is the 2-for-1 fallback. I like the Booker swap most.",
+        "trades": [
+          {
+            "partnerOwner": "Nir Zele",
+            "partnerTeamName": "Slotzki",
+            "give": [
+              {
+                "playerId": 3136193,
+                "name": "Devin Booker",
+                "proTeam": "PHX",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 40.1,
+                "avgLast15": 42.1,
+                "avgProjected": 43.2,
+                "gamesRestOfRegularSeason": 45,
+                "gamesPlayoffs": 15
+              }
+            ],
+            "get": [
+              {
+                "playerId": 3136195,
+                "name": "Karl-Anthony Towns",
+                "proTeam": "NYK",
+                "positions": [
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 44.6,
+                "avgLast15": 50,
+                "avgProjected": 44.1,
+                "gamesRestOfRegularSeason": 45,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "angles": [
+              "positional-need",
+              "playoff-schedule"
+            ],
+            "whyForYou": "Sengun is day-to-day and your only other center, so Towns (44.6 avg) fixes the C spot. He averages more than Booker (40.1) this season and you still have Doncic and Herro at guard.",
+            "whyTheyAccept": "Nir has Giannis, Davis, Hartenstein and Gafford at center and few shooting guards. Booker plays 15 playoff games against 13 for Towns, and is a 43.2 projection guard.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          },
+          {
+            "partnerOwner": "Nir Zele",
+            "partnerTeamName": "Slotzki",
+            "give": [
+              {
+                "playerId": 4395725,
+                "name": "Tyler Herro",
+                "proTeam": "MIL",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 31.2,
+                "avgLast15": 25.9,
+                "avgProjected": 38.8,
+                "gamesRestOfRegularSeason": 45,
+                "gamesPlayoffs": 13
+              },
+              {
+                "playerId": 5041935,
+                "name": "Cameron Boozer",
+                "proTeam": "MEM",
+                "positions": [
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 36,
+                "avgLast15": 35.4,
+                "avgProjected": 34.3,
+                "gamesRestOfRegularSeason": 44,
+                "gamesPlayoffs": 15
+              }
+            ],
+            "get": [
+              {
+                "playerId": 3136195,
+                "name": "Karl-Anthony Towns",
+                "proTeam": "NYK",
+                "positions": [
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 44.6,
+                "avgLast15": 50,
+                "avgProjected": 44.1,
+                "gamesRestOfRegularSeason": 45,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "angles": [
+              "depth"
+            ],
+            "whyForYou": "Herro (31.2 avg) is well under his 38.8 projection and Boozer is a 34.3 projected forward. You turn two mid starters into a 44.6 center and keep Booker and Doncic.",
+            "whyTheyAccept": "Nir gets two starters (Herro 13 and Boozer 15 playoff games) and fills the guard and forward spots Garland and Bane leave thin, for one center from a deep group.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 1
+            }
+          }
+        ]
+      }
     }
   ]
 }

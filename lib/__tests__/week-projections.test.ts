@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { allFit, fillActuals, playerAverage, projectTeam, watchNotes } from '../week-projections';
+import { allFit, fillActuals, firstPlayableDay, playerAverage, projectTeam, watchNotes } from '../week-projections';
 import type { ProTeamSchedule } from '../espn-schedule';
 
 const SEASON = 2027;
@@ -158,5 +158,42 @@ describe('projectTeam — OUT players', () => {
     expect(t.roster.find(p => p.name === 'Out')!.games).toBe(0);
     expect(t.games).toBe(4); // C1–C4; DTD still doesn't fit
     expect(t.projectedPoints).toBe(50 + 40 + 30 + 20);
+  });
+});
+
+describe('firstPlayableDay', () => {
+  // Day n ↔ 2026-11-(15+n): day 1 = Nov 16.
+  const dayOf = (date: string) => Number(date.slice(8)) - 15;
+  const out = (r?: number[]) => ({ injuryStatus: 'OUT', ...(r ? { injuryDetails: { expectedReturnDate: r } } : {}) });
+
+  it('no limit for players who are not OUT', () => {
+    expect(firstPlayableDay({ injuryStatus: 'DAY_TO_DAY' }, [3, 5], 3, dayOf)).toBe(0);
+    expect(firstPlayableDay({}, [3, 5], 3, dayOf)).toBe(0);
+  });
+  it('without a return date, misses only his next game', () => {
+    expect(firstPlayableDay(out(), [1, 3, 5, 6], 2, dayOf)).toBe(4);
+  });
+  it('with a return date, out until that day', () => {
+    // Back Sat Nov 21 = day 6: misses days 3 and 5, plays 6.
+    expect(firstPlayableDay(out([2026, 11, 21]), [1, 3, 5, 6], 2, dayOf)).toBe(6);
+  });
+  it('a return date on his next game day wins over "miss the next game"', () => {
+    // Maxey case: OUT today (day 4), team's next game day 6 = return date.
+    expect(firstPlayableDay(out([2026, 11, 21]), [6], 4, dayOf)).toBe(6);
+  });
+  it('a return date already passed still costs the next game', () => {
+    expect(firstPlayableDay(out([2026, 11, 16]), [3, 5], 2, dayOf)).toBe(4);
+  });
+  it('unknown dates (no schedule anchor): next game only', () => {
+    expect(firstPlayableDay(out([2026, 11, 21]), [3, 5], 2, () => null)).toBe(4);
+  });
+});
+
+describe('projectTeam — OUT player back later in the week', () => {
+  it('counts his games after the next one', () => {
+    const team = { id: 1, name: 'T', roster: { entries: [player('Out', 60, 1, CENTER, 0, 0, 'OUT')] } };
+    const t = projectTeam(team, [1, 2], schedules, SEASON, 1, undefined, 1);
+    expect(t.roster[0].games).toBe(1); // misses day 1, plays day 2
+    expect(t.projectedPoints).toBe(60);
   });
 });

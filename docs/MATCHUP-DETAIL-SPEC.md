@@ -62,7 +62,7 @@ Up to 3 short notes, built from the numbers above. Examples of the kinds of note
 | Term | Meaning |
 | --- | --- |
 | Week | ESPN matchup period, Monday–Sunday (week 1 = Tue Oct 20 – Sun Oct 25, 6 days). |
-| Startable game | Player not on IR and not OUT, his NBA team plays that day, and he fits one of the 10 starting spots (PG, SG, SF, PF, C, G, F, 3× UTIL). If more than 10 can play, the highest averages start. |
+| Startable game | Player not on IR and not OUT that day, his NBA team plays that day, and he fits one of the 10 starting spots (PG, SG, SF, PF, C, G, F, 3× UTIL). If more than 10 can play, the highest averages start. An OUT player is out until ESPN's expected return date (player card `injuryDetails.expectedReturnDate`); with no date, or one already passed, he misses only his team's next game. Day-to-day players count. |
 | Average | Weeks 1–2: ESPN's projected fantasy points per game for the season. Week 3: 60% ESPN projection + 40% actual average over the last 15 days. Week 4: 20% + 80%. Week 5 on: last 15 days only. A player with no games in the last 15 days uses the ESPN projection; a player with no ESPN projection uses the last 15 days. |
 | Projected points | Σ player average × startable games. |
 

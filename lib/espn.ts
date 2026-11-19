@@ -16,6 +16,7 @@ import { NON_SCORING_SLOTS, countStartersOnDay, dayStatLine } from './lineup';
 import { loadScheduleSeason } from './schedule-data';
 import { weeksOf } from './espn-schedule';
 import { projectRestOfWeek } from './week-projections';
+import { attachInjuryDetails } from './espn-injuries';
 
 const ESPN_S2 = process.env.ESPN_S2;
 const SWID = process.env.SWID;
@@ -128,6 +129,9 @@ async function makeGamesLeft(teams: any[], matchupPeriod: number, currentScoring
       /* fall back to today's rosters */
     }
   }
+  // Expected return dates, so OUT players count again once back.
+  await attachInjuryDetails([{ teams }, { teams: [...nextById.values()] }],
+    (params, headers) => espnFetch(params, headers, true));
   const hasPlayed = (player: any, sp: number) =>
     sp === currentScoringPeriod && !!dayStatLine({ playerPoolEntry: { player } }, sp);
   return (teamId: number): { games: number; points: number } => {
@@ -1198,7 +1202,9 @@ export async function getRules(): Promise<RulesData> {
  * (lib/week-projections.ts) when a week hasn't been frozen yet.
  */
 export async function getLeagueRosters(): Promise<any> {
-  return espnFetch('?view=mTeam&view=mRoster&view=mMatchup');
+  const league = await espnFetch('?view=mTeam&view=mRoster&view=mMatchup');
+  await attachInjuryDetails([league], (params, headers) => espnFetch(params, headers));
+  return league;
 }
 
 // ─── PLAYER POOL (home page trends) ───────────────────────────────────────────

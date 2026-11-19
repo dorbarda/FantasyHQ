@@ -89,6 +89,14 @@ if (!res.ok) {
   process.exit(1);
 }
 const league = await res.json();
+// Expected return dates, so OUT players count again once back (lib/espn-injuries.ts).
+const { attachInjuryDetails } = await import('../lib/espn-injuries');
+await attachInjuryDetails([league], async (params, headers) => {
+  const r = await fetch(`https://lm-api-reads.fantasy.espn.com/apis/v3/games/fba/seasons/${CURRENT_SEASON}` +
+    `/segments/0/leagues/${LEAGUE_ID}${params}`, { headers: { Cookie: `espn_s2=${ESPN_S2}; SWID=${SWID}`, Accept: 'application/json', ...headers } });
+  if (!r.ok) throw new Error(`ESPN API ${r.status}`);
+  return r.json();
+});
 const teamById = new Map<number, any>((league.teams || []).map((t: any) => [t.id, t]));
 const rostersNow: Record<string, string[]> = {};
 for (const [id, t] of teamById) rostersNow[String(id)] = rosterIds(t);

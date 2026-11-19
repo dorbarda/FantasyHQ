@@ -6,7 +6,7 @@
  * Pure — the Sunday script (scripts/freeze-week-projections.mts) does the I/O.
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { ProTeamSchedule } from './espn-schedule';
+import { buildDateIndex, nbaDate, type ProTeamSchedule } from './espn-schedule';
 
 /** ESPN lineup slots that start: PG, SG, SF, PF, C, G, F, then 3× UTIL. */
 const STARTING_SLOTS: Record<number, number> = { 0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 11: 3 };
@@ -96,8 +96,31 @@ export function allFit(eligible: Set<number>[]): boolean {
 }
 
 /**
+ * First scoring period an OUT player can play again. ESPN's expected return
+ * date (`injuryDetails.expectedReturnDate`, [y, m, d], from kona_playercard —
+ * see lib/espn-injuries.ts) when it is after today; without one (or when it
+ * has already passed but he's still OUT) he misses his team's next game only.
+ * Everyone else: 0 (no limit).
+ */
+export function firstPlayableDay(
+  player: any,
+  teamGames: number[],
+  today: number,
+  dayOf: (date: string) => number | null,
+): number {
+  if ((player?.injuryStatus || 'ACTIVE') !== 'OUT') return 0;
+  const r = player?.injuryDetails?.expectedReturnDate;
+  if (Array.isArray(r) && r.length === 3) {
+    const sp = dayOf(`${r[0]}-${String(r[1]).padStart(2, '0')}-${String(r[2]).padStart(2, '0')}`);
+    if (sp !== null && sp > today) return sp;
+  }
+  const next = teamGames.filter(sp => sp >= today).sort((a, b) => a - b)[0];
+  return next !== undefined ? next + 1 : today;
+}
+
+/**
  * Project one fantasy team for the week. On each day the players with a game
- * (not on IR, not OUT) start in order of average, as long as they still fit a slot; the rest are
+ * (not on IR, not OUT that day — see firstPlayableDay) start in order of average, as long as they still fit a slot; the rest are
  * games lost to the lineup limit. (Greedy is optimal here: which sets of
  * players can start together forms a matroid.)
  */
@@ -113,7 +136,15 @@ export function projectTeam(
    * longer counts; a bench player who played is simply done for the day.
    */
   hasPlayed?: (player: any, scoringPeriodId: number) => boolean,
+  /** Today's scoring period — where an OUT player's "next game" starts. Default: from the clock. */
+  today?: number,
 ): TeamProjection {
+  // Scoring period ↔ date, from the schedule (null when it has no dates).
+  const index = buildDateIndex(schedules);
+  const anchorMs = index.anchor ? Date.parse(`${index.anchor}T00:00:00Z`) : null;
+  const dayOf = (date: string) => anchorMs === null ? null
+    : Math.round((Date.parse(`${date}T00:00:00Z`) - anchorMs) / 86_400_000) + 1;
+  const todaySp = today ?? dayOf(nbaDate(Date.now())) ?? Math.min(...scoringPeriods);
   const playsOn = new Map<number, Set<number>>();
   const abbrev = new Map<number, string>();
   for (const s of schedules) {
@@ -137,17 +168,23 @@ export function projectTeam(
       projected: 0,
       eligible: new Set(slots),
       proTeamId: p.proTeamId as number,
+      from: 0,
     };
   });
+
+  for (const p of players) {
+    p.from = firstPlayableDay(p.raw, [...(playsOn.get(p.proTeamId) ?? [])], todaySp, dayOf);
+  }
 
   let lost = 0;
   for (const sp of scoringPeriods) {
     const withGame = players.filter((p: any) => !p.onIR && playsOn.get(p.proTeamId)?.has(sp));
     const played = new Set(hasPlayed ? withGame.filter((p: any) => hasPlayed(p.raw, sp)) : []);
     const starting: typeof players = withGame.filter((p: any) => played.has(p) && p.starter);
-    // OUT players don't start; one who already played still holds his spot.
+    // OUT players miss their next game and any before ESPN's return date;
+    // one who already played still holds his spot.
     const playing = withGame
-      .filter((p: any) => !played.has(p) && p.status !== 'OUT')
+      .filter((p: any) => !played.has(p) && sp >= p.from)
       .sort((a: any, b: any) => b.avg - a.avg);
     for (const p of playing) {
       if (allFit([...starting, p].map((x: any) => x.eligible))) { starting.push(p); p.games++; }
@@ -192,8 +229,8 @@ export function projectRestOfWeek(
   hasPlayed?: (player: any, scoringPeriodId: number) => boolean,
 ): { games: number; projectedPoints: number; roster: ProjectedPlayer[] } {
   const parts = [
-    projectTeam(todayTeam, remaining.filter(sp => sp <= today), schedules, season, week, hasPlayed),
-    projectTeam(nextTeam ?? todayTeam, remaining.filter(sp => sp > today), schedules, season, week, hasPlayed),
+    projectTeam(todayTeam, remaining.filter(sp => sp <= today), schedules, season, week, hasPlayed, today),
+    projectTeam(nextTeam ?? todayTeam, remaining.filter(sp => sp > today), schedules, season, week, hasPlayed, today),
   ];
   return {
     games: parts[0].games + parts[1].games,

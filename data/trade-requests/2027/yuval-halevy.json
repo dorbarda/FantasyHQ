@@ -11,7 +11,169 @@
       "note": "Someone offered me a trade: Alexar and Okungu and I get Walker Kessler. What do you think?",
       "createdAt": "2026-11-19T20:49:10.160Z",
       "by": "owner",
-      "status": "pending"
+      "status": "answered",
+      "answer": {
+        "answeredAt": "2026-11-20T07:50:04.520Z",
+        "inputGeneratedAt": "2026-11-20T07:49:12.665Z",
+        "summary": "Sarr is worth a solid starter, not a star. His projection is 36.6 (rank 66) and he averages 29.2 this season, but 40.8 over the last 7 days, so his stock is high right now. The offer you got (Sarr + Okongwu for Kessler) costs you two starters, 36.6 and 34.8 projected, for one center at 38.6 who plays 1 game this week. I'd decline it as is. Best of my ideas: Sarr + Jalen Smith for Kessler, same target but Smith is the throw-in instead of Okongwu.",
+        "trades": [
+          {
+            "partnerOwner": "Dor Barda",
+            "partnerTeamName": "Nordau Peaky Blinder🚬",
+            "give": [
+              {
+                "playerId": 5160992,
+                "name": "Alex Sarr",
+                "proTeam": "WAS",
+                "positions": [
+                  "PF",
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 29.2,
+                "avgLast15": 32,
+                "avgProjected": 36.6,
+                "gamesRestOfRegularSeason": 43,
+                "gamesPlayoffs": 14
+              },
+              {
+                "playerId": 4397189,
+                "name": "Jalen Smith",
+                "proTeam": "CHI",
+                "positions": [
+                  "PF",
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 32.1,
+                "avgLast15": 36.3,
+                "avgProjected": 22.4,
+                "gamesRestOfRegularSeason": 44,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4433136,
+                "name": "Walker Kessler",
+                "proTeam": "LAL",
+                "positions": [
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 39.5,
+                "avgLast15": 38,
+                "avgProjected": 38.6,
+                "gamesRestOfRegularSeason": 43,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "consolidation",
+              "sell-high"
+            ],
+            "whyForYou": "This is selling high on Jalen Smith, who averages 32.1 and 39 over the last 7 days against a projection of only 22.4, and you keep Okongwu. Sarr and Smith turn two mid-level bigs into Walker Kessler, projected 38.6 (rank 49) and 14 playoff games.",
+            "whyTheyAccept": "Dor Barda has only Jarrett Allen as a second center and a roster full of short-term pickups. He gets two healthy bigs with 2 games each this week, 4 combined, instead of Kessler's 1.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 1
+            }
+          },
+          {
+            "partnerOwner": "Dor Gelless",
+            "partnerTeamName": "Flint Tropics 70's Show",
+            "give": [
+              {
+                "playerId": 5160992,
+                "name": "Alex Sarr",
+                "proTeam": "WAS",
+                "positions": [
+                  "PF",
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 29.2,
+                "avgLast15": 32,
+                "avgProjected": 36.6,
+                "gamesRestOfRegularSeason": 43,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4278104,
+                "name": "Michael Porter Jr.",
+                "proTeam": "BKN",
+                "positions": [
+                  "SF",
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 33.4,
+                "avgLast15": 29.8,
+                "avgProjected": 38.9,
+                "gamesRestOfRegularSeason": 44,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "buy-low"
+            ],
+            "whyForYou": "Buying low on Michael Porter Jr.: he averages 33.4 this season but is projected at 38.9 (rank 44), above Sarr's 36.6. You get an SF/PF while Edwards is on IR and Caleb Wilson is OUT, and the playoff games match at 14.",
+            "whyTheyAccept": "Dor Gelless is 0-4 and wants games now. Sarr plays 2 games this week against MPJ's 1, he is hot at 40.8 over the last 7 days, and he is a PF/C while Zubac and Poeltl are his only centers, projected at 35.5 and 31.7 but averaging 21.5 and 22.9.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          },
+          {
+            "partnerOwner": "Yotam Goldin",
+            "partnerTeamName": "PlottKe",
+            "give": [
+              {
+                "playerId": 5160992,
+                "name": "Alex Sarr",
+                "proTeam": "WAS",
+                "positions": [
+                  "PF",
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 29.2,
+                "avgLast15": 32,
+                "avgProjected": 36.6,
+                "gamesRestOfRegularSeason": 43,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "get": [
+              {
+                "playerId": 3064514,
+                "name": "Julius Randle",
+                "proTeam": "BKN",
+                "positions": [
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 32.8,
+                "avgLast15": 34.3,
+                "avgProjected": 37,
+                "gamesRestOfRegularSeason": 44,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "playoff-schedule"
+            ],
+            "whyForYou": "A like-for-like swap for Julius Randle: projection 37.0 (rank 60) against Sarr's 36.6, and he averages 32.8 this season to Sarr's 29.2. It's a safe floor if you want to move Sarr without risk.",
+            "whyTheyAccept": "Yotam is 0-4 with Haliburton, Leonard and Murphy hurt. Sarr gives him 2 games this week against Randle's 1, with the same 14 playoff games, at almost the same projection.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          }
+        ]
+      }
     }
   ]
 }

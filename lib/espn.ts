@@ -921,7 +921,7 @@ export interface NightLineupTeam {
   teamId: number;
   teamName: string;
   ownerName: string;
-  starters: Array<{ playerName: string; proTeamId: number; fantasyPoints: number; played: boolean }>;
+  starters: Array<{ playerId: number; playerName: string; proTeamId: number; fantasyPoints: number; played: boolean }>;
 }
 
 /**
@@ -946,7 +946,7 @@ export async function getNightLineups(scoringPeriodId: number): Promise<NightLin
         );
         const fantasyPoints = dayStat?.appliedTotal || 0;
         const minutes = dayStat?.stats?.['40'] || 0;
-        return { playerName: p.fullName, proTeamId: p.proTeamId, fantasyPoints, played: minutes > 0 || fantasyPoints !== 0 };
+        return { playerId: p.id, playerName: p.fullName, proTeamId: p.proTeamId, fantasyPoints, played: minutes > 0 || fantasyPoints !== 0 };
       }),
   }));
 }

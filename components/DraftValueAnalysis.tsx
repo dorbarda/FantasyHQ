@@ -1,5 +1,6 @@
 import { DraftBoardData, DraftPick, DraftGrade } from '@/lib/types';
 import NbaLogo from '@/components/NbaLogo';
+import PlayerHeadshot from '@/components/PlayerHeadshot';
 
 interface Props {
   data: DraftBoardData;
@@ -287,8 +288,13 @@ export default function DraftValueAnalysis({ data }: Props) {
                 return (
                   <tr key={pick.playerId} className="border-b border-border last:border-0 hover:bg-panel/40">
                     <td className="px-4 py-2">
-                      <p className={`text-[12px] font-semibold ${isINJ ? 'text-secondary line-through' : 'text-foreground'}`}>{pick.playerName}</p>
-                      <p className="text-[10px] text-secondary">{pick.position} · <NbaLogo team={pick.proTeam} size={12} className="mr-0.5 -mt-0.5" />{pick.proTeam} · {firstName(pick.ownerName)}</p>
+                      <div className="flex items-center gap-2">
+                        <PlayerHeadshot playerId={pick.playerId} name={pick.playerName} size={30} />
+                        <div className="min-w-0">
+                          <p className={`text-[12px] font-semibold ${isINJ ? 'text-secondary line-through' : 'text-foreground'}`}>{pick.playerName}</p>
+                          <p className="text-[10px] text-secondary">{pick.position} · <NbaLogo team={pick.proTeam} size={12} className="mr-0.5 -mt-0.5" />{pick.proTeam} · {firstName(pick.ownerName)}</p>
+                        </div>
+                      </div>
                     </td>
                     <td className="px-3 py-2 text-center text-[12px] font-semibold tabular-nums text-muted">#{pick.overallPick}</td>
                     <td className="px-3 py-2 text-center text-[12px] tabular-nums text-muted">

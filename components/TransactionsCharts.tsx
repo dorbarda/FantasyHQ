@@ -55,7 +55,8 @@ function TopPlayersChart({ players }: { players: TransactionsData['topAddedPlaye
             {i + 1}
           </span>
 
-          <div className="w-[170px] shrink-0">
+          <PlayerHeadshot playerId={p.playerId} name={p.playerName} size={32} />
+          <div className="w-[130px] sm:w-[170px] shrink-0">
             <p className="text-[13px] font-semibold text-foreground leading-tight truncate">
               {p.playerName}
             </p>

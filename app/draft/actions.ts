@@ -14,6 +14,7 @@ export interface PlayerSeasonData {
 }
 
 export interface PlayerHistoryResult {
+  playerId?: number;
   playerName: string;
   seasons: PlayerSeasonData[];
   avgPick: number;
@@ -46,7 +47,7 @@ export async function searchPlayerHistory(query: string): Promise<PlayerHistoryR
   );
 
   // Map: normalized player name → seasons[]
-  const map = new Map<string, { canonical: string; seasons: PlayerSeasonData[] }>();
+  const map = new Map<string, { canonical: string; playerId?: number; seasons: PlayerSeasonData[] }>();
 
   boards.forEach((result, idx) => {
     if (result.status !== 'fulfilled') return;
@@ -57,6 +58,9 @@ export async function searchPlayerHistory(query: string): Promise<PlayerHistoryR
 
       if (!map.has(normalized)) {
         map.set(normalized, { canonical: pick.playerName, seasons: [] });
+      }
+      if (pick.playerId > 0 && !map.get(normalized)!.playerId) {
+        map.get(normalized)!.playerId = pick.playerId;
       }
       map.get(normalized)!.seasons.push({
         year: board.year,
@@ -75,12 +79,13 @@ export async function searchPlayerHistory(query: string): Promise<PlayerHistoryR
 
   const results: PlayerHistoryResult[] = [];
 
-  map.forEach(({ canonical, seasons }) => {
+  map.forEach(({ canonical, playerId, seasons }) => {
     seasons.sort((a, b) => a.year - b.year);
     const avgPick = Math.round(
       seasons.reduce((sum, s) => sum + s.overallPick, 0) / seasons.length
     );
     results.push({
+      playerId,
       playerName: canonical,
       seasons,
       avgPick,

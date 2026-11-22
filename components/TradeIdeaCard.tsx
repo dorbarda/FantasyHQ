@@ -1,6 +1,7 @@
 import OwnerAvatar from './OwnerAvatar';
 import type { TradeIdea, TradePlayerCard, TradeAngle, DiagnosisFlag } from '@/lib/trade-output';
 import NbaLogo from '@/components/NbaLogo';
+import PlayerHeadshot from '@/components/PlayerHeadshot';
 
 export const ANGLE_LABELS: Record<TradeAngle, string> = {
   'sell-high': 'Sell high',
@@ -35,7 +36,9 @@ const fmt = (n: number | null) => (n === null ? '–' : n.toFixed(1));
 function PlayerRow({ p }: { p: TradePlayerCard }) {
   const hurt = p.injuryStatus !== 'ACTIVE';
   return (
-    <li className="py-2 border-b border-border last:border-0">
+    <li className="py-2 border-b border-border last:border-0 flex gap-2.5">
+      <PlayerHeadshot playerId={p.playerId} name={p.name} size={36} className="mt-0.5" />
+      <div className="min-w-0 flex-1">
       <div className="flex items-baseline justify-between gap-2">
         <p className="text-[14px] font-bold text-foreground truncate">{p.name}</p>
         {hurt && (
@@ -50,6 +53,7 @@ function PlayerRow({ p }: { p: TradePlayerCard }) {
       <p className="type-stat text-[12px] text-foreground mt-0.5">
         {fmt(p.avgSeason)} avg · {fmt(p.avgProjected)} proj · {p.gamesPlayoffs} playoff games
       </p>
+      </div>
     </li>
   );
 }

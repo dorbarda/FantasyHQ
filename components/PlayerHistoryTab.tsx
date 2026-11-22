@@ -4,6 +4,7 @@ import { useState, useTransition, useCallback } from 'react';
 import { searchPlayerHistory, PlayerHistoryResult, PlayerSeasonData } from '@/app/draft/actions';
 import type { DraftGrade } from '@/lib/types';
 import NbaLogo from '@/components/NbaLogo';
+import PlayerHeadshot from '@/components/PlayerHeadshot';
 
 // ─── Grade badge (mirrors DraftValueAnalysis) ────────────────────────────────
 
@@ -131,11 +132,14 @@ function PlayerCard({ result }: { result: PlayerHistoryResult }) {
     <div className="border border-border rounded-lg overflow-hidden bg-surface">
       {/* Header */}
       <div className="px-5 py-4 border-b border-border bg-surface-secondary flex items-start justify-between gap-4">
-        <div>
+        <div className="flex items-center gap-3 min-w-0">
+          <PlayerHeadshot playerId={result.playerId} name={result.playerName} size={44} />
+          <div className="min-w-0">
           <p className="text-[16px] font-semibold text-foreground">{result.playerName}</p>
           <p className="text-[12px] text-secondary mt-0.5">
             {result.seasons[0].position} · <NbaLogo team={result.seasons[0].proTeam} size={14} className="mr-0.5 -mt-0.5" />{result.seasons[0].proTeam}
           </p>
+          </div>
         </div>
         <div className="flex gap-5 text-right shrink-0">
           <div>

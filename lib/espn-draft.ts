@@ -315,6 +315,7 @@ export async function getDraftBoard(year: number): Promise<DraftBoardData> {
 // ─── Favourite player aggregation ─────────────────────────────────────────────
 
 export interface FavouritePlayer {
+  playerId?: number;
   playerName: string;
   position: string;
   proTeam: string;
@@ -330,7 +331,7 @@ export async function getDraftCountsByOwner(): Promise<Record<string, FavouriteP
   const results = await Promise.allSettled(DRAFT_YEARS.map(getDraftBoard));
 
   // ownerName → playerName → accumulated data
-  const raw: Record<string, Record<string, { playerName: string; position: string; proTeam: string; years: number[] }>> = {};
+  const raw: Record<string, Record<string, { playerId?: number; playerName: string; position: string; proTeam: string; years: number[] }>> = {};
 
   for (const r of results) {
     if (r.status !== 'fulfilled') continue;
@@ -342,6 +343,7 @@ export async function getDraftCountsByOwner(): Promise<Record<string, FavouriteP
         entry.years.push(year);
       } else {
         raw[pick.ownerName][pick.playerName] = {
+          playerId:   pick.playerId > 0 ? pick.playerId : undefined,
           playerName: pick.playerName,
           position:   pick.position,
           proTeam:    pick.proTeam,

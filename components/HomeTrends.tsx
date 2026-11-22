@@ -3,6 +3,7 @@ import OwnerAvatar from '@/components/OwnerAvatar';
 import { rankGain, type TrendPlayer } from '@/lib/player-trends';
 import type { PowerRankingEntry } from '@/lib/power-rankings';
 import NbaLogo from '@/components/NbaLogo';
+import PlayerHeadshot from '@/components/PlayerHeadshot';
 
 /** Home page side column: last-30 leaders, surprises & busts, power rankings. */
 
@@ -31,6 +32,7 @@ function PlayerLine({ p, i, children }: { p: TrendPlayer; i: number; children: R
   return (
     <li className="flex items-center gap-3 px-4 py-2.5 border-b border-border last:border-b-0">
       <span className={`w-4 text-[13px] font-bold tabular-nums ${i === 0 ? 'text-accent' : 'text-muted'}`}>{i + 1}</span>
+      <PlayerHeadshot playerId={p.playerId} name={p.name} size={32} />
       <div className="flex-1 min-w-0">
         <p className="text-[13px] font-semibold text-foreground truncate">
           {p.name}

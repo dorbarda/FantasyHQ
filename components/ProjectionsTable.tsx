@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import type { ProjectionRow, StatLine } from '@/lib/espn-projections';
 import NbaLogo from '@/components/NbaLogo';
+import PlayerHeadshot from '@/components/PlayerHeadshot';
 
 interface Props {
   rows: ProjectionRow[];
@@ -42,6 +43,7 @@ const playerCol: Col = {
   value: r => r.name,
   render: r => (
     <>
+      <PlayerHeadshot playerId={r.playerId} name={r.name} size={26} className="inline-flex align-middle mr-2" />
       <span className="text-[13px] font-semibold text-foreground">{r.name}</span>
       <span className="text-[11px] text-muted ml-2 whitespace-nowrap">{r.position} · <NbaLogo team={r.proTeam} size={12} className="mr-0.5 -mt-0.5" />{r.proTeam}</span>
     </>

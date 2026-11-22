@@ -41,6 +41,7 @@ export async function buildNightlySnapshot(): Promise<NightlyRecap | null> {
           t.starters
             .filter(p => p.played)
             .map<NightPlayer>(p => ({
+              playerId: p.playerId,
               playerName: p.playerName,
               proTeam: PRO_TEAM_ABBREV[p.proTeamId] ?? '',
               fantasyPoints: round1(p.fantasyPoints),

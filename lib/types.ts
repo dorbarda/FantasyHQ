@@ -428,6 +428,8 @@ export interface TradedPlayer {
   playerName: string;
   proTeam: string;
   position: string;
+  /** Points before vs since the trade (lib/trade-tracker.ts). Missing in old snapshots. */
+  tracker?: import('./trade-tracker').TradedPlayerTracker;
 }
 
 export interface TradeTeam {
@@ -439,6 +441,8 @@ export interface TradeTeam {
 export interface TradeEvent {
   tradeId: string;
   date: number; // ms timestamp
+  /** Scoring period (day) the trade went through; games after it count as "since trade". */
+  tradePeriod?: number;
   teamA: TradeTeam;
   teamB: TradeTeam;
   teamAReceived: TradedPlayer[];

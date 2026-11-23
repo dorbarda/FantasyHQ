@@ -1,14 +1,21 @@
 {
   "season": 2027,
   "week": 6,
-  "updatedAt": "2026-11-23T04:01:34.226Z",
+  "updatedAt": "2026-11-23T06:01:48.326Z",
   "days": [],
   "teams": {},
   "matchups": [
     {
       "homeTeamId": 9,
       "awayTeamId": 5,
-      "homeWinProb": []
+      "homeWinProb": [],
+      "changes": [
+        {
+          "at": "2026-11-23T06:01:48.326Z",
+          "day": 0,
+          "homeWinProb": 0.906
+        }
+      ]
     },
     {
       "homeTeamId": 11,
@@ -23,12 +30,26 @@
     {
       "homeTeamId": 1,
       "awayTeamId": 10,
-      "homeWinProb": []
+      "homeWinProb": [],
+      "changes": [
+        {
+          "at": "2026-11-23T06:01:48.326Z",
+          "day": 0,
+          "homeWinProb": 0.173
+        }
+      ]
     },
     {
       "homeTeamId": 8,
       "awayTeamId": 2,
-      "homeWinProb": []
+      "homeWinProb": [],
+      "changes": [
+        {
+          "at": "2026-11-23T06:01:48.326Z",
+          "day": 0,
+          "homeWinProb": 0.321
+        }
+      ]
     }
   ],
   "rosters": {

@@ -105,11 +105,14 @@ function PickCell({ pick, pool, mode }: { pick: DraftPick; pool: number; mode: M
   const isINJ = mode.grade(pick) === 'INJ';
   return (
     <div className="h-full flex flex-col justify-between gap-0.5">
-      <div>
+      <div className="flex items-start gap-1.5 min-w-0">
+        <PlayerHeadshot playerId={pick.playerId} name={pick.playerName} size={22} className="mt-px" />
+        <div className="min-w-0">
         <p className={`text-[11px] font-semibold leading-tight truncate ${isINJ ? 'text-secondary line-through' : 'text-foreground'}`}>
           {pick.playerName}
         </p>
         <p className="text-[10px] text-secondary truncate">{pick.position} · <NbaLogo team={pick.proTeam} size={12} className="mr-0.5 -mt-0.5" />{pick.proTeam}</p>
+        </div>
       </div>
       <p className="text-[10px] text-muted tabular-nums">
         Pick #{pick.overallPick} → {isINJ ? 'DNP' : `${mode.rankLabel} ${fmtRank(mode.rank(pick), pool)}`}

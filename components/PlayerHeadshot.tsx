@@ -2,9 +2,13 @@
 
 import { useState } from 'react';
 
-/** ESPN headshot (fantasy player ids are ESPN athlete ids); initials when ESPN has none. */
-export default function PlayerHeadshot({ playerId, name, size = 40, className = '' }: {
-  playerId?: number | string | null; name: string; size?: number; className?: string;
+/**
+ * Player headshot; initials when there is no photo.
+ * source 'espn' (default): ESPN ids — fantasy player ids are ESPN athlete ids.
+ * source 'nba': NBA.com ids (stats.nba.com data, e.g. the NBA stat leaders).
+ */
+export default function PlayerHeadshot({ playerId, name, size = 40, className = '', source = 'espn' }: {
+  playerId?: number | string | null; name: string; size?: number; className?: string; source?: 'espn' | 'nba';
 }) {
   const [failed, setFailed] = useState(false);
   // Accepts ids like `p3112335` (lib/espn.ts getPlayers) as well as numbers.
@@ -21,7 +25,9 @@ export default function PlayerHeadshot({ playerId, name, size = 40, className = 
       ) : (
         // eslint-disable-next-line @next/next/no-img-element -- remote ESPN headshot, fixed size
         <img
-          src={`https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/${id}.png&w=96&h=70&cb=1`}
+          src={source === 'nba'
+            ? `https://cdn.nba.com/headshots/nba/latest/260x190/${id}.png`
+            : `https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/${id}.png&w=96&h=70&cb=1`}
           alt=""
           loading="lazy"
           onError={() => setFailed(true)}

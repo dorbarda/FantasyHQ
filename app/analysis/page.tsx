@@ -59,15 +59,25 @@ function computeAnalytics(rows: MatchupDepthRow[]): {
   }
 
   // Expected wins per team: for each week, fraction of opponents you'd beat
-  const expectedWinsMap: Record<string, number> = {};
-  for (const weekRows of Object.values(byWeek)) {
-    const n = weekRows.length;
-    for (const row of weekRows) {
-      const beaten = weekRows.filter((r: MatchupDepthRow) => r.teamId !== row.teamId && r.teamScore < row.teamScore).length;
-      const ew = n > 1 ? beaten / (n - 1) : 0;
-      expectedWinsMap[row.teamId] = (expectedWinsMap[row.teamId] ?? 0) + ew;
+  const expectedWinsThrough = (lastWeek: number): Record<string, number> => {
+    const map: Record<string, number> = {};
+    for (const [week, weekRows] of Object.entries(byWeek)) {
+      if (Number(week) > lastWeek) continue;
+      const n = weekRows.length;
+      for (const row of weekRows) {
+        const beaten = weekRows.filter((r: MatchupDepthRow) => r.teamId !== row.teamId && r.teamScore < row.teamScore).length;
+        const ew = n > 1 ? beaten / (n - 1) : 0;
+        map[row.teamId] = (map[row.teamId] ?? 0) + ew;
+      }
     }
-  }
+    return map;
+  };
+  const latestWeek = Math.max(...Object.keys(byWeek).map(Number));
+  const expectedWinsMap = expectedWinsThrough(latestWeek);
+  // Luck as it stood a week ago (all weeks before the latest one) — for the ▲▼ change.
+  const prevWeek = latestWeek - 1;
+  const hasPrev = Object.keys(byWeek).some(w => Number(w) <= prevWeek);
+  const prevExpectedWinsMap = hasPrev ? expectedWinsThrough(prevWeek) : null;
 
   // Build per-team analytics
   const teams: TeamAnalytics[] = [];
@@ -139,12 +149,21 @@ function computeAnalytics(rows: MatchupDepthRow[]): {
     wins: t.wins,
   }));
 
-  const luckEntries: LuckDeltaEntry[] = teams.map(t => ({
-    ownerName: t.ownerName,
-    luckDelta: t.luckDelta,
-    wins: t.wins,
-    expectedWins: t.expectedWins,
-  }));
+  const luckEntries: LuckDeltaEntry[] = teams.map(t => {
+    let change: number | null = null;
+    if (prevExpectedWinsMap) {
+      const prevWins = byTeam[t.teamId].filter(r => r.won === true && r.matchupPeriod <= prevWeek).length;
+      const prevLuck = prevWins - (prevExpectedWinsMap[t.teamId] ?? 0);
+      change = t.luckDelta - prevLuck;
+    }
+    return {
+      ownerName: t.ownerName,
+      luckDelta: t.luckDelta,
+      wins: t.wins,
+      expectedWins: t.expectedWins,
+      change,
+    };
+  });
 
   return {
     teams,
@@ -294,7 +313,7 @@ export default async function AnalysisPage() {
             Luck Delta
           </p>
           <p className="text-[11px] text-secondary mb-4">
-            Actual wins minus expected wins — positive means you&apos;ve been lucky
+            Actual wins minus expected wins — positive means you&apos;ve been lucky · ▲▼ = change from last week
           </p>
           <LuckDeltaChart entries={luckEntries} />
         </section>

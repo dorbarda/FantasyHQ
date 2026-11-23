@@ -7,6 +7,7 @@ import type { TeamProjection } from '@/lib/week-projections';
 import { teamLogoSrc } from '@/lib/team-logos';
 import { weekdayLabel, type DayLine, type MatchupDaily } from '@/lib/week-daily';
 import NbaLogo from '@/components/NbaLogo';
+import PlayerHeadshot from '@/components/PlayerHeadshot';
 
 interface Props {
   matchup: Matchup;
@@ -67,7 +68,9 @@ function KeyPlayers({ team }: { team: TeamProjection }) {
       <p className="text-[12px] font-semibold text-foreground truncate mb-1.5">{team.teamName}</p>
       <ul className="space-y-1.5">
         {team.keyPlayers.map(p => (
-          <li key={p.name} className="rounded-md bg-surface-secondary px-2.5 py-1.5">
+          <li key={p.name} className="rounded-md bg-surface-secondary px-2.5 py-1.5 flex items-center gap-2">
+            <PlayerHeadshot playerId={p.id} name={p.name} size={30} />
+            <div className="min-w-0">
             <p className="text-[13px] font-medium text-foreground truncate">{p.name}</p>
             <p className="text-[11px] text-secondary tabular-nums">
               {p.pos} · <NbaLogo team={p.nba} size={12} className="mr-0.5 -mt-0.5" />{p.nba} · avg {fmt(p.avg)} ·{' '}
@@ -75,6 +78,7 @@ function KeyPlayers({ team }: { team: TeamProjection }) {
                 {p.games} {p.games === 1 ? 'game' : 'games'}
               </span>
             </p>
+            </div>
           </li>
         ))}
       </ul>

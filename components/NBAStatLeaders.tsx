@@ -1,5 +1,6 @@
 import type { NBAStatLeader, NBAStatLeadersData } from '@/lib/types';
 import NbaLogo from '@/components/NbaLogo';
+import PlayerHeadshot from '@/components/PlayerHeadshot';
 
 interface Props {
   leaders: NBAStatLeadersData;
@@ -61,6 +62,8 @@ function StatCard({
               >
                 {p.rank === 1 ? '🥇' : p.rank === 2 ? '🥈' : '🥉'}
               </span>
+
+              <PlayerHeadshot playerId={p.playerId} name={p.playerName} size={32} source="nba" />
 
               {/* Player info */}
               <div className="flex-1 min-w-0">

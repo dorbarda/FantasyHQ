@@ -5,6 +5,8 @@
  */
 
 export interface NightPlayer {
+  /** ESPN player id (for the headshot). Missing in old snapshots. */
+  playerId?: number;
   playerName: string;
   proTeam: string;
   fantasyPoints: number;

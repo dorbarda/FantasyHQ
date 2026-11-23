@@ -1,5 +1,6 @@
 import NbaLogo from './NbaLogo';
 import type { WeeklyTopPlayer } from '@/lib/types';
+import PlayerHeadshot from '@/components/PlayerHeadshot';
 
 /**
  * The week's top 10 NBA players on league rosters, by total fantasy points
@@ -25,6 +26,7 @@ export default function RecapTopPlayers({ players }: { players: WeeklyTopPlayer[
             className="flex items-center gap-3 px-4 py-2.5 border-t border-surface-secondary tabular-nums"
           >
             <span className="w-5 text-right text-[12px] font-bold text-muted">{i + 1}</span>
+            <PlayerHeadshot playerId={p.playerId} name={p.playerName} size={32} />
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5 min-w-0">
                 <NbaLogo team={p.proTeam} size={16} />

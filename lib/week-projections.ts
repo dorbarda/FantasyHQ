@@ -30,6 +30,8 @@ export function last15Weight(week: number): number {
 }
 
 export interface ProjectedPlayer {
+  /** ESPN player id (for the headshot). */
+  id?: number;
   name: string;
   pos: string;
   nba: string;
@@ -193,7 +195,7 @@ export function projectTeam(
   }
 
   const roster: ProjectedPlayer[] = players.map((p: any) => ({
-    name: p.name, pos: p.pos, nba: p.nba, status: p.status, onIR: p.onIR,
+    id: p.raw?.id, name: p.name, pos: p.pos, nba: p.nba, status: p.status, onIR: p.onIR,
     avg: p.avg, games: p.games, projected: round1(p.avg * p.games),
   }));
 

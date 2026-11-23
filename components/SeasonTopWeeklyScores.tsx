@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import NbaLogo from './NbaLogo';
 import type { TopWeeklyScore } from '@/lib/recap';
+import PlayerHeadshot from '@/components/PlayerHeadshot';
 
 /**
  * The season's 10 best single-week player totals, from the weekly recap's
@@ -27,6 +28,7 @@ export default function SeasonTopWeeklyScores({ scores }: { scores: TopWeeklySco
             className="flex items-center gap-3 px-4 py-2.5 border-t border-surface-secondary tabular-nums"
           >
             <span className="w-5 text-right text-[12px] font-bold text-muted">{i + 1}</span>
+            <PlayerHeadshot playerId={p.playerId} name={p.playerName} size={32} />
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5 min-w-0">
                 <NbaLogo team={p.proTeam} size={16} />

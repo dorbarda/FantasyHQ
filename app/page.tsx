@@ -30,6 +30,7 @@ import {
   type NightPlayer,
 } from '@/lib/nightly';
 import NbaLogo from '@/components/NbaLogo';
+import PlayerHeadshot from '@/components/PlayerHeadshot';
 
 export const revalidate = 1800;
 
@@ -129,6 +130,7 @@ function TopPlayersCard({ players }: { players: NightPlayer[] }) {
             <span className={`w-5 text-[15px] font-bold tabular-nums ${i === 0 ? 'text-accent' : 'text-muted'}`}>
               {i + 1}
             </span>
+            <PlayerHeadshot playerId={p.playerId} name={p.playerName} size={40} />
             <div className="flex-1 min-w-0">
               <p className="text-[15px] font-semibold text-foreground truncate">
                 {p.playerName}

@@ -17,6 +17,7 @@ import { loadScheduleSeason } from './schedule-data';
 import { weeksOf } from './espn-schedule';
 import { projectRestOfWeek } from './week-projections';
 import { attachInjuryDetails } from './espn-injuries';
+import { gameLines, gameLogRequest, periodFromSchedule, periodOfDate, trackPlayer, type GameLine } from './trade-tracker';
 
 const ESPN_S2 = process.env.ESPN_S2;
 const SWID = process.env.SWID;
@@ -920,7 +921,7 @@ export interface NightLineupTeam {
   teamId: number;
   teamName: string;
   ownerName: string;
-  starters: Array<{ playerName: string; proTeamId: number; fantasyPoints: number; played: boolean }>;
+  starters: Array<{ playerId: number; playerName: string; proTeamId: number; fantasyPoints: number; played: boolean }>;
 }
 
 /**
@@ -945,7 +946,7 @@ export async function getNightLineups(scoringPeriodId: number): Promise<NightLin
         );
         const fantasyPoints = dayStat?.appliedTotal || 0;
         const minutes = dayStat?.stats?.['40'] || 0;
-        return { playerName: p.fullName, proTeamId: p.proTeamId, fantasyPoints, played: minutes > 0 || fantasyPoints !== 0 };
+        return { playerId: p.id, playerName: p.fullName, proTeamId: p.proTeamId, fantasyPoints, played: minutes > 0 || fantasyPoints !== 0 };
       }),
   }));
 }
@@ -1145,6 +1146,10 @@ export async function getTransactions(): Promise<TransactionsData> {
 
   // Build trade history (two-team trades only; sort newest first)
   const trades: TradeEvent[] = [];
+  const schedule = rawTrades.length > 0 ? await loadScheduleSeason() : null;
+  const tradePeriodOf = (ms: number) =>
+    (schedule && periodFromSchedule(ms, schedule.schedules)) ??
+    periodOfDate(ms, currentScoringPeriod, Date.now());
   for (const tx of rawTrades) {
     const seenMovements = new Set<string>();
     const movements: { playerId: number; fromTeamId: number; toTeamId: number }[] = [];
@@ -1175,9 +1180,11 @@ export async function getTransactions(): Promise<TransactionsData> {
     const metaA = teamMeta[teamAId] || { name: `Team ${teamAId}`, owner: 'Unknown' };
     const metaB = teamMeta[teamBId] || { name: `Team ${teamBId}`, owner: 'Unknown' };
 
+    const date = tx.processDate || tx.executionDate || 0;
     trades.push({
       tradeId: tx.id,
-      date: tx.processDate || tx.executionDate || 0,
+      date,
+      tradePeriod: tradePeriodOf(date),
       teamA: { teamId: teamAId, teamName: metaA.name, ownerName: metaA.owner },
       teamB: { teamId: teamBId, teamName: metaB.name, ownerName: metaB.owner },
       teamAReceived: movements.filter(m => m.toTeamId === teamAId).map(m => makePlayer(m.playerId)),
@@ -1185,6 +1192,27 @@ export async function getTransactions(): Promise<TransactionsData> {
     });
   }
   trades.sort((a, b) => b.date - a.date);
+
+  // Trades tracker: each traded player's points before vs since the trade.
+  if (trades.length > 0) {
+    try {
+      const ids = [...new Set(trades.flatMap(t => [...t.teamAReceived, ...t.teamBReceived].map(p => p.playerId)))];
+      const { params, headers } = gameLogRequest(ids, SEASON);
+      const cards = await espnFetch(params, headers);
+      const linesById = new Map<number, GameLine[]>();
+      for (const x of (cards?.players || []) as any[]) {
+        if (x?.player?.id) linesById.set(x.player.id, gameLines(x.player, SEASON));
+      }
+      for (const t of trades) {
+        for (const p of [...t.teamAReceived, ...t.teamBReceived]) {
+          const lines = linesById.get(p.playerId);
+          if (lines && t.tradePeriod != null) p.tracker = trackPlayer(lines, t.tradePeriod);
+        }
+      }
+    } catch (err) {
+      console.error('Trade tracker fetch failed:', err);
+    }
+  }
 
   return { topAddedPlayers, addsByNbaTeam, byFantasyTeam, totalAdds, trades };
 }

@@ -1,5 +1,6 @@
 import { DraftBoardData, DraftPick, DraftGrade } from '@/lib/types';
 import NbaLogo from '@/components/NbaLogo';
+import PlayerHeadshot from '@/components/PlayerHeadshot';
 
 interface Props {
   data: DraftBoardData;
@@ -104,11 +105,14 @@ function PickCell({ pick, pool, mode }: { pick: DraftPick; pool: number; mode: M
   const isINJ = mode.grade(pick) === 'INJ';
   return (
     <div className="h-full flex flex-col justify-between gap-0.5">
-      <div>
+      <div className="flex items-start gap-1.5 min-w-0">
+        <PlayerHeadshot playerId={pick.playerId} name={pick.playerName} size={22} className="mt-px" />
+        <div className="min-w-0">
         <p className={`text-[11px] font-semibold leading-tight truncate ${isINJ ? 'text-secondary line-through' : 'text-foreground'}`}>
           {pick.playerName}
         </p>
         <p className="text-[10px] text-secondary truncate">{pick.position} · <NbaLogo team={pick.proTeam} size={12} className="mr-0.5 -mt-0.5" />{pick.proTeam}</p>
+        </div>
       </div>
       <p className="text-[10px] text-muted tabular-nums">
         Pick #{pick.overallPick} → {isINJ ? 'DNP' : `${mode.rankLabel} ${fmtRank(mode.rank(pick), pool)}`}
@@ -287,8 +291,13 @@ export default function DraftValueAnalysis({ data }: Props) {
                 return (
                   <tr key={pick.playerId} className="border-b border-border last:border-0 hover:bg-panel/40">
                     <td className="px-4 py-2">
-                      <p className={`text-[12px] font-semibold ${isINJ ? 'text-secondary line-through' : 'text-foreground'}`}>{pick.playerName}</p>
-                      <p className="text-[10px] text-secondary">{pick.position} · <NbaLogo team={pick.proTeam} size={12} className="mr-0.5 -mt-0.5" />{pick.proTeam} · {firstName(pick.ownerName)}</p>
+                      <div className="flex items-center gap-2">
+                        <PlayerHeadshot playerId={pick.playerId} name={pick.playerName} size={30} />
+                        <div className="min-w-0">
+                          <p className={`text-[12px] font-semibold ${isINJ ? 'text-secondary line-through' : 'text-foreground'}`}>{pick.playerName}</p>
+                          <p className="text-[10px] text-secondary">{pick.position} · <NbaLogo team={pick.proTeam} size={12} className="mr-0.5 -mt-0.5" />{pick.proTeam} · {firstName(pick.ownerName)}</p>
+                        </div>
+                      </div>
                     </td>
                     <td className="px-3 py-2 text-center text-[12px] font-semibold tabular-nums text-muted">#{pick.overallPick}</td>
                     <td className="px-3 py-2 text-center text-[12px] tabular-nums text-muted">

@@ -7,6 +7,7 @@ import type { RecordsData, HistoricalSeason } from '@/lib/types';
 import PrintTrigger from './_components/PrintTrigger';
 import PrintButton from './_components/PrintButton';
 import Image from 'next/image';
+import PlayerHeadshot from '@/components/PlayerHeadshot';
 
 export const revalidate = 3600;
 
@@ -214,6 +215,7 @@ function TeamExportSection({
             {favourites.map((p, i) => (
               <div key={p.playerName} className="bg-background border border-border rounded-lg p-2 text-center">
                 <p className="text-[10px] font-black text-accent">#{i + 1}</p>
+                <PlayerHeadshot playerId={p.playerId} name={p.playerName} size={32} className="mx-auto my-1" />
                 <p className="text-[11px] font-bold text-foreground leading-tight mt-0.5">{p.playerName}</p>
                 <p className="text-[9px] text-tertiary mt-0.5">{p.position}{p.proTeam !== '—' ? ` · ${p.proTeam}` : ''}</p>
                 <p className="text-[13px] font-black text-accent mt-1">{p.draftCount}×</p>

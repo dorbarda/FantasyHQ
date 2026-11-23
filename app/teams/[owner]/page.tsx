@@ -9,6 +9,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import NbaLogo from '@/components/NbaLogo';
+import PlayerHeadshot from '@/components/PlayerHeadshot';
 
 export const revalidate = 3600;
 
@@ -512,6 +513,8 @@ export default async function TeamProfilePage({
                   <span className="text-[13px] font-black text-border-strong w-4 shrink-0 tabular-nums">
                     {i + 1}
                   </span>
+
+                  <PlayerHeadshot playerId={p.playerId} name={p.playerName} size={40} />
 
                   {/* Player info */}
                   <div className="flex-1 min-w-0">

@@ -1,4 +1,5 @@
-import type { TransactionsData, TradeEvent } from '@/lib/types';
+import type { TransactionsData, TradeEvent, TradedPlayer } from '@/lib/types';
+import PlayerHeadshot from '@/components/PlayerHeadshot';
 import NbaLogo from '@/components/NbaLogo';
 
 // ─── Shared bar chart primitives ──────────────────────────────────────────────
@@ -54,7 +55,8 @@ function TopPlayersChart({ players }: { players: TransactionsData['topAddedPlaye
             {i + 1}
           </span>
 
-          <div className="w-[170px] shrink-0">
+          <PlayerHeadshot playerId={p.playerId} name={p.playerName} size={32} />
+          <div className="w-[130px] sm:w-[170px] shrink-0">
             <p className="text-[13px] font-semibold text-foreground leading-tight truncate">
               {p.playerName}
             </p>
@@ -152,60 +154,105 @@ function FantasyTeamGrid({ teams }: { teams: TransactionsData['byFantasyTeam'] }
   );
 }
 
-// ─── Chart 4: Trade history ───────────────────────────────────────────────────
+// ─── Chart 4: Trades tracker ──────────────────────────────────────────────────
+
+function fmt(n: number): string {
+  return Number.isInteger(n) ? String(n) : n.toFixed(1);
+}
+
+function Change({ value }: { value: number | null }) {
+  if (value == null) return <span className="text-muted">—</span>;
+  const cls = value > 0 ? 'text-positive-text' : value < 0 ? 'text-negative-text' : 'text-secondary';
+  return <span className={`font-semibold tabular-nums ${cls}`}>{value > 0 ? '+' : ''}{fmt(value)}</span>;
+}
+
+function TrackedPlayerRow({ p }: { p: TradedPlayer }) {
+  const t = p.tracker;
+  return (
+    <div className="flex items-center gap-2 sm:gap-3 py-2">
+      <PlayerHeadshot playerId={p.playerId} name={p.playerName} size={36} />
+      <div className="min-w-0 flex-1">
+        <p className="text-[13px] font-semibold text-foreground leading-tight break-words">{p.playerName}</p>
+        <TeamBadge team={p.proTeam} />
+      </div>
+      {t ? (
+        <div className="grid grid-cols-[36px_48px_34px] sm:grid-cols-[44px_44px_44px] gap-1.5 sm:gap-2 text-right text-[12px] tabular-nums shrink-0">
+          <div>
+            <p className="font-semibold text-foreground">{fmt(t.after.pts)}</p>
+            <p className="text-[10px] text-muted whitespace-nowrap">{t.after.gp} GP</p>
+          </div>
+          <div>
+            <p className="font-semibold text-foreground">{t.after.avg != null ? fmt(t.after.avg) : '—'}</p>
+            <p className="text-[10px] text-muted whitespace-nowrap">was {t.before.avg != null ? fmt(t.before.avg) : '—'}</p>
+          </div>
+          <div className="pt-px"><Change value={t.avgChange} /></div>
+        </div>
+      ) : (
+        <span className="text-[11px] text-muted">no stats</span>
+      )}
+    </div>
+  );
+}
+
+function sideTotals(players: TradedPlayer[]) {
+  const pts = players.reduce((s, p) => s + (p.tracker?.after.pts ?? 0), 0);
+  const gp = players.reduce((s, p) => s + (p.tracker?.after.gp ?? 0), 0);
+  return { pts: Math.round(pts * 10) / 10, gp };
+}
+
+function TradeSide({ team, received, totalPts, leading }: {
+  team: TradeEvent['teamA']; received: TradedPlayer[]; totalPts: number; leading: boolean;
+}) {
+  return (
+    <div className={`rounded-lg border p-3 ${leading ? 'border-border bg-positive-surface' : 'border-border'}`}>
+      <div className="flex items-baseline justify-between gap-2">
+        <div className="min-w-0">
+          <p className="text-[14px] font-bold text-foreground truncate">{team.ownerName}</p>
+          <p className="text-[11px] text-muted truncate">{team.teamName}</p>
+        </div>
+        <div className="text-right shrink-0">
+          <p className="text-[18px] font-bold text-foreground tabular-nums leading-none">{fmt(totalPts)}</p>
+          <p className="text-[10px] text-muted uppercase tracking-wide">pts since trade</p>
+        </div>
+      </div>
+      <div className="flex items-center justify-between mt-3 text-[10px] text-secondary uppercase tracking-wide">
+        <span>Received</span>
+        <span className="grid grid-cols-[36px_48px_34px] sm:grid-cols-[44px_44px_44px] gap-1.5 sm:gap-2 text-right">
+          <span>Pts</span><span>Avg</span><span>Δ Avg</span>
+        </span>
+      </div>
+      <div className="divide-y divide-border">
+        {received.map(p => <TrackedPlayerRow key={p.playerId} p={p} />)}
+      </div>
+    </div>
+  );
+}
 
 function TradeCard({ trade }: { trade: TradeEvent }) {
   const date = new Date(trade.date).toLocaleDateString('en-US', {
-    month: 'short', day: 'numeric',
+    month: 'short', day: 'numeric', timeZone: 'America/New_York',
   });
+  const a = sideTotals(trade.teamAReceived);
+  const b = sideTotals(trade.teamBReceived);
+  const hasStats = a.gp + b.gp > 0;
+  const diff = Math.round(Math.abs(a.pts - b.pts) * 10) / 10;
+  const leader = !hasStats || a.pts === b.pts ? null : a.pts > b.pts ? trade.teamA : trade.teamB;
 
   return (
     <div className="border border-border rounded-lg bg-surface p-4">
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-[11px] text-secondary font-medium">{date}</span>
+      <div className="flex items-center justify-between gap-2 mb-3">
+        <span className="text-[12px] text-secondary font-medium">Traded {date}</span>
+        <span className="text-[12px] text-secondary">
+          {!hasStats
+            ? 'No games since the trade yet'
+            : leader
+              ? <><span className="font-semibold text-foreground">{leader.ownerName.split(' ')[0]}</span> ahead by {fmt(diff)} pts</>
+              : 'Even so far'}
+        </span>
       </div>
-
-      <div className="grid grid-cols-[1fr_auto_1fr] gap-2 items-start">
-        {/* Team A side */}
-        <div>
-          <p className="text-[12px] font-semibold text-foreground truncate">
-            {trade.teamA.ownerName.split(' ')[0]}
-          </p>
-          <p className="text-[10px] text-muted truncate mb-2">{trade.teamA.teamName}</p>
-          <p className="text-[10px] text-secondary uppercase tracking-wide mb-1">Received</p>
-          <div className="space-y-1">
-            {trade.teamAReceived.map(p => (
-              <div key={p.playerId} className="flex items-center gap-1.5">
-                <TeamBadge team={p.proTeam} />
-                <span className="text-[11px] text-foreground font-medium truncate">{p.playerName}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Arrow */}
-        <div className="flex flex-col items-center justify-center pt-4">
-          <svg className="w-4 h-4 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4M4 17h12m0 0l-4-4m4 4l-4 4" />
-          </svg>
-        </div>
-
-        {/* Team B side */}
-        <div>
-          <p className="text-[12px] font-semibold text-foreground truncate">
-            {trade.teamB.ownerName.split(' ')[0]}
-          </p>
-          <p className="text-[10px] text-muted truncate mb-2">{trade.teamB.teamName}</p>
-          <p className="text-[10px] text-secondary uppercase tracking-wide mb-1">Received</p>
-          <div className="space-y-1">
-            {trade.teamBReceived.map(p => (
-              <div key={p.playerId} className="flex items-center gap-1.5">
-                <TeamBadge team={p.proTeam} />
-                <span className="text-[11px] text-foreground font-medium truncate">{p.playerName}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <TradeSide team={trade.teamA} received={trade.teamAReceived} totalPts={a.pts} leading={leader === trade.teamA} />
+        <TradeSide team={trade.teamB} received={trade.teamBReceived} totalPts={b.pts} leading={leader === trade.teamB} />
       </div>
     </div>
   );
@@ -216,7 +263,7 @@ function TradeHistory({ trades }: { trades: TradeEvent[] }) {
     return <p className="text-[13px] text-muted">No trades this season.</p>;
   }
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <div className="space-y-3">
       {trades.map(t => <TradeCard key={t.tradeId} trade={t} />)}
     </div>
   );
@@ -279,8 +326,8 @@ export default function TransactionsCharts({ data }: { data: TransactionsData })
 
       {/* Trade history */}
       <Section
-        title="Trade History"
-        subtitle={`${data.trades.length} trade${data.trades.length !== 1 ? 's' : ''} this season · newest first`}
+        title="Trades Tracker"
+        subtitle={`${data.trades.length} trade${data.trades.length !== 1 ? 's' : ''} this season · points each player scored since the trade (from the day after) · Δ Avg = avg since trade minus avg before`}
       >
         <TradeHistory trades={data.trades} />
       </Section>

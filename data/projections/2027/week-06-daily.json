@@ -1,7 +1,7 @@
 {
   "season": 2027,
   "week": 6,
-  "updatedAt": "2026-11-24T04:01:51.136Z",
+  "updatedAt": "2026-11-24T06:01:34.810Z",
   "days": [
     {
       "date": "2026-11-23",
@@ -12,7 +12,7 @@
     "1": [
       {
         "played": 10,
-        "points": 364
+        "points": 408
       }
     ],
     "2": [
@@ -24,43 +24,43 @@
     "3": [
       {
         "played": 9,
-        "points": 309
+        "points": 327
       }
     ],
     "4": [
       {
         "played": 10,
-        "points": 337
+        "points": 350
       }
     ],
     "5": [
       {
         "played": 9,
-        "points": 226
+        "points": 241
       }
     ],
     "6": [
       {
         "played": 7,
-        "points": 184
+        "points": 231
       }
     ],
     "8": [
       {
         "played": 10,
-        "points": 246
+        "points": 306
       }
     ],
     "9": [
       {
         "played": 5,
-        "points": 138
+        "points": 202
       }
     ],
     "10": [
       {
         "played": 5,
-        "points": 137
+        "points": 142
       }
     ],
     "11": [

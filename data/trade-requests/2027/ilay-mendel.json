@@ -11,7 +11,108 @@
       "note": "אני רוצה טרייד עם הלוי",
       "createdAt": "2026-11-24T11:01:34.519Z",
       "by": "owner",
-      "status": "pending"
+      "status": "answered",
+      "answer": {
+        "answeredAt": "2026-11-24T13:51:26.932Z",
+        "inputGeneratedAt": "2026-11-24T13:50:43.022Z",
+        "summary": "Ajay Mitchell averages 30.1 (projected 32.8, rank 88) and Ilay's roster has few bigs, so Yuval Halevy is the right partner: he has two centers-type bigs in Sarr and Okongwu. I like Mitchell for Sarr best: Sarr averages 28.6 but is projected at 36.6.",
+        "trades": [
+          {
+            "partnerOwner": "Yuval Halevy",
+            "partnerTeamName": "League's American Problem",
+            "give": [
+              {
+                "playerId": 4900671,
+                "name": "Ajay Mitchell",
+                "proTeam": "OKC",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 30.1,
+                "avgLast15": 23.7,
+                "avgProjected": 32.8,
+                "gamesRestOfRegularSeason": 41,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "get": [
+              {
+                "playerId": 5160992,
+                "name": "Alex Sarr",
+                "proTeam": "WAS",
+                "positions": [
+                  "PF",
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 28.6,
+                "avgLast15": 29.5,
+                "avgProjected": 36.6,
+                "gamesRestOfRegularSeason": 41,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "buy-low",
+              "positional-need"
+            ],
+            "whyForYou": "Buying low on Alex Sarr (PF/C): he averages 28.6 this season but is projected at 36.6, and you get a big man for your guard-heavy roster.",
+            "whyTheyAccept": "Halevy gets Mitchell at 30.1 (L30 31.3) against Sarr's 28.6 now, and Edwards and Duren are OUT, so he needs a guard starter right away.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          },
+          {
+            "partnerOwner": "Yuval Halevy",
+            "partnerTeamName": "League's American Problem",
+            "give": [
+              {
+                "playerId": 4900671,
+                "name": "Ajay Mitchell",
+                "proTeam": "OKC",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 30.1,
+                "avgLast15": 23.7,
+                "avgProjected": 32.8,
+                "gamesRestOfRegularSeason": 41,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4431680,
+                "name": "Onyeka Okongwu",
+                "proTeam": "ATL",
+                "positions": [
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 32.5,
+                "avgLast15": 32.3,
+                "avgProjected": 34.8,
+                "gamesRestOfRegularSeason": 42,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "positional-need"
+            ],
+            "whyForYou": "Onyeka Okongwu is a center averaging 32.5 (projected 34.8), a better current scorer than Mitchell at 30.1, and he fills your thin big-man spots.",
+            "whyTheyAccept": "Halevy has a lot of guards but Caleb Wilson, Edwards and Duren are all OUT; Mitchell is a healthy starter with 14 playoff games, same as Okongwu.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          }
+        ]
+      }
     },
     {
       "id": "2026-11-24T11-02-35-411Z-6d2523",
@@ -22,7 +123,230 @@
       "note": "תציע לי טרייד על שחקנים בריאים שמערב שחקנים שהם ממוצע מתחת ל35 אצלי אפשר 2 על 2 וכו׳",
       "createdAt": "2026-11-24T11:02:35.411Z",
       "by": "owner",
-      "status": "pending"
+      "status": "answered",
+      "answer": {
+        "answeredAt": "2026-11-24T13:51:26.932Z",
+        "inputGeneratedAt": "2026-11-24T13:50:43.022Z",
+        "summary": "Quickley averages 33.5 (projected 34.9), so the best market is 2-for-2 or 2-for-1 packages that pair him with a below-35 player and return healthy starters. Best idea: Quickley and Kyshawn George for Bam Adebayo (43.2 average) from winless Dor Gelless.",
+        "trades": [
+          {
+            "partnerOwner": "Dor Gelless",
+            "partnerTeamName": "Flint Tropics 70's Show",
+            "give": [
+              {
+                "playerId": 4395724,
+                "name": "Immanuel Quickley",
+                "proTeam": "TOR",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 33.5,
+                "avgLast15": 32.4,
+                "avgProjected": 34.9,
+                "gamesRestOfRegularSeason": 42,
+                "gamesPlayoffs": 14
+              },
+              {
+                "playerId": 5174563,
+                "name": "Kyshawn George",
+                "proTeam": "WAS",
+                "positions": [
+                  "SG",
+                  "SF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 34.3,
+                "avgLast15": 31.5,
+                "avgProjected": 30.2,
+                "gamesRestOfRegularSeason": 41,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4066261,
+                "name": "Bam Adebayo",
+                "proTeam": "MIA",
+                "positions": [
+                  "PF",
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 43.2,
+                "avgLast15": 47.8,
+                "avgProjected": 39.6,
+                "gamesRestOfRegularSeason": 43,
+                "gamesPlayoffs": 13
+              }
+            ],
+            "angles": [
+              "consolidation",
+              "positional-need"
+            ],
+            "whyForYou": "Two players around 34 (Quickley 33.5, Kyshawn George 34.3) become Bam Adebayo, a healthy PF/C averaging 43.2 (L7 61), a real upgrade at big man.",
+            "whyTheyAccept": "Gelless is 0-5 with weak starters like Keldon Johnson (19.4) and Gillespie (24); two solid starters fill his lineup and he can spare Adebayo from a deep frontcourt.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          },
+          {
+            "partnerOwner": "Barak Miller",
+            "partnerTeamName": "Team Miller",
+            "give": [
+              {
+                "playerId": 4395724,
+                "name": "Immanuel Quickley",
+                "proTeam": "TOR",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 33.5,
+                "avgLast15": 32.4,
+                "avgProjected": 34.9,
+                "gamesRestOfRegularSeason": 42,
+                "gamesPlayoffs": 14
+              },
+              {
+                "playerId": 4278039,
+                "name": "Nickeil Alexander-Walker",
+                "proTeam": "ATL",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 33.4,
+                "avgLast15": 34.5,
+                "avgProjected": 34.1,
+                "gamesRestOfRegularSeason": 42,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "get": [
+              {
+                "playerId": 4395628,
+                "name": "Zion Williamson",
+                "proTeam": "NOP",
+                "positions": [
+                  "PF",
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 38.2,
+                "avgLast15": 35.4,
+                "avgProjected": 40,
+                "gamesRestOfRegularSeason": 40,
+                "gamesPlayoffs": 15
+              },
+              {
+                "playerId": 4278562,
+                "name": "Paul Reed",
+                "proTeam": "DET",
+                "positions": [
+                  "PF",
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 29.2,
+                "avgLast15": 30.6,
+                "avgProjected": 20.4,
+                "gamesRestOfRegularSeason": 42,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "consolidation",
+              "positional-need"
+            ],
+            "whyForYou": "Zion Williamson averages 38.2 (projected 40) and is a healthy PF/C; Paul Reed adds a healthy big at 29.2. Both of your guards give up under 35 each.",
+            "whyTheyAccept": "Curry is OUT and Ingram has played 1 game, so Miller needs guards; Quickley (33.5) and Alexander-Walker (33.4) both start for him right away.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          },
+          {
+            "partnerOwner": "Yotam Goldin",
+            "partnerTeamName": "PlottKe",
+            "give": [
+              {
+                "playerId": 4395724,
+                "name": "Immanuel Quickley",
+                "proTeam": "TOR",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 33.5,
+                "avgLast15": 32.4,
+                "avgProjected": 34.9,
+                "gamesRestOfRegularSeason": 42,
+                "gamesPlayoffs": 14
+              },
+              {
+                "playerId": 4433627,
+                "name": "Keyonte George",
+                "proTeam": "UTA",
+                "positions": [
+                  "PG",
+                  "SG"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 34.2,
+                "avgLast15": 33.9,
+                "avgProjected": 36.8,
+                "gamesRestOfRegularSeason": 40,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "get": [
+              {
+                "playerId": 5105565,
+                "name": "Donovan Clingan",
+                "proTeam": "POR",
+                "positions": [
+                  "C"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 36.4,
+                "avgLast15": 40.8,
+                "avgProjected": 33.9,
+                "gamesRestOfRegularSeason": 42,
+                "gamesPlayoffs": 14
+              },
+              {
+                "playerId": 3064514,
+                "name": "Julius Randle",
+                "proTeam": "BKN",
+                "positions": [
+                  "PF"
+                ],
+                "injuryStatus": "ACTIVE",
+                "avgSeason": 34.3,
+                "avgLast15": 39.7,
+                "avgProjected": 37,
+                "gamesRestOfRegularSeason": 42,
+                "gamesPlayoffs": 14
+              }
+            ],
+            "angles": [
+              "positional-need"
+            ],
+            "whyForYou": "Donovan Clingan (C, 36.4) and Julius Randle (PF, 34.3) are healthy bigs with 14 playoff games each, in exchange for two guards averaging 33.5 and 34.2.",
+            "whyTheyAccept": "Haliburton is OUT and Powell is OUT, so Goldin lacks healthy guards; Quickley and Keyonte George both start and are healthy.",
+            "dropsNeeded": {
+              "you": 0,
+              "partner": 0
+            }
+          }
+        ]
+      }
     }
   ]
 }

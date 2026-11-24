@@ -1,0 +1,17 @@
+{
+  "season": 2027,
+  "owner": "Ilay Mendel",
+  "requests": [
+    {
+      "id": "2026-11-24T11-01-34-519Z-221888",
+      "kind": "sell",
+      "playerId": 4900671,
+      "playerName": "Ajay Mitchell",
+      "playerOwner": "Ilay Mendel",
+      "note": "אני רוצה טרייד עם הלוי",
+      "createdAt": "2026-11-24T11:01:34.519Z",
+      "by": "owner",
+      "status": "pending"
+    }
+  ]
+}

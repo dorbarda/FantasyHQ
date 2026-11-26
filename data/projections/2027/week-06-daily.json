@@ -1,7 +1,7 @@
 {
   "season": 2027,
   "week": 6,
-  "updatedAt": "2026-11-25T20:01:32.809Z",
+  "updatedAt": "2026-11-26T04:01:51.610Z",
   "days": [
     {
       "date": "2026-11-23",
@@ -10,6 +10,10 @@
     {
       "date": "2026-11-24",
       "scoringPeriodId": 36
+    },
+    {
+      "date": "2026-11-25",
+      "scoringPeriodId": 37
     }
   ],
   "teams": {
@@ -21,6 +25,10 @@
       {
         "played": 2,
         "points": 44
+      },
+      {
+        "played": 9,
+        "points": 338
       }
     ],
     "2": [
@@ -31,6 +39,10 @@
       {
         "played": 3,
         "points": 53
+      },
+      {
+        "played": 9,
+        "points": 247
       }
     ],
     "3": [
@@ -41,6 +53,10 @@
       {
         "played": 2,
         "points": 47
+      },
+      {
+        "played": 9,
+        "points": 355
       }
     ],
     "4": [
@@ -51,6 +67,10 @@
       {
         "played": 4,
         "points": 126
+      },
+      {
+        "played": 8,
+        "points": 229
       }
     ],
     "5": [
@@ -61,6 +81,10 @@
       {
         "played": 3,
         "points": 97
+      },
+      {
+        "played": 6,
+        "points": 174
       }
     ],
     "6": [
@@ -71,6 +95,10 @@
       {
         "played": 3,
         "points": 78
+      },
+      {
+        "played": 7,
+        "points": 174
       }
     ],
     "8": [
@@ -81,6 +109,10 @@
       {
         "played": 2,
         "points": 78
+      },
+      {
+        "played": 8,
+        "points": 143
       }
     ],
     "9": [
@@ -91,6 +123,10 @@
       {
         "played": 7,
         "points": 287
+      },
+      {
+        "played": 6,
+        "points": 88
       }
     ],
     "10": [
@@ -101,6 +137,10 @@
       {
         "played": 3,
         "points": 151
+      },
+      {
+        "played": 9,
+        "points": 266
       }
     ],
     "11": [
@@ -111,6 +151,10 @@
       {
         "played": 2,
         "points": 50
+      },
+      {
+        "played": 5,
+        "points": 129
       }
     ]
   },
@@ -120,12 +164,14 @@
       "awayTeamId": 5,
       "homeWinProb": [
         0.975,
-        0.995
+        0.995,
+        null
       ],
       "dayMoves": [
         {
           "5": 2
         },
+        null,
         null
       ],
       "changes": [
@@ -162,13 +208,15 @@
       "awayTeamId": 3,
       "homeWinProb": [
         0.03,
-        0.033
+        0.033,
+        null
       ],
       "dayMoves": [
         null,
         {
           "11": 1
-        }
+        },
+        null
       ],
       "changes": [
         {
@@ -217,7 +265,8 @@
       "awayTeamId": 4,
       "homeWinProb": [
         0.444,
-        0.332
+        0.332,
+        null
       ],
       "dayMoves": [
         {
@@ -226,7 +275,8 @@
         },
         {
           "4": 1
-        }
+        },
+        null
       ],
       "changes": [
         {
@@ -285,7 +335,8 @@
       "awayTeamId": 10,
       "homeWinProb": [
         0.337,
-        0.262
+        0.262,
+        null
       ],
       "dayMoves": [
         {
@@ -293,7 +344,8 @@
         },
         {
           "1": 1
-        }
+        },
+        null
       ],
       "changes": [
         {
@@ -326,7 +378,8 @@
       "awayTeamId": 2,
       "homeWinProb": [
         0.155,
-        0.604
+        0.604,
+        null
       ],
       "dayMoves": [
         {
@@ -336,7 +389,8 @@
         {
           "2": 1,
           "8": 2
-        }
+        },
+        null
       ],
       "changes": [
         {
